@@ -1,35 +1,29 @@
-import { createSignal } from 'solid-js'
-import solidLogo from './assets/solid.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
 function App() {
-  const [count, setCount] = createSignal(0)
+	return (
+		<button
+			onClick={() => {
+				try {
+					const container = document.getElementById("anki-fields");
+					if (!container) return;
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} class="logo" alt="Vite logo" />
-        </a>
-        <a href="https://solidjs.com" target="_blank">
-          <img src={solidLogo} class="logo solid" alt="Solid logo" />
-        </a>
-      </div>
-      <h1>Vite + Solid</h1>
-      <div class="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count()}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p class="read-the-docs">
-        Click on the Vite and Solid logos to learn more
-      </p>
-    </>
-  )
+					const nodes = container.querySelectorAll("[data-field]");
+					const obj = {};
+
+					nodes.forEach((node) => {
+						const key = node.getAttribute("data-field");
+						// Use innerHTML to keep any HTML inside the field
+						obj[key] = node.innerHTML || "";
+					});
+
+					console.log(obj);
+				} catch (err) {
+					console.error("Failed to build note JSON", err);
+				}
+			}}
+		>
+			test
+		</button>
+	);
 }
 
-export default App
+export default App;
