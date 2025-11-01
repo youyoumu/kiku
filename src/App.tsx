@@ -1,5 +1,3 @@
-import "./tailwind.css";
-
 function App() {
 	return (
 		<div class="min-h-screen">

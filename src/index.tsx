@@ -1,8 +1,5 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
-import "./reviewer.css";
-import "./reviewer.css";
-
 import App from "./App.tsx";
 import tailwind from "./tailwind.css?inline";
 
