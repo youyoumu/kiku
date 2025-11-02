@@ -38,6 +38,9 @@ function App(props: { ankiFields: AnkiFields }) {
 					}
 				></div>
 			</div>
+			<div class="bg-base-200 p-4 border-s-4 text-xl rounded-lg [&_ol]:list-inside [&_ul]:list-inside">
+				<div innerHTML={props.ankiFields.MainDefinition}></div>
+			</div>
 		</div>
 	);
 }
