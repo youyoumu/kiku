@@ -6,5 +6,10 @@ export default defineConfig({
 	plugins: [solid(), tailwindcss()],
 	build: {
 		minify: false,
+		lib: {
+			entry: "src/index.tsx",
+			fileName: "kiku",
+			formats: ["es"],
+		},
 	},
 });
