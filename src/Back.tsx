@@ -35,7 +35,7 @@ export function Back(props: { ankiFields: AnkiFields }) {
             <div class="text-3xl">{/* TODO: pitch  */}</div>
           </div>
           <div
-            class="[&_>_img]:h-full [&_>_img]:rounded-lg [&_>_img]:object-contain [&_>_img]:max-h-52 sm:[&_>_img]:max-h-fit [&_>_img]:mx-auto bg-base-200 rounded-lg"
+            class="sm:[&_img]:h-full [&_img]:rounded-lg [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto bg-base-200 rounded-lg"
             innerHTML={props.ankiFields.Picture}
           ></div>
         </div>
