@@ -1,11 +1,15 @@
-import { CircleChevronDownIcon, InfoIcon } from "lucide-solid";
+import { BoltIcon, CircleChevronDownIcon, InfoIcon } from "lucide-solid";
 import { createSignal, For, onMount, Show } from "solid-js";
 import { Layout } from "./components/Layout";
 import type { AnkiBackFields } from "./types";
+import { type DaisyUITheme, nextTheme, setTheme } from "./util/theme";
 
 export function Back(props: { ankiFields: AnkiBackFields }) {
   let sentenceEl: HTMLDivElement | undefined;
   const [definitionPage, setDefinitionPage] = createSignal(0);
+  const [showSettings, setShowSettings] = createSignal(false);
+  const theme = () =>
+    document.documentElement.getAttribute("data-theme") as DaisyUITheme;
 
   const tags = props.ankiFields.Tags.split(" ");
 
@@ -20,13 +24,29 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
 
   return (
     <Layout>
-      <div class="flex justify-end flex-row">
+      <div class="flex justify-between flex-row">
+        <div class="relative h-5 text-secondary-content/50">
+          <BoltIcon
+            class="h-full w-full cursor-pointer"
+            on:click={() => setShowSettings(!showSettings())}
+          ></BoltIcon>
+          <Show when={showSettings()}>
+            <div class="absolute top-0 translate-y-6 left-2 bg-secondary text-secondary-content p-4 rounded-lg">
+              <button
+                class="btn text-nowrap"
+                on:click={() => setTheme(nextTheme(theme()))}
+              >
+                Next Theme
+              </button>
+            </div>
+          </Show>
+        </div>
         <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block h-5 text-secondary-content/50">
           <div innerHTML={props.ankiFields.FreqSort}></div>
           <CircleChevronDownIcon class="h-full w-full" />
           <div
             id="frequency"
-            class="absolute top-0 translate-y-8 right-0 w-fit [&_li]:text-nowrap bg-secondary text-secondary-content p-4 rounded-lg hidden"
+            class="absolute top-0 translate-y-6 right-2 w-fit [&_li]:text-nowrap bg-secondary text-secondary-content p-4 rounded-lg hidden"
             innerHTML={props.ankiFields.Frequency}
           ></div>
         </div>
