@@ -15,30 +15,33 @@ export function Back(props: { ankiFields: AnkiFields }) {
   });
 
   return (
-    <div class="max-w-4xl mx-auto overflow-auto px-2">
+    <div class="max-w-4xl mx-auto overflow-auto px-4">
       <div
         class="flex flex-col gap-8"
         style={{
           "max-height": "calc(100vh - 4em)",
         }}
       >
-        <div class="flex rounded-lg gap-4 h-56">
-          <div class="flex-1 bg-base-200 rounded-lg flex flex-col items-center justify-center">
+        <div class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row">
+          <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
             <div
-              class="text-3xl"
+              class="text-2xl sm:text-3xl"
               innerHTML={props.ankiFields["kana:ExpressionFurigana"]}
             ></div>
-            <div class="text-6xl" innerHTML={props.ankiFields.Expression}></div>
+            <div
+              class="text-5xl sm:text-6xl"
+              innerHTML={props.ankiFields.Expression}
+            ></div>
             <div class="text-3xl">{/* TODO: pitch  */}</div>
           </div>
           <div
-            class="[&_>_img]:h-full [&_>_img]:rounded-lg"
+            class="[&_>_img]:h-full [&_>_img]:rounded-lg [&_>_img]:object-contain [&_>_img]:max-h-52 sm:[&_>_img]:max-h-fit [&_>_img]:mx-auto bg-base-200 rounded-lg"
             innerHTML={props.ankiFields.Picture}
           ></div>
         </div>
         <div class="flex flex-col gap-4 items-center text-center">
           <div
-            class="text-4xl [&_b]:text-secondary-content"
+            class="text-2xl sm:text-4xl [&_b]:text-secondary-content"
             ref={sentenceEl}
             innerHTML={
               props.ankiFields["furigana:SentenceFurigana"] ??
@@ -50,7 +53,7 @@ export function Back(props: { ankiFields: AnkiFields }) {
           <div class="text-end text-base-content/25">
             {definitionPage() === 0 ? "Main definition" : "Glossary"}
           </div>
-          <div class="relative bg-base-200 p-4 border-s-4 text-xl rounded-lg [&_ol]:list-inside [&_ul]:list-inside">
+          <div class="relative bg-base-200 p-4 border-s-4 text-base sm:text-xl rounded-lg [&_ol]:list-inside [&_ul]:list-inside">
             <div
               style={{
                 display: definitionPage() === 0 ? "block" : "none",

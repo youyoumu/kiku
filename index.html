@@ -2,37 +2,39 @@
 <html class="night-mode" dir="ltr" data-bs-theme="dark">
   <head>
     <title>previewer</title>
-    <style>
-      body {
-        zoom: 1;
-        background-color: var(--canvas);
-      }
-      html {
-        font-family: "Sans Serif", sans-serif;
-      }
 
-      /* Buttons */
-      button {
-        font-family: "Sans Serif", sans-serif;
-      }
-      /* Input field focus outline */
-      textarea:focus,
-      input:focus,
-      input[type]:focus,
-      .uneditable-input:focus,
-      div[contenteditable="true"]:focus {
-        outline: 0 none;
-        border-color: #3b82f6;
-      }
-      :root {
-        --canvas: #f5f5f5;
-      }
-      :root[class*="night-mode"] {
-        --canvas: #2c2c2c;
-      }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+    body {
+      zoom: 1;
+      background-color: var(--canvas);
+    }
+    html {
+      font-family: "Sans Serif", sans-serif;
+    }
+
+    /* Buttons */
+    button {
+      font-family: "Sans Serif", sans-serif;
+    }
+    /* Input field focus outline */
+    textarea:focus,
+    input:focus,
+    input[type]:focus,
+    .uneditable-input:focus,
+    div[contenteditable="true"]:focus {
+      outline: 0 none;
+      border-color: #3b82f6;
+    }
+    :root {
+      --canvas: #f5f5f5;
+    }
+    :root[class*="night-mode"] {
+      --canvas: #2c2c2c;
+    }
     </style>
-    <link rel="stylesheet" href="/reviewer.css" />
-    <link rel="stylesheet" href="/webview.css" />
+    <link rel="stylesheet" href="/reviewer.css">
+    <link rel="stylesheet" href="/webview.css">
   </head>
 
   <body class="isLin nightMode night_mode reduce-motion fancy">
