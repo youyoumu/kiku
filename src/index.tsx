@@ -1,10 +1,10 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
-import App from "./App.tsx";
+import { Back } from "./Back.tsx";
 import "./tailwind.css";
 import tailwind from "./tailwind.css?inline";
 
-import { exampleFields } from "./types.ts";
+import { type AnkiFields, exampleFields } from "./types.ts";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("root not found");
@@ -13,7 +13,13 @@ const sheet = new CSSStyleSheet();
 sheet.replaceSync(tailwind.replaceAll(":root", ":host"));
 shadow.adoptedStyleSheets = [sheet];
 
-render(() => <App ankiFields={exampleFields} />, shadow);
+export function init({ ankiFields }: { ankiFields: AnkiFields }) {
+	render(() => <Back ankiFields={ankiFields} />, shadow);
+}
+
+if (import.meta.env.DEV) {
+	init({ ankiFields: exampleFields });
+}
 
 document.documentElement.setAttribute("data-theme", "coffee");
 root.setAttribute("data-theme", "coffee");

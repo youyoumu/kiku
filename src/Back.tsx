@@ -1,7 +1,7 @@
 import { createSignal, onMount } from "solid-js";
 import type { AnkiFields } from "./types";
 
-function App(props: { ankiFields: AnkiFields }) {
+export function Back(props: { ankiFields: AnkiFields }) {
 	let sentenceEl: HTMLDivElement | undefined;
 	const [definitionPage, setDefinitionPage] = createSignal(0);
 
@@ -82,5 +82,3 @@ function App(props: { ankiFields: AnkiFields }) {
 		</div>
 	);
 }
-
-export default App;
