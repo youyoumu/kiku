@@ -6,7 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "biome format .",
+    "format:write": "biome format --write .",
+    "lint": "biome lint .",
+    "lint:write": "biome lint --write .",
+    "check": "biome check .",
+    "check:write": "biome check --write ."
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.16",
@@ -14,6 +20,7 @@
     "tailwindcss": "^4.1.16"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.3.2",
     "@types/node": "^24.6.0",
     "daisyui": "^5.3.10",
     "typescript": "~5.9.3",
