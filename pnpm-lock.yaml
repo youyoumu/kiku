@@ -11,25 +11,25 @@ importers:
 
   .:
     dependencies:
-      '@tailwindcss/vite':
-        specifier: ^4.1.16
-        version: 4.1.16(rolldown-vite@7.1.14(@types/node@24.9.2)(jiti@2.6.1))
       solid-js:
         specifier: ^1.9.9
         version: 1.9.10
-      tailwindcss:
-        specifier: ^4.1.16
-        version: 4.1.16
     devDependencies:
       '@biomejs/biome':
         specifier: 2.3.2
         version: 2.3.2
+      '@tailwindcss/vite':
+        specifier: ^4.1.16
+        version: 4.1.16(rolldown-vite@7.1.14(@types/node@24.9.2)(jiti@2.6.1))
       '@types/node':
         specifier: ^24.6.0
         version: 24.9.2
       daisyui:
         specifier: ^5.3.10
         version: 5.3.10
+      tailwindcss:
+        specifier: ^4.1.16
+        version: 4.1.16
       typescript:
         specifier: ~5.9.3
         version: 5.9.3
