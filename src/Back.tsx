@@ -1,5 +1,5 @@
-import { CircleChevronDown } from "lucide-solid";
-import { createSignal, For, onMount } from "solid-js";
+import { CircleChevronDownIcon, InfoIcon } from "lucide-solid";
+import { createSignal, For, onMount, Show } from "solid-js";
 import { Layout } from "./components/Layout";
 import type { AnkiBackFields } from "./types";
 
@@ -23,7 +23,7 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
       <div class="flex justify-end flex-row">
         <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block h-5 text-secondary-content/50">
           <div innerHTML={props.ankiFields.FreqSort}></div>
-          <CircleChevronDown class="h-full w-full" />
+          <CircleChevronDownIcon class="h-full w-full" />
           <div
             id="frequency"
             class="absolute top-0 translate-y-8 right-0 w-fit [&_li]:text-nowrap bg-secondary text-secondary-content p-4 rounded-lg hidden"
@@ -92,6 +92,12 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
           </div>
         </div>
       </div>
+      <Show when={props.ankiFields.MiscInfo}>
+        <div class="flex gap-2 items-center justify-center bg-base-200 p-2 rounded-lg text-sm">
+          <InfoIcon class="h-5 w-5" />
+          <div innerHTML={props.ankiFields.MiscInfo}></div>
+        </div>
+      </Show>
       <div class="flex gap-4 items-center justify-center">
         <For each={tags}>
           {(tag) => {
