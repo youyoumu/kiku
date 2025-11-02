@@ -15,6 +15,7 @@ export type AnkiFields = {
   IsWordAndSentenceCard: string;
   IsClickCard: string;
   IsSentenceCard: string;
+  IsAudioCard: string;
   PitchPosition: string;
   PitchCategories: string;
   Frequency: string;
@@ -26,9 +27,27 @@ export type AnkiFields = {
   "furigana:ExpressionFurigana": string;
   "kana:ExpressionFurigana": string;
   "furigana:Sentence": string;
+  "kanji:Sentence": string;
   "furigana:SentenceFurigana": string;
   "kana:SentenceFurigana": string;
 };
+
+const frontKeys = [
+  "Expression",
+  "kanji:Sentence",
+  "IsWordAndSentenceCard",
+  "IsSentenceCard",
+  "IsClickCard",
+  "IsAudioCard",
+  "SentenceAudio",
+  "ExpressionAudio",
+  "Hint",
+] satisfies readonly (keyof AnkiFields)[];
+
+type ExtractUsedFields<T, U extends readonly (keyof T)[]> = Pick<T, U[number]>;
+
+export type AnkiFrontFields = ExtractUsedFields<AnkiFields, typeof frontKeys>;
+export type AnkiBackFields = AnkiFields;
 
 // biome-ignore format: this looks nicer
 export const exampleFields: AnkiFields = {
@@ -48,6 +67,7 @@ export const exampleFields: AnkiFields = {
   "IsWordAndSentenceCard": "",
   "IsClickCard": "x",
   "IsSentenceCard": "",
+  "IsAudioCard": "",
   "PitchPosition": "<span style=\"display:inline;\"><span>[</span><span>5</span><span>]</span></span>",
   "PitchCategories": "",
   "Frequency": "<ul style=\"text-align: left;\"><li>JPDB: 14171</li><li>Anime &amp; J-drama: 25407</li><li>Wikipedia: 134746</li><li>Innocent Ranked: 32798</li></ul>",
@@ -57,6 +77,7 @@ export const exampleFields: AnkiFields = {
   "furigana:ExpressionFurigana": "<ruby><rb>十中八九</rb><rt>じっちゅうはっく</rt></ruby>",
   "kana:ExpressionFurigana": "じっちゅうはっく",
   "furigana:Sentence": "<b>十中八九</b>せこい小遣い稼ぎだと思う<br>Hey there! Thanks a lot for downloading Lapis! Please refer to its <a href=\"https://github.com/donkuri/lapis\">documentation</a> to learn more about the note type!",
+  "kanji:Sentence": "<b>十中八九</b>せこい小遣い稼ぎだと思う<br>Hey there! Thanks a lot for downloading Lapis! Please refer to its <a href=\"https://github.com/donkuri/lapis\">documentation</a> to learn more about the note type!",
   "furigana:SentenceFurigana": "<b><ruby><rb>十中八九</rb><rt>じっちゅうはっく</rt></ruby></b>せこい<ruby><rb>小遣</rb><rt>こづか</rt></ruby>い<ruby><rb>稼</rb><rt>かせ</rt></ruby>ぎだと<ruby><rb>思</rb><rt>おも</rt></ruby>う<br>Hey there! <br>Thanks a lot for downloading Lapis. Please refer to its <a href=\"https://github.com/donkuri/lapis\">documentation</a> to learn more about the note type!",
   "kana:SentenceFurigana": "<b>じっちゅうはっく</b>せこいこづかいかせぎだとおもう<br>Hey there! <br>Thanks a lot for downloading Lapis. Please refer to its <a href=\"https://github.com/donkuri/lapis\">documentation</a> to learn more about the note type!"
 };

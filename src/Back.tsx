@@ -1,7 +1,7 @@
 import { createSignal, onMount } from "solid-js";
-import type { AnkiFields } from "./types";
+import type { AnkiBackFields } from "./types";
 
-export function Back(props: { ankiFields: AnkiFields }) {
+export function Back(props: { ankiFields: AnkiBackFields }) {
   let sentenceEl: HTMLDivElement | undefined;
   const [definitionPage, setDefinitionPage] = createSignal(0);
 
