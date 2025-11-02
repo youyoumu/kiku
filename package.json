@@ -12,7 +12,8 @@
     "lint": "biome lint .",
     "lint:write": "biome lint --write .",
     "check": "biome check .",
-    "check:write": "biome check --write ."
+    "check:write": "biome check --write .",
+    "copyDist": "bash ./script/copyDist.sh"
   },
   "dependencies": {
     "solid-js": "^1.9.9"
