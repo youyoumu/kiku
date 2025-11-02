@@ -1,11 +1,13 @@
 import { CircleChevronDown } from "lucide-solid";
-import { createSignal, onMount } from "solid-js";
+import { createSignal, For, onMount } from "solid-js";
 import { Layout } from "./components/Layout";
 import type { AnkiBackFields } from "./types";
 
 export function Back(props: { ankiFields: AnkiBackFields }) {
   let sentenceEl: HTMLDivElement | undefined;
   const [definitionPage, setDefinitionPage] = createSignal(0);
+
+  const tags = props.ankiFields.Tags.split(" ");
 
   onMount(() => {
     if (sentenceEl) {
@@ -24,7 +26,7 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
           <CircleChevronDown class="h-full w-full" />
           <div
             id="frequency"
-            class="absolute top-0 translate-y-8 right-0 w-fit [&_li]:text-nowrap bg-base-200 p-4 rounded-lg hidden"
+            class="absolute top-0 translate-y-8 right-0 w-fit [&_li]:text-nowrap bg-secondary text-secondary-content p-4 rounded-lg hidden"
             innerHTML={props.ankiFields.Frequency}
           ></div>
         </div>
@@ -87,6 +89,17 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
             }
           ></button>
         </div>
+      </div>
+      <div class="flex gap-4 items-center justify-center">
+        <For each={tags}>
+          {(tag) => {
+            return (
+              <div class="bg-secondary text-secondary-content p-1 rounded-sm text-sm">
+                {tag}
+              </div>
+            );
+          }}
+        </For>
       </div>
     </Layout>
   );
