@@ -3,6 +3,8 @@
   themes: all;
 }
 
+@custom-variant hover (&:hover);
+
 body {
   margin: 2em;
 }
