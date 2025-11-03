@@ -30,6 +30,10 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
     }
   });
 
+  const temp = document.createElement("div");
+  temp.innerHTML = props.ankiFields.Picture ?? "";
+  const img = temp.querySelector("img");
+
   return (
     <Layout>
       <Switch>
@@ -104,10 +108,9 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
                 </Show>
               </div>
             </div>
-            <div
-              class="sm:[&_img]:h-full [&_img]:rounded-lg [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto bg-base-200 rounded-lg"
-              innerHTML={props.ankiFields.Picture}
-            ></div>
+            <div class="sm:[&_img]:h-full [&_img]:rounded-lg [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto bg-base-200 rounded-lg">
+              {img}
+            </div>
           </div>
           <div class="flex sm:flex-col gap-8 flex-col-reverse">
             <div class="flex flex-col gap-4 items-center text-center">
