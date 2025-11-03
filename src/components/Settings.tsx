@@ -1,8 +1,9 @@
-import { ArrowLeftIcon } from "lucide-solid";
+import { ArrowLeftIcon, RefreshCwIcon } from "lucide-solid";
 import { createSignal, For, Match, onMount, Show, Switch } from "solid-js";
 import { AnkiConnect } from "../util/ankiConnect";
 import { capitalize } from "../util/capitalize";
 import type { KikuConfig } from "../util/config";
+import { isMobile } from "../util/general";
 import { type DaisyUITheme, daisyUIThemes, setTheme } from "../util/theme";
 
 export function Settings(props: {
@@ -16,11 +17,16 @@ export function Settings(props: {
     createSignal(false);
 
   onMount(async () => {
+    if (isMobile()) return;
+    await checkAnkiConnect();
+  });
+
+  async function checkAnkiConnect() {
     const version = await AnkiConnect.getVersion();
     if (version) {
       setIsAnkiConnectAvailable(true);
     }
-  });
+  }
 
   const saveConfig = async () => {
     const payload: KikuConfig = {
@@ -28,17 +34,38 @@ export function Settings(props: {
       ankiConnectPort: 8765,
       theme: currentTheme(),
     };
-    await AnkiConnect.saveConfig(payload);
-    toast.success("Config has been saved");
+    try {
+      await AnkiConnect.saveConfig(payload);
+      toast.success("Saved! Restart Anki to apply changes.");
+    } catch (e) {
+      toast.error(
+        `Failed to save config: ${e instanceof Error ? e.message : ""}`,
+      );
+    }
   };
 
   const [toastMessage, setToastMessage] = createSignal("");
+  const [toastType, setToastType] = createSignal<"success" | "error">(
+    "success",
+  );
   const [showToast, setShowToast] = createSignal(false);
+  let timeout: number;
   const toast = {
     success: (message: string) => {
+      if (timeout) clearTimeout(timeout);
+      setToastType("success");
       setToastMessage(message);
       setShowToast(true);
-      setTimeout(() => {
+      timeout = setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+    },
+    error: (message: string) => {
+      if (timeout) clearTimeout(timeout);
+      setToastType("error");
+      setToastMessage(message);
+      setShowToast(true);
+      timeout = setTimeout(() => {
         setShowToast(false);
       }, 3000);
     },
@@ -60,6 +87,16 @@ export function Settings(props: {
               <div class="status status-success"></div>
             </Match>
             <Match when={!isAnkiConnectAvailable()}>
+              <RefreshCwIcon
+                class="h-5 w-5 cursor-pointer text-base-content/50"
+                on:click={async () => {
+                  try {
+                    await checkAnkiConnect();
+                  } catch {
+                    toast.error("AnkiConnect is not available");
+                  }
+                }}
+              />
               <div class="text-sm">AnkiConnect is not available</div>
               <div class="status status-error animate-ping"></div>
             </Match>
@@ -139,7 +176,13 @@ export function Settings(props: {
       </div>
       <Show when={showToast()}>
         <div class="toast">
-          <div class="alert alert-success">
+          <div
+            class="alert"
+            classList={{
+              "alert-error": toastType() === "error",
+              "alert-success": toastType() === "success",
+            }}
+          >
             <span>{toastMessage()}</span>
           </div>
         </div>
