@@ -96,12 +96,12 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
           <div class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row">
             <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
               <div
-                class="text-2xl sm:text-3xl"
-                innerHTML={props.ankiFields["kana:ExpressionFurigana"]}
-              ></div>
-              <div
                 class="text-5xl sm:text-6xl"
-                innerHTML={props.ankiFields.Expression}
+                innerHTML={
+                  props.ankiFields.ExpressionFurigana
+                    ? props.ankiFields["furigana:ExpressionFurigana"]
+                    : props.ankiFields.Expression
+                }
               ></div>
               <div class="text-3xl">{/* TODO: pitch  */}</div>
               <div
