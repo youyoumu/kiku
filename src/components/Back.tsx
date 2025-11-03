@@ -1,11 +1,19 @@
-import { BoltIcon, CircleChevronDownIcon, InfoIcon } from "lucide-solid";
+import {
+  BoltIcon,
+  CircleChevronDownIcon,
+  InfoIcon,
+  PlayIcon,
+} from "lucide-solid";
 import { createSignal, For, Match, onMount, Show, Switch } from "solid-js";
 import type { AnkiBackFields } from "../types";
+import { isMobile } from "../util/general";
 import { Layout } from "./Layout";
 import { Settings } from "./Settings";
 
 export function Back(props: { ankiFields: AnkiBackFields }) {
   let sentenceEl: HTMLDivElement | undefined;
+  let expressionAudioRef: HTMLDivElement | undefined;
+  let sentenceAudioRef: HTMLDivElement | undefined;
   const [definitionPage, setDefinitionPage] = createSignal(0);
   const [showSettings, setShowSettings] = createSignal(false);
 
@@ -61,6 +69,38 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
                 innerHTML={props.ankiFields.Expression}
               ></div>
               <div class="text-3xl">{/* TODO: pitch  */}</div>
+              <div class="flex gap-2 pt-4">
+                <div
+                  style={{
+                    width: "0",
+                    height: "0",
+                    overflow: "hidden",
+                  }}
+                  ref={expressionAudioRef}
+                  innerHTML={props.ankiFields.ExpressionAudio}
+                ></div>
+                <div
+                  style={{
+                    width: "0",
+                    height: "0",
+                    overflow: "hidden",
+                  }}
+                  ref={sentenceAudioRef}
+                  innerHTML={props.ankiFields.SentenceAudio}
+                ></div>
+                <Show when={!isMobile()}>
+                  <NotePlayIcon
+                    on:click={() => {
+                      expressionAudioRef?.querySelector("a")?.click();
+                    }}
+                  ></NotePlayIcon>
+                  <NotePlayIcon
+                    on:click={() => {
+                      sentenceAudioRef?.querySelector("a")?.click();
+                    }}
+                  ></NotePlayIcon>
+                </Show>
+              </div>
             </div>
             <div
               class="sm:[&_img]:h-full [&_img]:rounded-lg [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto bg-base-200 rounded-lg"
@@ -128,8 +168,32 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
               }}
             </For>
           </div>
+
+          <Show when={isMobile()}>
+            <div class="absolute bottom-4 left-4 flex flex-col gap-2 items-center">
+              <NotePlayIcon
+                on:click={() => {
+                  expressionAudioRef?.querySelector("a")?.click();
+                }}
+              ></NotePlayIcon>
+              <NotePlayIcon
+                on:click={() => {
+                  sentenceAudioRef?.querySelector("a")?.click();
+                }}
+              ></NotePlayIcon>
+            </div>
+          </Show>
         </Match>
       </Switch>
     </Layout>
+  );
+}
+
+function NotePlayIcon(props: { "on:click"?: () => void }) {
+  return (
+    <PlayIcon
+      class="bg-primary rounded-full text-primary-content p-1 w-8 h-8 cursor-pointer"
+      on:click={props["on:click"]}
+    />
   );
 }
