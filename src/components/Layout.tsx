@@ -1,4 +1,4 @@
-import type { JSX } from "solid-js/jsx-runtime";
+import type { JSX } from "solid-js";
 import { isMobile } from "../util/general";
 
 export function Layout(props: { children: JSX.Element }) {
