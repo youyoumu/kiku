@@ -22,6 +22,7 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
   const [ready, setReady] = createSignal(false);
 
   const tags = props.ankiFields.Tags.split(" ");
+  const isNsfw = tags.map((tag) => tag.toLowerCase()).includes("nsfw");
 
   onMount(() => {
     if (sentenceEl) {
@@ -142,7 +143,13 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
                 )}
               </div>
             </div>
-            <div class="sm:[&_img]:h-full [&_img]:rounded-lg [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto bg-base-200 rounded-lg">
+
+            <div
+              class="sm:[&_img]:h-full [&_img]:rounded-lg [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto bg-base-200 rounded-lg transition-[filter] hover:filter-none"
+              classList={{
+                "filter blur-[16px] brightness-50": isNsfw,
+              }}
+            >
               {img}
             </div>
           </div>
