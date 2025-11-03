@@ -4,7 +4,7 @@ import {
   InfoIcon,
   PlayIcon,
 } from "lucide-solid";
-import { createSignal, For, Match, onMount, Show, Switch } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import type { AnkiBackFields } from "../types";
 import { isMobile } from "../util/general";
 import { Layout } from "./Layout";
@@ -51,40 +51,49 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
     if (definitionPage() === 1) return "Main definition";
     if (definitionPage() === 2) return "Glossary";
   };
+  const hiddenStyle = {
+    width: "0",
+    height: "0",
+    overflow: "hidden",
+  } as const;
 
   return (
     <Layout>
-      <Switch>
-        <Match when={showSettings()}>
-          <Settings
-            onBackClick={() => setShowSettings(false)}
-            onCancelClick={() => setShowSettings(false)}
-          />
-        </Match>
-        <Match when={!showSettings()}>
+      {showSettings() && (
+        <Settings
+          onBackClick={() => setShowSettings(false)}
+          onCancelClick={() => setShowSettings(false)}
+        />
+      )}
+      {!showSettings() && (
+        <>
           <div class="flex justify-between flex-row h-5 min-h-5">
-            <Show when={ready()}>
-              <div class="relative">
-                <BoltIcon
-                  class="h-full w-full cursor-pointer text-base-content/50"
-                  on:click={() => setShowSettings(!showSettings())}
-                ></BoltIcon>
-              </div>
-              <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block">
-                <div
-                  innerHTML={props.ankiFields.FreqSort}
-                  class="text-base-content/50"
-                ></div>
-                <Show when={props.ankiFields.Frequency}>
-                  <CircleChevronDownIcon class="h-full w-full text-base-content/50" />
+            {ready() && (
+              <>
+                <div class="relative">
+                  <BoltIcon
+                    class="h-full w-full cursor-pointer text-base-content/50"
+                    on:click={() => setShowSettings(!showSettings())}
+                  ></BoltIcon>
+                </div>
+                <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block">
                   <div
-                    id="frequency"
-                    class="absolute z-10 top-0 translate-y-6 right-2 w-fit [&_li]:text-nowrap [&_li]:whitespace-nowrap bg-base-300/90 p-4 rounded-lg hidden"
-                    innerHTML={props.ankiFields.Frequency}
+                    innerHTML={props.ankiFields.FreqSort}
+                    class="text-base-content/50"
                   ></div>
-                </Show>
-              </div>
-            </Show>
+                  {props.ankiFields.Frequency && (
+                    <>
+                      <CircleChevronDownIcon class="h-full w-full text-base-content/50" />
+                      <div
+                        id="frequency"
+                        class="absolute z-10 top-0 translate-y-6 right-2 w-fit [&_li]:text-nowrap [&_li]:whitespace-nowrap bg-base-300/90 p-4 rounded-lg hidden"
+                        innerHTML={props.ankiFields.Frequency}
+                      ></div>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
           </div>
           <div class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row">
             <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
@@ -100,42 +109,37 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
               <div
                 class="flex gap-2"
                 classList={{
-                  "h-8": !isMobile(),
-                  "pt-4": !isMobile(),
+                  "h-8 pt-4": !isMobile(),
                 }}
               >
-                <Show when={ready()}>
-                  <div
-                    style={{
-                      width: "0",
-                      height: "0",
-                      overflow: "hidden",
-                    }}
-                    ref={expressionAudioRef}
-                    innerHTML={props.ankiFields.ExpressionAudio}
-                  ></div>
-                  <div
-                    style={{
-                      width: "0",
-                      height: "0",
-                      overflow: "hidden",
-                    }}
-                    ref={sentenceAudioRef}
-                    innerHTML={props.ankiFields.SentenceAudio}
-                  ></div>
-                  <Show when={!isMobile()}>
-                    <NotePlayIcon
-                      on:click={() => {
-                        expressionAudioRef?.querySelector("a")?.click();
-                      }}
-                    ></NotePlayIcon>
-                    <NotePlayIcon
-                      on:click={() => {
-                        sentenceAudioRef?.querySelector("a")?.click();
-                      }}
-                    ></NotePlayIcon>
-                  </Show>
-                </Show>
+                {ready() && (
+                  <>
+                    <div
+                      style={hiddenStyle}
+                      ref={expressionAudioRef}
+                      innerHTML={props.ankiFields.ExpressionAudio}
+                    ></div>
+                    <div
+                      style={hiddenStyle}
+                      ref={sentenceAudioRef}
+                      innerHTML={props.ankiFields.SentenceAudio}
+                    ></div>
+                    {!isMobile() && (
+                      <>
+                        <NotePlayIcon
+                          on:click={() => {
+                            expressionAudioRef?.querySelector("a")?.click();
+                          }}
+                        ></NotePlayIcon>
+                        <NotePlayIcon
+                          on:click={() => {
+                            sentenceAudioRef?.querySelector("a")?.click();
+                          }}
+                        ></NotePlayIcon>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
             </div>
             <div class="sm:[&_img]:h-full [&_img]:rounded-lg [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto bg-base-200 rounded-lg">
@@ -153,81 +157,83 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
                 }
               ></div>
             </div>
-            <Show when={availablePagesCount > 0}>
+            {availablePagesCount > 0 && (
               <div>
-                <Show when={availablePagesCount > 1}>
+                {availablePagesCount > 1 && (
                   <div class="text-end text-base-content/50">{pageType()}</div>
-                </Show>
+                )}
                 <div class="relative bg-base-200 p-4 border-s-4 text-base sm:text-xl rounded-lg [&_ol]:list-inside [&_ul]:list-inside">
                   <div innerHTML={page()}></div>
-                  <Show when={availablePagesCount > 1 && ready()}>
-                    <button
-                      class="cursor-pointer w-8 h-full absolute top-0 left-0 hover:bg-base-content/10"
-                      on:click={() => {
-                        setDefinitionPage((prev) => {
-                          let next = (prev - 1 + pages.length) % pages.length;
-                          for (let i = 0; i < pages.length; i++) {
-                            if (pages[next]?.trim()) break;
-                            next = (next - 1 + pages.length) % pages.length;
-                          }
-                          return next;
-                        });
-                      }}
-                    ></button>
-                    <button
-                      class="cursor-pointer w-8 h-full absolute top-0 right-0 hover:bg-base-content/10"
-                      on:click={() => {
-                        setDefinitionPage((prev) => {
-                          let next = (prev + 1) % pages.length;
-                          for (let i = 0; i < pages.length; i++) {
-                            if (pages[next]?.trim()) break;
-                            next = (next + 1) % pages.length;
-                          }
-                          return next;
-                        });
-                      }}
-                    ></button>
-                  </Show>
+                  {availablePagesCount > 1 && ready() && (
+                    <>
+                      <button
+                        class="cursor-pointer w-8 h-full absolute top-0 left-0 hover:bg-base-content/10"
+                        on:click={() => {
+                          setDefinitionPage((prev) => {
+                            let next = (prev - 1 + pages.length) % pages.length;
+                            for (let i = 0; i < pages.length; i++) {
+                              if (pages[next]?.trim()) break;
+                              next = (next - 1 + pages.length) % pages.length;
+                            }
+                            return next;
+                          });
+                        }}
+                      ></button>
+                      <button
+                        class="cursor-pointer w-8 h-full absolute top-0 right-0 hover:bg-base-content/10"
+                        on:click={() => {
+                          setDefinitionPage((prev) => {
+                            let next = (prev + 1) % pages.length;
+                            for (let i = 0; i < pages.length; i++) {
+                              if (pages[next]?.trim()) break;
+                              next = (next + 1) % pages.length;
+                            }
+                            return next;
+                          });
+                        }}
+                      ></button>
+                    </>
+                  )}
                 </div>
               </div>
-            </Show>
+            )}
           </div>
-          <Show when={ready()}>
-            <Show when={props.ankiFields.MiscInfo}>
-              <div class="flex gap-2 items-center justify-center bg-base-200 p-2 rounded-lg text-sm">
-                <InfoIcon class="h-5 w-5" />
-                <div innerHTML={props.ankiFields.MiscInfo}></div>
-              </div>
-            </Show>
-            <div class="flex gap-4 items-center justify-center">
-              <For each={tags}>
-                {(tag) => {
+          {ready() && (
+            <>
+              {props.ankiFields.MiscInfo && (
+                <div class="flex gap-2 items-center justify-center bg-base-200 p-2 rounded-lg text-sm">
+                  <InfoIcon class="h-5 w-5" />
+                  <div innerHTML={props.ankiFields.MiscInfo}></div>
+                </div>
+              )}
+              <div class="flex gap-4 items-center justify-center">
+                {tags.map((tag) => {
                   return (
                     <div class="badge badge-primary badge-sm opacity-75">
                       {tag}
                     </div>
                   );
-                }}
-              </For>
-            </div>
-
-            <Show when={isMobile()}>
-              <div class="absolute bottom-4 left-4 flex flex-col gap-2 items-center">
-                <NotePlayIcon
-                  on:click={() => {
-                    expressionAudioRef?.querySelector("a")?.click();
-                  }}
-                ></NotePlayIcon>
-                <NotePlayIcon
-                  on:click={() => {
-                    sentenceAudioRef?.querySelector("a")?.click();
-                  }}
-                ></NotePlayIcon>
+                })}
               </div>
-            </Show>
-          </Show>
-        </Match>
-      </Switch>
+
+              {isMobile() && (
+                <div class="absolute bottom-4 left-4 flex flex-col gap-2 items-center">
+                  <NotePlayIcon
+                    on:click={() => {
+                      expressionAudioRef?.querySelector("a")?.click();
+                    }}
+                  ></NotePlayIcon>
+                  <NotePlayIcon
+                    on:click={() => {
+                      sentenceAudioRef?.querySelector("a")?.click();
+                    }}
+                  ></NotePlayIcon>
+                </div>
+              )}
+            </>
+          )}
+        </>
+      )}
     </Layout>
   );
 }
