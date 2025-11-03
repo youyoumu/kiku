@@ -1,31 +1,54 @@
-import { BoltIcon } from "lucide-solid";
-import { createSignal, For, Match, onMount, Switch } from "solid-js";
-import { getAnkiConnectVersion } from "../util/ankiConnect";
+import { ArrowLeftIcon } from "lucide-solid";
+import { createSignal, For, Match, onMount, Show, Switch } from "solid-js";
+import { AnkiConnect } from "../util/ankiConnect";
 import { capitalize } from "../util/capitalize";
-import { daisyUIThemes, setTheme } from "../util/theme";
+import type { KikuConfig } from "../util/config";
+import { type DaisyUITheme, daisyUIThemes, setTheme } from "../util/theme";
 
 export function Settings(props: { onHomeClick: () => void }) {
-  const [currentTheme, setCurrentTheme] = createSignal(
-    document.documentElement.getAttribute("data-theme"),
+  const [currentTheme, setCurrentTheme] = createSignal<DaisyUITheme>(
+    document.documentElement.getAttribute("data-theme") as DaisyUITheme,
   );
   const [isAnkiConnectAvailable, setIsAnkiConnectAvailable] =
     createSignal(false);
 
   onMount(async () => {
-    const version = await getAnkiConnectVersion();
+    const version = await AnkiConnect.getVersion();
     if (version) {
       setIsAnkiConnectAvailable(true);
     }
   });
 
+  const saveConfig = async () => {
+    const payload: KikuConfig = {
+      //TODO: configurable
+      ankiConnectPort: 8765,
+      theme: currentTheme(),
+    };
+    await AnkiConnect.saveConfig(payload);
+    toast.success("Config has been saved");
+  };
+
+  const [toastMessage, setToastMessage] = createSignal("");
+  const [showToast, setShowToast] = createSignal(false);
+  const toast = {
+    success: (message: string) => {
+      setToastMessage(message);
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+    },
+  };
+
   return (
     <>
       <div class="flex flex-row justify-between items-center">
         <div class="h-5">
-          <BoltIcon
+          <ArrowLeftIcon
             class="h-full w-full cursor-pointer text-base-content/50"
             on:click={props.onHomeClick}
-          ></BoltIcon>
+          ></ArrowLeftIcon>
         </div>
         <div class="flex flex-row gap-2 items-center">
           <Switch>
@@ -96,6 +119,26 @@ export function Settings(props: { onHomeClick: () => void }) {
           </For>
         </div>
       </div>
+      <div class="flex flex-row gap-2 justify-end">
+        <button class="btn btn-secondary">Cancel</button>
+        <button
+          class="btn btn-primary"
+          classList={{
+            "btn-disabled": !isAnkiConnectAvailable(),
+          }}
+          disabled={!isAnkiConnectAvailable()}
+          on:click={saveConfig}
+        >
+          Save
+        </button>
+      </div>
+      <Show when={showToast()}>
+        <div class="toast">
+          <div class="alert alert-success">
+            <span>{toastMessage()}</span>
+          </div>
+        </div>
+      </Show>
     </>
   );
 }
