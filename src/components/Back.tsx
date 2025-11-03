@@ -1,13 +1,9 @@
-import {
-  BoltIcon,
-  CircleChevronDownIcon,
-  InfoIcon,
-  PlayIcon,
-} from "lucide-solid";
+import { BoltIcon, CircleChevronDownIcon, InfoIcon } from "lucide-solid";
 import { createSignal, onMount } from "solid-js";
 import type { AnkiBackFields } from "../types";
 import { isMobile } from "../util/general";
 import { Layout } from "./Layout";
+import { NotePlayIcon } from "./NotePlayIcon";
 import { Settings } from "./Settings";
 
 export function Back(props: { ankiFields: AnkiBackFields }) {
@@ -250,15 +246,6 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
         />
       )}
     </Layout>
-  );
-}
-
-function NotePlayIcon(props: { "on:click"?: () => void }) {
-  return (
-    <PlayIcon
-      class="bg-primary rounded-full text-primary-content p-1 w-8 h-8 cursor-pointer"
-      on:click={props["on:click"]}
-    />
   );
 }
 
