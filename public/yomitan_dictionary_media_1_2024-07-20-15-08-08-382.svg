@@ -1,4 +1,0 @@
-<svg viewBox='0 0 150 300' xmlns='http://www.w3.org/2000/svg' version='1.1'>
-    <rect width='150' height='30' fill='red'/>
-    <rect width='30' height='150' x='120' fill='red'/>
-</svg>

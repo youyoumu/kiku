@@ -1,10 +1,32 @@
+import { stat } from "node:fs/promises";
+import { join } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "vite";
+import express from "express";
+import { defineConfig, type PluginOption } from "vite";
 import lucidePreprocess from "vite-plugin-lucide-preprocess";
 import solid from "vite-plugin-solid";
 
+function serveAnkiCollectionMediaPlugin(): PluginOption {
+  return {
+    name: "serve-anki-media-root",
+    configureServer: async (server) => {
+      const ANKI_MEDIA_DIR = join(
+        process.env.HOME || "",
+        ".local/share/Anki2/yym/collection.media",
+      );
+      await stat(ANKI_MEDIA_DIR);
+      server.middlewares.use(express.static(ANKI_MEDIA_DIR) as any);
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [lucidePreprocess(), solid(), tailwindcss()],
+  plugins: [
+    lucidePreprocess(),
+    solid(),
+    tailwindcss(),
+    serveAnkiCollectionMediaPlugin(),
+  ],
   build: {
     minify: false,
     lib: {

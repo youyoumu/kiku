@@ -25,8 +25,10 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.2",
     "@tailwindcss/vite": "^4.1.16",
+    "@types/express": "^5.0.5",
     "@types/node": "^24.6.0",
     "daisyui": "^5.3.10",
+    "express": "^5.1.0",
     "tailwindcss": "^4.1.16",
     "typescript": "~5.9.3",
     "vite": "npm:rolldown-vite@7.1.14",

@@ -82,7 +82,6 @@ export const exampleFields: AnkiFields = {
   "kana:SentenceFurigana": "<b>じっちゅうはっく</b>せこいこづかいかせぎだとおもう<br>Hey there! <br>Thanks a lot for downloading Lapis. Please refer to its <a href=\"https://github.com/donkuri/lapis\">documentation</a> to learn more about the note type!"
 };
 
-
 // biome-ignore format: this looks nicer
 export const exampleFields2: AnkiFields = {
   "Expression": "太る",
@@ -114,4 +113,37 @@ export const exampleFields2: AnkiFields = {
   "kanji:Sentence": "「こんなに食べたら<b>太っちゃいそう</b>だけど、仕方ないね」",
   "furigana:SentenceFurigana": "<span class=\"term\">「</span><span class=\"term\">こんなに</span><span class=\"term\"><ruby>食<rt>た</rt></ruby>べたら</span><span class=\"term\"><ruby>太<rt>ふと</rt></ruby>っちゃいそう</span><span class=\"term\">だけど、</span><span class=\"term\"><ruby>仕方<rt>しかた</rt></ruby>ないね</span><span class=\"term\">」</span>",
   "kana:SentenceFurigana": "<span class=\"term\">「</span><span class=\"term\">こんなに</span><span class=\"term\"><ruby>食<rt>た</rt></ruby>べたら</span><span class=\"term\"><ruby>太<rt>ふと</rt></ruby>っちゃいそう</span><span class=\"term\">だけど、</span><span class=\"term\"><ruby>仕方<rt>しかた</rt></ruby>ないね</span><span class=\"term\">」</span>"
+}
+
+// biome-ignore format: this looks nicer
+export const exampleFields3: AnkiFields = {
+  "Expression": "かたじけない",
+  "ExpressionFurigana": "かたじけない",
+  "ExpressionReading": "かたじけない",
+  "ExpressionAudio": "<a class=\"replay-button soundLink\" href=# onclick=\"pycmd('play:a:0'); return false;\">\n    <svg class=\"playImage\" viewBox=\"0 0 64 64\" version=\"1.1\">\n        <circle cx=\"32\" cy=\"32\" r=\"29\" />\n        <path d=\"M56.502,32.301l-37.502,20.101l0.329,-40.804l37.173,20.703Z\" />\n    </svg>\n</a>",
+  "SelectionText": "<ol><li data-details=\"実用日本語表現辞典\"><span class=\"dict-group__tag-list\"><span class=\"dict-group__tag dict-group__tag--dict\"><span class=\"dict-group__tag-inner\">実用日本語表現辞典</span></span></span><span class=\"dict-group__glossary\"><span class=\"dict-group__glossary--first-line\">かたじけない 別表記：辱い、忝い</span><span class=\"dict-group__glossary--first-line-break\"><br></span>感謝の意を表す言葉。 古語の「かたじけなし」の口語形。「こんなことをしてもらって、かたじけない」など、恐れ多さを表す際に使用する。語源は「難し気無し」や「勝たじ気甚し」など、諸説がある。</span></li></ol>",
+  "MainDefinition": "",
+  "DefinitionPicture": "",
+  "Sentence": "本当に…<br>本当に <b>かたじけない</b>です！",
+  "SentenceFurigana": "",
+  "SentenceAudio": "<a class=\"replay-button soundLink\" href=# onclick=\"pycmd('play:a:1'); return false;\">\n    <svg class=\"playImage\" viewBox=\"0 0 64 64\" version=\"1.1\">\n        <circle cx=\"32\" cy=\"32\" r=\"29\" />\n        <path d=\"M56.502,32.301l-37.502,20.101l0.329,-40.804l37.173,20.703Z\" />\n    </svg>\n</a>",
+  "Picture": "<div><img src=\"SubsPlease%20Yuru%20Camp%20Movie%20(1080p)%20547C8607.mkv_4986679.jpeg\"></div>",
+  "Glossary": "",
+  "Hint": "",
+  "IsWordAndSentenceCard": "",
+  "IsClickCard": "",
+  "IsSentenceCard": "",
+  "IsAudioCard": "",
+  "PitchPosition": "",
+  "PitchCategories": "",
+  "Frequency": "",
+  "FreqSort": "17352",
+  "MiscInfo": "",
+  "Tags": "yomichan",
+  "furigana:ExpressionFurigana": "かたじけない",
+  "kana:ExpressionFurigana": "かたじけない",
+  "furigana:Sentence": "本当に…<br>本当に <b>かたじけない</b>です！",
+  "kanji:Sentence": "本当に…<br>本当に <b>かたじけない</b>です！",
+  "furigana:SentenceFurigana": "",
+  "kana:SentenceFurigana": ""
 }
