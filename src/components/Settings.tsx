@@ -1,5 +1,6 @@
 import { BoltIcon } from "lucide-solid";
-import { createSignal, For } from "solid-js";
+import { createSignal, For, Match, onMount, Switch } from "solid-js";
+import { getAnkiConnectVersion } from "../util/ankiConnect";
 import { capitalize } from "../util/capitalize";
 import { daisyUIThemes, setTheme } from "../util/theme";
 
@@ -7,15 +8,36 @@ export function Settings(props: { onHomeClick: () => void }) {
   const [currentTheme, setCurrentTheme] = createSignal(
     document.documentElement.getAttribute("data-theme"),
   );
+  const [isAnkiConnectAvailable, setIsAnkiConnectAvailable] =
+    createSignal(false);
+
+  onMount(async () => {
+    const version = await getAnkiConnectVersion();
+    if (version) {
+      setIsAnkiConnectAvailable(true);
+    }
+  });
 
   return (
     <>
-      <div class="flex flex-row justify-start">
+      <div class="flex flex-row justify-between items-center">
         <div class="h-5">
           <BoltIcon
             class="h-full w-full cursor-pointer text-base-content/50"
             on:click={props.onHomeClick}
           ></BoltIcon>
+        </div>
+        <div class="flex flex-row gap-2 items-center">
+          <Switch>
+            <Match when={isAnkiConnectAvailable()}>
+              <div class="text-sm">AnkiConnect is available</div>
+              <div class="status status-success"></div>
+            </Match>
+            <Match when={!isAnkiConnectAvailable()}>
+              <div class="text-sm">AnkiConnect is not available</div>
+              <div class="status status-error animate-ping"></div>
+            </Match>
+          </Switch>
         </div>
       </div>
       <div class="flex flex-col gap-2">
