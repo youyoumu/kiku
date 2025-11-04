@@ -14,7 +14,7 @@ import { capitalize, isMobile } from "../util/general";
 import { daisyUIThemes } from "../util/theme";
 import { useConfig } from "./Context";
 
-export function Settings(props: {
+export default function Settings(props: {
   onBackClick?: () => void;
   onCancelClick?: () => void;
 }) {

@@ -1,24 +1,19 @@
-import {
-  BoltIcon,
-  CircleChevronDownIcon,
-  InfoIcon,
-  PaintbrushIcon,
-} from "lucide-solid";
 import { createSignal, onMount } from "solid-js";
 import type { AnkiBackFields } from "../types";
-import { capitalize, isMobile } from "../util/general";
-import { nextTheme } from "../util/theme";
+import { isMobile } from "../util/general";
+import BackFooter from "./BackFooter";
+import BackHeader from "./BackHeader";
+import BackPlayButton from "./BackPlayButton";
 import { useAnkiField, useConfig } from "./Context";
 import { Layout } from "./Layout";
-import { NotePlayIcon } from "./NotePlayIcon";
-import { Settings } from "./Settings";
+import Settings from "./Settings";
 
 export function Back() {
   let sentenceEl: HTMLDivElement | undefined;
-  let expressionAudioRef: HTMLDivElement | undefined;
-  let sentenceAudioRef: HTMLDivElement | undefined;
+  const expressionAudioRefSignal = createSignal<HTMLDivElement | undefined>();
+  const sentenceAudioRefSignal = createSignal<HTMLDivElement | undefined>();
+  const [config] = useConfig();
 
-  const [config, setConfig] = useConfig();
   const ankiFields = useAnkiField() as AnkiBackFields;
   const [definitionPage, setDefinitionPage] = createSignal(
     ankiFields.SelectionText ? 0 : 1,
@@ -58,11 +53,6 @@ export function Back() {
     if (definitionPage() === 1) return "Main definition";
     if (definitionPage() === 2) return "Glossary";
   };
-  const hiddenStyle = {
-    width: "0",
-    height: "0",
-    overflow: "hidden",
-  } as const;
 
   return (
     <Layout>
@@ -75,41 +65,7 @@ export function Back() {
       {!showSettings() && (
         <>
           <div class="flex justify-between flex-row h-5 min-h-5">
-            {ready() && (
-              <>
-                <div class="flex gap-2 items-center">
-                  <BoltIcon
-                    class="h-full w-full cursor-pointer text-base-content/50"
-                    on:click={() => setShowSettings(!showSettings())}
-                  ></BoltIcon>
-                  <PaintbrushIcon
-                    class="h-full w-full cursor-pointer text-base-content/50"
-                    on:click={() => {
-                      setConfig("theme", nextTheme());
-                    }}
-                  ></PaintbrushIcon>
-                  <div class="text-base-content/50">
-                    {capitalize(config.theme)}
-                  </div>
-                </div>
-                <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block">
-                  <div
-                    innerHTML={ankiFields.FreqSort}
-                    class="text-base-content/50"
-                  ></div>
-                  {ankiFields.Frequency && (
-                    <>
-                      <CircleChevronDownIcon class="h-full w-full text-base-content/50" />
-                      <div
-                        id="frequency"
-                        class="absolute z-10 top-0 translate-y-6 right-2 w-fit [&_li]:text-nowrap [&_li]:whitespace-nowrap bg-base-300/90 p-4 rounded-lg hidden"
-                        innerHTML={ankiFields.Frequency}
-                      ></div>
-                    </>
-                  )}
-                </div>
-              </>
-            )}
+            {ready() && <BackHeader />}
           </div>
           <div class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row">
             <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
@@ -133,32 +89,11 @@ export function Back() {
                 }}
               >
                 {ready() && (
-                  <>
-                    <div
-                      style={hiddenStyle}
-                      ref={expressionAudioRef}
-                      innerHTML={ankiFields.ExpressionAudio}
-                    ></div>
-                    <div
-                      style={hiddenStyle}
-                      ref={sentenceAudioRef}
-                      innerHTML={ankiFields.SentenceAudio}
-                    ></div>
-                    {!isMobile() && (
-                      <>
-                        <NotePlayIcon
-                          on:click={() => {
-                            expressionAudioRef?.querySelector("a")?.click();
-                          }}
-                        ></NotePlayIcon>
-                        <NotePlayIcon
-                          on:click={() => {
-                            sentenceAudioRef?.querySelector("a")?.click();
-                          }}
-                        ></NotePlayIcon>
-                      </>
-                    )}
-                  </>
+                  <BackPlayButton
+                    position={1}
+                    expressionAudioRefSignal={expressionAudioRefSignal}
+                    sentenceAudioRefSignal={sentenceAudioRefSignal}
+                  />
                 )}
               </div>
             </div>
@@ -227,34 +162,12 @@ export function Back() {
           </div>
           {ready() && (
             <>
-              {ankiFields.MiscInfo && (
-                <div
-                  class={`flex gap-2 items-center justify-center bg-base-200 p-2 rounded-lg ${config.fontSizeBaseMiscInfo} ${config.fontSizeSmMiscInfo}`}
-                >
-                  <InfoIcon class="h-5 w-5" />
-                  <div innerHTML={ankiFields.MiscInfo}></div>
-                </div>
-              )}
-              <div class="flex gap-2 items-center justify-center">
-                {tags.map((tag) => {
-                  return <div class="badge badge-secondary">{tag}</div>;
-                })}
-              </div>
-
-              {isMobile() && (
-                <div class="absolute bottom-4 left-4 flex flex-col gap-2 items-center">
-                  <NotePlayIcon
-                    on:click={() => {
-                      expressionAudioRef?.querySelector("a")?.click();
-                    }}
-                  ></NotePlayIcon>
-                  <NotePlayIcon
-                    on:click={() => {
-                      sentenceAudioRef?.querySelector("a")?.click();
-                    }}
-                  ></NotePlayIcon>
-                </div>
-              )}
+              <BackFooter tags={tags} />
+              <BackPlayButton
+                position={2}
+                expressionAudioRefSignal={expressionAudioRefSignal}
+                sentenceAudioRefSignal={sentenceAudioRefSignal}
+              />
             </>
           )}
         </>
