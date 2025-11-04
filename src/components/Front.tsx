@@ -1,14 +1,15 @@
 import { createSignal } from "solid-js";
 import type { AnkiFrontFields } from "../types";
-import { useConfig } from "./Context";
+import { useAnkiField, useConfig } from "./Context";
 import { Layout } from "./Layout";
 import { NotePlayIcon } from "./NotePlayIcon";
 
-export function Front(props: { ankiFields: AnkiFrontFields }) {
+export function Front() {
   let expressionAudioRef: HTMLDivElement | undefined;
   let sentenceAudioRef: HTMLDivElement | undefined;
 
   const [config] = useConfig();
+  const ankiFields = useAnkiField() as AnkiFrontFields;
   const [clicked, setClicked] = createSignal(false);
 
   const hiddenStyle = {
@@ -33,40 +34,40 @@ export function Front(props: { ankiFields: AnkiFrontFields }) {
             class={`${config.fontSizeBaseExpression} ${config.fontSizeSmExpression}`}
             classList={{
               "border-b-2 border-dotted border-base-content/50":
-                !!props.ankiFields.IsClickCard,
+                !!ankiFields.IsClickCard,
             }}
             innerHTML={
-              !props.ankiFields.IsSentenceCard && !props.ankiFields.IsAudioCard
-                ? props.ankiFields.Expression
+              !ankiFields.IsSentenceCard && !ankiFields.IsAudioCard
+                ? ankiFields.Expression
                 : "?"
             }
           ></div>
         </div>
       </div>
 
-      {(props.ankiFields.IsAudioCard ||
-        props.ankiFields.IsSentenceCard ||
-        props.ankiFields.IsWordAndSentenceCard ||
-        (props.ankiFields.IsClickCard && clicked())) && (
+      {(ankiFields.IsAudioCard ||
+        ankiFields.IsSentenceCard ||
+        ankiFields.IsWordAndSentenceCard ||
+        (ankiFields.IsClickCard && clicked())) && (
         <div class="flex flex-col gap-4 items-center text-center">
           <div
             class={`[&_b]:text-base-content-primary ${config.fontSizeBaseSentence} ${config.fontSizeSmSentence}`}
-            innerHTML={props.ankiFields["kanji:Sentence"]}
+            innerHTML={ankiFields["kanji:Sentence"]}
           ></div>
         </div>
       )}
 
-      {props.ankiFields.IsAudioCard && (
+      {ankiFields.IsAudioCard && (
         <div class="flex gap-4 justify-center">
           <div
             style={hiddenStyle}
             ref={expressionAudioRef}
-            innerHTML={props.ankiFields.ExpressionAudio}
+            innerHTML={ankiFields.ExpressionAudio}
           ></div>
           <div
             style={hiddenStyle}
             ref={sentenceAudioRef}
-            innerHTML={props.ankiFields.SentenceAudio}
+            innerHTML={ankiFields.SentenceAudio}
           ></div>
           <NotePlayIcon
             on:click={() => {
@@ -81,11 +82,11 @@ export function Front(props: { ankiFields: AnkiFrontFields }) {
         </div>
       )}
 
-      {props.ankiFields.Hint && (
+      {ankiFields.Hint && (
         <div
           class={`flex gap-2 items-center justify-center text-center border-t-1 ${config.fontSizeBaseHint} ${config.fontSizeSmHint}`}
         >
-          <div innerHTML={props.ankiFields.Hint}></div>
+          <div innerHTML={ankiFields.Hint}></div>
         </div>
       )}
     </Layout>

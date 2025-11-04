@@ -4,7 +4,10 @@ import { Back } from "./components/Back.tsx";
 import { type AnkiFields, exampleFields, exampleFields2 } from "./types.ts";
 import "./tailwind.css";
 import { createStore } from "solid-js/store";
-import { ConfigContextProvider } from "./components/Context.tsx";
+import {
+  AnkiFieldContextProvider,
+  ConfigContextProvider,
+} from "./components/Context.tsx";
 import { Front } from "./components/Front.tsx";
 import { type KikuConfig, validateConfig } from "./util/config.ts";
 import { type OnlineFont, setOnlineFont } from "./util/fonts.ts";
@@ -55,18 +58,22 @@ export async function init({
     if (side === "front") {
       render(
         () => (
-          <ConfigContextProvider value={[config, setConfig]}>
-            <Front ankiFields={ankiFields} />
-          </ConfigContextProvider>
+          <AnkiFieldContextProvider value={ankiFields}>
+            <ConfigContextProvider value={[config, setConfig]}>
+              <Front />
+            </ConfigContextProvider>
+          </AnkiFieldContextProvider>
         ),
         shadow,
       );
     } else if (side === "back") {
       render(
         () => (
-          <ConfigContextProvider value={[config, setConfig]}>
-            <Back ankiFields={ankiFields} />
-          </ConfigContextProvider>
+          <AnkiFieldContextProvider value={ankiFields}>
+            <ConfigContextProvider value={[config, setConfig]}>
+              <Back />
+            </ConfigContextProvider>
+          </AnkiFieldContextProvider>
         ),
         shadow,
       );

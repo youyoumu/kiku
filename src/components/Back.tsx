@@ -8,25 +8,26 @@ import { createSignal, onMount } from "solid-js";
 import type { AnkiBackFields } from "../types";
 import { capitalize, isMobile } from "../util/general";
 import { nextTheme } from "../util/theme";
-import { useConfig } from "./Context";
+import { useAnkiField, useConfig } from "./Context";
 import { Layout } from "./Layout";
 import { NotePlayIcon } from "./NotePlayIcon";
 import { Settings } from "./Settings";
 
-export function Back(props: { ankiFields: AnkiBackFields }) {
+export function Back() {
   let sentenceEl: HTMLDivElement | undefined;
   let expressionAudioRef: HTMLDivElement | undefined;
   let sentenceAudioRef: HTMLDivElement | undefined;
 
   const [config, setConfig] = useConfig();
+  const ankiFields = useAnkiField() as AnkiBackFields;
   const [definitionPage, setDefinitionPage] = createSignal(
-    props.ankiFields.SelectionText ? 0 : 1,
+    ankiFields.SelectionText ? 0 : 1,
   );
   const [showSettings, setShowSettings] = createSignal(false);
   const [ready, setReady] = createSignal(false);
   const [showImageModal, setShowImageModal] = createSignal(false);
 
-  const tags = props.ankiFields.Tags.split(" ");
+  const tags = ankiFields.Tags.split(" ");
   const isNsfw = tags.map((tag) => tag.toLowerCase()).includes("nsfw");
 
   onMount(() => {
@@ -42,13 +43,13 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
   });
 
   const temp = document.createElement("div");
-  temp.innerHTML = props.ankiFields.Picture ?? "";
+  temp.innerHTML = ankiFields.Picture ?? "";
   const img = temp.querySelector("img");
 
   const pages = [
-    props.ankiFields.SelectionText,
-    props.ankiFields.MainDefinition,
-    props.ankiFields.Glossary,
+    ankiFields.SelectionText,
+    ankiFields.MainDefinition,
+    ankiFields.Glossary,
   ];
   const availablePagesCount = pages.filter((page) => page?.trim()).length;
   const page = () => pages[definitionPage()];
@@ -93,16 +94,16 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
                 </div>
                 <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block">
                   <div
-                    innerHTML={props.ankiFields.FreqSort}
+                    innerHTML={ankiFields.FreqSort}
                     class="text-base-content/50"
                   ></div>
-                  {props.ankiFields.Frequency && (
+                  {ankiFields.Frequency && (
                     <>
                       <CircleChevronDownIcon class="h-full w-full text-base-content/50" />
                       <div
                         id="frequency"
                         class="absolute z-10 top-0 translate-y-6 right-2 w-fit [&_li]:text-nowrap [&_li]:whitespace-nowrap bg-base-300/90 p-4 rounded-lg hidden"
-                        innerHTML={props.ankiFields.Frequency}
+                        innerHTML={ankiFields.Frequency}
                       ></div>
                     </>
                   )}
@@ -115,9 +116,9 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
               <div
                 class={`${config.fontSizeBaseExpression} ${config.fontSizeSmExpression}`}
                 innerHTML={
-                  props.ankiFields.ExpressionFurigana
-                    ? props.ankiFields["furigana:ExpressionFurigana"]
-                    : props.ankiFields.Expression
+                  ankiFields.ExpressionFurigana
+                    ? ankiFields["furigana:ExpressionFurigana"]
+                    : ankiFields.Expression
                 }
               ></div>
               <div
@@ -136,12 +137,12 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
                     <div
                       style={hiddenStyle}
                       ref={expressionAudioRef}
-                      innerHTML={props.ankiFields.ExpressionAudio}
+                      innerHTML={ankiFields.ExpressionAudio}
                     ></div>
                     <div
                       style={hiddenStyle}
                       ref={sentenceAudioRef}
-                      innerHTML={props.ankiFields.SentenceAudio}
+                      innerHTML={ankiFields.SentenceAudio}
                     ></div>
                     {!isMobile() && (
                       <>
@@ -178,8 +179,8 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
                 class={`[&_b]:text-base-content-primary ${config.fontSizeBaseSentence} ${config.fontSizeSmSentence}`}
                 ref={sentenceEl}
                 innerHTML={
-                  props.ankiFields["furigana:SentenceFurigana"] ??
-                  props.ankiFields["furigana:Sentence"]
+                  ankiFields["furigana:SentenceFurigana"] ??
+                  ankiFields["furigana:Sentence"]
                 }
               ></div>
             </div>
@@ -226,12 +227,12 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
           </div>
           {ready() && (
             <>
-              {props.ankiFields.MiscInfo && (
+              {ankiFields.MiscInfo && (
                 <div
                   class={`flex gap-2 items-center justify-center bg-base-200 p-2 rounded-lg ${config.fontSizeBaseMiscInfo} ${config.fontSizeSmMiscInfo}`}
                 >
                   <InfoIcon class="h-5 w-5" />
-                  <div innerHTML={props.ankiFields.MiscInfo}></div>
+                  <div innerHTML={ankiFields.MiscInfo}></div>
                 </div>
               )}
               <div class="flex gap-2 items-center justify-center">
