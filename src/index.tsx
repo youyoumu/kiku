@@ -10,7 +10,8 @@ import {
 import "./tailwind.css";
 import { Front } from "./components/Front.tsx";
 import { defaultConfig, type KikuConfig } from "./util/config.ts";
-import { env } from "./util/env.ts";
+import { type OnlineFont, onlineFonts, setOnlineFont } from "./util/fonts.ts";
+import { env } from "./util/general.ts";
 
 export async function init({
   ankiFields,
@@ -46,6 +47,9 @@ export async function init({
 
   document.documentElement.setAttribute("data-theme", config.theme);
   root.setAttribute("data-theme", config.theme);
+  if (onlineFonts.includes(config.font as OnlineFont)) {
+    setOnlineFont(config.font as OnlineFont);
+  }
 
   if (side === "front") {
     render(() => <Front ankiFields={ankiFields} />, shadow);

@@ -16,3 +16,7 @@ export const base64 = {
   encodeString: (s: string) =>
     base64.encode(new TextEncoder().encode(s).buffer),
 };
+
+export const env = {
+  KIKU_CONFIG_FILE: "_kiku.config.json",
+};

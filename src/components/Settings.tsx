@@ -1,7 +1,16 @@
 import { ArrowLeftIcon, RefreshCwIcon } from "lucide-solid";
-import { createSignal, For, Match, onMount, Show, Switch } from "solid-js";
+import {
+  createEffect,
+  createSignal,
+  For,
+  Match,
+  onMount,
+  Show,
+  Switch,
+} from "solid-js";
 import { AnkiConnect } from "../util/ankiConnect";
 import type { KikuConfig } from "../util/config";
+import { type OnlineFont, onlineFonts, setOnlineFont } from "../util/fonts";
 import { capitalize, isMobile } from "../util/general";
 import { type DaisyUITheme, daisyUIThemes, setTheme } from "../util/theme";
 
@@ -12,6 +21,7 @@ export function Settings(props: {
   const [currentTheme, setCurrentTheme] = createSignal<DaisyUITheme>(
     document.documentElement.getAttribute("data-theme") as DaisyUITheme,
   );
+  const [currentFont, setCurrentFont] = createSignal<string>("");
   const [isAnkiConnectAvailable, setIsAnkiConnectAvailable] =
     createSignal(false);
 
@@ -32,6 +42,7 @@ export function Settings(props: {
       //TODO: configurable
       ankiConnectPort: 8765,
       theme: currentTheme(),
+      font: currentFont(),
     };
     try {
       await AnkiConnect.saveConfig(payload);
@@ -42,6 +53,14 @@ export function Settings(props: {
       );
     }
   };
+
+  createEffect(() => {
+    setTheme(currentTheme());
+    const font = onlineFonts.includes(currentFont() as OnlineFont)
+      ? currentFont()
+      : undefined;
+    if (font) setOnlineFont(font as OnlineFont);
+  });
 
   const [toastMessage, setToastMessage] = createSignal("");
   const [toastType, setToastType] = createSignal<"success" | "error">(
@@ -114,7 +133,6 @@ export function Settings(props: {
                     "outline-2": theme === currentTheme(),
                   }}
                   on:click={() => {
-                    setTheme(theme);
                     setCurrentTheme(theme);
                   }}
                 >
@@ -157,6 +175,36 @@ export function Settings(props: {
             }}
           </For>
         </div>
+      </div>
+      <div class="flex flex-col gap-2">
+        <div class="text-2xl font-bold">Font</div>
+        <fieldset
+          class="fieldset"
+          on:change={(e) => {
+            const target = e.target as HTMLSelectElement;
+            if (onlineFonts.includes(target.value as OnlineFont)) {
+              setCurrentFont(target.value);
+            }
+          }}
+        >
+          <legend class="fieldset-legend">Online Font</legend>
+          <select class="select">
+            {!currentFont() && (
+              <option selected disabled>
+                Select a font
+              </option>
+            )}
+            <For each={onlineFonts}>
+              {(font) => {
+                return (
+                  <option value={font} selected={currentFont() === font}>
+                    {font}
+                  </option>
+                );
+              }}
+            </For>
+          </select>
+        </fieldset>
       </div>
       <div class="flex flex-row gap-2 justify-end">
         <button class="btn btn-secondary" on:click={props.onCancelClick}>
