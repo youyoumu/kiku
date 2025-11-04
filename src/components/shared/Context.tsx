@@ -1,9 +1,13 @@
 import { createContext, createEffect, type JSX, useContext } from "solid-js";
 import type { SetStoreFunction, Store } from "solid-js/store";
-import type { AnkiFields } from "../types";
-import type { KikuConfig } from "../util/config";
-import { type OnlineFont, setOnlineFont, setSystemFont } from "../util/fonts";
-import { setTheme } from "../util/theme";
+import type { AnkiFields } from "../../types";
+import type { KikuConfig } from "../../util/config";
+import {
+  type OnlineFont,
+  setOnlineFont,
+  setSystemFont,
+} from "../../util/fonts";
+import { setTheme } from "../../util/theme";
 
 const ConfigContext =
   createContext<[Store<KikuConfig>, SetStoreFunction<KikuConfig>]>();

@@ -1,8 +1,8 @@
 import { BoltIcon, CircleChevronDownIcon, PaintbrushIcon } from "lucide-solid";
-import type { AnkiBackFields } from "../types";
-import { capitalize } from "../util/general";
-import { nextTheme } from "../util/theme";
-import { useAnkiField, useConfig } from "./Context";
+import type { AnkiBackFields } from "#/types";
+import { capitalize } from "#/util/general";
+import { nextTheme } from "#/util/theme";
+import { useAnkiField, useConfig } from "../shared/Context";
 
 export default function BackHeader(props: { onSettingsClick?: () => void }) {
   const [config, setConfig] = useConfig();

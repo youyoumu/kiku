@@ -3,6 +3,7 @@ import { join } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import express from "express";
 import { defineConfig, type PluginOption } from "vite";
+import circularDpendency from "vite-plugin-circular-dependency";
 import lucidePreprocess from "vite-plugin-lucide-preprocess";
 import solid from "vite-plugin-solid";
 
@@ -26,7 +27,16 @@ export default defineConfig({
     solid(),
     tailwindcss(),
     serveAnkiCollectionMediaPlugin(),
+    circularDpendency({
+      outputFilePath: "./.circularDependency.json",
+      circleImportThrowErr: true,
+    }),
   ],
+  resolve: {
+    alias: {
+      "#": join(import.meta.dirname, "src"),
+    },
+  },
   build: {
     lib: {
       entry: "src/index.tsx",
@@ -34,5 +44,25 @@ export default defineConfig({
       formats: ["es"],
     },
     copyPublicDir: false,
+
+    rolldownOptions: {
+      output: {
+        advancedChunks: {
+          groups: [
+            {
+              test: (id) => {
+                const result =
+                  /src\/util/.test(id) ||
+                  /src\/components\/shared/.test(id) ||
+                  /node_modules/.test(id);
+                return result;
+              },
+              name: "_kiku_shared",
+            },
+          ],
+        },
+        chunkFileNames: "[name].js",
+      },
+    },
   },
 });

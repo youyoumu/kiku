@@ -1,8 +1,8 @@
 import { createSignal } from "solid-js";
 import type { AnkiFrontFields } from "../types";
-import { useAnkiField, useConfig } from "./Context";
 import { Layout } from "./Layout";
-import { NotePlayIcon } from "./NotePlayIcon";
+import { useAnkiField, useConfig } from "./shared/Context";
+import { NotePlayIcon } from "./shared/NotePlayIcon";
 
 export function Front() {
   let expressionAudioRef: HTMLDivElement | undefined;

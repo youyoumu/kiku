@@ -4,11 +4,11 @@ import { Back } from "./components/Back.tsx";
 import { type AnkiFields, exampleFields, exampleFields2 } from "./types.ts";
 import "./tailwind.css";
 import { createStore } from "solid-js/store";
+import { Front } from "./components/Front.tsx";
 import {
   AnkiFieldContextProvider,
   ConfigContextProvider,
-} from "./components/Context.tsx";
-import { Front } from "./components/Front.tsx";
+} from "./components/shared/Context.tsx";
 import { type KikuConfig, validateConfig } from "./util/config.ts";
 import { type OnlineFont, setOnlineFont } from "./util/fonts.ts";
 import { env } from "./util/general.ts";

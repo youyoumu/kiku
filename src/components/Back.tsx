@@ -1,12 +1,23 @@
-import { createSignal, onMount } from "solid-js";
+import { createSignal, lazy, onMount } from "solid-js";
 import type { AnkiBackFields } from "../types";
 import { isMobile } from "../util/general";
-import BackFooter from "./BackFooter";
-import BackHeader from "./BackHeader";
-import BackPlayButton from "./BackPlayButton";
-import { useAnkiField, useConfig } from "./Context";
 import { Layout } from "./Layout";
-import Settings from "./Settings";
+import { useAnkiField, useConfig } from "./shared/Context";
+
+const Lazy = {
+  Settings: lazy(async () => ({
+    default: (await import("./_kiku_lazy")).Settings,
+  })),
+  BackHeader: lazy(async () => ({
+    default: (await import("./_kiku_lazy")).BackHeader,
+  })),
+  BackFooter: lazy(async () => ({
+    default: (await import("./_kiku_lazy")).BackFooter,
+  })),
+  BackPlayButton: lazy(async () => ({
+    default: (await import("./_kiku_lazy")).BackPlayButton,
+  })),
+};
 
 export function Back() {
   let sentenceEl: HTMLDivElement | undefined;
@@ -57,7 +68,7 @@ export function Back() {
   return (
     <Layout>
       {showSettings() && (
-        <Settings
+        <Lazy.Settings
           onBackClick={() => setShowSettings(false)}
           onCancelClick={() => setShowSettings(false)}
         />
@@ -65,7 +76,7 @@ export function Back() {
       {!showSettings() && (
         <>
           <div class="flex justify-between flex-row h-5 min-h-5">
-            {ready() && <BackHeader />}
+            {ready() && <Lazy.BackHeader />}
           </div>
           <div class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row">
             <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
@@ -89,7 +100,7 @@ export function Back() {
                 }}
               >
                 {ready() && (
-                  <BackPlayButton
+                  <Lazy.BackPlayButton
                     position={1}
                     expressionAudioRefSignal={expressionAudioRefSignal}
                     sentenceAudioRefSignal={sentenceAudioRefSignal}
@@ -162,8 +173,8 @@ export function Back() {
           </div>
           {ready() && (
             <>
-              <BackFooter tags={tags} />
-              <BackPlayButton
+              <Lazy.BackFooter tags={tags} />
+              <Lazy.BackPlayButton
                 position={2}
                 expressionAudioRefSignal={expressionAudioRefSignal}
                 sentenceAudioRefSignal={sentenceAudioRefSignal}

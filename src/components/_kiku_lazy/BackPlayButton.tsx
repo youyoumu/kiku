@@ -1,8 +1,8 @@
 import type { Signal } from "solid-js";
-import type { AnkiBackFields } from "../types";
-import { isMobile } from "../util/general";
-import { useAnkiField } from "./Context";
-import { NotePlayIcon } from "./NotePlayIcon";
+import type { AnkiBackFields } from "#/types";
+import { isMobile } from "#/util/general";
+import { useAnkiField } from "../shared/Context";
+import { NotePlayIcon } from "../shared/NotePlayIcon";
 
 export default function BackPlayButton(props: {
   expressionAudioRefSignal: Signal<HTMLDivElement | undefined>;
