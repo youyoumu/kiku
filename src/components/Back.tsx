@@ -1,7 +1,14 @@
-import { BoltIcon, CircleChevronDownIcon, InfoIcon } from "lucide-solid";
+import {
+  BoltIcon,
+  CircleChevronDownIcon,
+  InfoIcon,
+  PaintbrushIcon,
+} from "lucide-solid";
 import { createSignal, onMount } from "solid-js";
 import type { AnkiBackFields } from "../types";
-import { isMobile } from "../util/general";
+import { capitalize, isMobile } from "../util/general";
+import { nextTheme } from "../util/theme";
+import { useConfig } from "./Context";
 import { Layout } from "./Layout";
 import { NotePlayIcon } from "./NotePlayIcon";
 import { Settings } from "./Settings";
@@ -11,6 +18,7 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
   let expressionAudioRef: HTMLDivElement | undefined;
   let sentenceAudioRef: HTMLDivElement | undefined;
 
+  const [config, setConfig] = useConfig();
   const [definitionPage, setDefinitionPage] = createSignal(
     props.ankiFields.SelectionText ? 0 : 1,
   );
@@ -68,11 +76,20 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
           <div class="flex justify-between flex-row h-5 min-h-5">
             {ready() && (
               <>
-                <div class="relative">
+                <div class="flex gap-2 items-center">
                   <BoltIcon
                     class="h-full w-full cursor-pointer text-base-content/50"
                     on:click={() => setShowSettings(!showSettings())}
                   ></BoltIcon>
+                  <PaintbrushIcon
+                    class="h-full w-full cursor-pointer text-base-content/50"
+                    on:click={() => {
+                      setConfig("theme", nextTheme());
+                    }}
+                  ></PaintbrushIcon>
+                  <div class="text-base-content/50">
+                    {capitalize(config.theme)}
+                  </div>
                 </div>
                 <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block">
                   <div
@@ -213,11 +230,7 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
               )}
               <div class="flex gap-2 items-center justify-center">
                 {tags.map((tag) => {
-                  return (
-                    <div class="badge badge-primary badge-sm opacity-75">
-                      {tag}
-                    </div>
-                  );
+                  return <div class="badge badge-secondary">{tag}</div>;
                 })}
               </div>
 

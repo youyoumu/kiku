@@ -44,7 +44,10 @@ export function setTheme(theme: DaisyUITheme) {
   if (root) root.setAttribute("data-theme", theme);
 }
 
-export function nextTheme(current: DaisyUITheme): DaisyUITheme {
+export function nextTheme(): DaisyUITheme {
+  const current = document.documentElement.getAttribute(
+    "data-theme",
+  ) as DaisyUITheme;
   const index = daisyUIThemes.indexOf(current);
   return daisyUIThemes[(index + 1) % daisyUIThemes.length];
 }
