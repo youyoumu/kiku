@@ -3,6 +3,203 @@
   themes: all;
 }
 
+@theme {
+  --color-base-content-primary: black;
+}
+
+@plugin "daisyui/theme" {
+  name: "light";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "dark";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "cupcake";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "bumblebee";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "emerald";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "corporate";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "synthwave";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "retro";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "cyberpunk";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "valentine";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "halloween";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "garden";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "forest";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "aqua";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "lofi";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "pastel";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "fantasy";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "wireframe";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "black";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "luxury";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "dracula";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "cmyk";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "autumn";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "business";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "acid";
+  --color-base-content-primary: color-mix(
+    in srgb,
+    var(--color-primary) 50%,
+    var(--color-base-content)
+  );
+}
+@plugin "daisyui/theme" {
+  name: "lemonade";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "night";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "coffee";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "winter";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "dim";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "nord";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "sunset";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "carramelta";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "abyss";
+  --color-base-content-primary: var(--color-primary);
+}
+@plugin "daisyui/theme" {
+  name: "silk";
+  --color-base-content-primary: var(--color-primary);
+}
+
 @custom-variant hover (&:hover);
 
 body {
@@ -32,5 +229,5 @@ body {
 }
 
 [data-sc-content="example-keyword"] {
-  color: var(--color-primary) !important;
+  color: var(--color-base-content-primary) !important;
 }

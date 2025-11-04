@@ -154,7 +154,7 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
           <div class="flex sm:flex-col gap-8 flex-col-reverse">
             <div class="flex flex-col gap-4 items-center text-center">
               <div
-                class="text-2xl sm:text-4xl [&_b]:text-primary"
+                class="text-2xl sm:text-4xl [&_b]:text-base-content-primary"
                 ref={sentenceEl}
                 innerHTML={
                   props.ankiFields["furigana:SentenceFurigana"] ??

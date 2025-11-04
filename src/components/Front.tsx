@@ -47,7 +47,7 @@ export function Front(props: { ankiFields: AnkiFrontFields }) {
         (props.ankiFields.IsClickCard && clicked())) && (
         <div class="flex flex-col gap-4 items-center text-center">
           <div
-            class="text-2xl sm:text-4xl [&_b]:text-primary"
+            class="text-2xl sm:text-4xl [&_b]:text-base-content-primary"
             innerHTML={props.ankiFields["kanji:Sentence"]}
           ></div>
         </div>

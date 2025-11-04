@@ -1,7 +1,7 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
 import { Back } from "./components/Back.tsx";
-import { type AnkiFields, exampleFields2 } from "./types.ts";
+import { type AnkiFields, exampleFields, exampleFields2 } from "./types.ts";
 import "./tailwind.css";
 import { createStore } from "solid-js/store";
 import { ConfigContextProvider } from "./components/Context.tsx";
@@ -105,5 +105,5 @@ if (import.meta.env.DEV) {
   });
   // @ts-expect-error
   const side = params.side;
-  init({ ankiFields: exampleFields2, side: side ?? "back" });
+  init({ ankiFields: exampleFields, side: side ?? "back" });
 }
