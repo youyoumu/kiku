@@ -130,14 +130,7 @@ function validateResponsiveFontSize(
   value: any,
   fallback: ResponsiveFontSize,
 ): ResponsiveFontSize {
-  if (typeof value !== "string") return fallback;
-  if (tailwindFontSize.includes(value as TailwindFontSize))
-    return value as ResponsiveFontSize;
-  for (const bp of tailwindBreakpoints) {
-    for (const fs of tailwindFontSize) {
-      if (value === `${bp}:${fs}`) return value as ResponsiveFontSize;
-    }
-  }
+  if (tailwindResponsiveFontSizesSet.has(value)) return value;
   return fallback;
 }
 
