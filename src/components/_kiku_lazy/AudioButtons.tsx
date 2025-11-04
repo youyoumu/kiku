@@ -26,6 +26,7 @@ export default function BackPlayButton(props: {
     width: "0",
     height: "0",
     overflow: "hidden",
+    position: "absolute",
   } as const;
 
   if (props.position === 1 || props.position === 3)
@@ -41,21 +42,20 @@ export default function BackPlayButton(props: {
           ref={setSentenceAudioRef}
           innerHTML={ankiFields.SentenceAudio}
         ></div>
-        {!isMobile() ||
-          (props.position === 3 && (
-            <>
-              <NotePlayIcon
-                on:click={() => {
-                  expressionAudioRef()?.querySelector("a")?.click();
-                }}
-              ></NotePlayIcon>
-              <NotePlayIcon
-                on:click={() => {
-                  sentenceAudioRef()?.querySelector("a")?.click();
-                }}
-              ></NotePlayIcon>
-            </>
-          ))}
+        {(!isMobile() || props.position === 3) && (
+          <>
+            <NotePlayIcon
+              on:click={() => {
+                expressionAudioRef()?.querySelector("a")?.click();
+              }}
+            ></NotePlayIcon>
+            <NotePlayIcon
+              on:click={() => {
+                sentenceAudioRef()?.querySelector("a")?.click();
+              }}
+            ></NotePlayIcon>
+          </>
+        )}
       </>
     );
 

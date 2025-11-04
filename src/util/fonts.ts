@@ -40,7 +40,7 @@ export function loadGoogleFont(
 }
 
 export function setOnlineFont(font: OnlineFont) {
-  loadGoogleFont(font);
+  loadGoogleFont(font, [400, 500, 600, 700]);
   const root = document.getElementById("root");
   if (root) {
     root.style.fontFamily = font;
