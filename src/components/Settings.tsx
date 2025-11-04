@@ -35,46 +35,23 @@ export function Settings(props: {
   }
 
   const saveConfig = async () => {
+    // biome-ignore format: this looks nicer
     const payload: KikuConfig = {
       //TODO: configurable
       ankiConnectPort: 8765,
       theme: config.theme ? config.theme : defaultConfig.theme,
-      onlineFont: config.onlineFont
-        ? config.onlineFont
-        : defaultConfig.onlineFont,
-      systemFont: config.systemFont
-        ? config.systemFont
-        : defaultConfig.systemFont,
-      fontSizeBaseExpression: config.fontSizeBaseExpression
-        ? config.fontSizeBaseExpression
-        : defaultConfig.fontSizeBaseExpression,
-      fontSizeBasePitch: config.fontSizeBasePitch
-        ? config.fontSizeBasePitch
-        : defaultConfig.fontSizeBasePitch,
-      fontSizeBaseSentence: config.fontSizeBaseSentence
-        ? config.fontSizeBaseSentence
-        : defaultConfig.fontSizeBaseSentence,
-      fontSizeBaseMiscInfo: config.fontSizeBaseMiscInfo
-        ? config.fontSizeBaseMiscInfo
-        : defaultConfig.fontSizeBaseMiscInfo,
-      fontSizeBaseHint: config.fontSizeBaseHint
-        ? config.fontSizeBaseHint
-        : defaultConfig.fontSizeBaseHint,
-      fontSizeSmExpression: config.fontSizeSmExpression
-        ? config.fontSizeSmExpression
-        : defaultConfig.fontSizeSmExpression,
-      fontSizeSmPitch: config.fontSizeSmPitch
-        ? config.fontSizeSmPitch
-        : defaultConfig.fontSizeSmPitch,
-      fontSizeSmSentence: config.fontSizeSmSentence
-        ? config.fontSizeSmSentence
-        : defaultConfig.fontSizeSmSentence,
-      fontSizeSmMiscInfo: config.fontSizeSmMiscInfo
-        ? config.fontSizeSmMiscInfo
-        : defaultConfig.fontSizeSmMiscInfo,
-      fontSizeSmHint: config.fontSizeSmHint
-        ? config.fontSizeSmHint
-        : defaultConfig.fontSizeSmHint,
+      onlineFont: config.onlineFont ? config.onlineFont : defaultConfig.onlineFont,
+      systemFont: config.systemFont ? config.systemFont : defaultConfig.systemFont,
+      fontSizeBaseExpression: config.fontSizeBaseExpression ? config.fontSizeBaseExpression : defaultConfig.fontSizeBaseExpression,
+      fontSizeBasePitch: config.fontSizeBasePitch ? config.fontSizeBasePitch : defaultConfig.fontSizeBasePitch,
+      fontSizeBaseSentence: config.fontSizeBaseSentence ? config.fontSizeBaseSentence : defaultConfig.fontSizeBaseSentence,
+      fontSizeBaseMiscInfo: config.fontSizeBaseMiscInfo ? config.fontSizeBaseMiscInfo : defaultConfig.fontSizeBaseMiscInfo,
+      fontSizeBaseHint: config.fontSizeBaseHint ? config.fontSizeBaseHint : defaultConfig.fontSizeBaseHint,
+      fontSizeSmExpression: config.fontSizeSmExpression ? config.fontSizeSmExpression : defaultConfig.fontSizeSmExpression,
+      fontSizeSmPitch: config.fontSizeSmPitch ? config.fontSizeSmPitch : defaultConfig.fontSizeSmPitch,
+      fontSizeSmSentence: config.fontSizeSmSentence ? config.fontSizeSmSentence : defaultConfig.fontSizeSmSentence,
+      fontSizeSmMiscInfo: config.fontSizeSmMiscInfo ? config.fontSizeSmMiscInfo : defaultConfig.fontSizeSmMiscInfo,
+      fontSizeSmHint: config.fontSizeSmHint ? config.fontSizeSmHint : defaultConfig.fontSizeSmHint,
     };
     try {
       await AnkiConnect.saveConfig(payload);
@@ -283,45 +260,23 @@ function FontSizeSettings() {
       <div class="text-2xl font-bold">Font Size</div>
       <div>
         <div class="text-lg font-bold">Mobile</div>
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] rounded-box gap-x-4 gap-y-2">
-          <FontSizeSettingsFieldset
-            configKey="fontSizeBaseExpression"
-            label="Expression Mobile"
-          />
-          <FontSizeSettingsFieldset
-            configKey="fontSizeBasePitch"
-            label="Pitch Mobile"
-          />
-          <FontSizeSettingsFieldset
-            configKey="fontSizeBaseSentence"
-            label="Sentence Mobile"
-          />
-          <FontSizeSettingsFieldset
-            configKey="fontSizeBaseMiscInfo"
-            label="Misc Info Mobile"
-          />
-          <FontSizeSettingsFieldset
-            configKey="fontSizeBaseHint"
-            label="Hint Mobile"
-          />
+        {/* biome-ignore format: this looks nicer */}
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] rounded-box gap-x-4 gap-y-2">
+          <FontSizeSettingsFieldset configKey="fontSizeBaseExpression" label="Expression" />
+          <FontSizeSettingsFieldset configKey="fontSizeBasePitch" label="Pitch" />
+          <FontSizeSettingsFieldset configKey="fontSizeBaseSentence" label="Sentence" />
+          <FontSizeSettingsFieldset configKey="fontSizeBaseMiscInfo" label="Misc Info" />
+          <FontSizeSettingsFieldset configKey="fontSizeBaseHint" label="Hint" />
         </div>
       </div>
       <div>
         <div class="text-lg font-bold">Desktop</div>
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] rounded-box gap-x-4 gap-y-2">
-          <FontSizeSettingsFieldset
-            configKey="fontSizeSmExpression"
-            label="Expression"
-          />
+        {/* biome-ignore format: this looks nicer */}
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] rounded-box gap-x-4 gap-y-2">
+          <FontSizeSettingsFieldset configKey="fontSizeSmExpression" label="Expression" />
           <FontSizeSettingsFieldset configKey="fontSizeSmPitch" label="Pitch" />
-          <FontSizeSettingsFieldset
-            configKey="fontSizeSmSentence"
-            label="Sentence"
-          />
-          <FontSizeSettingsFieldset
-            configKey="fontSizeSmMiscInfo"
-            label="Misc Info"
-          />
+          <FontSizeSettingsFieldset configKey="fontSizeSmSentence" label="Sentence" />
+          <FontSizeSettingsFieldset configKey="fontSizeSmMiscInfo" label="Misc Info" />
           <FontSizeSettingsFieldset configKey="fontSizeSmHint" label="Hint" />
         </div>
       </div>
@@ -353,6 +308,9 @@ function FontSizeSettingsFieldset(props: {
         {props.label}{" "}
         <UndoIcon
           class="h-4 w-4 cursor-pointer"
+          classList={{
+            hidden: config[props.configKey] === defaultConfig[props.configKey],
+          }}
           on:click={() => {
             setConfig(props.configKey, defaultConfig[props.configKey]);
           }}
