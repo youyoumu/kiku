@@ -17,6 +17,9 @@ const Lazy = {
   AudioButtons: lazy(async () => ({
     default: (await import("./_kiku_lazy")).AudioButtons,
   })),
+  ImageModal: lazy(async () => ({
+    default: (await import("./_kiku_lazy")).ImageModal,
+  })),
 };
 
 export function Back() {
@@ -185,23 +188,13 @@ export function Back() {
           )}
         </>
       )}
-      {ready() && showImageModal() && img && (
-        <ImageModal
+      {ready() && img && (
+        <Lazy.ImageModal
+          show={showImageModal()}
           img={img.cloneNode()}
           on:click={() => setShowImageModal(false)}
         />
       )}
     </Layout>
-  );
-}
-
-function ImageModal(props: { img: Node; "on:click"?: () => void }) {
-  return (
-    <div
-      class="absolute top-0 left-0 w-full h-full p-4 sm:p-8 bg-black/75 bg-opacity-50 flex justify-center items-center"
-      on:click={props["on:click"]}
-    >
-      {props.img}
-    </div>
   );
 }
