@@ -77,6 +77,12 @@ export function Front(props: { ankiFields: AnkiFrontFields }) {
           ></NotePlayIcon>
         </div>
       )}
+
+      {props.ankiFields.Hint && (
+        <div class="flex gap-2 items-center justify-center text-center text-lg sm:text-2xl border-t-1">
+          <div innerHTML={props.ankiFields.Hint}></div>
+        </div>
+      )}
     </Layout>
   );
 }
