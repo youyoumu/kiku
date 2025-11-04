@@ -21,3 +21,16 @@ body {
 .gutter-stable {
   scrollbar-gutter: stable;
 }
+
+/*
+ *    ────────────────────────── Jitexdex ─────────────────────────
+*/
+
+[data-sc-content="example-sentence"] {
+  background-color: var(--color-base-300) !important;
+  border-color: var(--color-primary) !important;
+}
+
+[data-sc-content="example-keyword"] {
+  color: var(--color-primary) !important;
+}

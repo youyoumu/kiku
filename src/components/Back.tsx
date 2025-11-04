@@ -167,7 +167,7 @@ export function Back(props: { ankiFields: AnkiBackFields }) {
                 {availablePagesCount > 1 && (
                   <div class="text-end text-base-content/50">{pageType()}</div>
                 )}
-                <div class="relative bg-base-200 p-4 border-s-4 text-base sm:text-xl rounded-lg [&_ol]:list-inside [&_ul]:list-inside">
+                <div class="relative bg-base-200 p-4 border-s-4 border-primary text-base sm:text-xl rounded-lg [&_ol]:list-inside [&_ul]:list-inside">
                   <div innerHTML={page()}></div>
                   {availablePagesCount > 1 && ready() && (
                     <>
