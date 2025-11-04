@@ -1,7 +1,14 @@
-import { ArrowLeftIcon, RefreshCwIcon } from "lucide-solid";
+import { ArrowLeftIcon, RefreshCwIcon, UndoIcon } from "lucide-solid";
 import { createSignal, For, Match, onMount, Show, Switch } from "solid-js";
 import { AnkiConnect } from "../util/ankiConnect";
-import { defaultConfig, type KikuConfig } from "../util/config";
+import {
+  defaultConfig,
+  getTailwindFontSize,
+  type KikuConfig,
+  type TailwindBreakpoint,
+  type TailwindFontSizeLabel,
+  tailwindFontSizeLabel,
+} from "../util/config";
 import { type OnlineFont, onlineFonts } from "../util/fonts";
 import { capitalize, isMobile } from "../util/general";
 import { daisyUIThemes } from "../util/theme";
@@ -38,6 +45,36 @@ export function Settings(props: {
       systemFont: config.systemFont
         ? config.systemFont
         : defaultConfig.systemFont,
+      fontSizeBaseExpression: config.fontSizeBaseExpression
+        ? config.fontSizeBaseExpression
+        : defaultConfig.fontSizeBaseExpression,
+      fontSizeBasePitch: config.fontSizeBasePitch
+        ? config.fontSizeBasePitch
+        : defaultConfig.fontSizeBasePitch,
+      fontSizeBaseSentence: config.fontSizeBaseSentence
+        ? config.fontSizeBaseSentence
+        : defaultConfig.fontSizeBaseSentence,
+      fontSizeBaseMiscInfo: config.fontSizeBaseMiscInfo
+        ? config.fontSizeBaseMiscInfo
+        : defaultConfig.fontSizeBaseMiscInfo,
+      fontSizeBaseHint: config.fontSizeBaseHint
+        ? config.fontSizeBaseHint
+        : defaultConfig.fontSizeBaseHint,
+      fontSizeSmExpression: config.fontSizeSmExpression
+        ? config.fontSizeSmExpression
+        : defaultConfig.fontSizeSmExpression,
+      fontSizeSmPitch: config.fontSizeSmPitch
+        ? config.fontSizeSmPitch
+        : defaultConfig.fontSizeSmPitch,
+      fontSizeSmSentence: config.fontSizeSmSentence
+        ? config.fontSizeSmSentence
+        : defaultConfig.fontSizeSmSentence,
+      fontSizeSmMiscInfo: config.fontSizeSmMiscInfo
+        ? config.fontSizeSmMiscInfo
+        : defaultConfig.fontSizeSmMiscInfo,
+      fontSizeSmHint: config.fontSizeSmHint
+        ? config.fontSizeSmHint
+        : defaultConfig.fontSizeSmHint,
     };
     try {
       await AnkiConnect.saveConfig(payload);
@@ -108,7 +145,7 @@ export function Settings(props: {
           </Switch>
         </div>
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-4">
         <div class="text-2xl font-bold">Theme</div>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] rounded-box gap-4 p-2">
           <For each={daisyUIThemes}>
@@ -163,7 +200,7 @@ export function Settings(props: {
           </For>
         </div>
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-4">
         <div class="text-2xl font-bold">Font</div>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] rounded-box gap-4">
           <fieldset
@@ -201,7 +238,8 @@ export function Settings(props: {
           </fieldset>
         </div>
       </div>
-      <div class="flex flex-col gap-2">
+      <FontSizeSettings />
+      <div class="flex flex-col gap-4">
         <div class="text-2xl font-bold">Debug</div>
         <pre class="text-xs bg-base-200 p-4 rounded-lg">
           {JSON.stringify({ ...config }, null, 2)}
@@ -236,5 +274,103 @@ export function Settings(props: {
         </div>
       </Show>
     </>
+  );
+}
+
+function FontSizeSettings() {
+  return (
+    <div class="flex flex-col gap-4">
+      <div class="text-2xl font-bold">Font Size</div>
+      <div>
+        <div class="text-lg font-bold">Mobile</div>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] rounded-box gap-x-4 gap-y-2">
+          <FontSizeSettingsFieldset
+            configKey="fontSizeBaseExpression"
+            label="Expression Mobile"
+          />
+          <FontSizeSettingsFieldset
+            configKey="fontSizeBasePitch"
+            label="Pitch Mobile"
+          />
+          <FontSizeSettingsFieldset
+            configKey="fontSizeBaseSentence"
+            label="Sentence Mobile"
+          />
+          <FontSizeSettingsFieldset
+            configKey="fontSizeBaseMiscInfo"
+            label="Misc Info Mobile"
+          />
+          <FontSizeSettingsFieldset
+            configKey="fontSizeBaseHint"
+            label="Hint Mobile"
+          />
+        </div>
+      </div>
+      <div>
+        <div class="text-lg font-bold">Desktop</div>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] rounded-box gap-x-4 gap-y-2">
+          <FontSizeSettingsFieldset
+            configKey="fontSizeSmExpression"
+            label="Expression"
+          />
+          <FontSizeSettingsFieldset configKey="fontSizeSmPitch" label="Pitch" />
+          <FontSizeSettingsFieldset
+            configKey="fontSizeSmSentence"
+            label="Sentence"
+          />
+          <FontSizeSettingsFieldset
+            configKey="fontSizeSmMiscInfo"
+            label="Misc Info"
+          />
+          <FontSizeSettingsFieldset configKey="fontSizeSmHint" label="Hint" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FontSizeSettingsFieldset(props: {
+  configKey: keyof KikuConfig;
+  label: string;
+}) {
+  const [config, setConfig] = useConfig();
+  const breakpoint = props.configKey.startsWith("fontSizeBase") ? "" : "sm:";
+  return (
+    <fieldset
+      class="fieldset"
+      on:change={(e) => {
+        const target = e.target as HTMLSelectElement;
+        const value = target.value as TailwindFontSizeLabel;
+        const tailwindFontSize = getTailwindFontSize(value);
+        setConfig(props.configKey, `${breakpoint}${tailwindFontSize}`);
+      }}
+    >
+      <legend class="fieldset-legend">
+        {props.label}{" "}
+        <UndoIcon
+          class="h-4 w-4 cursor-pointer"
+          on:click={() => {
+            setConfig(props.configKey, defaultConfig[props.configKey]);
+          }}
+        />
+      </legend>
+      <select class="select w-full">
+        <For each={tailwindFontSizeLabel}>
+          {(label) => {
+            return (
+              <option
+                value={label}
+                selected={
+                  config[props.configKey] ===
+                  `${breakpoint}${getTailwindFontSize(label)}`
+                }
+              >
+                {label}
+              </option>
+            );
+          }}
+        </For>
+      </select>
+    </fieldset>
   );
 }
