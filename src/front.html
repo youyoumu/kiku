@@ -1,26 +1,21 @@
 <!-- biome-ignore format: this looks nicer -->
 <div style="display: none" id="anki-fields">
-<script type="text/html" data-field="Expression"> {{Expression}} </script>
-<script type="text/html" data-field="Hint"> {{Hint}} </script>
-<script type="text/html" data-field="IsWordAndSentenceCard"> {{IsWordAndSentenceCard}} </script>
-<script type="text/html" data-field="IsClickCard"> {{IsClickCard}} </script>
-<script type="text/html" data-field="IsSentenceCard"> {{IsSentenceCard}} </script>
-<script type="text/html" data-field="IsAudioCard"> {{IsAudioCard}} </script>
+<div data-field="Expression"> {{Expression}} </div>
+<div data-field="Hint"> {{Hint}} </div>
+<div data-field="IsWordAndSentenceCard"> {{IsWordAndSentenceCard}} </div>
+<div data-field="IsClickCard"> {{IsClickCard}} </div>
+<div data-field="IsSentenceCard"> {{IsSentenceCard}} </div>
+<div data-field="IsAudioCard"> {{IsAudioCard}} </div>
 {{#IsAudioCard}}
-<script type="text/html" data-field="ExpressionAudio"> {{ExpressionAudio}} </script>
-<script type="text/html" data-field="SentenceAudio"> {{SentenceAudio}} </script>
+<div data-field="ExpressionAudio"> {{ExpressionAudio}} </div>
+<div data-field="SentenceAudio"> {{SentenceAudio}} </div>
 {{/IsAudioCard}}
 {{^IsAudioCard}}
-<script type="text/html" data-field="ExpressionAudio"></script>
-<script type="text/html" data-field="SentenceAudio"></script>
+<div data-field="ExpressionAudio"></div>
+<div data-field="SentenceAudio"></div>
 {{/IsAudioCard}}
 
-<script type="text/html" data-field="kanji:Sentence"> {{kanji:Sentence}} </script>
-</div>
-
-<!-- prefetch picture -->
-<div style="width: 0; height: 0; overflow: hidden;" id="prefetch-picture">
-  {{Picture}}
+<div data-field="kanji:Sentence"> {{kanji:Sentence}} </div>
 </div>
 
 <div id="root"></div>
@@ -28,7 +23,7 @@
 <script type="module">
 import { init } from "./_kiku.js";
 
-const scripts = document.querySelectorAll("#anki-fields > script");
+const scripts = document.querySelectorAll("#anki-fields > div");
 const fields = Object.fromEntries(
   Array.from(scripts).map((el) => [el.dataset.field, el.innerHTML.trim()]),
 );

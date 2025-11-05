@@ -1,6 +1,13 @@
 import { createContext, createEffect, type JSX, useContext } from "solid-js";
 import type { SetStoreFunction, Store } from "solid-js/store";
-import type { AnkiFields } from "../../types";
+import type {
+  AnkiBackFieldNodes,
+  AnkiBackFields,
+  AnkiFieldNodes,
+  AnkiFields,
+  AnkiFrontFieldNodes,
+  AnkiFrontFields,
+} from "../../types";
 import type { KikuConfig } from "../../util/config";
 import {
   type OnlineFont,
@@ -36,11 +43,14 @@ export function useConfig() {
   return config;
 }
 
-const AnkiFieldContext = createContext<AnkiFields>();
+const AnkiFieldContext = createContext<{
+  ankiFields: AnkiFields;
+  ankiFieldNodes: AnkiFieldNodes;
+}>();
 
 export function AnkiFieldContextProvider(props: {
   children: JSX.Element;
-  value: AnkiFields;
+  value: { ankiFields: AnkiFields; ankiFieldNodes: AnkiFieldNodes };
 }) {
   return (
     <AnkiFieldContext.Provider value={props.value}>
@@ -49,8 +59,19 @@ export function AnkiFieldContextProvider(props: {
   );
 }
 
-export function useAnkiField() {
+type useAnkiFieldType = {
+  front: {
+    ankiFields: AnkiFrontFields;
+    ankiFieldNodes: AnkiFrontFieldNodes;
+  };
+  back: {
+    ankiFields: AnkiBackFields;
+    ankiFieldNodes: AnkiBackFieldNodes;
+  };
+};
+
+export function useAnkiField<T extends "front" | "back">() {
   const ankiField = useContext(AnkiFieldContext);
   if (!ankiField) throw new Error("Missing AnkiFieldContext");
-  return ankiField;
+  return ankiField as useAnkiFieldType[T];
 }

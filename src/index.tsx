@@ -1,7 +1,11 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
 import { Back } from "./components/Back.tsx";
-import { type AnkiFields, exampleFields, exampleFields2 } from "./types.ts";
+import {
+  type AnkiFieldNodes,
+  type AnkiFields,
+  exampleFields,
+} from "./types.ts";
 import "./tailwind.css";
 import { createStore } from "solid-js/store";
 import { Front } from "./components/Front.tsx";
@@ -24,6 +28,14 @@ export async function init({
     const root = document.getElementById("root");
     if (!root) throw new Error("root not found");
 
+    const divs = document.querySelectorAll("#anki-fields > div");
+    let ankiFieldNodes = Object.fromEntries(
+      Array.from(divs).map((el) => [
+        (el as HTMLDivElement).dataset.field,
+        el.childNodes,
+      ]),
+    ) as AnkiFieldNodes;
+
     const shadow = root.attachShadow({ mode: "closed" });
     let config_: KikuConfig;
     try {
@@ -35,6 +47,16 @@ export async function init({
     }
 
     if (import.meta.env.DEV) {
+      const divs = Object.entries(ankiFields).map(([key, value]) => {
+        const div = document.createElement("div");
+        div.dataset.field = key;
+        div.innerHTML = value;
+        return div;
+      });
+      ankiFieldNodes = Object.fromEntries(
+        Array.from(divs).map((el) => [el.dataset.field, el.childNodes]),
+      ) as AnkiFieldNodes;
+
       const link = document.createElement("link");
       link.rel = "stylesheet";
       link.href = "/src/tailwind.css";
@@ -58,7 +80,7 @@ export async function init({
     if (side === "front") {
       render(
         () => (
-          <AnkiFieldContextProvider value={ankiFields}>
+          <AnkiFieldContextProvider value={{ ankiFields, ankiFieldNodes }}>
             <ConfigContextProvider value={[config, setConfig]}>
               <Front />
             </ConfigContextProvider>
@@ -69,7 +91,7 @@ export async function init({
     } else if (side === "back") {
       render(
         () => (
-          <AnkiFieldContextProvider value={ankiFields}>
+          <AnkiFieldContextProvider value={{ ankiFields, ankiFieldNodes }}>
             <ConfigContextProvider value={[config, setConfig]}>
               <Back />
             </ConfigContextProvider>

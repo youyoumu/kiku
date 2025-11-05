@@ -32,7 +32,7 @@ export function Back() {
   const sentenceAudioRefSignal = createSignal<HTMLDivElement | undefined>();
   const [config] = useConfig();
 
-  const ankiFields = useAnkiField() as AnkiBackFields;
+  const { ankiFields, ankiFieldNodes } = useAnkiField<"back">();
   const [showSettings, setShowSettings] = createSignal(false);
   const [ready, setReady] = createSignal(false);
   const [showImageModal, setShowImageModal] = createSignal(false);
@@ -47,12 +47,10 @@ export function Back() {
     }, 50);
   });
 
-  let prefetch = document.getElementById("prefetch-picture");
-  if (import.meta.env.DEV) {
-    prefetch = document.createElement("div");
-    prefetch.innerHTML = ankiFields.Picture ?? "";
-  }
-  if (!prefetch) throw new Error("Prefetch picture not found");
+  const prefetch = document.createElement("div");
+  ankiFieldNodes.Picture.forEach((node) => {
+    prefetch.appendChild(node);
+  });
   const img = prefetch.querySelector("img");
 
   return (
@@ -79,12 +77,11 @@ export function Back() {
             <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
               <div
                 class={`${config.fontSizeBaseExpression} ${config.fontSizeSmExpression}`}
-                innerHTML={
-                  ankiFields.ExpressionFurigana
-                    ? ankiFields["furigana:ExpressionFurigana"]
-                    : ankiFields.Expression
-                }
-              ></div>
+              >
+                {ankiFields.ExpressionFurigana
+                  ? Array.from(ankiFieldNodes["furigana:ExpressionFurigana"])
+                  : Array.from(ankiFieldNodes.Expression)}
+              </div>
               <div
                 class={`${config.fontSizeBasePitch} ${config.fontSizeSmPitch}`}
               >

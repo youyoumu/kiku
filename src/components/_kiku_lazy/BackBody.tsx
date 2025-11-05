@@ -1,11 +1,10 @@
 import { createSignal, onMount } from "solid-js";
-import type { AnkiBackFields } from "#/types";
 import { useAnkiField, useConfig } from "../shared/Context";
 
 export default function BackBody() {
   let sentenceEl: HTMLDivElement | undefined;
   const [config] = useConfig();
-  const ankiFields = useAnkiField() as AnkiBackFields;
+  const { ankiFields, ankiFieldNodes } = useAnkiField<"back">();
   const [definitionPage, setDefinitionPage] = createSignal(
     ankiFields.SelectionText ? 0 : 1,
   );
@@ -15,8 +14,14 @@ export default function BackBody() {
     ankiFields.MainDefinition,
     ankiFields.Glossary,
   ];
+  const pageNodes = [
+    ankiFieldNodes.SelectionText,
+    ankiFieldNodes.MainDefinition,
+    ankiFieldNodes.Glossary,
+  ];
+
   const availablePagesCount = pages.filter((page) => page?.trim()).length;
-  const page = () => pages[definitionPage()];
+  const pageNode = () => pageNodes[definitionPage()];
   const pageType = () => {
     if (definitionPage() === 0) return "Selection text";
     if (definitionPage() === 1) return "Main definition";
@@ -38,11 +43,11 @@ export default function BackBody() {
         <div
           class={`[&_b]:text-base-content-primary ${config.fontSizeBaseSentence} ${config.fontSizeSmSentence}`}
           ref={sentenceEl}
-          innerHTML={
-            ankiFields["furigana:SentenceFurigana"] ??
-            ankiFields["furigana:Sentence"]
-          }
-        ></div>
+        >
+          {ankiFields["furigana:SentenceFurigana"]
+            ? Array.from(ankiFieldNodes["furigana:SentenceFurigana"])
+            : Array.from(ankiFieldNodes["kanji:Sentence"])}
+        </div>
       </div>
       {availablePagesCount > 0 && (
         <div>
@@ -50,7 +55,7 @@ export default function BackBody() {
             <div class="text-end text-base-content/50">{pageType()}</div>
           )}
           <div class="relative bg-base-200 p-4 border-s-4 border-primary text-base sm:text-xl rounded-lg [&_ol]:list-inside [&_ul]:list-inside">
-            <div innerHTML={page()}></div>
+            <div>{Array.from(pageNode())}</div>
             {availablePagesCount > 1 && (
               <>
                 <button

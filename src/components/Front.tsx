@@ -1,5 +1,4 @@
 import { createSignal, lazy, onMount } from "solid-js";
-import type { AnkiFrontFields } from "../types";
 import { Layout } from "./Layout";
 import { useAnkiField, useConfig } from "./shared/Context";
 
@@ -17,7 +16,7 @@ export function Front() {
   const sentenceAudioRefSignal = createSignal<HTMLDivElement | undefined>();
 
   const [config] = useConfig();
-  const ankiFields = useAnkiField() as AnkiFrontFields;
+  const { ankiFields, ankiFieldNodes } = useAnkiField<"front">();
 
   const [ready, setReady] = createSignal(false);
   const [clicked, setClicked] = createSignal(false);
@@ -47,12 +46,11 @@ export function Front() {
                 "border-b-2 border-dotted border-base-content/50":
                   !!ankiFields.IsClickCard,
               }}
-              innerHTML={
-                !ankiFields.IsSentenceCard && !ankiFields.IsAudioCard
-                  ? ankiFields.Expression
-                  : "?"
-              }
-            ></div>
+            >
+              {!ankiFields.IsSentenceCard && !ankiFields.IsAudioCard
+                ? Array.from(ankiFieldNodes.Expression)
+                : "?"}
+            </div>
           </div>
         </div>
 
@@ -63,8 +61,9 @@ export function Front() {
           <div class="flex flex-col gap-4 items-center text-center">
             <div
               class={`[&_b]:text-base-content-primary ${config.fontSizeBaseSentence} ${config.fontSizeSmSentence}`}
-              innerHTML={ankiFields["kanji:Sentence"]}
-            ></div>
+            >
+              {Array.from(ankiFieldNodes["kanji:Sentence"])}
+            </div>
           </div>
         )}
 
@@ -82,7 +81,7 @@ export function Front() {
           <div
             class={`flex gap-2 items-center justify-center text-center border-t-1 ${config.fontSizeBaseHint} ${config.fontSizeSmHint}`}
           >
-            <div innerHTML={ankiFields.Hint}></div>
+            <div>{Array.from(ankiFieldNodes.Hint)}</div>
           </div>
         )}
       </Layout>

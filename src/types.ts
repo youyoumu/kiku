@@ -32,6 +32,40 @@ export type AnkiFields = {
   "kana:SentenceFurigana": string;
 };
 
+export type AnkiFieldNodes = {
+  Expression: NodeList;
+  ExpressionFurigana: NodeList;
+  ExpressionReading: NodeList;
+  ExpressionAudio: NodeList;
+  SelectionText: NodeList;
+  MainDefinition: NodeList;
+  DefinitionPicture: NodeList;
+  Sentence: NodeList;
+  SentenceFurigana: NodeList;
+  SentenceAudio: NodeList;
+  Picture: NodeList;
+  Glossary: NodeList;
+  Hint: NodeList;
+  IsWordAndSentenceCard: NodeList;
+  IsClickCard: NodeList;
+  IsSentenceCard: NodeList;
+  IsAudioCard: NodeList;
+  PitchPosition: NodeList;
+  PitchCategories: NodeList;
+  Frequency: NodeList;
+  FreqSort: NodeList;
+  MiscInfo: NodeList;
+  Tags: NodeList;
+
+  // === Variants (for furigana/kana helpers) ===
+  "furigana:ExpressionFurigana": NodeList;
+  "kana:ExpressionFurigana": NodeList;
+  "furigana:Sentence": NodeList;
+  "kanji:Sentence": NodeList;
+  "furigana:SentenceFurigana": NodeList;
+  "kana:SentenceFurigana": NodeList;
+};
+
 const frontKeys = [
   "Expression",
   "kanji:Sentence",
@@ -48,6 +82,11 @@ type ExtractUsedFields<T, U extends readonly (keyof T)[]> = Pick<T, U[number]>;
 
 export type AnkiFrontFields = ExtractUsedFields<AnkiFields, typeof frontKeys>;
 export type AnkiBackFields = AnkiFields;
+export type AnkiFrontFieldNodes = ExtractUsedFields<
+  AnkiFieldNodes,
+  typeof frontKeys
+>;
+export type AnkiBackFieldNodes = AnkiFieldNodes;
 
 // biome-ignore format: this looks nicer
 export const exampleFields: AnkiFields = {

@@ -1,5 +1,4 @@
 import type { Signal } from "solid-js";
-import type { AnkiBackFields } from "#/types";
 import { isMobile } from "#/util/general";
 import { useAnkiField } from "../shared/Context";
 import { PlayIcon } from "./Icons";
@@ -18,7 +17,7 @@ export default function BackPlayButton(props: {
   sentenceAudioRefSignal: Signal<HTMLDivElement | undefined>;
   position: 1 | 2 | 3;
 }) {
-  const ankiFields = useAnkiField() as AnkiBackFields;
+  const { ankiFields, ankiFieldNodes } = useAnkiField<"back">();
   const [expressionAudioRef, setExpressionAudioRef] =
     props.expressionAudioRefSignal;
   const [sentenceAudioRef, setSentenceAudioRef] = props.sentenceAudioRefSignal;
@@ -32,16 +31,12 @@ export default function BackPlayButton(props: {
   if (props.position === 1 || props.position === 3)
     return (
       <>
-        <div
-          style={hiddenStyle}
-          ref={setExpressionAudioRef}
-          innerHTML={ankiFields.ExpressionAudio}
-        ></div>
-        <div
-          style={hiddenStyle}
-          ref={setSentenceAudioRef}
-          innerHTML={ankiFields.SentenceAudio}
-        ></div>
+        <div style={hiddenStyle} ref={setExpressionAudioRef}>
+          {Array.from(ankiFieldNodes.ExpressionAudio)}
+        </div>
+        <div style={hiddenStyle} ref={setSentenceAudioRef}>
+          {Array.from(ankiFieldNodes.SentenceAudio)}
+        </div>
         {(!isMobile() || props.position === 3) && (
           <>
             <NotePlayIcon
