@@ -13,7 +13,9 @@ export default function BackFooter(props: { tags: string[] }) {
         >
           <InfoIcon class="h-5 w-5 text-base-content-calm" />
           <div class="text-base-content-calm">
-            {Array.from(ankiFieldNodes.MiscInfo)}
+            {Array.from(ankiFieldNodes.MiscInfo).map((node) =>
+              node.cloneNode(true),
+            )}
           </div>
         </div>
       )}
