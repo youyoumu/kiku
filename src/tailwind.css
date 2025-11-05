@@ -5,6 +5,55 @@
 
 @theme {
   --color-base-content-primary: black;
+  --color-base-content-subtle-100: color-mix(
+    in srgb,
+    var(--color-base-content) 10%,
+    var(--color-base-100)
+  );
+  --color-base-content-subtle-200: color-mix(
+    in srgb,
+    var(--color-base-content) 20%,
+    var(--color-base-100)
+  );
+  --color-base-content-subtle-300: color-mix(
+    in srgb,
+    var(--color-base-content) 30%,
+    var(--color-base-100)
+  );
+  --color-base-content-subtle-400: color-mix(
+    in srgb,
+    var(--color-base-content) 40%,
+    var(--color-base-100)
+  );
+  --color-base-content-subtle-500: color-mix(
+    in srgb,
+    var(--color-base-content) 50%,
+    var(--color-base-100)
+  );
+  --color-base-content-subtle-600: color-mix(
+    in srgb,
+    var(--color-base-content) 60%,
+    var(--color-base-100)
+  );
+  --color-base-content-subtle-700: color-mix(
+    in srgb,
+    var(--color-base-content) 70%,
+    var(--color-base-100)
+  );
+  --color-base-content-subtle-800: color-mix(
+    in srgb,
+    var(--color-base-content) 80%,
+    var(--color-base-100)
+  );
+  --color-base-content-subtle-900: color-mix(
+    in srgb,
+    var(--color-base-content) 90%,
+    var(--color-base-100)
+  );
+
+  --color-base-content-faint: var(--color-base-content-subtle-300);
+  --color-base-content-soft: var(--color-base-content-subtle-500);
+  --color-base-content-calm: var(--color-base-content-subtle-700);
 }
 
 @plugin "daisyui/theme" {

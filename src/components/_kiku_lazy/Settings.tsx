@@ -95,7 +95,7 @@ export default function Settings(props: {
       <div class="flex flex-row justify-between items-center animate-fade-in">
         <div class="h-5">
           <ArrowLeftIcon
-            class="h-full w-full cursor-pointer text-base-content/50"
+            class="h-full w-full cursor-pointer text-base-content-soft"
             on:click={props.onBackClick}
           ></ArrowLeftIcon>
         </div>
@@ -109,7 +109,7 @@ export default function Settings(props: {
           {!isAnkiConnectAvailable() && (
             <>
               <RefreshCwIcon
-                class="h-5 w-5 cursor-pointer text-base-content/50"
+                class="h-5 w-5 cursor-pointer text-base-content-soft"
                 on:click={async () => {
                   try {
                     await checkAnkiConnect();

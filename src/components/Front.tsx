@@ -32,7 +32,7 @@ export function Front() {
       <Lazy.CacheJoyoKanji />
       <Layout>
         <div class="flex justify-end flex-row">
-          <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block h-5 text-secondary-content/50"></div>
+          <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block h-5"></div>
         </div>
 
         <div
@@ -43,7 +43,7 @@ export function Front() {
             <div
               class={`${config.fontSizeBaseExpression} ${config.fontSizeSmExpression}`}
               classList={{
-                "border-b-2 border-dotted border-base-content/50":
+                "border-b-2 border-dotted border-base-content-soft":
                   !!ankiFields.IsClickCard,
               }}
             >
