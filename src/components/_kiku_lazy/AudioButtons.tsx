@@ -32,10 +32,14 @@ export default function BackPlayButton(props: {
     return (
       <>
         <div style={hiddenStyle} ref={setExpressionAudioRef}>
-          {Array.from(ankiFieldNodes.ExpressionAudio)}
+          {Array.from(ankiFieldNodes.ExpressionAudio).map((node) =>
+            node.cloneNode(true),
+          )}
         </div>
         <div style={hiddenStyle} ref={setSentenceAudioRef}>
-          {Array.from(ankiFieldNodes.SentenceAudio)}
+          {Array.from(ankiFieldNodes.SentenceAudio).map((node) =>
+            node.cloneNode(true),
+          )}
         </div>
         {(!isMobile() || props.position === 3) && (
           <>
@@ -62,16 +66,20 @@ export default function BackPlayButton(props: {
     return (
       isMobile() && (
         <div class="absolute bottom-4 left-4 flex flex-col gap-2 items-center">
-          <NotePlayIcon
-            on:click={() => {
-              expressionAudioRef()?.querySelector("a")?.click();
-            }}
-          ></NotePlayIcon>
-          <NotePlayIcon
-            on:click={() => {
-              sentenceAudioRef()?.querySelector("a")?.click();
-            }}
-          ></NotePlayIcon>
+          {ankiFields.ExpressionAudio && (
+            <NotePlayIcon
+              on:click={() => {
+                expressionAudioRef()?.querySelector("a")?.click();
+              }}
+            ></NotePlayIcon>
+          )}
+          {ankiFields.SentenceAudio && (
+            <NotePlayIcon
+              on:click={() => {
+                sentenceAudioRef()?.querySelector("a")?.click();
+              }}
+            ></NotePlayIcon>
+          )}
         </div>
       )
     );
