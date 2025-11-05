@@ -1,7 +1,6 @@
-import { createSignal, lazy, onMount } from "solid-js";
+import { createSignal, lazy, onMount, Suspense } from "solid-js";
 import { isMobile } from "../util/general";
 import { Layout } from "./Layout";
-import Pitch from "./Pitch";
 import { useAnkiField, useConfig } from "./shared/Context";
 
 const Lazy = {
@@ -23,13 +22,16 @@ const Lazy = {
   BackBody: lazy(async () => ({
     default: (await import("./_kiku_lazy")).BackBody,
   })),
+  Pitches: lazy(async () => ({
+    default: (await import("./_kiku_lazy")).Pitches,
+  })),
 };
 
 export function Back() {
   const expressionAudioRefSignal = createSignal<HTMLDivElement | undefined>();
   const sentenceAudioRefSignal = createSignal<HTMLDivElement | undefined>();
-  const [config] = useConfig();
 
+  const [config] = useConfig();
   const { ankiFields, ankiFieldNodes } = useAnkiField<"back">();
   const [showSettings, setShowSettings] = createSignal(false);
   const [ready, setReady] = createSignal(false);
@@ -45,29 +47,11 @@ export function Back() {
     }, 50);
   });
 
-  let tempDiv = document.createElement("div");
+  const tempDiv = document.createElement("div");
   ankiFieldNodes.Picture.forEach((node) => {
     tempDiv.appendChild(node);
   });
   const picture = tempDiv.querySelector("img");
-
-  tempDiv = document.createElement("div");
-  ankiFieldNodes.PitchPosition.forEach((node) => {
-    tempDiv.appendChild(node);
-  });
-  const pitchNumber = Array.from(tempDiv.querySelectorAll("span"))
-    .filter((el) => {
-      return !Number.isNaN(Number(el.innerText));
-    })
-    .map((el) => {
-      return Number(el.innerText);
-    });
-  const pitches = pitchNumber.map((pitchNum, index) => {
-    const kana = ankiFields.ExpressionFurigana
-      ? ankiFields["kana:ExpressionFurigana"]
-      : ankiFields.ExpressionReading;
-    return <Pitch kana={kana} pitchNum={pitchNum} index={index} />;
-  });
 
   return (
     <Layout>
@@ -105,7 +89,13 @@ export function Back() {
               <div
                 class={`mt-6 flex gap-4 ${config.fontSizeBasePitch} ${config.fontSizeSmPitch}`}
               >
-                {pitches}
+                {ankiFields.PitchPosition && ready() ? (
+                  <Suspense fallback={<>&nbsp;</>}>
+                    <Lazy.Pitches />
+                  </Suspense>
+                ) : (
+                  ankiFields.PitchPosition && <>&nbsp;</>
+                )}
               </div>
               <div
                 class="flex gap-2"
@@ -150,7 +140,7 @@ export function Back() {
           )}
         </>
       )}
-      {ready() && picture && (
+      {ready() && (
         <Lazy.ImageModal
           show={!!showImageModal()}
           img={showImageModal()?.cloneNode()}

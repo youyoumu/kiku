@@ -38,7 +38,7 @@ export async function init({ side }: { side: "front" | "back" }) {
       document.querySelectorAll("#anki-fields > div");
 
     if (import.meta.env.DEV) {
-      divs = Object.entries(exampleFields7).map(([key, value]) => {
+      divs = Object.entries(exampleFields6).map(([key, value]) => {
         const div = document.createElement("div");
         div.dataset.field = key;
         div.innerHTML = value;

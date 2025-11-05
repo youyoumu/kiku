@@ -4,6 +4,7 @@ import BackFooter from "./BackFooter";
 import BackHeader from "./BackHeader";
 import CacheJoyoKanji from "./CacheJoyoKanji";
 import ImageModal from "./ImageModal";
+import Pitches from "./Pitches";
 import Settings from "./Settings";
 
 export {
@@ -14,4 +15,5 @@ export {
   ImageModal,
   BackBody,
   CacheJoyoKanji,
+  Pitches,
 };
