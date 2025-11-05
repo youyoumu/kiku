@@ -25,6 +25,7 @@ declare global {
     KIKU_STATE: {
       relax?: boolean;
       shadow?: ShadowRoot;
+      initDelay?: number;
     };
   }
 }

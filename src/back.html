@@ -36,5 +36,12 @@
 <script type="module">
 import { init } from "./_kiku.js";
 
-init({ side: "back" });
+async function initAnki() {
+  const now = performance.now();
+  await init({ side: "back" });
+  const delay = Math.round(performance.now() - now);
+  window.KIKU_STATE ??= {};
+  window.KIKU_STATE.initDelay = delay;
+}
+initAnki();
 </script>

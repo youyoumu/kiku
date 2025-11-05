@@ -1,3 +1,4 @@
+import { createSignal, onMount } from "solid-js";
 import { nextTheme } from "#/util/theme";
 import { useAnkiField, useConfig } from "../shared/Context";
 import { BoltIcon, CircleChevronDownIcon, PaintbrushIcon } from "./Icons";
@@ -6,6 +7,14 @@ import { capitalize } from "./util/general";
 export default function BackHeader(props: { onSettingsClick?: () => void }) {
   const [config, setConfig] = useConfig();
   const { ankiFields, ankiFieldNodes } = useAnkiField<"back">();
+  const [initDelay, setInitDelay] = createSignal<number | null>(null);
+
+  onMount(() => {
+    setTimeout(() => {
+      if (window.KIKU_STATE.initDelay)
+        setInitDelay(window.KIKU_STATE.initDelay);
+    }, 250);
+  });
 
   return (
     <>
@@ -22,6 +31,10 @@ export default function BackHeader(props: { onSettingsClick?: () => void }) {
         >
           <PaintbrushIcon class="size-5 cursor-pointer text-base-content-soft"></PaintbrushIcon>
           <div class="text-base-content-soft">{capitalize(config.theme)}</div>
+        </div>
+        <div class="text-base-content-soft bg-yellow-700/10 rounded-sm px-1">
+          {initDelay()}
+          {initDelay() && "ms"}
         </div>
       </div>
       <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block animate-fade-in-sm z-10">
