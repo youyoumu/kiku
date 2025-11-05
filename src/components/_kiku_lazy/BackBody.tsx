@@ -1,8 +1,6 @@
 import { createSignal, onMount } from "solid-js";
 import { useAnkiField, useConfig } from "../shared/Context";
 
-let relax = false;
-
 export default function BackBody() {
   let sentenceEl: HTMLDivElement | undefined;
   const [config] = useConfig();
@@ -16,19 +14,31 @@ export default function BackBody() {
     ankiFields.MainDefinition,
     ankiFields.Glossary,
   ];
+  const pagesWithContent = pages.filter((page) => page?.trim());
+
   const pageNodes = [
     ankiFieldNodes.SelectionText,
     ankiFieldNodes.MainDefinition,
     ankiFieldNodes.Glossary,
   ];
 
-  const availablePagesCount = pages.filter((page) => page?.trim()).length;
   const pageNode = () => pageNodes[definitionPage()];
   const pageType = () => {
     if (definitionPage() === 0) return "Selection text";
     if (definitionPage() === 1) return "Main definition";
     if (definitionPage() === 2) return "Glossary";
   };
+
+  function changePage(direction: 1 | -1) {
+    setDefinitionPage((prev) => {
+      let next = (prev + direction + pages.length) % pages.length;
+      for (let i = 0; i < pages.length; i++) {
+        if (pages[next]?.trim()) break;
+        next = (next + direction + pages.length) % pages.length;
+      }
+      return next;
+    });
+  }
 
   onMount(() => {
     if (sentenceEl) {
@@ -37,16 +47,10 @@ export default function BackBody() {
         el.classList.add(..."[&_rt]:invisible hover:[&_rt]:visible".split(" "));
       });
     }
-    relax = true;
   });
 
   return (
-    <div
-      class="flex sm:flex-col gap-8 flex-col-reverse"
-      classList={{
-        "animate-fade-in": relax,
-      }}
-    >
+    <div class="flex sm:flex-col gap-8 flex-col-reverse animate-fade-in-sm">
       <div class="flex flex-col gap-4 items-center text-center">
         <div
           class={`[&_b]:text-base-content-primary ${config.fontSizeBaseSentence} ${config.fontSizeSmSentence}`}
@@ -57,40 +61,24 @@ export default function BackBody() {
             : Array.from(ankiFieldNodes["kanji:Sentence"])}
         </div>
       </div>
-      {availablePagesCount > 0 && (
+      {pagesWithContent.length > 0 && (
         <div>
-          {availablePagesCount > 1 && (
+          {pagesWithContent.length > 1 && (
             <div class="text-end text-base-content/50">{pageType()}</div>
           )}
           <div class="relative bg-base-200 p-4 border-s-4 border-primary text-base sm:text-xl rounded-lg [&_ol]:list-inside [&_ul]:list-inside">
-            <div>{Array.from(pageNode())}</div>
-            {availablePagesCount > 1 && (
+            <div>
+              {Array.from(pageNode()).map((node) => node.cloneNode(true))}
+            </div>
+            {pagesWithContent.length > 1 && (
               <>
                 <button
                   class="cursor-pointer w-8 h-full absolute top-0 left-0 hover:bg-base-content/10"
-                  on:click={() => {
-                    setDefinitionPage((prev) => {
-                      let next = (prev - 1 + pages.length) % pages.length;
-                      for (let i = 0; i < pages.length; i++) {
-                        if (pages[next]?.trim()) break;
-                        next = (next - 1 + pages.length) % pages.length;
-                      }
-                      return next;
-                    });
-                  }}
+                  on:click={() => changePage(-1)}
                 ></button>
                 <button
                   class="cursor-pointer w-8 h-full absolute top-0 right-0 hover:bg-base-content/10"
-                  on:click={() => {
-                    setDefinitionPage((prev) => {
-                      let next = (prev + 1) % pages.length;
-                      for (let i = 0; i < pages.length; i++) {
-                        if (pages[next]?.trim()) break;
-                        next = (next + 1) % pages.length;
-                      }
-                      return next;
-                    });
-                  }}
+                  on:click={() => changePage(1)}
                 ></button>
               </>
             )}

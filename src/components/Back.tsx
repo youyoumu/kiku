@@ -1,5 +1,4 @@
 import { createSignal, lazy, onMount } from "solid-js";
-import type { AnkiBackFields } from "../types";
 import { isMobile } from "../util/general";
 import { Layout } from "./Layout";
 import { useAnkiField, useConfig } from "./shared/Context";
@@ -113,7 +112,7 @@ export function Back() {
               {img}
             </div>
           </div>
-          <Lazy.BackBody />
+          {ready() && <Lazy.BackBody />}
           {ready() && (
             <>
               <Lazy.BackFooter tags={tags} />
