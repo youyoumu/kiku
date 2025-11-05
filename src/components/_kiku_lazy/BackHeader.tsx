@@ -24,7 +24,7 @@ export default function BackHeader(props: { onSettingsClick?: () => void }) {
           <div class="text-base-content/50">{capitalize(config.theme)}</div>
         </div>
       </div>
-      <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block animate-fade-in-sm">
+      <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block animate-fade-in-sm z-10">
         <div class="text-base-content/50">
           {Array.from(ankiFieldNodes.FreqSort)}
         </div>
@@ -33,7 +33,7 @@ export default function BackHeader(props: { onSettingsClick?: () => void }) {
             <CircleChevronDownIcon class="size-5 text-base-content/50" />
             <div
               id="frequency"
-              class="absolute z-10 top-0 translate-y-6 right-2 w-fit [&_li]:text-nowrap [&_li]:whitespace-nowrap bg-base-300/90 p-4 rounded-lg hidden"
+              class="absolute top-0 translate-y-6 right-2 w-fit [&_li]:text-nowrap [&_li]:whitespace-nowrap bg-base-300/90 p-4 rounded-lg hidden"
             >
               {Array.from(ankiFieldNodes.Frequency)}
             </div>
