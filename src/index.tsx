@@ -87,7 +87,6 @@ export async function init({ side }: { side: "front" | "back" }) {
 
     document.documentElement.setAttribute("data-theme", config_.theme);
     root.setAttribute("data-theme", config_.theme);
-    root.style.position = "relative";
     setOnlineFont(config_.onlineFont as OnlineFont);
 
     const [config, setConfig] = createStore(config_);
