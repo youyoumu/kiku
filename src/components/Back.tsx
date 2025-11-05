@@ -113,18 +113,29 @@ export function Back() {
               </div>
             </div>
 
-            <div class="bg-base-200 rounded-lg">
+            {ankiFields.Picture && (
               <div
-                class="h-full sm:[&_img]:h-full [&_img]:rounded-lg [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto [&_img]:transition-[filter] [&_img]:hover:filter-none cursor-pointer rounded-lg overflow-hidden"
+                class="bg-base-200 rounded-lg relative overflow-hidden [&>img]:size-full [&>img]:filter 
+               [&>img]:object-cover [&>img]:object-center [&>img]:brightness-50 [&>img]:absolute"
                 classList={{
-                  "[&_img]:filter [&_img]:blur-[16px] [&_img]:brightness-50":
-                    isNsfw,
+                  "[&>img]:blur-[16px]": isNsfw,
+                  "[&>img]:blur-[4px]": !isNsfw,
                 }}
-                on:click={() => picture && setShowImageModal(picture)}
               >
-                {picture}
+                {isMobile() && picture?.cloneNode(true)}
+                <div
+                  class="relative h-full sm:[&_img]:h-full [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto 
+                [&_img]:transition-[filter] [&_img]:hover:filter-none cursor-pointer "
+                  classList={{
+                    "[&_img]:filter [&_img]:blur-[16px] [&_img]:brightness-50":
+                      isNsfw,
+                  }}
+                  on:click={() => picture && setShowImageModal(picture)}
+                >
+                  {picture}
+                </div>
               </div>
-            </div>
+            )}
           </div>
           {ready() && (
             <Lazy.BackBody
