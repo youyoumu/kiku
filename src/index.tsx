@@ -24,6 +24,7 @@ declare global {
   interface Window {
     KIKU_STATE: {
       relax?: boolean;
+      shadow?: ShadowRoot;
     };
   }
 }
@@ -34,6 +35,7 @@ export async function init({ side }: { side: "front" | "back" }) {
     const root = document.getElementById("root");
     if (!root) throw new Error("root not found");
     const shadow = root.attachShadow({ mode: "closed" });
+    window.KIKU_STATE.shadow = shadow;
     let divs: NodeListOf<Element> | Element[] =
       document.querySelectorAll("#anki-fields > div");
 
@@ -85,6 +87,7 @@ export async function init({ side }: { side: "front" | "back" }) {
 
     document.documentElement.setAttribute("data-theme", config_.theme);
     root.setAttribute("data-theme", config_.theme);
+    root.style.position = "relative";
     setOnlineFont(config_.onlineFont as OnlineFont);
 
     const [config, setConfig] = createStore(config_);

@@ -1,10 +1,16 @@
 import { createSignal, onMount } from "solid-js";
+import { Portal } from "solid-js/web";
 import { defaultConfig, type KikuConfig } from "#/util/config";
 import { type OnlineFont, onlineFonts } from "#/util/fonts";
 import { isMobile } from "#/util/general";
 import { daisyUIThemes } from "#/util/theme";
-import { useConfig } from "../shared/Context";
-import { ArrowLeftIcon, RefreshCwIcon, UndoIcon } from "./Icons";
+import { useAnkiField, useConfig } from "../shared/Context";
+import {
+  ArrowLeftIcon,
+  ClipboardCopyIcon,
+  RefreshCwIcon,
+  UndoIcon,
+} from "./Icons";
 import { AnkiConnect } from "./util/ankiConnect";
 import { capitalize } from "./util/general";
 import {
@@ -19,6 +25,7 @@ export default function Settings(props: {
   onCancelClick?: () => void;
 }) {
   const [config, setConfig] = useConfig();
+  const { ankiFields } = useAnkiField<"back">();
   const [isAnkiConnectAvailable, setIsAnkiConnectAvailable] =
     createSignal(false);
 
@@ -211,27 +218,63 @@ export default function Settings(props: {
         </div>
       </div>
       <FontSizeSettings />
-      <div class="flex flex-col gap-4 animate-fade-in">
+      <div class="flex flex-col gap-4 animate-fade-in ">
         <div class="text-2xl font-bold">Debug</div>
-        <pre class="text-xs bg-base-200 p-4 rounded-lg">
-          {JSON.stringify({ ...config }, null, 2)}
-        </pre>
+        <div class="flex flex-col gap-2">
+          <div class="flex gap-2 items-center">
+            <div class="text-lg">Config</div>
+            <ClipboardCopyIcon
+              class="size-5 text-base-content-calm cursor-pointer"
+              on:click={() => {
+                navigator.clipboard.writeText(
+                  JSON.stringify({ ...config }, null, 2),
+                );
+                toast.success("Copied to clipboard!");
+              }}
+            />
+          </div>
+          <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+            {JSON.stringify({ ...config }, null, 2)}
+          </pre>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="flex gap-2 items-center">
+            <div class="text-lg">Anki Fields</div>
+            <ClipboardCopyIcon
+              class="size-5 text-base-content-calm cursor-pointer"
+              on:click={() => {
+                navigator.clipboard.writeText(
+                  JSON.stringify({ ...ankiFields }, null, 2),
+                );
+                toast.success("Copied to clipboard!");
+              }}
+            />
+          </div>
+          <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+            {JSON.stringify({ ...ankiFields }, null, 2)}
+          </pre>
+        </div>
       </div>
-      <div class="flex flex-row gap-2 justify-end animate-fade-in">
-        <button class="btn btn-secondary" on:click={props.onCancelClick}>
-          Cancel
-        </button>
-        <button
-          class="btn btn-primary"
-          classList={{
-            "btn-disabled": !isAnkiConnectAvailable(),
-          }}
-          disabled={!isAnkiConnectAvailable()}
-          on:click={saveConfig}
-        >
-          Save
-        </button>
-      </div>
+      <Portal mount={window.KIKU_STATE.shadow}>
+        <div class="max-w-4xl mx-auto w-full relative">
+          <div class="flex flex-row gap-2 justify-end animate-fade-in absolute bottom-0 right-0 mx-4 mb-4">
+            <button class="btn btn-secondary " on:click={props.onCancelClick}>
+              Cancel
+            </button>
+            <button
+              class="btn btn-primary"
+              classList={{
+                "btn-disabled": !isAnkiConnectAvailable(),
+              }}
+              disabled={!isAnkiConnectAvailable()}
+              on:click={saveConfig}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </Portal>
       {showToast() && (
         <div class="toast toast-top toast-center">
           <div
