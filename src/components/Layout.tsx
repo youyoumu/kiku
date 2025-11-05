@@ -3,7 +3,7 @@ import { isMobile } from "../util/general";
 
 export function Layout(props: { children: JSX.Element }) {
   return (
-    <div class="max-w-4xl mx-auto overflow-auto px-4 gutter-stable relative">
+    <div class="max-w-4xl mx-auto overflow-auto px-4 gutter-stable">
       <div
         class="flex flex-col gap-6"
         style={{
