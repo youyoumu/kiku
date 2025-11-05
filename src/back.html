@@ -1,34 +1,34 @@
 <!-- biome-ignore format: this looks nicer -->
 <div style="display: none" id="anki-fields">
-<div data-field="Expression"> {{Expression}} </div>
-<div data-field="ExpressionFurigana"> {{ExpressionFurigana}} </div>
-<div data-field="ExpressionReading"> {{ExpressionReading}} </div>
-<div data-field="ExpressionAudio"> {{ExpressionAudio}} </div>
-<div data-field="SelectionText"> {{SelectionText}} </div>
-<div data-field="MainDefinition"> {{MainDefinition}} </div>
-<div data-field="DefinitionPicture"> {{DefinitionPicture}} </div>
-<div data-field="Sentence"> {{Sentence}} </div>
-<div data-field="SentenceFurigana"> {{SentenceFurigana}} </div>
-<div data-field="SentenceAudio"> {{SentenceAudio}} </div>
-<div data-field="Picture"> {{Picture}} </div>
-<div data-field="Glossary"> {{Glossary}} </div>
-<div data-field="Hint"> {{Hint}} </div>
-<div data-field="IsWordAndSentenceCard"> {{IsWordAndSentenceCard}} </div>
-<div data-field="IsClickCard"> {{IsClickCard}} </div>
-<div data-field="IsSentenceCard"> {{IsSentenceCard}} </div>
-<div data-field="IsAudioCard"> {{IsAudioCard}} </div>
-<div data-field="PitchPosition"> {{PitchPosition}} </div>
-<div data-field="PitchCategories"> {{PitchCategories}} </div>
-<div data-field="Frequency"> {{Frequency}} </div>
-<div data-field="FreqSort"> {{FreqSort}} </div>
-<div data-field="MiscInfo"> {{MiscInfo}} </div>
-<div data-field="Tags"> {{Tags}} </div>
-<div data-field="furigana:ExpressionFurigana" > {{furigana:ExpressionFurigana}} </div>
-<div data-field="kana:ExpressionFurigana"> {{kana:ExpressionFurigana}} </div>
-<div data-field="furigana:Sentence"> {{furigana:Sentence}} </div>
-<div data-field="kanji:Sentence"> {{kanji:Sentence}} </div>
-<div data-field="furigana:SentenceFurigana"> {{furigana:SentenceFurigana}} </div>
-<div data-field="kana:SentenceFurigana"> {{kana:SentenceFurigana}} </div>
+<div data-field="Expression">{{Expression}}</div>
+<div data-field="ExpressionFurigana">{{ExpressionFurigana}}</div>
+<div data-field="ExpressionReading">{{ExpressionReading}}</div>
+<div data-field="ExpressionAudio">{{ExpressionAudio}}</div>
+<div data-field="SelectionText">{{SelectionText}}</div>
+<div data-field="MainDefinition">{{MainDefinition}}</div>
+<div data-field="DefinitionPicture">{{DefinitionPicture}}</div>
+<div data-field="Sentence">{{Sentence}}</div>
+<div data-field="SentenceFurigana">{{SentenceFurigana}}</div>
+<div data-field="SentenceAudio">{{SentenceAudio}}</div>
+<div data-field="Picture">{{Picture}}</div>
+<div data-field="Glossary">{{Glossary}}</div>
+<div data-field="Hint">{{Hint}}</div>
+<div data-field="IsWordAndSentenceCard">{{IsWordAndSentenceCard}}</div>
+<div data-field="IsClickCard">{{IsClickCard}}</div>
+<div data-field="IsSentenceCard">{{IsSentenceCard}}</div>
+<div data-field="IsAudioCard">{{IsAudioCard}}</div>
+<div data-field="PitchPosition">{{PitchPosition}}</div>
+<div data-field="PitchCategories">{{PitchCategories}}</div>
+<div data-field="Frequency">{{Frequency}}</div>
+<div data-field="FreqSort">{{FreqSort}}</div>
+<div data-field="MiscInfo">{{MiscInfo}}</div>
+<div data-field="Tags">{{Tags}}</div>
+<div data-field="furigana:ExpressionFurigana">{{furigana:ExpressionFurigana}}</div>
+<div data-field="kana:ExpressionFurigana">{{kana:ExpressionFurigana}}</div>
+<div data-field="furigana:Sentence">{{furigana:Sentence}}</div>
+<div data-field="kanji:Sentence">{{kanji:Sentence}}</div>
+<div data-field="furigana:SentenceFurigana">{{furigana:SentenceFurigana}}</div>
+<div data-field="kana:SentenceFurigana">{{kana:SentenceFurigana}}</div>
 </div>
 
 <div id="root"></div>
@@ -36,10 +36,5 @@
 <script type="module">
 import { init } from "./_kiku.js";
 
-const scripts = document.querySelectorAll("#anki-fields > div");
-const fields = Object.fromEntries(
-  Array.from(scripts).map((el) => [el.dataset.field, el.innerHTML.trim()]),
-);
-console.log(fields);
-init({ ankiFields: fields, side: "back" });
+init({ side: "back" });
 </script>

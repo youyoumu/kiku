@@ -1,20 +1,19 @@
 <!-- biome-ignore format: this looks nicer -->
 <div style="display: none" id="anki-fields">
-<div data-field="Expression"> {{Expression}} </div>
-<div data-field="Hint"> {{Hint}} </div>
-<div data-field="IsWordAndSentenceCard"> {{IsWordAndSentenceCard}} </div>
-<div data-field="IsClickCard"> {{IsClickCard}} </div>
-<div data-field="IsSentenceCard"> {{IsSentenceCard}} </div>
-<div data-field="IsAudioCard"> {{IsAudioCard}} </div>
+<div data-field="Expression">{{Expression}}</div>
+<div data-field="Hint">{{Hint}}</div>
+<div data-field="IsWordAndSentenceCard">{{IsWordAndSentenceCard}}</div>
+<div data-field="IsClickCard">{{IsClickCard}}</div>
+<div data-field="IsSentenceCard">{{IsSentenceCard}}</div>
+<div data-field="IsAudioCard">{{IsAudioCard}}</div>
 {{#IsAudioCard}}
-<div data-field="ExpressionAudio"> {{ExpressionAudio}} </div>
-<div data-field="SentenceAudio"> {{SentenceAudio}} </div>
+<div data-field="ExpressionAudio">{{ExpressionAudio}}</div>
+<div data-field="SentenceAudio">{{SentenceAudio}}</div>
 {{/IsAudioCard}}
 {{^IsAudioCard}}
 <div data-field="ExpressionAudio"></div>
 <div data-field="SentenceAudio"></div>
 {{/IsAudioCard}}
-
 <div data-field="kanji:Sentence"> {{kanji:Sentence}} </div>
 </div>
 
@@ -23,10 +22,5 @@
 <script type="module">
 import { init } from "./_kiku.js";
 
-const scripts = document.querySelectorAll("#anki-fields > div");
-const fields = Object.fromEntries(
-  Array.from(scripts).map((el) => [el.dataset.field, el.innerHTML.trim()]),
-);
-console.log(fields);
-init({ ankiFields: fields, side: "front" });
+init({ side: "front" });
 </script>

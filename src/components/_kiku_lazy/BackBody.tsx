@@ -1,6 +1,8 @@
 import { createSignal, onMount } from "solid-js";
 import { useAnkiField, useConfig } from "../shared/Context";
 
+let relax = false;
+
 export default function BackBody() {
   let sentenceEl: HTMLDivElement | undefined;
   const [config] = useConfig();
@@ -35,10 +37,16 @@ export default function BackBody() {
         el.classList.add(..."[&_rt]:invisible hover:[&_rt]:visible".split(" "));
       });
     }
+    relax = true;
   });
 
   return (
-    <div class="flex sm:flex-col gap-8 flex-col-reverse animate-fade-in">
+    <div
+      class="flex sm:flex-col gap-8 flex-col-reverse"
+      classList={{
+        "animate-fade-in": relax,
+      }}
+    >
       <div class="flex flex-col gap-4 items-center text-center">
         <div
           class={`[&_b]:text-base-content-primary ${config.fontSizeBaseSentence} ${config.fontSizeSmSentence}`}

@@ -113,7 +113,7 @@ export function Back() {
               {img}
             </div>
           </div>
-          {ready() && <Lazy.BackBody />}
+          <Lazy.BackBody />
           {ready() && (
             <>
               <Lazy.BackFooter tags={tags} />

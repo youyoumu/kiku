@@ -17,45 +17,21 @@ import { type KikuConfig, validateConfig } from "./util/config.ts";
 import { type OnlineFont, setOnlineFont } from "./util/fonts.ts";
 import { env } from "./util/general.ts";
 
-export async function init({
-  ankiFields,
-  side,
-}: {
-  ankiFields: AnkiFields;
-  side: "front" | "back";
-}) {
+export async function init({ side }: { side: "front" | "back" }) {
   try {
     const root = document.getElementById("root");
     if (!root) throw new Error("root not found");
-
-    const divs = document.querySelectorAll("#anki-fields > div");
-    let ankiFieldNodes = Object.fromEntries(
-      Array.from(divs).map((el) => [
-        (el as HTMLDivElement).dataset.field,
-        el.childNodes,
-      ]),
-    ) as AnkiFieldNodes;
-
     const shadow = root.attachShadow({ mode: "closed" });
-    let config_: KikuConfig;
-    try {
-      config_ = validateConfig(
-        await (await fetch(env.KIKU_CONFIG_FILE)).json(),
-      );
-    } catch (e) {
-      throw new Error("Failed to load config", { cause: e });
-    }
+    let divs: NodeListOf<Element> | Element[] =
+      document.querySelectorAll("#anki-fields > div");
 
     if (import.meta.env.DEV) {
-      const divs = Object.entries(ankiFields).map(([key, value]) => {
+      divs = Object.entries(exampleFields).map(([key, value]) => {
         const div = document.createElement("div");
         div.dataset.field = key;
         div.innerHTML = value;
         return div;
       });
-      ankiFieldNodes = Object.fromEntries(
-        Array.from(divs).map((el) => [el.dataset.field, el.childNodes]),
-      ) as AnkiFieldNodes;
 
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -70,6 +46,28 @@ export async function init({
         shadow.appendChild(style.cloneNode(true));
       }
     }
+
+    let config_: KikuConfig;
+    try {
+      config_ = validateConfig(
+        await (await fetch(env.KIKU_CONFIG_FILE)).json(),
+      );
+    } catch (e) {
+      throw new Error("Failed to load config", { cause: e });
+    }
+
+    const ankiFields = Object.fromEntries(
+      Array.from(divs).map((el) => [
+        (el as HTMLDivElement).dataset.field,
+        el.innerHTML.trim(),
+      ]),
+    ) as AnkiFields;
+    const ankiFieldNodes = Object.fromEntries(
+      Array.from(divs).map((el) => [
+        (el as HTMLDivElement).dataset.field,
+        el.childNodes,
+      ]),
+    ) as AnkiFieldNodes;
 
     document.documentElement.setAttribute("data-theme", config_.theme);
     root.setAttribute("data-theme", config_.theme);
@@ -134,5 +132,5 @@ if (import.meta.env.DEV) {
   });
   // @ts-expect-error
   const side = params.side;
-  init({ ankiFields: exampleFields, side: side ?? "back" });
+  init({ side: side ?? "back" });
 }
