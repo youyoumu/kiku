@@ -55,7 +55,7 @@ export function Back() {
     setTimeout(() => {
       setReady(true);
       globalThis.KIKU_STATE.relax = true;
-    }, 2000);
+    }, 1000);
   });
 
   return (
@@ -105,12 +105,14 @@ export function Back() {
               >
                 {ankiFields$.PitchPosition && ready() ? (
                   <AnkiFieldContextProvider value={{ ankiFields: ankiFields$ }}>
-                    <Suspense fallback={<>&nbsp;</>}>
+                    <Suspense fallback={<span>&nbsp;</span>}>
                       <Lazy.Pitches />
                     </Suspense>
                   </AnkiFieldContextProvider>
+                ) : isServer ? (
+                  "{{#PitchPosition}}<span>&nbsp;</span>{{/PitchPosition}}"
                 ) : (
-                  ankiFields$.PitchPosition && <>&nbsp;</>
+                  ankiFields$.PitchPosition && <span>&nbsp;</span>
                 )}
               </div>
               <div class="flex gap-2 sm:h-8 sm:mt-2">
