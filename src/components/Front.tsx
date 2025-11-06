@@ -1,25 +1,23 @@
 import { createSignal, lazy, onMount } from "solid-js";
+import type { AnkiFields } from "#/types";
+import { getAnkiFields } from "#/util/general";
 import { Layout } from "./Layout";
-import { useAnkiField, useConfig } from "./shared/Context";
+import { AnkiFieldContextProvider } from "./shared/Context";
 
+// biome-ignore format: this looks nicer
 const Lazy = {
-  AudioButtons: lazy(async () => ({
-    default: (await import("./_kiku_lazy")).AudioButtons,
-  })),
-  CacheJoyoKanji: lazy(async () => ({
-    default: (await import("./_kiku_lazy")).CacheJoyoKanji,
-  })),
+  AudioButtons: lazy(async () => ({ default: (await import("./_kiku_lazy")).AudioButtons, })),
+  CacheJoyoKanji: lazy(async () => ({ default: (await import("./_kiku_lazy")).CacheJoyoKanji, })),
 };
 
 export function Front() {
   const expressionAudioRefSignal = createSignal<HTMLDivElement | undefined>();
   const sentenceAudioRefSignal = createSignal<HTMLDivElement | undefined>();
 
-  const [config] = useConfig();
-  const { ankiFields } = useAnkiField<"front">();
-
   const [ready, setReady] = createSignal(false);
   const [clicked, setClicked] = createSignal(false);
+
+  const ankiFields$ = getAnkiFields<"front">();
 
   onMount(() => {
     setTimeout(() => {
@@ -29,7 +27,11 @@ export function Front() {
 
   return (
     <>
-      <Lazy.CacheJoyoKanji />
+      <AnkiFieldContextProvider
+        value={{ ankiFields: ankiFields$ as AnkiFields }}
+      >
+        <Lazy.CacheJoyoKanji />
+      </AnkiFieldContextProvider>
       <Layout>
         <div class="flex justify-end flex-row">
           <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block h-5"></div>
@@ -44,44 +46,48 @@ export function Front() {
               class="expression"
               classList={{
                 "border-b-2 border-dotted border-base-content-soft":
-                  !!ankiFields.IsClickCard,
+                  !!ankiFields$.IsClickCard,
               }}
               innerHTML={
-                !ankiFields.IsSentenceCard && !ankiFields.IsAudioCard
-                  ? ankiFields.Expression
+                !ankiFields$.IsSentenceCard && !ankiFields$.IsAudioCard
+                  ? ankiFields$.Expression
                   : "?"
               }
             ></div>
           </div>
         </div>
 
-        {(ankiFields.IsAudioCard ||
-          ankiFields.IsSentenceCard ||
-          ankiFields.IsWordAndSentenceCard ||
-          (ankiFields.IsClickCard && clicked())) && (
+        {(ankiFields$.IsAudioCard ||
+          ankiFields$.IsSentenceCard ||
+          ankiFields$.IsWordAndSentenceCard ||
+          (ankiFields$.IsClickCard && clicked())) && (
           <div class="flex flex-col gap-4 items-center text-center">
             <div
               class={`[&_b]:text-base-content-primary sentence`}
-              innerHTML={ankiFields["kanji:Sentence"]}
+              innerHTML={ankiFields$["kanji:Sentence"]}
             ></div>
           </div>
         )}
 
-        {ready() && ankiFields.IsAudioCard && (
+        {ready() && ankiFields$.IsAudioCard && (
           <div class="flex gap-4 justify-center">
-            <Lazy.AudioButtons
-              position={3}
-              expressionAudioRefSignal={expressionAudioRefSignal}
-              sentenceAudioRefSignal={sentenceAudioRefSignal}
-            />
+            <AnkiFieldContextProvider
+              value={{ ankiFields: ankiFields$ as AnkiFields }}
+            >
+              <Lazy.AudioButtons
+                position={3}
+                expressionAudioRefSignal={expressionAudioRefSignal}
+                sentenceAudioRefSignal={sentenceAudioRefSignal}
+              />
+            </AnkiFieldContextProvider>
           </div>
         )}
 
-        {ankiFields.Hint && (
+        {ankiFields$.Hint && (
           <div
             class={`flex gap-2 items-center justify-center text-center border-t-1 hint`}
           >
-            <div innerHTML={ankiFields.Hint}></div>
+            <div innerHTML={ankiFields$.Hint}></div>
           </div>
         )}
       </Layout>

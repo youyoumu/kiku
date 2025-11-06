@@ -1,12 +1,8 @@
 import { createSignal, lazy, onMount, Suspense } from "solid-js";
 import { isServer } from "solid-js/web";
-import {
-  type AnkiBackFields,
-  ankiFieldsSkeleton,
-  exampleFields6,
-} from "#/types";
+import { getAnkiFields } from "#/util/general";
 import { Layout } from "./Layout";
-import { AnkiFieldContextProvider, useConfig } from "./shared/Context";
+import { AnkiFieldContextProvider } from "./shared/Context";
 
 // biome-ignore format: this looks nicer
 const Lazy = {
@@ -23,30 +19,11 @@ export function Back() {
   const expressionAudioRefSignal = createSignal<HTMLDivElement | undefined>();
   const sentenceAudioRefSignal = createSignal<HTMLDivElement | undefined>();
 
-  const [config] = useConfig();
   const [showSettings, setShowSettings] = createSignal(false);
   const [ready, setReady] = createSignal(false);
   const [imageModal, setImageModal] = createSignal<string>();
 
-  let divs: NodeListOf<Element> | Element[] | undefined = isServer
-    ? undefined
-    : document.querySelectorAll("#anki-fields > div");
-  if (import.meta.env.DEV && !isServer) {
-    divs = Object.entries(exampleFields6).map(([key, value]) => {
-      const div = document.createElement("div");
-      div.dataset.field = key;
-      div.innerHTML = value;
-      return div;
-    });
-  }
-  const ankiFields$: AnkiBackFields = divs
-    ? Object.fromEntries(
-        Array.from(divs).map((el) => [
-          (el as HTMLDivElement).dataset.field,
-          el.innerHTML.trim(),
-        ]),
-      )
-    : ankiFieldsSkeleton;
+  const ankiFields$ = getAnkiFields<"back">();
 
   const tags = ankiFields$.Tags.split(" ");
   const isNsfw = tags.map((tag) => tag.toLowerCase()).includes("nsfw");

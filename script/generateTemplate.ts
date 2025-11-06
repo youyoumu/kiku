@@ -1,27 +1,30 @@
-import { readFile, writeFile } from "fs/promises";
-import { join } from "path";
+import { readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { getSsrTemplate } from "./ssr.js";
 
 async function main() {
-  const frontPath = join(import.meta.dirname, "../src/front.html");
+  const frontSrcPath = join(import.meta.dirname, "../src/front.html");
   const frontDestPath = join(import.meta.dirname, "../dist/front.html");
-  const backPath = join(import.meta.dirname, "../src/back.html");
+  const backSrcPath = join(import.meta.dirname, "../src/back.html");
   const backDestPath = join(import.meta.dirname, "../dist/back.html");
 
-  const [front, back] = await Promise.all([
-    readFile(frontPath, "utf8"),
-    readFile(backPath, "utf8"),
+  const [frontSrc, backSrc] = await Promise.all([
+    readFile(frontSrcPath, "utf8"),
+    readFile(backSrcPath, "utf8"),
   ]);
 
-  let { backTemplate, hydrationScript } = getSsrTemplate();
+  let { frontTemplate, backTemplate, hydrationScript } = getSsrTemplate();
 
-  backTemplate = back.replace("<!-- SSR_TEMPLATE -->", backTemplate);
-  backTemplate = backTemplate.replace(
-    "<!-- HYDRATION_SCRIPT -->",
-    hydrationScript,
-  );
-  await writeFile(backDestPath, backTemplate);
-  await writeFile(frontDestPath, front);
+  frontTemplate = frontSrc
+    .replace("<!-- SSR_TEMPLATE -->", frontTemplate)
+    .replace("<!-- HYDRATION_SCRIPT -->", hydrationScript);
+  backTemplate = backSrc
+    .replace("<!-- SSR_TEMPLATE -->", backTemplate)
+    .replace("<!-- HYDRATION_SCRIPT -->", hydrationScript);
+  await Promise.all([
+    writeFile(frontDestPath, frontTemplate),
+    writeFile(backDestPath, backTemplate),
+  ]);
 }
 main()
   .catch((err) => {

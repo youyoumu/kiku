@@ -1,13 +1,11 @@
 /* @refresh reload */
 import { hydrate, render } from "solid-js/web";
 import { Back } from "./components/Back.tsx";
-import { type AnkiFields, exampleFields6 } from "./types.ts";
 import "./tailwind.css";
 import { createStore } from "solid-js/store";
 import type { ResponsiveFontSize } from "./components/_kiku_lazy/util/tailwind.ts";
 import { Front } from "./components/Front.tsx";
 import {
-  AnkiFieldContextProvider,
   BreakpointContextProvider,
   ConfigContextProvider,
 } from "./components/shared/Context.tsx";
@@ -75,35 +73,15 @@ export async function init({
     })()
     updateConfigDataset(root, config$);
 
-    let divs: NodeListOf<Element> | Element[] =
-      document.querySelectorAll("#anki-fields > div");
-    if (import.meta.env.DEV) {
-      divs = Object.entries(exampleFields6).map(([key, value]) => {
-        const div = document.createElement("div");
-        div.dataset.field = key;
-        div.innerHTML = value;
-        return div;
-      });
-    }
-    const ankiFields = Object.fromEntries(
-      Array.from(divs).map((el) => [
-        (el as HTMLDivElement).dataset.field,
-        el.innerHTML.trim(),
-      ]),
-    ) as AnkiFields;
-
-    console.log("DEBUG[876]: ankiFields=", ankiFields);
     const [config, setConfig] = createStore(config$);
     window.KIKU_STATE.relax = false;
 
     if (side === "front") {
       const App = () => (
         <BreakpointContextProvider>
-          <AnkiFieldContextProvider value={{ ankiFields }}>
-            <ConfigContextProvider value={[config, setConfig]}>
-              <Front />
-            </ConfigContextProvider>
-          </AnkiFieldContextProvider>
+          <ConfigContextProvider value={[config, setConfig]}>
+            <Front />
+          </ConfigContextProvider>
         </BreakpointContextProvider>
       );
       if (ssr) return hydrate(App, root);

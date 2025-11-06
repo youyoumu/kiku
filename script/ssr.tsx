@@ -1,5 +1,6 @@
 import { createStore } from "solid-js/store";
 import { generateHydrationScript, renderToString } from "solid-js/web";
+import { Front } from "#/components/Front";
 import { Back } from "../src/components/Back";
 import {
   BreakpointContextProvider,
@@ -14,6 +15,13 @@ globalThis.KIKU_STATE = {
 };
 
 export function getSsrTemplate() {
+  const frontTemplate = renderToString(() => (
+    <BreakpointContextProvider>
+      <ConfigContextProvider value={[config, setConfig]}>
+        <Front />
+      </ConfigContextProvider>
+    </BreakpointContextProvider>
+  ));
   const backTemplate = renderToString(() => (
     <BreakpointContextProvider>
       <ConfigContextProvider value={[config, setConfig]}>
@@ -21,9 +29,11 @@ export function getSsrTemplate() {
       </ConfigContextProvider>
     </BreakpointContextProvider>
   ));
+
   const hydrationScript = generateHydrationScript();
 
   const result = {
+    frontTemplate,
     backTemplate,
     hydrationScript,
   };
