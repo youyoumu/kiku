@@ -1,4 +1,5 @@
 import { createSignal, lazy, onMount } from "solid-js";
+import { isServer } from "solid-js/web";
 import type { AnkiFields } from "#/types";
 import { getAnkiFields } from "#/util/general";
 import { Layout } from "./Layout";
@@ -22,7 +23,7 @@ export function Front() {
   onMount(() => {
     setTimeout(() => {
       setReady(true);
-    }, 50);
+    }, 0);
   });
 
   return (
@@ -49,11 +50,17 @@ export function Front() {
                   !!ankiFields$.IsClickCard,
               }}
               innerHTML={
-                !ankiFields$.IsSentenceCard && !ankiFields$.IsAudioCard
-                  ? ankiFields$.Expression
-                  : "?"
+                isServer
+                  ? undefined
+                  : !ankiFields$.IsSentenceCard && !ankiFields$.IsAudioCard
+                    ? ankiFields$.Expression
+                    : "?"
               }
-            ></div>
+            >
+              {isServer
+                ? "{{#IsSentenceCard}} {{#IsAudioCard}} <span>?</span> {{/IsAudioCard}} {{/IsSentenceCard}} {{^IsSentenceCard}} {{^IsAudioCard}} {{Expression}} {{/IsAudioCard}} {{/IsSentenceCard}}"
+                : undefined}
+            </div>
           </div>
         </div>
 
@@ -64,8 +71,10 @@ export function Front() {
           <div class="flex flex-col gap-4 items-center text-center">
             <div
               class={`[&_b]:text-base-content-primary sentence`}
-              innerHTML={ankiFields$["kanji:Sentence"]}
-            ></div>
+              innerHTML={isServer ? undefined : ankiFields$["kanji:Sentence"]}
+            >
+              {isServer ? "{{kanji:Sentence}}" : undefined}
+            </div>
           </div>
         )}
 
@@ -87,7 +96,9 @@ export function Front() {
           <div
             class={`flex gap-2 items-center justify-center text-center border-t-1 hint`}
           >
-            <div innerHTML={ankiFields$.Hint}></div>
+            <div innerHTML={isServer ? undefined : ankiFields$.Hint}>
+              {isServer ? "{{Hint}}" : undefined}
+            </div>
           </div>
         )}
       </Layout>

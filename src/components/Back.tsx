@@ -32,7 +32,7 @@ export function Back() {
     setTimeout(() => {
       setReady(true);
       globalThis.KIKU_STATE.relax = true;
-    }, 1000);
+    }, 0);
   });
 
   return (
