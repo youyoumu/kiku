@@ -19,9 +19,10 @@ declare global {
     relax?: boolean;
     shadow?: ShadowRoot;
     initDelay?: number;
+    config?: KikuConfig;
   };
 }
-window.KIKU_STATE = {};
+globalThis.KIKU_STATE = {};
 
 export async function init({ side }: { side: "front" | "back" }) {
   try {
@@ -31,8 +32,30 @@ export async function init({ side }: { side: "front" | "back" }) {
     const shadow = root.attachShadow({ mode: "closed" });
     root.appendChild(shadow);
     if (template) shadow.appendChild(template.content);
-
     window.KIKU_STATE.shadow = shadow;
+
+    if (!import.meta.env.DEV) {
+      const qa = document.getElementById("qa");
+      const style = qa?.querySelector("style");
+      if (style) {
+        shadow.appendChild(style.cloneNode(true));
+      }
+    }
+
+    let config$: KikuConfig;
+    try {
+      if (globalThis.KIKU_STATE.config) config$ = globalThis.KIKU_STATE.config;
+      config$ = validateConfig(
+        await (await fetch(env.KIKU_CONFIG_FILE)).json(),
+      );
+      globalThis.KIKU_STATE.config = config$;
+    } catch (e) {
+      throw new Error("Failed to load config", { cause: e });
+    }
+    document.documentElement.setAttribute("data-theme", config$.theme);
+    root.setAttribute("data-theme", config$.theme);
+    setOnlineFont(config$.onlineFont as OnlineFont);
+
     let divs: NodeListOf<Element> | Element[] =
       document.querySelectorAll("#anki-fields > div");
 
@@ -50,21 +73,6 @@ export async function init({ side }: { side: "front" | "back" }) {
       const link2 = link.cloneNode();
       document.head.appendChild(link);
       shadow.appendChild(link2);
-    } else {
-      const qa = document.getElementById("qa");
-      const style = qa?.querySelector("style");
-      if (style) {
-        shadow.appendChild(style.cloneNode(true));
-      }
-    }
-
-    let config_: KikuConfig;
-    try {
-      config_ = validateConfig(
-        await (await fetch(env.KIKU_CONFIG_FILE)).json(),
-      );
-    } catch (e) {
-      throw new Error("Failed to load config", { cause: e });
     }
 
     const ankiFields = Object.fromEntries(
@@ -76,11 +84,7 @@ export async function init({ side }: { side: "front" | "back" }) {
 
     console.log("DEBUG[876]: ankiFields=", ankiFields);
 
-    document.documentElement.setAttribute("data-theme", config_.theme);
-    root.setAttribute("data-theme", config_.theme);
-    setOnlineFont(config_.onlineFont as OnlineFont);
-
-    const [config, setConfig] = createStore(config_);
+    const [config, setConfig] = createStore(config$);
 
     window.KIKU_STATE.relax = false;
     if (side === "front") {
@@ -98,11 +102,9 @@ export async function init({ side }: { side: "front" | "back" }) {
     } else if (side === "back") {
       const App = () => (
         <BreakpointContextProvider>
-          <AnkiFieldContextProvider value={{ ankiFields }}>
-            <ConfigContextProvider value={[config, setConfig]}>
-              <Back />
-            </ConfigContextProvider>
-          </AnkiFieldContextProvider>
+          <ConfigContextProvider value={[config, setConfig]}>
+            <Back />
+          </ConfigContextProvider>
         </BreakpointContextProvider>
       );
       if (template) return hydrate(App, shadow);

@@ -89,6 +89,39 @@ export type AnkiFrontFieldNodes = ExtractUsedFields<
 export type AnkiBackFieldNodes = AnkiFieldNodes;
 
 // biome-ignore format: this looks nicer
+export const ankiFieldsSkeleton: AnkiFields = {
+  "Expression": "",
+  "ExpressionFurigana": "",
+  "ExpressionReading": "",
+  "ExpressionAudio": "",
+  "SelectionText": "",
+  "MainDefinition": "",
+  "DefinitionPicture": "",
+  "Sentence": "",
+  "SentenceFurigana": "",
+  "SentenceAudio": "",
+  "Picture": "",
+  "Glossary": "",
+  "Hint": "",
+  "IsWordAndSentenceCard": "",
+  "IsClickCard": "",
+  "IsSentenceCard": "",
+  "IsAudioCard": "",
+  "PitchPosition": "",
+  "PitchCategories": "",
+  "Frequency": "",
+  "FreqSort": "",
+  "MiscInfo": "",
+  "Tags": "",
+  "furigana:ExpressionFurigana": "",
+  "kana:ExpressionFurigana": "",
+  "furigana:Sentence": "",
+  "kanji:Sentence": "",
+  "furigana:SentenceFurigana": "",
+  "kana:SentenceFurigana": ""
+}
+
+// biome-ignore format: this looks nicer
 export const exampleFields: AnkiFields = {
   "Expression": "十中八九",
   "ExpressionFurigana": "十中八九[じっちゅうはっく]",

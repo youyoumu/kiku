@@ -16,6 +16,7 @@
     "check:write": "biome check --write .",
     "copyDist": "node ./script/copyDist.ts",
     "updateNoteType": "node ./script/updateNoteType.ts",
+    "ssr": "npx vite-node ./src/ssr.tsx",
     "apply": "pnpm run build && pnpm run copyDist && pnpm run updateNoteType"
   },
   "dependencies": {

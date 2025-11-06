@@ -1,6 +1,15 @@
 import { createSignal, lazy, onMount, Suspense } from "solid-js";
+import {
+  type AnkiBackFields,
+  ankiFieldsSkeleton,
+  exampleFields6,
+} from "#/types";
 import { Layout } from "./Layout";
-import { useAnkiField, useBreakpoint, useConfig } from "./shared/Context";
+import {
+  AnkiFieldContextProvider,
+  useBreakpoint,
+  useConfig,
+} from "./shared/Context";
 
 const Lazy = {
   Settings: lazy(async () => ({
@@ -32,39 +41,69 @@ export function Back() {
 
   const [config] = useConfig();
   const bp = useBreakpoint();
-  const { ankiFields } = useAnkiField<"back">();
   const [showSettings, setShowSettings] = createSignal(false);
+  const [ankiFields, setAnkiFields] =
+    createSignal<AnkiBackFields>(ankiFieldsSkeleton);
   const [ready, setReady] = createSignal(false);
   const [picture, setPicture] = createSignal<string>();
   const [imageModal, setImageModal] = createSignal<string>();
 
-  const tags = ankiFields.Tags.split(" ");
-  const isNsfw = tags.map((tag) => tag.toLowerCase()).includes("nsfw");
+  const tags = () => ankiFields().Tags.split(" ") ?? [];
+  const isNsfw = () =>
+    tags()
+      .map((tag) => tag.toLowerCase())
+      .includes("nsfw");
 
   onMount(() => {
     setTimeout(() => {
       setReady(true);
       globalThis.KIKU_STATE.relax = true;
-    }, 0);
+    }, 760);
 
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = ankiFields.Picture;
-    setPicture(tempDiv.querySelector("img")?.outerHTML ?? "");
+    setTimeout(() => {
+      let divs: NodeListOf<Element> | Element[] =
+        document.querySelectorAll("#anki-fields > div");
+      if (import.meta.env.DEV) {
+        divs = Object.entries(exampleFields6).map(([key, value]) => {
+          const div = document.createElement("div");
+          div.dataset.field = key;
+          div.innerHTML = value;
+          return div;
+        });
+      }
+      const ankiFields$ = Object.fromEntries(
+        Array.from(divs).map((el) => [
+          (el as HTMLDivElement).dataset.field,
+          el.innerHTML.trim(),
+        ]),
+      ) as AnkiBackFields;
+      setAnkiFields(ankiFields$);
+
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = ankiFields().Picture;
+      setPicture(tempDiv.querySelector("img")?.outerHTML ?? "");
+    }, 500);
   });
 
   return (
     <Layout>
       {showSettings() && (
-        <Lazy.Settings
-          onBackClick={() => setShowSettings(false)}
-          onCancelClick={() => setShowSettings(false)}
-        />
+        <AnkiFieldContextProvider value={{ ankiFields: ankiFields() }}>
+          <Lazy.Settings
+            onBackClick={() => setShowSettings(false)}
+            onCancelClick={() => setShowSettings(false)}
+          />
+        </AnkiFieldContextProvider>
       )}
       {!showSettings() && (
         <>
           <div class="flex justify-between flex-row h-5 min-h-5">
             {ready() && (
-              <Lazy.BackHeader onSettingsClick={() => setShowSettings(true)} />
+              <AnkiFieldContextProvider value={{ ankiFields: ankiFields() }}>
+                <Lazy.BackHeader
+                  onSettingsClick={() => setShowSettings(true)}
+                />
+              </AnkiFieldContextProvider>
             )}
           </div>
           <div
@@ -77,20 +116,24 @@ export function Back() {
               <div
                 class={`${config.fontSizeBaseExpression} ${config.fontSizeSmExpression}`}
                 innerHTML={
-                  ankiFields.ExpressionFurigana
-                    ? ankiFields["furigana:ExpressionFurigana"]
-                    : ankiFields.Expression
+                  ankiFields().ExpressionFurigana
+                    ? ankiFields()["furigana:ExpressionFurigana"]
+                    : ankiFields().Expression
                 }
               ></div>
               <div
                 class={`mt-6 flex gap-4 ${config.fontSizeBasePitch} ${config.fontSizeSmPitch}`}
               >
-                {ankiFields.PitchPosition && ready() ? (
-                  <Suspense fallback={<>&nbsp;</>}>
-                    <Lazy.Pitches />
-                  </Suspense>
+                {ankiFields().PitchPosition && ready() ? (
+                  <AnkiFieldContextProvider
+                    value={{ ankiFields: ankiFields() }}
+                  >
+                    <Suspense fallback={<>&nbsp;</>}>
+                      <Lazy.Pitches />
+                    </Suspense>
+                  </AnkiFieldContextProvider>
                 ) : (
-                  ankiFields.PitchPosition && <>&nbsp;</>
+                  ankiFields().PitchPosition && <>&nbsp;</>
                 )}
               </div>
               <div
@@ -100,23 +143,27 @@ export function Back() {
                 }}
               >
                 {ready() && (
-                  <Lazy.AudioButtons
-                    position={1}
-                    expressionAudioRefSignal={expressionAudioRefSignal}
-                    sentenceAudioRefSignal={sentenceAudioRefSignal}
-                  />
+                  <AnkiFieldContextProvider
+                    value={{ ankiFields: ankiFields() }}
+                  >
+                    <Lazy.AudioButtons
+                      position={1}
+                      expressionAudioRefSignal={expressionAudioRefSignal}
+                      sentenceAudioRefSignal={sentenceAudioRefSignal}
+                    />
+                  </AnkiFieldContextProvider>
                 )}
               </div>
             </div>
 
-            {ankiFields.Picture && (
+            {ankiFields().Picture && (
               <div class="bg-base-200 rounded-lg relative overflow-hidden">
                 {!bp.isAtLeast("sm") && (
                   <div
                     class="[&>img]:scale-110 [&>img]:size-full [&>img]:filter [&>img]:object-cover [&>img]:object-center [&>img]:brightness-50 [&>img]:absolute"
                     classList={{
-                      "[&>img]:blur-[16px]": isNsfw,
-                      "[&>img]:blur-[4px]": !isNsfw,
+                      "[&>img]:blur-[16px]": isNsfw(),
+                      "[&>img]:blur-[4px]": !isNsfw(),
                     }}
                     innerHTML={picture()}
                   ></div>
@@ -126,7 +173,7 @@ export function Back() {
                 [&_img]:transition-[filter] [&_img]:hover:filter-none cursor-pointer "
                   classList={{
                     "[&_img]:filter [&_img]:blur-[16px] [&_img]:brightness-50":
-                      isNsfw,
+                      isNsfw(),
                   }}
                   on:click={() => picture && setImageModal(picture())}
                   innerHTML={picture()}
@@ -135,29 +182,33 @@ export function Back() {
             )}
           </div>
           {ready() && (
-            <Lazy.BackBody
-              onDefinitionPictureClick={(picture) => {
-                setImageModal(picture);
-              }}
-            />
+            <AnkiFieldContextProvider value={{ ankiFields: ankiFields() }}>
+              <Lazy.BackBody
+                onDefinitionPictureClick={(picture) => {
+                  setImageModal(picture);
+                }}
+              />
+            </AnkiFieldContextProvider>
           )}
           {ready() && (
-            <>
-              <Lazy.BackFooter tags={tags} />
+            <AnkiFieldContextProvider value={{ ankiFields: ankiFields() }}>
+              <Lazy.BackFooter tags={tags()} />
               <Lazy.AudioButtons
                 position={2}
                 expressionAudioRefSignal={expressionAudioRefSignal}
                 sentenceAudioRefSignal={sentenceAudioRefSignal}
               />
-            </>
+            </AnkiFieldContextProvider>
           )}
         </>
       )}
       {ready() && (
-        <Lazy.ImageModal
-          img={imageModal()}
-          on:click={() => setImageModal(undefined)}
-        />
+        <AnkiFieldContextProvider value={{ ankiFields: ankiFields() }}>
+          <Lazy.ImageModal
+            img={imageModal()}
+            on:click={() => setImageModal(undefined)}
+          />
+        </AnkiFieldContextProvider>
       )}
     </Layout>
   );
