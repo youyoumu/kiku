@@ -1,8 +1,9 @@
 import { createStore } from "solid-js/store";
-import { renderToString } from "solid-js/web";
+import { generateHydrationScript, renderToString } from "solid-js/web";
 import { Back } from "./components/Back";
 import {
   AnkiFieldContextProvider,
+  BreakpointContextProvider,
   ConfigContextProvider,
 } from "./components/shared/Context";
 import { exampleFields6 } from "./types";
@@ -10,14 +11,19 @@ import { defaultConfig } from "./util/config";
 
 const [config, setConfig] = createStore(defaultConfig);
 
+globalThis.KIKU_STATE = {};
+
 const html = renderToString(() => (
-  <AnkiFieldContextProvider
-    //@ts-expect-error
-    value={{ ankiFields: exampleFields6, ankiFieldNodes: {} }}
-  >
-    <ConfigContextProvider value={[config, setConfig]}>
-      <Back />
-    </ConfigContextProvider>
-  </AnkiFieldContextProvider>
+  <BreakpointContextProvider>
+    <AnkiFieldContextProvider value={{ ankiFields: exampleFields6 }}>
+      <ConfigContextProvider value={[config, setConfig]}>
+        <Back />
+      </ConfigContextProvider>
+    </AnkiFieldContextProvider>
+  </BreakpointContextProvider>
 ));
-console.log("DEBUG[885]: html=", html);
+const hydrationScript = generateHydrationScript();
+
+console.log(html);
+console.log("\n");
+console.log(hydrationScript);
