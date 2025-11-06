@@ -40,7 +40,9 @@ export async function init({
   ssr?: boolean;
 }) {
   try {
-    const root = document.getElementById("root");
+    const root =
+      document.getElementById("root") ??
+      document.querySelector("[data-kiku-root]");
     if (!root) throw new Error("root not found");
     globalThis.KIKU_STATE.root = root;
 

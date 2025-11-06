@@ -23,6 +23,7 @@ export function ConfigContextProvider(props: {
   const [config] = props.value;
   createEffect(() => {
     ({ ...config });
+    //TODO: system font ?
     if (config.systemFont) setSystemFont(config.systemFont);
     if (!globalThis.KIKU_STATE.root) throw new Error("Missing root");
     updateConfigDataset(globalThis.KIKU_STATE.root, config);

@@ -104,7 +104,9 @@ export default function Settings(props: {
         toast.success("Copied to clipboard!");
       })
       .catch(() => {
-        toast.error("Failed to copy to clipboard!");
+        toast.error(
+          "Copy to clipboard is not supported, you can select and CTRL+C manually.",
+        );
       });
   }
 
@@ -157,6 +159,7 @@ export default function Settings(props: {
       "fontFamily",
       config.systemFont ? config.systemFont : config.onlineFont,
     ]);
+    dataset.unshift(["kikuRoot", "true"]);
     const dataset$ = Object.fromEntries(
       dataset.map(([key, value]) => {
         return [key, value.toString()];
@@ -315,7 +318,7 @@ export default function Settings(props: {
             <div class="flex flex-col gap-4 animate-fade-in ">
               <div class="flex flex-col gap-2">
                 <div class="flex gap-2 items-center">
-                  <div class="text-lg">Root Dataset</div>
+                  <div class="text-lg">Correct Root Dataset</div>
                   <ClipboardCopyIcon
                     class="size-5 text-base-content-calm cursor-pointer"
                     on:click={() => {

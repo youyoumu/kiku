@@ -9,7 +9,9 @@ import { defaultConfig } from "../src/util/config";
 
 const [config, setConfig] = createStore(defaultConfig);
 
-globalThis.KIKU_STATE = {};
+globalThis.KIKU_STATE = {
+  rootDataset: {},
+};
 
 export function getSsrTemplate() {
   const backTemplate = renderToString(() => (
