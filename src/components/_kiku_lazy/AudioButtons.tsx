@@ -17,7 +17,7 @@ export default function BackPlayButton(props: {
   position: 1 | 2 | 3;
 }) {
   const bp = useBreakpoint();
-  const { ankiFields, ankiFieldNodes } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiField<"back">();
   const [expressionAudioRef, setExpressionAudioRef] =
     props.expressionAudioRefSignal;
   const [sentenceAudioRef, setSentenceAudioRef] = props.sentenceAudioRefSignal;
@@ -31,16 +31,16 @@ export default function BackPlayButton(props: {
   if (props.position === 1 || props.position === 3)
     return (
       <>
-        <div style={hiddenStyle} ref={setExpressionAudioRef}>
-          {Array.from(ankiFieldNodes.ExpressionAudio).map((node) =>
-            node.cloneNode(true),
-          )}
-        </div>
-        <div style={hiddenStyle} ref={setSentenceAudioRef}>
-          {Array.from(ankiFieldNodes.SentenceAudio).map((node) =>
-            node.cloneNode(true),
-          )}
-        </div>
+        <div
+          style={hiddenStyle}
+          ref={setExpressionAudioRef}
+          innerHTML={ankiFields.ExpressionAudio}
+        ></div>
+        <div
+          style={hiddenStyle}
+          ref={setSentenceAudioRef}
+          innerHTML={ankiFields.SentenceAudio}
+        ></div>
         {(bp.isAtLeast("sm") || props.position === 3) && (
           <>
             {ankiFields.ExpressionAudio && (

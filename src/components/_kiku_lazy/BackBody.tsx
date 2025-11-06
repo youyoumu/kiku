@@ -7,7 +7,7 @@ export default function BackBody(props: {
   let sentenceEl: HTMLDivElement | undefined;
   let definitionEl: HTMLDivElement | undefined;
   const [config] = useConfig();
-  const { ankiFields, ankiFieldNodes } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiField<"back">();
   const [definitionPage, setDefinitionPage] = createSignal(
     ankiFields.SelectionText ? 0 : 1,
   );
@@ -19,13 +19,6 @@ export default function BackBody(props: {
   ];
   const pagesWithContent = pages.filter((page) => page?.trim());
 
-  const pageNodes = [
-    ankiFieldNodes.SelectionText,
-    ankiFieldNodes.MainDefinition,
-    ankiFieldNodes.Glossary,
-  ];
-
-  const pageNode = () => pageNodes[definitionPage()];
   const pageType = () => {
     if (definitionPage() === 0) return "Selection Text";
     if (definitionPage() === 1) return "Main Definition";
@@ -92,9 +85,7 @@ export default function BackBody(props: {
   });
 
   const tempDiv = document.createElement("div");
-  ankiFieldNodes.DefinitionPicture.forEach((node) => {
-    tempDiv.appendChild(node.cloneNode());
-  });
+  tempDiv.innerHTML = ankiFields.DefinitionPicture;
   const definitionPicture = tempDiv.querySelector("img");
 
   return (
@@ -103,15 +94,12 @@ export default function BackBody(props: {
         <div
           class={`[&_b]:text-base-content-primary ${config.fontSizeBaseSentence} ${config.fontSizeSmSentence}`}
           ref={sentenceEl}
-        >
-          {ankiFields["furigana:SentenceFurigana"]
-            ? Array.from(ankiFieldNodes["furigana:SentenceFurigana"]).map(
-                (node) => node.cloneNode(true),
-              )
-            : Array.from(ankiFieldNodes["kanji:Sentence"]).map((node) =>
-                node.cloneNode(true),
-              )}
-        </div>
+          innerHTML={
+            ankiFields["furigana:SentenceFurigana"]
+              ? ankiFields["furigana:SentenceFurigana"]
+              : ankiFields["kanji:Sentence"]
+          }
+        ></div>
       </div>
       {pagesWithContent.length > 0 && (
         <div>
@@ -131,7 +119,7 @@ export default function BackBody(props: {
                   {definitionPicture}
                 </div>
               )}
-              {Array.from(pageNode()).map((node) => node.cloneNode(true))}
+              <div class="contents" innerHTML={pages[definitionPage()]}></div>
             </div>
             {pagesWithContent.length > 1 && (
               <>

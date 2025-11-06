@@ -16,7 +16,7 @@ export function Front() {
   const sentenceAudioRefSignal = createSignal<HTMLDivElement | undefined>();
 
   const [config] = useConfig();
-  const { ankiFields, ankiFieldNodes } = useAnkiField<"front">();
+  const { ankiFields } = useAnkiField<"front">();
 
   const [ready, setReady] = createSignal(false);
   const [clicked, setClicked] = createSignal(false);
@@ -46,11 +46,12 @@ export function Front() {
                 "border-b-2 border-dotted border-base-content-soft":
                   !!ankiFields.IsClickCard,
               }}
-            >
-              {!ankiFields.IsSentenceCard && !ankiFields.IsAudioCard
-                ? Array.from(ankiFieldNodes.Expression)
-                : "?"}
-            </div>
+              innerHTML={
+                !ankiFields.IsSentenceCard && !ankiFields.IsAudioCard
+                  ? ankiFields.Expression
+                  : "?"
+              }
+            ></div>
           </div>
         </div>
 
@@ -61,9 +62,8 @@ export function Front() {
           <div class="flex flex-col gap-4 items-center text-center">
             <div
               class={`[&_b]:text-base-content-primary ${config.fontSizeBaseSentence} ${config.fontSizeSmSentence}`}
-            >
-              {Array.from(ankiFieldNodes["kanji:Sentence"])}
-            </div>
+              innerHTML={ankiFields["kanji:Sentence"]}
+            ></div>
           </div>
         )}
 
@@ -81,7 +81,7 @@ export function Front() {
           <div
             class={`flex gap-2 items-center justify-center text-center border-t-1 ${config.fontSizeBaseHint} ${config.fontSizeSmHint}`}
           >
-            <div>{Array.from(ankiFieldNodes.Hint)}</div>
+            <div innerHTML={ankiFields.Hint}></div>
           </div>
         )}
       </Layout>

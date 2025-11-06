@@ -1,11 +1,7 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
 import { Back } from "./components/Back.tsx";
-import {
-  type AnkiFieldNodes,
-  type AnkiFields,
-  exampleFields6,
-} from "./types.ts";
+import { type AnkiFields, exampleFields6 } from "./types.ts";
 import "./tailwind.css";
 import { createStore } from "solid-js/store";
 import { Front } from "./components/Front.tsx";
@@ -75,12 +71,6 @@ export async function init({ side }: { side: "front" | "back" }) {
         el.innerHTML.trim(),
       ]),
     ) as AnkiFields;
-    const ankiFieldNodes = Object.fromEntries(
-      Array.from(divs).map((el) => [
-        (el as HTMLDivElement).dataset.field,
-        el.childNodes,
-      ]),
-    ) as AnkiFieldNodes;
 
     console.log("DEBUG[876]: ankiFields=", ankiFields);
 
@@ -95,7 +85,7 @@ export async function init({ side }: { side: "front" | "back" }) {
       render(
         () => (
           <BreakpointContextProvider>
-            <AnkiFieldContextProvider value={{ ankiFields, ankiFieldNodes }}>
+            <AnkiFieldContextProvider value={{ ankiFields }}>
               <ConfigContextProvider value={[config, setConfig]}>
                 <Front />
               </ConfigContextProvider>
@@ -108,7 +98,7 @@ export async function init({ side }: { side: "front" | "back" }) {
       render(
         () => (
           <BreakpointContextProvider>
-            <AnkiFieldContextProvider value={{ ankiFields, ankiFieldNodes }}>
+            <AnkiFieldContextProvider value={{ ankiFields }}>
               <ConfigContextProvider value={[config, setConfig]}>
                 <Back />
               </ConfigContextProvider>

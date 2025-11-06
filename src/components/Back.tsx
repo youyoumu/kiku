@@ -1,4 +1,4 @@
-import { createEffect, createSignal, lazy, onMount, Suspense } from "solid-js";
+import { createSignal, lazy, onMount, Suspense } from "solid-js";
 import { Layout } from "./Layout";
 import { useAnkiField, useBreakpoint, useConfig } from "./shared/Context";
 
@@ -32,7 +32,7 @@ export function Back() {
 
   const [config] = useConfig();
   const bp = useBreakpoint();
-  const { ankiFields, ankiFieldNodes } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiField<"back">();
   const [showSettings, setShowSettings] = createSignal(false);
   const [ready, setReady] = createSignal(false);
   const [showImageModal, setShowImageModal] = createSignal<undefined | Node>();
@@ -48,9 +48,7 @@ export function Back() {
   });
 
   const tempDiv = document.createElement("div");
-  ankiFieldNodes.Picture.forEach((node) => {
-    tempDiv.appendChild(node);
-  });
+  tempDiv.innerHTML = ankiFields.Picture;
   const picture = tempDiv.querySelector("img");
 
   return (
@@ -77,15 +75,12 @@ export function Back() {
             <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
               <div
                 class={`${config.fontSizeBaseExpression} ${config.fontSizeSmExpression}`}
-              >
-                {ankiFields.ExpressionFurigana
-                  ? Array.from(
-                      ankiFieldNodes["furigana:ExpressionFurigana"],
-                    ).map((node) => node.cloneNode(true))
-                  : Array.from(ankiFieldNodes.Expression).map((node) =>
-                      node.cloneNode(true),
-                    )}
-              </div>
+                innerHTML={
+                  ankiFields.ExpressionFurigana
+                    ? ankiFields["furigana:ExpressionFurigana"]
+                    : ankiFields.Expression
+                }
+              ></div>
               <div
                 class={`mt-6 flex gap-4 ${config.fontSizeBasePitch} ${config.fontSizeSmPitch}`}
               >

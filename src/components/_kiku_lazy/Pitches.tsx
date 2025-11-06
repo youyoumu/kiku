@@ -2,12 +2,10 @@ import { hatsuon } from "#/util/hatsuon";
 import { useAnkiField } from "../shared/Context";
 
 export default function Pitches() {
-  const { ankiFields, ankiFieldNodes } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiField<"back">();
 
   const tempDiv = document.createElement("div");
-  ankiFieldNodes.PitchPosition.forEach((node) => {
-    tempDiv.appendChild(node);
-  });
+  tempDiv.innerHTML = ankiFields.PitchPosition;
   const pitchNumber = Array.from(tempDiv.querySelectorAll("span"))
     .filter((el) => {
       return !Number.isNaN(Number(el.innerText));

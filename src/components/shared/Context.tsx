@@ -9,14 +9,7 @@ import {
   useContext,
 } from "solid-js";
 import type { SetStoreFunction, Store } from "solid-js/store";
-import type {
-  AnkiBackFieldNodes,
-  AnkiBackFields,
-  AnkiFieldNodes,
-  AnkiFields,
-  AnkiFrontFieldNodes,
-  AnkiFrontFields,
-} from "../../types";
+import type { AnkiBackFields, AnkiFields, AnkiFrontFields } from "../../types";
 import type { KikuConfig } from "../../util/config";
 import {
   type OnlineFont,
@@ -54,12 +47,11 @@ export function useConfig() {
 
 const AnkiFieldContext = createContext<{
   ankiFields: AnkiFields;
-  ankiFieldNodes: AnkiFieldNodes;
 }>();
 
 export function AnkiFieldContextProvider(props: {
   children: JSX.Element;
-  value: { ankiFields: AnkiFields; ankiFieldNodes: AnkiFieldNodes };
+  value: { ankiFields: AnkiFields };
 }) {
   return (
     <AnkiFieldContext.Provider value={props.value}>
@@ -71,11 +63,9 @@ export function AnkiFieldContextProvider(props: {
 type useAnkiFieldType = {
   front: {
     ankiFields: AnkiFrontFields;
-    ankiFieldNodes: AnkiFrontFieldNodes;
   };
   back: {
     ankiFields: AnkiBackFields;
-    ankiFieldNodes: AnkiBackFieldNodes;
   };
 };
 
