@@ -41,6 +41,7 @@ export async function init({ side }: { side: "front" | "back" }) {
         shadow.appendChild(style.cloneNode(true));
       }
     }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     let config$: KikuConfig;
     try {

@@ -45,8 +45,11 @@ export function Back() {
   const [ankiFields, setAnkiFields] =
     createSignal<AnkiBackFields>(ankiFieldsSkeleton);
   const [ready, setReady] = createSignal(false);
-  const [picture, setPicture] = createSignal<string>();
+  const [picture, setPicture] = createSignal<string | undefined>();
   const [imageModal, setImageModal] = createSignal<string>();
+
+  const pictureInnerHtml = () =>
+    import.meta.env.DEV ? ankiFields().Picture : undefined;
 
   const tags = () => ankiFields().Tags.split(" ") ?? [];
   const isNsfw = () =>
@@ -58,7 +61,7 @@ export function Back() {
     setTimeout(() => {
       setReady(true);
       globalThis.KIKU_STATE.relax = true;
-    }, 760);
+    }, 2000);
 
     setTimeout(() => {
       let divs: NodeListOf<Element> | Element[] =
@@ -82,7 +85,7 @@ export function Back() {
       const tempDiv = document.createElement("div");
       tempDiv.innerHTML = ankiFields().Picture;
       setPicture(tempDiv.querySelector("img")?.outerHTML ?? "");
-    }, 500);
+    }, 1000);
   });
 
   return (
@@ -155,31 +158,29 @@ export function Back() {
                 )}
               </div>
             </div>
-
-            {ankiFields().Picture && (
-              <div class="bg-base-200 rounded-lg relative overflow-hidden">
-                {!bp.isAtLeast("sm") && (
-                  <div
-                    class="[&>img]:scale-110 [&>img]:size-full [&>img]:filter [&>img]:object-cover [&>img]:object-center [&>img]:brightness-50 [&>img]:absolute"
-                    classList={{
-                      "[&>img]:blur-[16px]": isNsfw(),
-                      "[&>img]:blur-[4px]": !isNsfw(),
-                    }}
-                    innerHTML={picture()}
-                  ></div>
-                )}
-                <div
-                  class="relative h-full sm:[&_img]:h-full [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto 
-                [&_img]:transition-[filter] [&_img]:hover:filter-none cursor-pointer "
-                  classList={{
-                    "[&_img]:filter [&_img]:blur-[16px] [&_img]:brightness-50":
-                      isNsfw(),
-                  }}
-                  on:click={() => picture && setImageModal(picture())}
-                  innerHTML={picture()}
-                ></div>
+            <div class="bg-base-200 rounded-lg relative overflow-hidden">
+              <div
+                class="[&_img]:scale-110 [&_img]:size-full [&_img]:filter [&_img]:object-cover [&_img]:object-center [&_img]:brightness-50 [&_img]:absolute [&_img]:blur-[16px]"
+                innerHTML={
+                  import.meta.env.DEV ? ankiFields().Picture : undefined
+                }
+              >
+                {import.meta.env.DEV ? undefined : "{{Picture}}"}
               </div>
-            )}
+              <div
+                class="relative h-full sm:[&_img]:h-full [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto [&_img]:transition-[filter] [&_img]:hover:filter-none cursor-pointer"
+                classList={{
+                  "[&_img]:filter [&_img]:blur-[16px] [&_img]:brightness-50":
+                    isNsfw(),
+                }}
+                on:click={() => picture && setImageModal(picture())}
+                innerHTML={
+                  import.meta.env.DEV ? ankiFields().Picture : undefined
+                }
+              >
+                {import.meta.env.DEV ? undefined : "{{Picture}}"}
+              </div>
+            </div>
           </div>
           {ready() && (
             <AnkiFieldContextProvider value={{ ankiFields: ankiFields() }}>
