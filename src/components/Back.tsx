@@ -25,46 +25,43 @@ export function Back() {
 
   const [config] = useConfig();
   const [showSettings, setShowSettings] = createSignal(false);
-  const [ankiFields, setAnkiFields] =
-    createSignal<AnkiBackFields>(ankiFieldsSkeleton);
   const [ready, setReady] = createSignal(false);
   const [imageModal, setImageModal] = createSignal<string>();
 
-  const tags = () => ankiFields().Tags.split(" ") ?? [];
-  const isNsfw = () =>
-    tags()
-      .map((tag) => tag.toLowerCase())
-      .includes("nsfw");
+  let divs: NodeListOf<Element> | Element[] | undefined = isServer
+    ? undefined
+    : document.querySelectorAll("#anki-fields > div");
+  if (import.meta.env.DEV && !isServer) {
+    divs = Object.entries(exampleFields6).map(([key, value]) => {
+      const div = document.createElement("div");
+      div.dataset.field = key;
+      div.innerHTML = value;
+      return div;
+    });
+  }
+  const ankiFields$: AnkiBackFields = divs
+    ? Object.fromEntries(
+        Array.from(divs).map((el) => [
+          (el as HTMLDivElement).dataset.field,
+          el.innerHTML.trim(),
+        ]),
+      )
+    : ankiFieldsSkeleton;
+
+  const tags = ankiFields$.Tags.split(" ");
+  const isNsfw = tags.map((tag) => tag.toLowerCase()).includes("nsfw");
 
   onMount(() => {
     setTimeout(() => {
       setReady(true);
       globalThis.KIKU_STATE.relax = true;
     }, 2000);
-
-    let divs: NodeListOf<Element> | Element[] =
-      document.querySelectorAll("#anki-fields > div");
-    if (import.meta.env.DEV) {
-      divs = Object.entries(exampleFields6).map(([key, value]) => {
-        const div = document.createElement("div");
-        div.dataset.field = key;
-        div.innerHTML = value;
-        return div;
-      });
-    }
-    const ankiFields$ = Object.fromEntries(
-      Array.from(divs).map((el) => [
-        (el as HTMLDivElement).dataset.field,
-        el.innerHTML.trim(),
-      ]),
-    ) as AnkiBackFields;
-    setAnkiFields(ankiFields$);
   });
 
   return (
     <Layout>
       {showSettings() && (
-        <AnkiFieldContextProvider value={{ ankiFields: ankiFields() }}>
+        <AnkiFieldContextProvider value={{ ankiFields: ankiFields$ }}>
           <Lazy.Settings
             onBackClick={() => setShowSettings(false)}
             onCancelClick={() => setShowSettings(false)}
@@ -75,7 +72,7 @@ export function Back() {
         <>
           <div class="flex justify-between flex-row h-5 min-h-5">
             {ready() && (
-              <AnkiFieldContextProvider value={{ ankiFields: ankiFields() }}>
+              <AnkiFieldContextProvider value={{ ankiFields: ankiFields$ }}>
                 <Lazy.BackHeader
                   onSettingsClick={() => setShowSettings(true)}
                 />
@@ -94,9 +91,9 @@ export function Back() {
                 innerHTML={
                   isServer
                     ? undefined
-                    : ankiFields().ExpressionFurigana
-                      ? ankiFields()["furigana:ExpressionFurigana"]
-                      : ankiFields().Expression
+                    : ankiFields$.ExpressionFurigana
+                      ? ankiFields$["furigana:ExpressionFurigana"]
+                      : ankiFields$.Expression
                 }
               >
                 {isServer
@@ -106,23 +103,19 @@ export function Back() {
               <div
                 class={`mt-6 flex gap-4 ${config.fontSizeBasePitch} ${config.fontSizeSmPitch}`}
               >
-                {ankiFields().PitchPosition && ready() ? (
-                  <AnkiFieldContextProvider
-                    value={{ ankiFields: ankiFields() }}
-                  >
+                {ankiFields$.PitchPosition && ready() ? (
+                  <AnkiFieldContextProvider value={{ ankiFields: ankiFields$ }}>
                     <Suspense fallback={<>&nbsp;</>}>
                       <Lazy.Pitches />
                     </Suspense>
                   </AnkiFieldContextProvider>
                 ) : (
-                  <>&nbsp;</>
+                  ankiFields$.PitchPosition && <>&nbsp;</>
                 )}
               </div>
               <div class="flex gap-2 sm:h-8 sm:mt-2">
                 {ready() && (
-                  <AnkiFieldContextProvider
-                    value={{ ankiFields: ankiFields() }}
-                  >
+                  <AnkiFieldContextProvider value={{ ankiFields: ankiFields$ }}>
                     <Lazy.AudioButtons
                       position={1}
                       expressionAudioRefSignal={expressionAudioRefSignal}
@@ -135,22 +128,22 @@ export function Back() {
             <div class="bg-base-200 rounded-lg relative overflow-hidden">
               <div
                 class="picture-field-background"
-                innerHTML={isServer ? undefined : ankiFields().Picture}
+                innerHTML={isServer ? undefined : ankiFields$.Picture}
               >
                 {isServer ? "{{Picture}}" : undefined}
               </div>
               <div
                 class="picture-field"
-                data-nsfw={isNsfw() ? "true" : undefined}
-                on:click={() => setImageModal(ankiFields().Picture)}
-                innerHTML={isServer ? undefined : ankiFields().Picture}
+                data-nsfw={isNsfw ? "true" : undefined}
+                on:click={() => setImageModal(ankiFields$.Picture)}
+                innerHTML={isServer ? undefined : ankiFields$.Picture}
               >
                 {isServer ? "{{Picture}}" : undefined}
               </div>
             </div>
           </div>
           {ready() && (
-            <AnkiFieldContextProvider value={{ ankiFields: ankiFields() }}>
+            <AnkiFieldContextProvider value={{ ankiFields: ankiFields$ }}>
               <Lazy.BackBody
                 onDefinitionPictureClick={(picture) => {
                   setImageModal(picture);
@@ -159,8 +152,8 @@ export function Back() {
             </AnkiFieldContextProvider>
           )}
           {ready() && (
-            <AnkiFieldContextProvider value={{ ankiFields: ankiFields() }}>
-              <Lazy.BackFooter tags={tags()} />
+            <AnkiFieldContextProvider value={{ ankiFields: ankiFields$ }}>
+              <Lazy.BackFooter tags={tags} />
               <Lazy.AudioButtons
                 position={2}
                 expressionAudioRefSignal={expressionAudioRefSignal}
@@ -171,7 +164,7 @@ export function Back() {
         </>
       )}
       {ready() && (
-        <AnkiFieldContextProvider value={{ ankiFields: ankiFields() }}>
+        <AnkiFieldContextProvider value={{ ankiFields: ankiFields$ }}>
           <Lazy.ImageModal
             img={imageModal()}
             on:click={() => setImageModal(undefined)}
