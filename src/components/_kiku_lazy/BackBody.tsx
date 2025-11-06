@@ -2,7 +2,7 @@ import { createEffect, createSignal, onMount } from "solid-js";
 import { useAnkiField, useConfig } from "../shared/Context";
 
 export default function BackBody(props: {
-  onDefinitionPictureClick?: (node: Node) => void;
+  onDefinitionPictureClick?: (picture: string) => void;
 }) {
   let sentenceEl: HTMLDivElement | undefined;
   let definitionEl: HTMLDivElement | undefined;
@@ -11,6 +11,7 @@ export default function BackBody(props: {
   const [definitionPage, setDefinitionPage] = createSignal(
     ankiFields.SelectionText ? 0 : 1,
   );
+  const [definitionPicture, setDefinitionPicture] = createSignal<string>();
 
   const pages = [
     ankiFields.SelectionText,
@@ -37,6 +38,10 @@ export default function BackBody(props: {
   }
 
   onMount(() => {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = ankiFields.DefinitionPicture;
+    setDefinitionPicture(tempDiv.querySelector("img")?.outerHTML ?? "");
+
     if (sentenceEl) {
       const ruby = sentenceEl.querySelectorAll("ruby");
       ruby.forEach((el) => {
@@ -84,10 +89,6 @@ export default function BackBody(props: {
     }
   });
 
-  const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = ankiFields.DefinitionPicture;
-  const definitionPicture = tempDiv.querySelector("img");
-
   return (
     <div class="flex sm:flex-col gap-8 flex-col-reverse animate-fade-in">
       <div class="flex flex-col gap-4 items-center text-center">
@@ -111,13 +112,12 @@ export default function BackBody(props: {
               {ankiFields.DefinitionPicture && (
                 <div
                   class="max-w-1/3 float-right [&_img]:rounded-sm ps-2 cursor-pointer"
-                  on:click={() =>
-                    definitionPicture &&
-                    props.onDefinitionPictureClick?.(definitionPicture)
-                  }
-                >
-                  {definitionPicture}
-                </div>
+                  on:click={() => {
+                    const picture = definitionPicture();
+                    if (picture) props.onDefinitionPictureClick?.(picture);
+                  }}
+                  innerHTML={definitionPicture()}
+                ></div>
               )}
               <div class="contents" innerHTML={pages[definitionPage()]}></div>
             </div>

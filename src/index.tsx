@@ -15,13 +15,11 @@ import { type OnlineFont, setOnlineFont } from "./util/fonts.ts";
 import { env } from "./util/general.ts";
 
 declare global {
-  interface Window {
-    KIKU_STATE: {
-      relax?: boolean;
-      shadow?: ShadowRoot;
-      initDelay?: number;
-    };
-  }
+  var KIKU_STATE: {
+    relax?: boolean;
+    shadow?: ShadowRoot;
+    initDelay?: number;
+  };
 }
 window.KIKU_STATE = {};
 

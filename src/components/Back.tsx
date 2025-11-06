@@ -35,7 +35,8 @@ export function Back() {
   const { ankiFields } = useAnkiField<"back">();
   const [showSettings, setShowSettings] = createSignal(false);
   const [ready, setReady] = createSignal(false);
-  const [showImageModal, setShowImageModal] = createSignal<undefined | Node>();
+  const [picture, setPicture] = createSignal<string>();
+  const [imageModal, setImageModal] = createSignal<string>();
 
   const tags = ankiFields.Tags.split(" ");
   const isNsfw = tags.map((tag) => tag.toLowerCase()).includes("nsfw");
@@ -43,13 +44,13 @@ export function Back() {
   onMount(() => {
     setTimeout(() => {
       setReady(true);
-      window.KIKU_STATE.relax = true;
-    }, 50);
-  });
+      globalThis.KIKU_STATE.relax = true;
+    }, 0);
 
-  const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = ankiFields.Picture;
-  const picture = tempDiv.querySelector("img");
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = ankiFields.Picture;
+    setPicture(tempDiv.querySelector("img")?.outerHTML ?? "");
+  });
 
   return (
     <Layout>
@@ -69,7 +70,7 @@ export function Back() {
           <div
             class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row"
             classList={{
-              "animate-fade-in": window.KIKU_STATE.relax,
+              "animate-fade-in": globalThis.KIKU_STATE.relax,
             }}
           >
             <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
@@ -109,15 +110,17 @@ export function Back() {
             </div>
 
             {ankiFields.Picture && (
-              <div
-                class="bg-base-200 rounded-lg relative overflow-hidden [&>img]:size-full [&>img]:filter 
-               [&>img]:object-cover [&>img]:object-center [&>img]:brightness-50 [&>img]:absolute"
-                classList={{
-                  "[&>img]:blur-[16px]": isNsfw,
-                  "[&>img]:blur-[4px]": !isNsfw,
-                }}
-              >
-                {!bp.isAtLeast("sm") && picture?.cloneNode(true)}
+              <div class="bg-base-200 rounded-lg relative overflow-hidden">
+                {!bp.isAtLeast("sm") && (
+                  <div
+                    class="[&>img]:scale-110 [&>img]:size-full [&>img]:filter [&>img]:object-cover [&>img]:object-center [&>img]:brightness-50 [&>img]:absolute"
+                    classList={{
+                      "[&>img]:blur-[16px]": isNsfw,
+                      "[&>img]:blur-[4px]": !isNsfw,
+                    }}
+                    innerHTML={picture()}
+                  ></div>
+                )}
                 <div
                   class="relative h-full sm:[&_img]:h-full [&_img]:object-contain [&_img]:h-48 [&_img]:mx-auto 
                 [&_img]:transition-[filter] [&_img]:hover:filter-none cursor-pointer "
@@ -125,16 +128,17 @@ export function Back() {
                     "[&_img]:filter [&_img]:blur-[16px] [&_img]:brightness-50":
                       isNsfw,
                   }}
-                  on:click={() => picture && setShowImageModal(picture)}
-                >
-                  {picture}
-                </div>
+                  on:click={() => picture && setImageModal(picture())}
+                  innerHTML={picture()}
+                ></div>
               </div>
             )}
           </div>
           {ready() && (
             <Lazy.BackBody
-              onDefinitionPictureClick={(node) => setShowImageModal(node)}
+              onDefinitionPictureClick={(picture) => {
+                setImageModal(picture);
+              }}
             />
           )}
           {ready() && (
@@ -151,9 +155,8 @@ export function Back() {
       )}
       {ready() && (
         <Lazy.ImageModal
-          show={!!showImageModal()}
-          img={showImageModal()?.cloneNode()}
-          on:click={() => setShowImageModal(undefined)}
+          img={imageModal()}
+          on:click={() => setImageModal(undefined)}
         />
       )}
     </Layout>
