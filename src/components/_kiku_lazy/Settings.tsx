@@ -246,7 +246,7 @@ export default function Settings(props: {
       </div>
       <div class="flex flex-col gap-4 animate-fade-in">
         <div class="text-2xl font-bold">Theme</div>
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] rounded-box gap-4 p-2">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(9.8rem,1fr))] rounded-box gap-4 p-2">
           {daisyUIThemes.map((theme) => {
             return (
               <div
@@ -296,7 +296,7 @@ export default function Settings(props: {
       </div>
       <div class="flex flex-col gap-4 animate-fade-in">
         <div class="text-2xl font-bold">Font</div>
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] rounded-box gap-4">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] rounded-box gap-4">
           <fieldset
             class="fieldset"
             on:change={(e) => {
@@ -515,7 +515,7 @@ function FontSizeSettings() {
       <div>
         <div class="text-lg font-bold">Mobile</div>
         {/* biome-ignore format: this looks nicer */}
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] rounded-box gap-x-4 gap-y-2">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] rounded-box gap-x-4 gap-y-2">
           <FontSizeSettingsFieldset configKey="fontSizeBaseExpression" label="Expression" />
           <FontSizeSettingsFieldset configKey="fontSizeBasePitch" label="Pitch" />
           <FontSizeSettingsFieldset configKey="fontSizeBaseSentence" label="Sentence" />
