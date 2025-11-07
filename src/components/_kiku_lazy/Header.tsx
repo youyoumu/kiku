@@ -22,9 +22,10 @@ export default function Header(props: {
     <>
       <div class="flex gap-2 items-center animate-fade-in-sm">
         <BoltIcon
-          class="size-5 cursor-pointer text-base-content-soft"
+          class="size-5"
           classList={{
-            invisible: props.side === "front",
+            "text-base-content-soft cursor-pointer": props.side === "back",
+            "text-base-content-subtle-100": props.side === "front",
           }}
           on:click={props.onSettingsClick}
         ></BoltIcon>
