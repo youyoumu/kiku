@@ -9,6 +9,7 @@ import { AnkiFieldContextProvider } from "./shared/Context";
 const Lazy = {
   AudioButtons: lazy(async () => ({ default: (await import("./_kiku_lazy")).AudioButtons, })),
   CacheJoyoKanji: lazy(async () => ({ default: (await import("./_kiku_lazy")).CacheJoyoKanji, })),
+  Header: lazy(async () => ({ default: (await import("./_kiku_lazy")).Header, })),
 };
 
 export function Front() {
@@ -34,10 +35,15 @@ export function Front() {
         <Lazy.CacheJoyoKanji />
       </AnkiFieldContextProvider>
       <Layout>
-        <div class="flex justify-end flex-row">
-          <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block h-5"></div>
+        <div class="flex justify-between flex-row h-5 min-h-5">
+          {ready() && (
+            <AnkiFieldContextProvider
+              value={{ ankiFields: ankiFields$ as AnkiFields }}
+            >
+              <Lazy.Header side="front" />
+            </AnkiFieldContextProvider>
+          )}
         </div>
-
         <div
           class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row"
           on:click={() => setClicked((prev) => !prev)}

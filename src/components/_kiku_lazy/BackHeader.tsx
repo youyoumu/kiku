@@ -4,16 +4,18 @@ import { useAnkiField, useConfig } from "../shared/Context";
 import { BoltIcon, CircleChevronDownIcon, PaintbrushIcon } from "./Icons";
 import { capitalize } from "./util/general";
 
-export default function BackHeader(props: { onSettingsClick?: () => void }) {
+export default function Header(props: {
+  onSettingsClick?: () => void;
+  side: "back" | "front";
+}) {
   const [config, setConfig] = useConfig();
-  const { ankiFields } = useAnkiField<"back">();
   const [initDelay, setInitDelay] = createSignal<number | null>(null);
 
   onMount(() => {
     setTimeout(() => {
       if (window.KIKU_STATE.initDelay)
         setInitDelay(window.KIKU_STATE.initDelay);
-    }, 250);
+    }, 200);
   });
 
   return (
@@ -21,6 +23,9 @@ export default function BackHeader(props: { onSettingsClick?: () => void }) {
       <div class="flex gap-2 items-center animate-fade-in-sm">
         <BoltIcon
           class="size-5 cursor-pointer text-base-content-soft"
+          classList={{
+            invisible: props.side === "front",
+          }}
           on:click={props.onSettingsClick}
         ></BoltIcon>
         <div
@@ -32,27 +37,33 @@ export default function BackHeader(props: { onSettingsClick?: () => void }) {
           <PaintbrushIcon class="size-5 cursor-pointer text-base-content-soft"></PaintbrushIcon>
           <div class="text-base-content-soft">{capitalize(config.theme)}</div>
         </div>
-        <div class="text-base-content-soft bg-yellow-700/10 rounded-sm px-1">
+        <div class="text-base-content-soft bg-warning/10 rounded-sm px-1 text-sm">
           {initDelay()}
           {initDelay() && "ms"}
         </div>
       </div>
       <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block animate-fade-in-sm z-10">
-        <div
-          class="text-base-content-soft"
-          innerHTML={ankiFields.FreqSort}
-        ></div>
-        {ankiFields.Frequency && (
-          <>
-            <CircleChevronDownIcon class="size-5 text-base-content-soft" />
-            <div
-              id="frequency"
-              class="absolute top-0 translate-y-6 right-2 w-fit [&_li]:text-nowrap [&_li]:whitespace-nowrap bg-base-300/90 p-4 rounded-lg hidden"
-              innerHTML={ankiFields.Frequency}
-            ></div>
-          </>
-        )}
+        {props.side === "back" && <Frequency />}
       </div>
+    </>
+  );
+}
+
+function Frequency() {
+  const { ankiFields } = useAnkiField<"back">();
+  return (
+    <>
+      <div class="text-base-content-soft" innerHTML={ankiFields.FreqSort}></div>
+      {ankiFields.Frequency && (
+        <>
+          <CircleChevronDownIcon class="size-5 text-base-content-soft" />
+          <div
+            id="frequency"
+            class="absolute top-0 translate-y-6 right-2 w-fit [&_li]:text-nowrap [&_li]:whitespace-nowrap bg-base-300/90 p-4 rounded-lg hidden"
+            innerHTML={ankiFields.Frequency}
+          ></div>
+        </>
+      )}
     </>
   );
 }

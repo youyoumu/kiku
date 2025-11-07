@@ -7,7 +7,7 @@ import { AnkiFieldContextProvider } from "./shared/Context";
 // biome-ignore format: this looks nicer
 const Lazy = {
   Settings: lazy(async () => ({ default: (await import("./_kiku_lazy")).Settings, })),
-  BackHeader: lazy(async () => ({ default: (await import("./_kiku_lazy")).BackHeader, })),
+  Header: lazy(async () => ({ default: (await import("./_kiku_lazy")).Header, })),
   BackFooter: lazy(async () => ({ default: (await import("./_kiku_lazy")).BackFooter, })),
   AudioButtons: lazy(async () => ({ default: (await import("./_kiku_lazy")).AudioButtons, })),
   ImageModal: lazy(async () => ({ default: (await import("./_kiku_lazy")).ImageModal, })),
@@ -53,7 +53,8 @@ export function Back() {
           <div class="flex justify-between flex-row h-5 min-h-5">
             {ready() && (
               <AnkiFieldContextProvider value={{ ankiFields: ankiFields$ }}>
-                <Lazy.BackHeader
+                <Lazy.Header
+                  side="back"
                   onSettingsClick={() => setShowSettings(true)}
                 />
               </AnkiFieldContextProvider>

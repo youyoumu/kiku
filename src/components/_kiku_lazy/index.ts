@@ -1,14 +1,14 @@
 import AudioButtons from "./AudioButtons";
 import BackBody from "./BackBody";
 import BackFooter from "./BackFooter";
-import BackHeader from "./BackHeader";
+import Header from "./BackHeader";
 import CacheJoyoKanji from "./CacheJoyoKanji";
 import ImageModal from "./ImageModal";
 import Pitches from "./Pitches";
 import Settings from "./Settings";
 
 export {
-  BackHeader,
+  Header,
   BackFooter,
   AudioButtons,
   Settings,
