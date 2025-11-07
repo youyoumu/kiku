@@ -119,9 +119,21 @@ export default function Settings(props: {
       .join("\n");
   }
 
+  function toCssVarString(obj: Record<string, string>) {
+    let txt = Object.entries(obj)
+      .map(([key, value]) => {
+        return `${key}: ${value};`;
+      })
+      .join("\n");
+    txt += "\n";
+    return txt;
+  }
+
   const unwantedKeys = ["ankiConnectPort", "font", "systemFont"];
-  const [mismatches, setMismatches] = createSignal<Record<string, string>>({});
-  function compareConfigAndRootDataset() {
+  const [rootDatasetMismatches, setRootDatasetMismatches] = createSignal<
+    Record<string, string>
+  >({});
+  function getRootDatasetMismatches() {
     let mismatches = Object.entries(config).filter(([key, value]) => {
       const rootDataValue =
         globalThis.KIKU_STATE.rootDataset[key as keyof KikuConfig];
@@ -147,10 +159,10 @@ export default function Settings(props: {
     return mismatches$2;
   }
 
-  const [configDataset, setConfigDataset] = createSignal<
-    Record<string, string>
-  >({});
-  function generateConfigDataset() {
+  const [rootDataset, setRootDataset] = createSignal<Record<string, string>>(
+    {},
+  );
+  function getRootDataset() {
     let dataset = Object.entries(config);
     dataset = dataset.filter(([key]) => {
       return !unwantedKeys.includes(key);
@@ -168,15 +180,35 @@ export default function Settings(props: {
     return dataset$;
   }
 
+  const [cssVarMismatches, setCssVarMismatches] = createSignal<
+    Record<string, string>
+  >({});
+  function getCssVarMismatches() {
+    const mismatches: Array<[string, string]> = [];
+    const systemFont = window
+      .getComputedStyle(document.documentElement)
+      .getPropertyValue("--system-font");
+    if (config.systemFont && config.systemFont !== systemFont) {
+      mismatches.push(["--system-font", systemFont]);
+    }
+    return Object.fromEntries(mismatches);
+  }
+
+  const [cssVar, setCssVar] = createSignal<Record<string, string>>({});
+  function getCssVar() {
+    const cssVar: Record<string, string> = {};
+    if (config.systemFont) {
+      cssVar["--system-font"] = `"${config.systemFont}"`;
+    }
+    return cssVar;
+  }
+
   createEffect(() => {
     ({ ...config });
-    setMismatches(compareConfigAndRootDataset());
-    setConfigDataset(generateConfigDataset());
-    console.log(
-      "DEBUG[901]: mismatches, dataset=",
-      mismatches(),
-      configDataset(),
-    );
+    setRootDatasetMismatches(getRootDatasetMismatches());
+    setRootDataset(getRootDataset());
+    setCssVarMismatches(getCssVarMismatches());
+    setCssVar(getCssVar());
   });
 
   return (
@@ -304,7 +336,7 @@ export default function Settings(props: {
         </div>
       </div>
       <FontSizeSettings />
-      <Show when={Object.keys(mismatches()).length > 0}>
+      <Show when={Object.keys(rootDatasetMismatches()).length > 0}>
         <div role="alert" class="alert alert-warning">
           <TriangleAlertIcon />
           <span>
@@ -322,23 +354,16 @@ export default function Settings(props: {
             <div class="flex flex-col gap-4 animate-fade-in ">
               <div class="flex flex-col gap-2">
                 <div class="flex gap-2 items-center">
-                  <div class="text-lg">Correct Root Dataset</div>
+                  <div class="text-lg">Expected Root Dataset</div>
                   <ClipboardCopyIcon
                     class="size-5 text-base-content-calm cursor-pointer"
                     on:click={() => {
-                      copyToClipboard(
-                        JSON.stringify(
-                          toDatasetString(configDataset()),
-                          (_, value) =>
-                            value === undefined ? "undefined" : value,
-                          2,
-                        ),
-                      );
+                      copyToClipboard(toDatasetString(rootDataset()));
                     }}
                   />
                 </div>
                 <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                  {toDatasetString(configDataset())}
+                  {toDatasetString(rootDataset())}
                 </pre>
               </div>
 
@@ -349,18 +374,43 @@ export default function Settings(props: {
                     class="size-5 text-base-content-calm cursor-pointer"
                     on:click={() => {
                       copyToClipboard(
-                        JSON.stringify(
-                          toDatasetString(globalThis.KIKU_STATE.rootDataset),
-                          (_, value) =>
-                            value === undefined ? "undefined" : value,
-                          2,
-                        ),
+                        toDatasetString(globalThis.KIKU_STATE.rootDataset),
                       );
                     }}
                   />
                 </div>
                 <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
                   {toDatasetString(globalThis.KIKU_STATE.rootDataset)}
+                </pre>
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <div class="flex gap-2 items-center">
+                  <div class="text-lg">Expected CSS Variable</div>
+                  <ClipboardCopyIcon
+                    class="size-5 text-base-content-calm cursor-pointer"
+                    on:click={() => {
+                      copyToClipboard(toCssVarString(cssVarMismatches()));
+                    }}
+                  />
+                </div>
+                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                  {toCssVarString(cssVarMismatches())}
+                </pre>
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <div class="flex gap-2 items-center">
+                  <div class="text-lg">Current CSS Variable</div>
+                  <ClipboardCopyIcon
+                    class="size-5 text-base-content-calm cursor-pointer"
+                    on:click={() => {
+                      copyToClipboard(toCssVarString(cssVar()));
+                    }}
+                  />
+                </div>
+                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                  {toCssVarString(cssVar())}
                 </pre>
               </div>
 
