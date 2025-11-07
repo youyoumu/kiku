@@ -120,12 +120,11 @@ export default function Settings(props: {
   }
 
   function toCssVarString(obj: Record<string, string>) {
-    let txt = Object.entries(obj)
+    const txt = Object.entries(obj)
       .map(([key, value]) => {
         return `${key}: ${value};`;
       })
       .join("\n");
-    txt += "\n";
     return txt;
   }
 
@@ -336,11 +335,22 @@ export default function Settings(props: {
         </div>
       </div>
       <FontSizeSettings />
-      <Show when={Object.keys(rootDatasetMismatches()).length > 0}>
+      <Show
+        when={
+          Object.keys(rootDatasetMismatches()).length > 0 ||
+          Object.keys(cssVarMismatches()).length > 0
+        }
+      >
         <div role="alert" class="alert alert-warning">
           <TriangleAlertIcon />
           <span>
-            Root Dataset mismatches, FOUC (Flash Of Unstyled Content) may occur.
+            <Show when={Object.keys(rootDatasetMismatches()).length > 0}>
+              Root Dataset mismatches,{" "}
+            </Show>
+            <Show when={Object.keys(cssVarMismatches()).length > 0}>
+              CSS Variable mismatches,{" "}
+            </Show>
+            <span>FOUC (Flash Of Unstyled Content) may occur.</span>
           </span>
         </div>
       </Show>
@@ -363,7 +373,9 @@ export default function Settings(props: {
                   />
                 </div>
                 <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                  <span class="opacity-25 select-none">{"<div\n"}</span>
                   {toDatasetString(rootDataset())}
+                  <span class="opacity-25 select-none">{"\n>"}</span>
                 </pre>
               </div>
 
@@ -380,7 +392,9 @@ export default function Settings(props: {
                   />
                 </div>
                 <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                  <span class="opacity-25 select-none">{"<div\n"}</span>
                   {toDatasetString(globalThis.KIKU_STATE.rootDataset)}
+                  <span class="opacity-25 select-none">{"\n>"}</span>
                 </pre>
               </div>
 
@@ -395,7 +409,9 @@ export default function Settings(props: {
                   />
                 </div>
                 <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                  <span class="opacity-25 select-none">{":root {\n"}</span>
                   {toCssVarString(cssVarMismatches())}
+                  <span class="opacity-25 select-none">{"\n}"}</span>
                 </pre>
               </div>
 
@@ -410,7 +426,9 @@ export default function Settings(props: {
                   />
                 </div>
                 <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                  <span class="opacity-25 select-none">{":root {\n"}</span>
                   {toCssVarString(cssVar())}
+                  <span class="opacity-25 select-none">{"\n}"}</span>
                 </pre>
               </div>
 
