@@ -97,8 +97,9 @@ export function updateConfigDataset(el: HTMLElement, config: KikuConfig) {
   document.documentElement.setAttribute("data-theme", config.theme);
   el.setAttribute("data-theme", config.theme);
   el.setAttribute("data-font-family", config.font);
-  el.setAttribute("data-font-family", config.systemFont);
+  if (config.systemFont) el.setAttribute("data-font-family", config.systemFont);
   if (config.systemFont) el.style.fontFamily = config.systemFont;
+  if (!config.systemFont) el.style.fontFamily = ""
   el.setAttribute("data-font-size-base-expression", config.fontSizeBaseExpression);
   el.setAttribute("data-font-size-base-pitch", config.fontSizeBasePitch);
   el.setAttribute("data-font-size-base-sentence", config.fontSizeBaseSentence);
