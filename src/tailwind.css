@@ -1,11 +1,22 @@
 @import "tailwindcss";
 @import "./tailwindFontSize.css";
+
 @plugin "daisyui" {
   themes: all;
 }
 
 /* biome-ignore format: this looks nicer */
 @layer base {
+  [data-font-family]:not(
+    [data-font-family="Hina Mincho"],
+    [data-font-family="Klee One"],
+    [data-font-family="Noto Sans JP"],
+    [data-font-family="Noto Serif JP"],
+    [data-font-family="IBM Plex Sans JP"]
+  ) {
+    font-family: var(--system-font), system-ui, sans-serif;
+  }
+
   [data-font-family="Hina Mincho"] { font-family: "Hina Mincho", serif; }
   [data-font-family="Klee One"] { font-family: "Klee One", cursive; }
   [data-font-family="Noto Sans JP"] { font-family: "Noto Sans JP", sans-serif; }

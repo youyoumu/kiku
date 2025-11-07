@@ -11,7 +11,6 @@ import {
 import type { SetStoreFunction, Store } from "solid-js/store";
 import type { AnkiBackFields, AnkiFields, AnkiFrontFields } from "../../types";
 import { type KikuConfig, updateConfigDataset } from "../../util/config";
-import { setSystemFont } from "../../util/fonts";
 
 const ConfigContext =
   createContext<[Store<KikuConfig>, SetStoreFunction<KikuConfig>]>();
@@ -23,8 +22,6 @@ export function ConfigContextProvider(props: {
   const [config] = props.value;
   createEffect(() => {
     ({ ...config });
-    //TODO: system font ?
-    if (config.systemFont) setSystemFont(config.systemFont);
     if (!globalThis.KIKU_STATE.root) throw new Error("Missing root");
     updateConfigDataset(globalThis.KIKU_STATE.root, config);
   });

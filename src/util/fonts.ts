@@ -7,8 +7,3 @@ export const fonts = [
 ] as const;
 
 export type Font = (typeof fonts)[number];
-
-export function setSystemFont(font: string) {
-  const root = globalThis.KIKU_STATE.root;
-  if (root) root.style.fontFamily = font;
-}
