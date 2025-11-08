@@ -9,7 +9,13 @@ const ANKI_MEDIA_DIR = join(
 await stat(ANKI_MEDIA_DIR);
 
 // files to copy
-const FILES = ["_kiku.js", "_kiku_lazy.js", "_kiku_shared.js", "_kiku_libs.js"];
+const FILES = [
+  "_kiku.js",
+  "_kiku_lazy.js",
+  "_kiku_shared.js",
+  "_kiku_libs.js",
+  "_kiku.css",
+];
 
 for (const file of FILES) {
   const src = join(import.meta.dirname, "../dist", file);

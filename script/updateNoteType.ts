@@ -49,17 +49,17 @@ async function main() {
     `✅ Updated Anki note type "${noteType}" Front/Back from ${frontPath} and ${backPath}`,
   );
 
-  const result2 = await AnkiConnect.call("updateModelStyling", {
-    model: {
-      name: noteType,
-      css: style,
-    },
-  });
-
-  console.log(result2);
-  console.log(
-    `✅ Updated Anki note type "${noteType}" style from ${stylePath}`,
-  );
+  // const result2 = await AnkiConnect.call("updateModelStyling", {
+  //   model: {
+  //     name: noteType,
+  //     css: style,
+  //   },
+  // });
+  //
+  // console.log(result2);
+  // console.log(
+  //   `✅ Updated Anki note type "${noteType}" style from ${stylePath}`,
+  // );
 }
 
 main().catch((err) => {
