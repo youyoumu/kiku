@@ -188,6 +188,14 @@ export default function Settings(props: {
 
     return Object.fromEntries(mismatches);
   }
+  function getCurrentCssVar() {
+    const systemFont = window
+      .getComputedStyle(document.documentElement)
+      .getPropertyValue("--system-font");
+    return {
+      "--system-font": systemFont,
+    };
+  }
 
   const [cssVar, setCssVar] = createSignal<Record<string, string>>({});
   function getCssVar() {
@@ -419,13 +427,13 @@ export default function Settings(props: {
                   <ClipboardCopyIcon
                     class="size-5 text-base-content-calm cursor-pointer"
                     on:click={() => {
-                      copyToClipboard(toCssVarString(cssVarMismatches()));
+                      copyToClipboard(toCssVarString(getCurrentCssVar()));
                     }}
                   />
                 </div>
                 <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
                   <span class="opacity-25 select-none">{":root {\n"}</span>
-                  {toCssVarString(cssVarMismatches())}
+                  {toCssVarString(getCurrentCssVar())}
                   <span class="opacity-25 select-none">{"\n}"}</span>
                 </pre>
               </div>
