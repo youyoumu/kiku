@@ -1,4 +1,5 @@
 import { createEffect, createSignal } from "solid-js";
+import type { DatasetProp } from "#/util/config";
 
 export default function ImageModal(props: {
   img: string | undefined;
@@ -23,12 +24,16 @@ export default function ImageModal(props: {
     }
   });
 
+  const pictureModalDataset: () => DatasetProp = () => ({
+    "data-modal-hidden": showModal() ? "false" : "true",
+    "data-modal-transparent": transparent() ? "true" : "false",
+  });
+
   return (
     <div
       class="picture-modal"
-      data-modal-hidden={showModal() ? "false" : "true"}
-      data-modal-transparent={transparent() ? "true" : "false"}
       on:click={props["on:click"]}
+      {...pictureModalDataset()}
       innerHTML={props.img}
     ></div>
   );

@@ -2,7 +2,7 @@ import { createEffect, createSignal, onMount, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import {
   type CssVar,
-  type DataSetProp,
+  type DatasetProp,
   defaultConfig,
   type KikuConfig,
 } from "#/util/config";
@@ -345,7 +345,7 @@ export default function Settings(props: {
               <legend class="fieldset-legend">Web Font</legend>
               <select class="select w-full">
                 {webFonts.map((font) => {
-                  const dataSetProp: DataSetProp = {
+                  const dataSetProp: DatasetProp = {
                     "data-font-primary": "true",
                     "data-web-font-primary": font,
                     "data-use-system-font-primary": "false",
@@ -440,7 +440,7 @@ export default function Settings(props: {
               <legend class="fieldset-legend">Web Font</legend>
               <select class="select w-full">
                 {webFonts.map((font) => {
-                  const dataSetProp: DataSetProp = {
+                  const dataSetProp: DatasetProp = {
                     "data-font-secondary": "true",
                     "data-web-font-secondary": font,
                     "data-use-system-font-secondary": "false",

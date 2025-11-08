@@ -112,7 +112,8 @@ export type CssVar = {
   "--system-font-secondary": string;
 };
 
-export type DataSet = {
+// biome-ignore format: this looks nicer
+export type Dataset = {
   "data-kiku-root": "true" | "false";
   "data-theme": string;
   "data-web-font-primary": string;
@@ -134,10 +135,10 @@ export type DataSet = {
   "data-font-size-sm-hint": string;
   //
   "data-field": string;
-  "data-is-audio-card": "true" | "false";
-  "data-is-sentence-card": "true" | "false";
-  "data-is-word-and-sentence-card": "true" | "false";
-  "data-is-click-card": "true" | "false";
+  "data-is-audio-card": "true" | "false" | "{{IsAudioCard}}";
+  "data-is-sentence-card": "true" | "false" | "{{IsSentenceCard}}";
+  "data-is-word-and-sentence-card": | "true" | "false" | "{{IsWordAndSentenceCard}}";
+  "data-is-click-card": "true" | "false" | "{{IsClickCard}}";
   "data-clicked": "true" | "false";
   "data-font-primary": "true" | "false";
   "data-font-secondary": "true" | "false";
@@ -150,7 +151,7 @@ export type DataSet = {
   "data-modal-transparent": "true" | "false";
 };
 
-export type DataSetProp = Partial<DataSet>;
+export type DatasetProp = Partial<Dataset>;
 
 export function updateConfigDataset(el: HTMLElement, config: KikuConfig) {
   document.documentElement.setAttribute("data-theme", config.theme);

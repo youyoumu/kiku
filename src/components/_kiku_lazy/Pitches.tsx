@@ -1,3 +1,4 @@
+import type { DatasetProp } from "#/util/config";
 import { hatsuon } from "#/util/hatsuon";
 import { useAnkiField } from "../shared/Context";
 
@@ -26,9 +27,13 @@ function Pitch(props: { kana: string; pitchNum: number; index: number }) {
   const pitchInfo = hatsuon({ reading: props.kana, pitchNum: props.pitchNum });
   const isEven = props.index % 2 === 0;
 
+  const pitchDataset: DatasetProp = {
+    "data-is-even": isEven ? "true" : "false",
+  };
+
   return (
     <div class="flex items-start gap-1 animate-fade-in-sm">
-      <div data-is-even={isEven}>
+      <div {...pitchDataset}>
         {pitchInfo.morae.map((mora, i) => {
           return (
             <span

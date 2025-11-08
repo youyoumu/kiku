@@ -1,5 +1,6 @@
 import { createSignal, lazy, onMount, Suspense } from "solid-js";
 import { isServer } from "solid-js/web";
+import type { DatasetProp } from "#/util/config";
 import { getAnkiFields } from "#/util/general";
 import { Layout } from "./Layout";
 import { AnkiFieldContextProvider } from "./shared/Context";
@@ -36,6 +37,12 @@ export function Back() {
 
     const tags = ankiFields$.Tags.split(" ");
     setIsNsfw(tags.map((tag) => tag.toLowerCase()).includes("nsfw"));
+  });
+
+  const pictureFieldDataset: () => DatasetProp = () => ({
+    "data-transition": ready() ? "true" : undefined,
+    "data-tags": "{{Tags}}",
+    "data-nsfw": isNsfw() ? "true" : "false",
   });
 
   return (
@@ -115,10 +122,8 @@ export function Back() {
               </div>
               <div
                 class="picture-field"
-                data-transition={ready() ? "true" : undefined}
-                data-tags="{{Tags}}"
-                data-nsfw={isNsfw() ? "true" : "false"}
                 on:click={() => setImageModal(ankiFields$.Picture)}
+                {...pictureFieldDataset()}
                 innerHTML={isServer ? undefined : ankiFields$.Picture}
               >
                 {isServer ? "{{Picture}}" : undefined}

@@ -1,6 +1,7 @@
 import { createSignal, lazy, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
 import type { AnkiFields } from "#/types";
+import type { DatasetProp } from "#/util/config";
 import { getAnkiFields } from "#/util/general";
 import { Layout } from "./Layout";
 import { AnkiFieldContextProvider } from "./shared/Context";
@@ -25,6 +26,15 @@ export function Front() {
       setReady(true);
     }, 100);
   });
+
+  // biome-ignore format: this looks nicer
+  const sentenceFrontProp: DatasetProp = {
+    "data-is-audio-card": isServer ? "{{IsAudioCard}}" : undefined,
+    "data-is-sentence-card": isServer ? "{{IsSentenceCard}}" : undefined,
+    "data-is-word-and-sentence-card": isServer ? "{{IsWordAndSentenceCard}}" : undefined ,
+    "data-is-click-card" :isServer ? "{{IsClickCard}}" : undefined,
+    "data-clicked": clicked() ? "true" : undefined
+  }
 
   return (
     <Layout>
@@ -63,16 +73,7 @@ export function Front() {
         </div>
       </div>
 
-      <div
-        class="sentence-front"
-        data-is-audio-card={isServer ? "{{IsAudioCard}}" : undefined}
-        data-is-sentence-card={isServer ? "{{IsSentenceCard}}" : undefined}
-        data-is-word-and-sentence-card={
-          isServer ? "{{IsWordAndSentenceCard}}" : undefined
-        }
-        data-is-click-card={isServer ? "{{IsClickCard}}" : undefined}
-        data-clicked={clicked() ? "true" : undefined}
-      >
+      <div class="sentence-front" {...sentenceFrontProp}>
         <div
           class={`[&_b]:text-base-content-primary sentence`}
           innerHTML={isServer ? undefined : ankiFields$["kanji:Sentence"]}
