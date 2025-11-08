@@ -24,7 +24,6 @@ export function Back() {
   const [showSettings, setShowSettings] = createSignal(false);
   const [ready, setReady] = createSignal(false);
   const [imageModal, setImageModal] = createSignal<string>();
-  const [pictureCount, setPictureCount] = createSignal(0);
   const [pictureIndex, setPictureIndex] = createSignal(0);
   const [pictures, setPictures] = createSignal<HTMLImageElement[]>([]);
 
@@ -50,7 +49,6 @@ export function Back() {
         img.dataset.index = imgs.indexOf(img).toString();
       });
       setPictures(imgs);
-      setPictureCount(imgs.length);
       pictureFieldEl.replaceChildren(...imgs);
     }
   });
@@ -162,13 +160,17 @@ export function Back() {
                 }}
                 onNextClick={() => {
                   setPictureIndex((prev) => {
-                    return (prev + 1) % pictureCount();
+                    return (prev + 1) % pictures().length;
                   });
                 }}
                 onPrevClick={() => {
                   setPictureIndex((prev) => {
-                    return (prev - 1 + pictureCount()) % pictureCount();
+                    return (prev - 1 + pictures().length) % pictures().length;
                   });
+                }}
+                sentenceIndex={(sentenceLength) => {
+                  if (pictures().length !== sentenceLength) return undefined;
+                  return pictures().length > 1 ? pictureIndex() : undefined;
                 }}
               />
             </AnkiFieldContextProvider>

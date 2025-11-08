@@ -6,6 +6,7 @@ export default function BackBody(props: {
   onDefinitionPictureClick?: (picture: string) => void;
   onNextClick?: () => void;
   onPrevClick?: () => void;
+  sentenceIndex?: (sentencesLenght: number) => number | undefined;
 }) {
   let sentenceEl: HTMLDivElement | undefined;
   let definitionEl: HTMLDivElement | undefined;
@@ -15,6 +16,7 @@ export default function BackBody(props: {
     ankiFields.SelectionText ? 0 : 1,
   );
   const [definitionPicture, setDefinitionPicture] = createSignal<string>();
+  const [sentences, setSentences] = createSignal<HTMLSpanElement[]>([]);
 
   const pages = [
     ankiFields.SelectionText,
@@ -67,6 +69,26 @@ export default function BackBody(props: {
       });
       i.forEach((el) => {
         el.dataset.jitendexI = "true";
+      });
+    }
+
+    if (sentenceEl) {
+      const spans = Array.from(sentenceEl.querySelectorAll("span")).filter(
+        (el) => el.parentNode === sentenceEl,
+      );
+      spans.forEach((span, index) => {
+        span.dataset.index = index.toString();
+      });
+      setSentences(spans);
+    }
+  });
+
+  createEffect(() => {
+    const sentencesIndex = props.sentenceIndex?.(sentences().length);
+    if (typeof sentencesIndex === "number") {
+      sentences().forEach((span) => {
+        span.style.display =
+          span.dataset.index === sentencesIndex.toString() ? "block" : "none";
       });
     }
   });

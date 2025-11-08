@@ -314,8 +314,8 @@ export const exampleFields6: AnkiFields = {
   "furigana:ExpressionFurigana": "<ruby><rb>絡繰</rb><rt>からくり</rt></ruby>",
   "kana:ExpressionFurigana": "からくり",
   "furigana:Sentence": "ゴールの方程式の<b>からくり</b>は<br>分かったけど",
-  "kanji:Sentence": "ゴールの方程式の<b>からくり</b>は<br>分かったけど",
-  "furigana:SentenceFurigana": "ゴールの<ruby><rb>方程式</rb><rt>ほうていしき</rt></ruby>の<b>からくり</b>は<br><ruby><rb>分</rb><rt>わ</rt></ruby>かったけど",
+  "kanji:Sentence": "<span>ゴールの方程式の<b>からくり</b>は<br>分かったけど</span><span>あ… ちょっと<br><b>こびすぎ</b>じゃない？</span>",
+  "furigana:SentenceFurigana": "<span>ゴールの<ruby><rb>方程式</rb><rt>ほうていしき</rt></ruby>の<b>からくり</b>は<br><ruby><rb>分</rb><rt>わ</rt></ruby>かったけど</span><span><span class=\"term\">ちょっと</span><span class=\"term\">こびすぎ</span><span class=\"term\">じゃない</span><span class=\"term\">？</span></span>",
   "kana:SentenceFurigana": "ゴールのほうていしきの<b>からくり</b>は<br>わかったけど"
 }
 
