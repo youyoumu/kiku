@@ -1,134 +1,30 @@
 /* generated from script/generateTailwindFontSizeCss.ts */
 /* biome-ignore format: this looks nicer */
 @layer utilities {
-  [data-font-size-base-expression="text-xs"] .expression { @apply text-xs; }
-  [data-font-size-base-expression="text-sm"] .expression { @apply text-sm; }
-  [data-font-size-base-expression="text-base"] .expression { @apply text-base; }
-  [data-font-size-base-expression="text-lg"] .expression { @apply text-lg; }
-  [data-font-size-base-expression="text-xl"] .expression { @apply text-xl; }
-  [data-font-size-base-expression="text-2xl"] .expression { @apply text-2xl; }
-  [data-font-size-base-expression="text-3xl"] .expression { @apply text-3xl; }
-  [data-font-size-base-expression="text-4xl"] .expression { @apply text-4xl; }
-  [data-font-size-base-expression="text-5xl"] .expression { @apply text-5xl; }
-  [data-font-size-base-expression="text-6xl"] .expression { @apply text-6xl; }
-  [data-font-size-base-expression="text-7xl"] .expression { @apply text-7xl; }
-  [data-font-size-base-expression="text-8xl"] .expression { @apply text-8xl; }
-  [data-font-size-base-expression="text-9xl"] .expression { @apply text-9xl; }
-  [data-font-size-base-pitch="text-xs"] .pitch { @apply text-xs; }
-  [data-font-size-base-pitch="text-sm"] .pitch { @apply text-sm; }
-  [data-font-size-base-pitch="text-base"] .pitch { @apply text-base; }
-  [data-font-size-base-pitch="text-lg"] .pitch { @apply text-lg; }
-  [data-font-size-base-pitch="text-xl"] .pitch { @apply text-xl; }
-  [data-font-size-base-pitch="text-2xl"] .pitch { @apply text-2xl; }
-  [data-font-size-base-pitch="text-3xl"] .pitch { @apply text-3xl; }
-  [data-font-size-base-pitch="text-4xl"] .pitch { @apply text-4xl; }
-  [data-font-size-base-pitch="text-5xl"] .pitch { @apply text-5xl; }
-  [data-font-size-base-pitch="text-6xl"] .pitch { @apply text-6xl; }
-  [data-font-size-base-pitch="text-7xl"] .pitch { @apply text-7xl; }
-  [data-font-size-base-pitch="text-8xl"] .pitch { @apply text-8xl; }
-  [data-font-size-base-pitch="text-9xl"] .pitch { @apply text-9xl; }
-  [data-font-size-base-sentence="text-xs"] .sentence { @apply text-xs; }
-  [data-font-size-base-sentence="text-sm"] .sentence { @apply text-sm; }
-  [data-font-size-base-sentence="text-base"] .sentence { @apply text-base; }
-  [data-font-size-base-sentence="text-lg"] .sentence { @apply text-lg; }
-  [data-font-size-base-sentence="text-xl"] .sentence { @apply text-xl; }
-  [data-font-size-base-sentence="text-2xl"] .sentence { @apply text-2xl; }
-  [data-font-size-base-sentence="text-3xl"] .sentence { @apply text-3xl; }
-  [data-font-size-base-sentence="text-4xl"] .sentence { @apply text-4xl; }
-  [data-font-size-base-sentence="text-5xl"] .sentence { @apply text-5xl; }
-  [data-font-size-base-sentence="text-6xl"] .sentence { @apply text-6xl; }
-  [data-font-size-base-sentence="text-7xl"] .sentence { @apply text-7xl; }
-  [data-font-size-base-sentence="text-8xl"] .sentence { @apply text-8xl; }
-  [data-font-size-base-sentence="text-9xl"] .sentence { @apply text-9xl; }
-  [data-font-size-base-misc-info="text-xs"] .misc-info { @apply text-xs; }
-  [data-font-size-base-misc-info="text-sm"] .misc-info { @apply text-sm; }
-  [data-font-size-base-misc-info="text-base"] .misc-info { @apply text-base; }
-  [data-font-size-base-misc-info="text-lg"] .misc-info { @apply text-lg; }
-  [data-font-size-base-misc-info="text-xl"] .misc-info { @apply text-xl; }
-  [data-font-size-base-misc-info="text-2xl"] .misc-info { @apply text-2xl; }
-  [data-font-size-base-misc-info="text-3xl"] .misc-info { @apply text-3xl; }
-  [data-font-size-base-misc-info="text-4xl"] .misc-info { @apply text-4xl; }
-  [data-font-size-base-misc-info="text-5xl"] .misc-info { @apply text-5xl; }
-  [data-font-size-base-misc-info="text-6xl"] .misc-info { @apply text-6xl; }
-  [data-font-size-base-misc-info="text-7xl"] .misc-info { @apply text-7xl; }
-  [data-font-size-base-misc-info="text-8xl"] .misc-info { @apply text-8xl; }
-  [data-font-size-base-misc-info="text-9xl"] .misc-info { @apply text-9xl; }
-  [data-font-size-base-hint="text-xs"] .hint { @apply text-xs; }
-  [data-font-size-base-hint="text-sm"] .hint { @apply text-sm; }
-  [data-font-size-base-hint="text-base"] .hint { @apply text-base; }
-  [data-font-size-base-hint="text-lg"] .hint { @apply text-lg; }
-  [data-font-size-base-hint="text-xl"] .hint { @apply text-xl; }
-  [data-font-size-base-hint="text-2xl"] .hint { @apply text-2xl; }
-  [data-font-size-base-hint="text-3xl"] .hint { @apply text-3xl; }
-  [data-font-size-base-hint="text-4xl"] .hint { @apply text-4xl; }
-  [data-font-size-base-hint="text-5xl"] .hint { @apply text-5xl; }
-  [data-font-size-base-hint="text-6xl"] .hint { @apply text-6xl; }
-  [data-font-size-base-hint="text-7xl"] .hint { @apply text-7xl; }
-  [data-font-size-base-hint="text-8xl"] .hint { @apply text-8xl; }
-  [data-font-size-base-hint="text-9xl"] .hint { @apply text-9xl; }
-  [data-font-size-sm-expression="sm:text-xs"] .expression { @apply sm:text-xs; }
-  [data-font-size-sm-expression="sm:text-sm"] .expression { @apply sm:text-sm; }
-  [data-font-size-sm-expression="sm:text-base"] .expression { @apply sm:text-base; }
-  [data-font-size-sm-expression="sm:text-lg"] .expression { @apply sm:text-lg; }
-  [data-font-size-sm-expression="sm:text-xl"] .expression { @apply sm:text-xl; }
-  [data-font-size-sm-expression="sm:text-2xl"] .expression { @apply sm:text-2xl; }
-  [data-font-size-sm-expression="sm:text-3xl"] .expression { @apply sm:text-3xl; }
-  [data-font-size-sm-expression="sm:text-4xl"] .expression { @apply sm:text-4xl; }
-  [data-font-size-sm-expression="sm:text-5xl"] .expression { @apply sm:text-5xl; }
-  [data-font-size-sm-expression="sm:text-6xl"] .expression { @apply sm:text-6xl; }
-  [data-font-size-sm-expression="sm:text-7xl"] .expression { @apply sm:text-7xl; }
-  [data-font-size-sm-expression="sm:text-8xl"] .expression { @apply sm:text-8xl; }
-  [data-font-size-sm-expression="sm:text-9xl"] .expression { @apply sm:text-9xl; }
-  [data-font-size-sm-pitch="sm:text-xs"] .pitch { @apply sm:text-xs; }
-  [data-font-size-sm-pitch="sm:text-sm"] .pitch { @apply sm:text-sm; }
-  [data-font-size-sm-pitch="sm:text-base"] .pitch { @apply sm:text-base; }
-  [data-font-size-sm-pitch="sm:text-lg"] .pitch { @apply sm:text-lg; }
-  [data-font-size-sm-pitch="sm:text-xl"] .pitch { @apply sm:text-xl; }
-  [data-font-size-sm-pitch="sm:text-2xl"] .pitch { @apply sm:text-2xl; }
-  [data-font-size-sm-pitch="sm:text-3xl"] .pitch { @apply sm:text-3xl; }
-  [data-font-size-sm-pitch="sm:text-4xl"] .pitch { @apply sm:text-4xl; }
-  [data-font-size-sm-pitch="sm:text-5xl"] .pitch { @apply sm:text-5xl; }
-  [data-font-size-sm-pitch="sm:text-6xl"] .pitch { @apply sm:text-6xl; }
-  [data-font-size-sm-pitch="sm:text-7xl"] .pitch { @apply sm:text-7xl; }
-  [data-font-size-sm-pitch="sm:text-8xl"] .pitch { @apply sm:text-8xl; }
-  [data-font-size-sm-pitch="sm:text-9xl"] .pitch { @apply sm:text-9xl; }
-  [data-font-size-sm-sentence="sm:text-xs"] .sentence { @apply sm:text-xs; }
-  [data-font-size-sm-sentence="sm:text-sm"] .sentence { @apply sm:text-sm; }
-  [data-font-size-sm-sentence="sm:text-base"] .sentence { @apply sm:text-base; }
-  [data-font-size-sm-sentence="sm:text-lg"] .sentence { @apply sm:text-lg; }
-  [data-font-size-sm-sentence="sm:text-xl"] .sentence { @apply sm:text-xl; }
-  [data-font-size-sm-sentence="sm:text-2xl"] .sentence { @apply sm:text-2xl; }
-  [data-font-size-sm-sentence="sm:text-3xl"] .sentence { @apply sm:text-3xl; }
-  [data-font-size-sm-sentence="sm:text-4xl"] .sentence { @apply sm:text-4xl; }
-  [data-font-size-sm-sentence="sm:text-5xl"] .sentence { @apply sm:text-5xl; }
-  [data-font-size-sm-sentence="sm:text-6xl"] .sentence { @apply sm:text-6xl; }
-  [data-font-size-sm-sentence="sm:text-7xl"] .sentence { @apply sm:text-7xl; }
-  [data-font-size-sm-sentence="sm:text-8xl"] .sentence { @apply sm:text-8xl; }
-  [data-font-size-sm-sentence="sm:text-9xl"] .sentence { @apply sm:text-9xl; }
-  [data-font-size-sm-misc-info="sm:text-xs"] .misc-info { @apply sm:text-xs; }
-  [data-font-size-sm-misc-info="sm:text-sm"] .misc-info { @apply sm:text-sm; }
-  [data-font-size-sm-misc-info="sm:text-base"] .misc-info { @apply sm:text-base; }
-  [data-font-size-sm-misc-info="sm:text-lg"] .misc-info { @apply sm:text-lg; }
-  [data-font-size-sm-misc-info="sm:text-xl"] .misc-info { @apply sm:text-xl; }
-  [data-font-size-sm-misc-info="sm:text-2xl"] .misc-info { @apply sm:text-2xl; }
-  [data-font-size-sm-misc-info="sm:text-3xl"] .misc-info { @apply sm:text-3xl; }
-  [data-font-size-sm-misc-info="sm:text-4xl"] .misc-info { @apply sm:text-4xl; }
-  [data-font-size-sm-misc-info="sm:text-5xl"] .misc-info { @apply sm:text-5xl; }
-  [data-font-size-sm-misc-info="sm:text-6xl"] .misc-info { @apply sm:text-6xl; }
-  [data-font-size-sm-misc-info="sm:text-7xl"] .misc-info { @apply sm:text-7xl; }
-  [data-font-size-sm-misc-info="sm:text-8xl"] .misc-info { @apply sm:text-8xl; }
-  [data-font-size-sm-misc-info="sm:text-9xl"] .misc-info { @apply sm:text-9xl; }
-  [data-font-size-sm-hint="sm:text-xs"] .hint { @apply sm:text-xs; }
-  [data-font-size-sm-hint="sm:text-sm"] .hint { @apply sm:text-sm; }
-  [data-font-size-sm-hint="sm:text-base"] .hint { @apply sm:text-base; }
-  [data-font-size-sm-hint="sm:text-lg"] .hint { @apply sm:text-lg; }
-  [data-font-size-sm-hint="sm:text-xl"] .hint { @apply sm:text-xl; }
-  [data-font-size-sm-hint="sm:text-2xl"] .hint { @apply sm:text-2xl; }
-  [data-font-size-sm-hint="sm:text-3xl"] .hint { @apply sm:text-3xl; }
-  [data-font-size-sm-hint="sm:text-4xl"] .hint { @apply sm:text-4xl; }
-  [data-font-size-sm-hint="sm:text-5xl"] .hint { @apply sm:text-5xl; }
-  [data-font-size-sm-hint="sm:text-6xl"] .hint { @apply sm:text-6xl; }
-  [data-font-size-sm-hint="sm:text-7xl"] .hint { @apply sm:text-7xl; }
-  [data-font-size-sm-hint="sm:text-8xl"] .hint { @apply sm:text-8xl; }
-  [data-font-size-sm-hint="sm:text-9xl"] .hint { @apply sm:text-9xl; }
+  [data-font-size-base-expression="text-xs"] .expression, [data-font-size-base-pitch="text-xs"] .pitch, [data-font-size-base-sentence="text-xs"] .sentence, [data-font-size-base-misc-info="text-xs"] .misc-info, [data-font-size-base-hint="text-xs"] .hint { @apply text-xs; }
+  [data-font-size-base-expression="text-sm"] .expression, [data-font-size-base-pitch="text-sm"] .pitch, [data-font-size-base-sentence="text-sm"] .sentence, [data-font-size-base-misc-info="text-sm"] .misc-info, [data-font-size-base-hint="text-sm"] .hint { @apply text-sm; }
+  [data-font-size-base-expression="text-base"] .expression, [data-font-size-base-pitch="text-base"] .pitch, [data-font-size-base-sentence="text-base"] .sentence, [data-font-size-base-misc-info="text-base"] .misc-info, [data-font-size-base-hint="text-base"] .hint { @apply text-base; }
+  [data-font-size-base-expression="text-lg"] .expression, [data-font-size-base-pitch="text-lg"] .pitch, [data-font-size-base-sentence="text-lg"] .sentence, [data-font-size-base-misc-info="text-lg"] .misc-info, [data-font-size-base-hint="text-lg"] .hint { @apply text-lg; }
+  [data-font-size-base-expression="text-xl"] .expression, [data-font-size-base-pitch="text-xl"] .pitch, [data-font-size-base-sentence="text-xl"] .sentence, [data-font-size-base-misc-info="text-xl"] .misc-info, [data-font-size-base-hint="text-xl"] .hint { @apply text-xl; }
+  [data-font-size-base-expression="text-2xl"] .expression, [data-font-size-base-pitch="text-2xl"] .pitch, [data-font-size-base-sentence="text-2xl"] .sentence, [data-font-size-base-misc-info="text-2xl"] .misc-info, [data-font-size-base-hint="text-2xl"] .hint { @apply text-2xl; }
+  [data-font-size-base-expression="text-3xl"] .expression, [data-font-size-base-pitch="text-3xl"] .pitch, [data-font-size-base-sentence="text-3xl"] .sentence, [data-font-size-base-misc-info="text-3xl"] .misc-info, [data-font-size-base-hint="text-3xl"] .hint { @apply text-3xl; }
+  [data-font-size-base-expression="text-4xl"] .expression, [data-font-size-base-pitch="text-4xl"] .pitch, [data-font-size-base-sentence="text-4xl"] .sentence, [data-font-size-base-misc-info="text-4xl"] .misc-info, [data-font-size-base-hint="text-4xl"] .hint { @apply text-4xl; }
+  [data-font-size-base-expression="text-5xl"] .expression, [data-font-size-base-pitch="text-5xl"] .pitch, [data-font-size-base-sentence="text-5xl"] .sentence, [data-font-size-base-misc-info="text-5xl"] .misc-info, [data-font-size-base-hint="text-5xl"] .hint { @apply text-5xl; }
+  [data-font-size-base-expression="text-6xl"] .expression, [data-font-size-base-pitch="text-6xl"] .pitch, [data-font-size-base-sentence="text-6xl"] .sentence, [data-font-size-base-misc-info="text-6xl"] .misc-info, [data-font-size-base-hint="text-6xl"] .hint { @apply text-6xl; }
+  [data-font-size-base-expression="text-7xl"] .expression, [data-font-size-base-pitch="text-7xl"] .pitch, [data-font-size-base-sentence="text-7xl"] .sentence, [data-font-size-base-misc-info="text-7xl"] .misc-info, [data-font-size-base-hint="text-7xl"] .hint { @apply text-7xl; }
+  [data-font-size-base-expression="text-8xl"] .expression, [data-font-size-base-pitch="text-8xl"] .pitch, [data-font-size-base-sentence="text-8xl"] .sentence, [data-font-size-base-misc-info="text-8xl"] .misc-info, [data-font-size-base-hint="text-8xl"] .hint { @apply text-8xl; }
+  [data-font-size-base-expression="text-9xl"] .expression, [data-font-size-base-pitch="text-9xl"] .pitch, [data-font-size-base-sentence="text-9xl"] .sentence, [data-font-size-base-misc-info="text-9xl"] .misc-info, [data-font-size-base-hint="text-9xl"] .hint { @apply text-9xl; }
+  [data-font-size-sm-expression="sm:text-xs"] .expression, [data-font-size-sm-pitch="sm:text-xs"] .pitch, [data-font-size-sm-sentence="sm:text-xs"] .sentence, [data-font-size-sm-misc-info="sm:text-xs"] .misc-info, [data-font-size-sm-hint="sm:text-xs"] .hint { @apply sm:text-xs; }
+  [data-font-size-sm-expression="sm:text-sm"] .expression, [data-font-size-sm-pitch="sm:text-sm"] .pitch, [data-font-size-sm-sentence="sm:text-sm"] .sentence, [data-font-size-sm-misc-info="sm:text-sm"] .misc-info, [data-font-size-sm-hint="sm:text-sm"] .hint { @apply sm:text-sm; }
+  [data-font-size-sm-expression="sm:text-base"] .expression, [data-font-size-sm-pitch="sm:text-base"] .pitch, [data-font-size-sm-sentence="sm:text-base"] .sentence, [data-font-size-sm-misc-info="sm:text-base"] .misc-info, [data-font-size-sm-hint="sm:text-base"] .hint { @apply sm:text-base; }
+  [data-font-size-sm-expression="sm:text-lg"] .expression, [data-font-size-sm-pitch="sm:text-lg"] .pitch, [data-font-size-sm-sentence="sm:text-lg"] .sentence, [data-font-size-sm-misc-info="sm:text-lg"] .misc-info, [data-font-size-sm-hint="sm:text-lg"] .hint { @apply sm:text-lg; }
+  [data-font-size-sm-expression="sm:text-xl"] .expression, [data-font-size-sm-pitch="sm:text-xl"] .pitch, [data-font-size-sm-sentence="sm:text-xl"] .sentence, [data-font-size-sm-misc-info="sm:text-xl"] .misc-info, [data-font-size-sm-hint="sm:text-xl"] .hint { @apply sm:text-xl; }
+  [data-font-size-sm-expression="sm:text-2xl"] .expression, [data-font-size-sm-pitch="sm:text-2xl"] .pitch, [data-font-size-sm-sentence="sm:text-2xl"] .sentence, [data-font-size-sm-misc-info="sm:text-2xl"] .misc-info, [data-font-size-sm-hint="sm:text-2xl"] .hint { @apply sm:text-2xl; }
+  [data-font-size-sm-expression="sm:text-3xl"] .expression, [data-font-size-sm-pitch="sm:text-3xl"] .pitch, [data-font-size-sm-sentence="sm:text-3xl"] .sentence, [data-font-size-sm-misc-info="sm:text-3xl"] .misc-info, [data-font-size-sm-hint="sm:text-3xl"] .hint { @apply sm:text-3xl; }
+  [data-font-size-sm-expression="sm:text-4xl"] .expression, [data-font-size-sm-pitch="sm:text-4xl"] .pitch, [data-font-size-sm-sentence="sm:text-4xl"] .sentence, [data-font-size-sm-misc-info="sm:text-4xl"] .misc-info, [data-font-size-sm-hint="sm:text-4xl"] .hint { @apply sm:text-4xl; }
+  [data-font-size-sm-expression="sm:text-5xl"] .expression, [data-font-size-sm-pitch="sm:text-5xl"] .pitch, [data-font-size-sm-sentence="sm:text-5xl"] .sentence, [data-font-size-sm-misc-info="sm:text-5xl"] .misc-info, [data-font-size-sm-hint="sm:text-5xl"] .hint { @apply sm:text-5xl; }
+  [data-font-size-sm-expression="sm:text-6xl"] .expression, [data-font-size-sm-pitch="sm:text-6xl"] .pitch, [data-font-size-sm-sentence="sm:text-6xl"] .sentence, [data-font-size-sm-misc-info="sm:text-6xl"] .misc-info, [data-font-size-sm-hint="sm:text-6xl"] .hint { @apply sm:text-6xl; }
+  [data-font-size-sm-expression="sm:text-7xl"] .expression, [data-font-size-sm-pitch="sm:text-7xl"] .pitch, [data-font-size-sm-sentence="sm:text-7xl"] .sentence, [data-font-size-sm-misc-info="sm:text-7xl"] .misc-info, [data-font-size-sm-hint="sm:text-7xl"] .hint { @apply sm:text-7xl; }
+  [data-font-size-sm-expression="sm:text-8xl"] .expression, [data-font-size-sm-pitch="sm:text-8xl"] .pitch, [data-font-size-sm-sentence="sm:text-8xl"] .sentence, [data-font-size-sm-misc-info="sm:text-8xl"] .misc-info, [data-font-size-sm-hint="sm:text-8xl"] .hint { @apply sm:text-8xl; }
+  [data-font-size-sm-expression="sm:text-9xl"] .expression, [data-font-size-sm-pitch="sm:text-9xl"] .pitch, [data-font-size-sm-sentence="sm:text-9xl"] .sentence, [data-font-size-sm-misc-info="sm:text-9xl"] .misc-info, [data-font-size-sm-hint="sm:text-9xl"] .hint { @apply sm:text-9xl; }
 }

@@ -17,25 +17,28 @@ const sizes = [
 ];
 const fields = ["expression", "pitch", "sentence", "misc-info", "hint"];
 
-let css = `@layer utilities {\n`;
+let css = `/* generated from script/generateTailwindFontSizeCss.ts */\n/* biome-ignore format: this looks nicer */\n@layer utilities {\n`;
 
 // Base font size (no breakpoint)
-for (const field of fields) {
-  for (const size of sizes) {
-    css += `  [data-font-size-base-${field}="${size}"] .${field} { @apply ${size}; }\n`;
-  }
+for (const size of sizes) {
+  const selectors = fields
+    .map((field) => `[data-font-size-base-${field}="${size}"] .${field}`)
+    .join(", ");
+  css += `  ${selectors} { @apply ${size}; }\n`;
 }
 
 // Responsive variants
-for (const field of fields) {
-  for (const bp of tailwindBreakpoints) {
-    for (const size of sizes) {
-      css += `  [data-font-size-${bp}-${field}="${bp}:${size}"] .${field} { @apply ${bp}:${size}; }\n`;
-    }
+for (const bp of tailwindBreakpoints) {
+  for (const size of sizes) {
+    const selectors = fields
+      .map(
+        (field) => `[data-font-size-${bp}-${field}="${bp}:${size}"] .${field}`,
+      )
+      .join(", ");
+    css += `  ${selectors} { @apply ${bp}:${size}; }\n`;
   }
 }
 
 css += `}\n`;
 console.log(css);
-
 console.log("✅ Generated src/generated/fontsize.css");
