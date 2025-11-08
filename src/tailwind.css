@@ -9,20 +9,32 @@
 }
 
 @layer base {
-  [data-use-system-font="true"] {
-    font-family: var(--system-font);
+  [data-use-system-font-primary="true"] [data-font-primary="true"] {
+    font-family: var(--system-font-primary);
   }
-  [data-use-system-font="false"][data-web-font="Hina Mincho"] {
+  [data-use-system-font-secondary="true"] [data-font-secondary="true"] {
+    font-family: var(--system-font-secondary);
+  }
+  [data-use-system-font-primary="false"][data-web-font-primary="Hina Mincho"]
+    [data-font-primary="true"],
+  [data-use-system-font-secondary="false"][data-web-font-secondary="Hina Mincho"]
+    [data-font-secondary="true"] {
     font-family: "Hina Mincho", serif;
     font-weight: 400;
     font-style: normal;
   }
-  [data-use-system-font="false"][data-web-font="Klee One"] {
+  [data-use-system-font-primary="false"][data-web-font-primary="Klee One"]
+    [data-font-primary="true"],
+  [data-use-system-font-secondary="false"][data-web-font-secondary="Klee One"]
+    [data-font-secondary="true"] {
     font-family: "Klee One", cursive;
     font-weight: 400;
     font-style: normal;
   }
-  [data-use-system-font="false"][data-web-font="IBM Plex Sans JP"] {
+  [data-use-system-font-primary="false"][data-web-font-primary="IBM Plex Sans JP"]
+    [data-font-primary="true"],
+  [data-use-system-font-secondary="false"][data-web-font-secondary="IBM Plex Sans JP"]
+    [data-font-secondary="true"] {
     font-family: "IBM Plex Sans JP", sans-serif;
     font-weight: 400;
     font-style: normal;
