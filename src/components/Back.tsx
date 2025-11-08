@@ -75,7 +75,7 @@ export function Back() {
           >
             <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
               <div
-                class="expression"
+                class="expression font-secondary"
                 innerHTML={
                   isServer
                     ? undefined
