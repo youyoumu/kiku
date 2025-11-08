@@ -60,8 +60,8 @@ export async function init({
       const rootDataset$: KikuConfig = {
         kikuRoot: rootDataset.kikuRoot,
         theme: rootDataset.theme,
-        webFont: rootDataset.webFont,
-        systemFont: rootDataset.systemFont,
+        webFontPrimary: rootDataset.webFontPrimary,
+        systemFontPrimary: rootDataset.systemFontPrimary,
         useSystemFont: rootDataset.useSystemFont,
         ankiConnectPort: rootDataset.ankiConnectPort,
         fontSizeBaseExpression: rootDataset.fontSizeBaseExpression,

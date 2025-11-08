@@ -47,8 +47,8 @@ export default function Settings(props: {
     const payload: KikuConfig = {
       kikuRoot: "true",
       theme: config.theme ? config.theme : defaultConfig.theme,
-      webFont: config.webFont ? config.webFont : defaultConfig.webFont,
-      systemFont: config.systemFont ? config.systemFont : defaultConfig.systemFont,
+      webFontPrimary: config.webFontPrimary ? config.webFontPrimary : defaultConfig.webFontPrimary,
+      systemFontPrimary: config.systemFontPrimary ? config.systemFontPrimary : defaultConfig.systemFontPrimary,
       useSystemFont: config.useSystemFont ? config.useSystemFont : defaultConfig.useSystemFont,
       //TODO: configurable
       ankiConnectPort: "8765",
@@ -172,7 +172,7 @@ export default function Settings(props: {
       .getComputedStyle(document.documentElement)
       .getPropertyValue("--system-font");
 
-    const systemFontConfigTrim = config.systemFont
+    const systemFontConfigTrim = config.systemFontPrimary
       .replaceAll("\n", "")
       .split(",")
       .map((font) => font.trim().replaceAll('"', "'"))
@@ -183,7 +183,7 @@ export default function Settings(props: {
       .map((font) => font.trim().replaceAll('"', "'"))
       .join(", ");
 
-    if (config.systemFont && systemFontConfigTrim !== systemFontTrim) {
+    if (config.systemFontPrimary && systemFontConfigTrim !== systemFontTrim) {
       mismatches.push(["--system-font", systemFont]);
     }
 
@@ -201,8 +201,8 @@ export default function Settings(props: {
   const [cssVar, setCssVar] = createSignal<Record<string, string>>({});
   function getCssVar() {
     const cssVar: Record<string, string> = {};
-    if (config.systemFont) {
-      cssVar["--system-font"] = `${config.systemFont}`;
+    if (config.systemFontPrimary) {
+      cssVar["--system-font"] = `${config.systemFontPrimary}`;
     }
     return cssVar;
   }
@@ -309,7 +309,7 @@ export default function Settings(props: {
             }}
             on:change={(e) => {
               const target = e.target as HTMLSelectElement;
-              setConfig("webFont", target.value as WebFont);
+              setConfig("webFontPrimary", target.value as WebFont);
             }}
           >
             <legend class="fieldset-legend">Web Font</legend>
@@ -318,7 +318,7 @@ export default function Settings(props: {
                 return (
                   <option
                     value={font}
-                    selected={config.webFont === font}
+                    selected={config.webFontPrimary === font}
                     data-web-font={font}
                     data-use-system-font={"false"}
                   >
@@ -339,10 +339,15 @@ export default function Settings(props: {
               <UndoIcon
                 class="h-4 w-4 cursor-pointer"
                 classList={{
-                  hidden: config.systemFont === defaultConfig.systemFont,
+                  hidden:
+                    config.systemFontPrimary ===
+                    defaultConfig.systemFontPrimary,
                 }}
                 on:click={() => {
-                  setConfig("systemFont", defaultConfig.systemFont);
+                  setConfig(
+                    "systemFontPrimary",
+                    defaultConfig.systemFontPrimary,
+                  );
                 }}
               />
             </legend>
@@ -352,9 +357,12 @@ export default function Settings(props: {
               placeholder={
                 "'Hiragino Mincho ProN', 'Noto Serif CJK JP', 'Noto Serif JP', 'Yu Mincho', HanaMinA, HanaMinB, serif"
               }
-              value={config.systemFont}
+              value={config.systemFontPrimary}
               on:input={(e) => {
-                setConfig("systemFont", (e.target as HTMLInputElement).value);
+                setConfig(
+                  "systemFontPrimary",
+                  (e.target as HTMLInputElement).value,
+                );
               }}
             />
           </fieldset>
