@@ -1,6 +1,11 @@
 import { createEffect, createSignal, onMount, Show } from "solid-js";
 import { Portal } from "solid-js/web";
-import { type CssVar, defaultConfig, type KikuConfig } from "#/util/config";
+import {
+  type CssVar,
+  type DataSetProp,
+  defaultConfig,
+  type KikuConfig,
+} from "#/util/config";
 import { type WebFont, webFonts } from "#/util/fonts";
 import { daisyUIThemes } from "#/util/theme";
 import { useAnkiField, useBreakpoint, useConfig } from "../shared/Context";
@@ -340,12 +345,17 @@ export default function Settings(props: {
               <legend class="fieldset-legend">Web Font</legend>
               <select class="select w-full">
                 {webFonts.map((font) => {
+                  const dataSetProp: DataSetProp = {
+                    "data-font-primary": "true",
+                    "data-web-font-primary": font,
+                    "data-use-system-font-primary": "false",
+                    "data-font-scope": "local",
+                  };
                   return (
                     <option
                       value={font}
                       selected={config.webFontPrimary === font}
-                      data-web-font={font}
-                      data-use-system-font={"false"}
+                      {...dataSetProp}
                     >
                       {font}
                     </option>
@@ -430,13 +440,17 @@ export default function Settings(props: {
               <legend class="fieldset-legend">Web Font</legend>
               <select class="select w-full">
                 {webFonts.map((font) => {
+                  const dataSetProp: DataSetProp = {
+                    "data-font-secondary": "true",
+                    "data-web-font-secondary": font,
+                    "data-use-system-font-secondary": "false",
+                    "data-font-scope": "local",
+                  };
                   return (
                     <option
                       value={font}
                       selected={config.webFontSecondary === font}
-                      // TODO: font
-                      data-web-font={font}
-                      data-use-system-font={"false"}
+                      {...dataSetProp}
                     >
                       {font}
                     </option>

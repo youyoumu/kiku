@@ -112,6 +112,46 @@ export type CssVar = {
   "--system-font-secondary": string;
 };
 
+export type DataSet = {
+  "data-kiku-root": "true" | "false";
+  "data-theme": string;
+  "data-web-font-primary": string;
+  "data-system-font-primary": string;
+  "data-use-system-font-primary": "true" | "false";
+  "data-web-font-secondary": string;
+  "data-system-font-secondary": string;
+  "data-use-system-font-secondary": "true" | "false";
+  "data-anki-connect-port": string;
+  "data-font-size-base-expression": string;
+  "data-font-size-base-pitch": string;
+  "data-font-size-base-sentence": string;
+  "data-font-size-base-misc-info": string;
+  "data-font-size-base-hint": string;
+  "data-font-size-sm-expression": string;
+  "data-font-size-sm-pitch": string;
+  "data-font-size-sm-sentence": string;
+  "data-font-size-sm-misc-info": string;
+  "data-font-size-sm-hint": string;
+  //
+  "data-field": string;
+  "data-is-audio-card": "true" | "false";
+  "data-is-sentence-card": "true" | "false";
+  "data-is-word-and-sentence-card": "true" | "false";
+  "data-is-click-card": "true" | "false";
+  "data-clicked": "true" | "false";
+  "data-font-primary": "true" | "false";
+  "data-font-secondary": "true" | "false";
+  "data-font-scope": "local";
+  "data-transition": "true" | "false";
+  "data-tags": string;
+  "data-nsfw": "true" | "false";
+  "data-is-even": "true" | "false";
+  "data-modal-hidden": "true" | "false";
+  "data-modal-transparent": "true" | "false";
+};
+
+export type DataSetProp = Partial<DataSet>;
+
 export function updateConfigDataset(el: HTMLElement, config: KikuConfig) {
   document.documentElement.setAttribute("data-theme", config.theme);
   Object.entries(config).forEach(([key, value]) => {
