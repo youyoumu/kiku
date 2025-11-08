@@ -98,22 +98,9 @@ export function validateConfig(config: KikuConfig): KikuConfig {
   }
 }
 
-// biome-ignore format: this looks nicer
 export function updateConfigDataset(el: HTMLElement, config: KikuConfig) {
   document.documentElement.setAttribute("data-theme", config.theme);
-  el.setAttribute("data-theme", config.theme);
-  el.setAttribute("data-web-font", config.webFont);
-  el.setAttribute("data-system-font", config.systemFont);
-  if (config.systemFont) el.style.fontFamily = config.systemFont;
-  if (!config.systemFont) el.style.fontFamily = ""
-  el.setAttribute("data-font-size-base-expression", config.fontSizeBaseExpression);
-  el.setAttribute("data-font-size-base-pitch", config.fontSizeBasePitch);
-  el.setAttribute("data-font-size-base-sentence", config.fontSizeBaseSentence);
-  el.setAttribute("data-font-size-base-misc-info", config.fontSizeBaseMiscInfo);
-  el.setAttribute("data-font-size-base-hint", config.fontSizeBaseHint);
-  el.setAttribute("data-font-size-sm-expression", config.fontSizeSmExpression);
-  el.setAttribute("data-font-size-sm-pitch", config.fontSizeSmPitch);
-  el.setAttribute("data-font-size-sm-sentence", config.fontSizeSmSentence);
-  el.setAttribute("data-font-size-sm-misc-info", config.fontSizeSmMiscInfo);
-  el.setAttribute("data-font-size-sm-hint", config.fontSizeSmHint);
+  Object.entries(config).forEach(([key, value]) => {
+    el.dataset[key] = value;
+  });
 }

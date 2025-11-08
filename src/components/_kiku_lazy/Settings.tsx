@@ -337,7 +337,24 @@ export default function Settings(props: {
                 setConfig("systemFont", (e.target as HTMLInputElement).value);
               }}
             />
-            <p class="label">Overrides Web Font when specified</p>
+          </fieldset>
+
+          <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-64 py-4">
+            <legend class="fieldset-legend">Use System Font</legend>
+            <label class="label">
+              <input
+                type="checkbox"
+                checked={config.useSystemFont === "true"}
+                class="toggle"
+                on:change={(e) => {
+                  setConfig(
+                    "useSystemFont",
+                    e.target.checked ? "true" : "false",
+                  );
+                }}
+              />
+              Overrides Web Font when enabled
+            </label>
           </fieldset>
         </div>
       </div>
