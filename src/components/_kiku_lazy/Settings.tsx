@@ -319,7 +319,8 @@ export default function Settings(props: {
                   <option
                     value={font}
                     selected={config.webFont === font}
-                    //TODO: font
+                    data-web-font={font}
+                    data-use-system-font={"false"}
                   >
                     {font}
                   </option>
