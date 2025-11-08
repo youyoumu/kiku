@@ -25,7 +25,7 @@ export const defaultConfig: KikuConfig = {
   kikuRoot: "true",
   theme: "coffee",
   webFont: "Klee One",
-  systemFont: '"Hiragino Mincho ProN", "Noto Serif CJK JP", "Noto Serif JP", "Yu Mincho", HanaMinA, HanaMinB, serif',
+  systemFont: "'Hiragino Mincho ProN', 'Noto Serif CJK JP', 'Noto Serif JP', 'Yu Mincho', HanaMinA, HanaMinB, serif",
   ankiConnectPort: 8765,
   fontSizeBaseExpression: "text-5xl",
   fontSizeBasePitch: "text-xl",

@@ -136,7 +136,10 @@ export default function Settings(props: {
     const mismatches = Object.entries(config).filter(([key, value]) => {
       const rootDataValue =
         globalThis.KIKU_STATE.rootDataset[key as keyof KikuConfig];
-      return rootDataValue !== value;
+      return (
+        String(rootDataValue).replaceAll('"', "'") !==
+        value.toString().replaceAll('"', "'")
+      );
     });
     const mismatches$ = mismatches.map(([key]) => {
       return [key, globalThis.KIKU_STATE.rootDataset[key as keyof KikuConfig]];
@@ -151,10 +154,9 @@ export default function Settings(props: {
   );
   function getRootDataset() {
     const dataset = Object.entries(config);
-    dataset.unshift(["kikuRoot", "true"]);
     const dataset$ = Object.fromEntries(
       dataset.map(([key, value]) => {
-        return [key, value.toString()];
+        return [key, value.toString().replaceAll('"', "'")];
       }),
     );
     return dataset$;
@@ -319,7 +321,7 @@ export default function Settings(props: {
               type="text"
               class="input w-full"
               placeholder={
-                '"Hiragino Mincho ProN", "Noto Serif CJK JP", "Noto Serif JP", "Yu Mincho", HanaMinA, HanaMinB, serif'
+                "'Hiragino Mincho ProN', 'Noto Serif CJK JP', 'Noto Serif JP', 'Yu Mincho', HanaMinA, HanaMinB, serif"
               }
               value={config.systemFont}
               on:input={(e) => {
