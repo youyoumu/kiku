@@ -16,7 +16,7 @@ import {
   updateConfigDataset,
   validateConfig,
 } from "./util/config.ts";
-import { env, getAnkiFields } from "./util/general.ts";
+import { env } from "./util/general.ts";
 
 declare global {
   var KIKU_STATE: {
@@ -85,12 +85,11 @@ export async function init({
     updateConfigDataset(root, config$);
 
     const [config, setConfig] = createStore(config$);
-    const ankiFields = getAnkiFields();
     window.KIKU_STATE.relax = false;
 
     if (side === "front") {
       const App = () => (
-        <AnkiFieldContextProvider value={{ ankiFields }}>
+        <AnkiFieldContextProvider>
           <CardStoreContextProvider>
             <BreakpointContextProvider>
               <ConfigContextProvider value={[config, setConfig]}>
@@ -104,7 +103,7 @@ export async function init({
       render(App, root);
     } else if (side === "back") {
       const App = () => (
-        <AnkiFieldContextProvider value={{ ankiFields }}>
+        <AnkiFieldContextProvider>
           <CardStoreContextProvider>
             <BreakpointContextProvider>
               <ConfigContextProvider value={[config, setConfig]}>

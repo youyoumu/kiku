@@ -9,6 +9,7 @@ import {
   useContext,
 } from "solid-js";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
+import { getAnkiFields } from "#/util/general";
 import type { AnkiBackFields, AnkiFields, AnkiFrontFields } from "../../types";
 import { type KikuConfig, updateConfigDataset } from "../../util/config";
 
@@ -43,12 +44,11 @@ const AnkiFieldContext = createContext<{
   ankiFields: AnkiFields;
 }>();
 
-export function AnkiFieldContextProvider(props: {
-  children: JSX.Element;
-  value: { ankiFields: AnkiFields };
-}) {
+export function AnkiFieldContextProvider(props: { children: JSX.Element }) {
+  const ankiFields = getAnkiFields();
+
   return (
-    <AnkiFieldContext.Provider value={props.value}>
+    <AnkiFieldContext.Provider value={{ ankiFields }}>
       {props.children}
     </AnkiFieldContext.Provider>
   );

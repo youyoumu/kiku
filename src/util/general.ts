@@ -1,5 +1,5 @@
 import { isServer } from "solid-js/web";
-import { ankiFieldsSkeleton, exampleFields6 } from "#/types";
+import { type AnkiFields, ankiFieldsSkeleton, exampleFields6 } from "#/types";
 
 export const env = {
   KIKU_CONFIG_FILE: "_kiku.config.json",
@@ -25,5 +25,5 @@ export function getAnkiFields() {
         ]),
       )
     : ankiFieldsSkeleton;
-  return ankiFields;
+  return ankiFields as AnkiFields;
 }

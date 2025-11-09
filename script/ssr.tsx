@@ -3,7 +3,9 @@ import { generateHydrationScript, renderToString } from "solid-js/web";
 import { Front } from "#/components/Front";
 import { Back } from "../src/components/Back";
 import {
+  AnkiFieldContextProvider,
   BreakpointContextProvider,
+  CardStoreContextProvider,
   ConfigContextProvider,
 } from "../src/components/shared/Context";
 import { defaultConfig } from "../src/util/config";
@@ -16,18 +18,26 @@ globalThis.KIKU_STATE = {
 
 export function getSsrTemplate() {
   const frontTemplate = renderToString(() => (
-    <BreakpointContextProvider>
-      <ConfigContextProvider value={[config, setConfig]}>
-        <Front />
-      </ConfigContextProvider>
-    </BreakpointContextProvider>
+    <AnkiFieldContextProvider>
+      <CardStoreContextProvider>
+        <BreakpointContextProvider>
+          <ConfigContextProvider value={[config, setConfig]}>
+            <Front />
+          </ConfigContextProvider>
+        </BreakpointContextProvider>
+      </CardStoreContextProvider>
+    </AnkiFieldContextProvider>
   ));
   const backTemplate = renderToString(() => (
-    <BreakpointContextProvider>
-      <ConfigContextProvider value={[config, setConfig]}>
-        <Back />
-      </ConfigContextProvider>
-    </BreakpointContextProvider>
+    <AnkiFieldContextProvider>
+      <CardStoreContextProvider>
+        <BreakpointContextProvider>
+          <ConfigContextProvider value={[config, setConfig]}>
+            <Back />
+          </ConfigContextProvider>
+        </BreakpointContextProvider>
+      </CardStoreContextProvider>
+    </AnkiFieldContextProvider>
   ));
 
   const hydrationScript = generateHydrationScript();
