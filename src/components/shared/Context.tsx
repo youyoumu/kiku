@@ -143,6 +143,7 @@ export function useBreakpoint() {
 type CardStore = {
   pictureFieldRef?: HTMLDivElement;
   expressionAudioRef?: HTMLDivElement;
+  sentenceFieldRef?: HTMLDivElement;
   sentenceAudioRef?: HTMLDivElement;
   sentenceAudios?: HTMLAnchorElement[];
   showSettings: boolean;
@@ -161,6 +162,7 @@ export function CardStoreContextProvider(props: { children: JSX.Element }) {
   const store = createStore<CardStore>({
     pictureFieldRef: undefined,
     expressionAudioRef: undefined,
+    sentenceFieldRef: undefined,
     sentenceAudioRef: undefined,
     sentenceAudios: undefined,
     showSettings: false,
