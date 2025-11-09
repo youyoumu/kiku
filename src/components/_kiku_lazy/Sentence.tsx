@@ -1,9 +1,10 @@
 import { createEffect, createSignal, onMount } from "solid-js";
-import { useAnkiField } from "../shared/Context";
+import { useAnkiField, useCardStore } from "../shared/Context";
 
 export function SentenceBack() {
   let sentenceEl: HTMLDivElement | undefined;
   const { ankiFields } = useAnkiField<"back">();
+  const [card, setCard] = useCardStore();
   const [sentences, setSentences] = createSignal<HTMLSpanElement[]>([]);
 
   onMount(() => {
@@ -26,14 +27,14 @@ export function SentenceBack() {
   });
 
   createEffect(() => {
-    //TODO: props
-    // const sentencesIndex = props.sentenceIndex?.(sentences().length);
-    // if (typeof sentencesIndex === "number") {
-    //   sentences().forEach((span) => {
-    //     span.style.display =
-    //       span.dataset.index === sentencesIndex.toString() ? "block" : "none";
-    //   });
-    // }
+    const sentencesIndex =
+      card.pictures.length > 1 ? card.pictureIndex : undefined;
+    if (typeof sentencesIndex === "number") {
+      sentences().forEach((span) => {
+        span.style.display =
+          span.dataset.index === sentencesIndex.toString() ? "block" : "none";
+      });
+    }
   });
 
   return (
