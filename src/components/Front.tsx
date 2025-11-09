@@ -38,36 +38,38 @@ export function Front() {
       <div class="flex justify-between flex-row h-5 min-h-5">
         {card.ready && <Lazy.Header side="front" />}
       </div>
-      <div
-        class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row"
-        on:click={() => setCard("clicked", (prev) => !prev)}
-      >
-        <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
-          <div
-            class="expression font-secondary"
-            classList={{
-              "border-b-2 border-dotted border-base-content-soft":
-                !!ankiFields.IsClickCard,
-            }}
-            innerHTML={
-              isServer
-                ? undefined
-                : !ankiFields.IsSentenceCard && !ankiFields.IsAudioCard
-                  ? ankiFields.Expression
-                  : "?"
-            }
-          >
-            {isServer
-              ? `{{#IsSentenceCard}} <span>?</span> {{/IsSentenceCard}} {{#IsAudioCard}} <span>?</span> {{/IsAudioCard}} {{^IsSentenceCard}} {{^IsAudioCard}} {{Expression}} {{/IsAudioCard}} {{/IsSentenceCard}}`
-              : undefined}
+      <div class="flex flex-col gap-4">
+        <div
+          class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row"
+          on:click={() => setCard("clicked", (prev) => !prev)}
+        >
+          <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
+            <div
+              class="expression font-secondary"
+              classList={{
+                "border-b-2 border-dotted border-base-content-soft":
+                  !!ankiFields.IsClickCard,
+              }}
+              innerHTML={
+                isServer
+                  ? undefined
+                  : !ankiFields.IsSentenceCard && !ankiFields.IsAudioCard
+                    ? ankiFields.Expression
+                    : "?"
+              }
+            >
+              {isServer
+                ? `{{#IsSentenceCard}} <span>?</span> {{/IsSentenceCard}} {{#IsAudioCard}} <span>?</span> {{/IsAudioCard}} {{^IsSentenceCard}} {{^IsAudioCard}} {{Expression}} {{/IsAudioCard}} {{/IsSentenceCard}}`
+                : undefined}
+            </div>
           </div>
         </div>
-      </div>
-      <div
-        class="hidden justify-between py-1 text-base-content-soft items-center gap-2 animate-fade-in h-5 sm:h-8 flex-if-x-card"
-        {...flexIfXCardProp()}
-      >
-        {card.ready && <Lazy.PicturePagination />}
+        <div
+          class="hidden justify-between text-base-content-soft items-center gap-2 animate-fade-in h-5 sm:h-8 flex-if-x-card"
+          {...flexIfXCardProp()}
+        >
+          {card.ready && <Lazy.PicturePagination />}
+        </div>
       </div>
 
       {/* TODO: animation */}

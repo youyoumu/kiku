@@ -64,7 +64,7 @@ export function Back() {
               />
             )}
           </div>
-          <div>
+          <div class="flex flex-col gap-4">
             <div
               class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row"
               classList={{
@@ -119,7 +119,7 @@ export function Back() {
                 </div>
               </div>
             </div>
-            <div class="flex justify-between py-1 text-base-content-soft items-center gap-2 animate-fade-in h-5 sm:h-8">
+            <div class="flex justify-between text-base-content-soft items-center gap-2 animate-fade-in h-5 sm:h-8">
               {card.ready && <Lazy.PicturePagination />}
             </div>
           </div>
