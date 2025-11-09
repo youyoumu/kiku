@@ -1,10 +1,8 @@
 import { lazy, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
-import type { AnkiFields } from "#/types";
 import type { DatasetProp } from "#/util/config";
-import { getAnkiFields } from "#/util/general";
 import { Layout } from "./Layout";
-import { AnkiFieldContextProvider, useCardStore } from "./shared/Context";
+import { useAnkiField, useCardStore } from "./shared/Context";
 
 // biome-ignore format: this looks nicer
 const Lazy = {
@@ -14,8 +12,7 @@ const Lazy = {
 
 export function Front() {
   const [card, setCard] = useCardStore();
-
-  const ankiFields$ = getAnkiFields<"front">();
+  const { ankiFields } = useAnkiField<"front">();
 
   onMount(() => {
     setTimeout(() => {
@@ -35,13 +32,7 @@ export function Front() {
   return (
     <Layout>
       <div class="flex justify-between flex-row h-5 min-h-5">
-        {card.ready && (
-          <AnkiFieldContextProvider
-            value={{ ankiFields: ankiFields$ as AnkiFields }}
-          >
-            <Lazy.Header side="front" />
-          </AnkiFieldContextProvider>
-        )}
+        {card.ready && <Lazy.Header side="front" />}
       </div>
       <div
         class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row"
@@ -52,13 +43,13 @@ export function Front() {
             class="expression font-secondary"
             classList={{
               "border-b-2 border-dotted border-base-content-soft":
-                !!ankiFields$.IsClickCard,
+                !!ankiFields.IsClickCard,
             }}
             innerHTML={
               isServer
                 ? undefined
-                : !ankiFields$.IsSentenceCard && !ankiFields$.IsAudioCard
-                  ? ankiFields$.Expression
+                : !ankiFields.IsSentenceCard && !ankiFields.IsAudioCard
+                  ? ankiFields.Expression
                   : "?"
             }
           >
@@ -72,27 +63,23 @@ export function Front() {
       <div class="sentence-front" {...sentenceFrontProp}>
         <div
           class={`[&_b]:text-base-content-primary sentence font-secondary`}
-          innerHTML={isServer ? undefined : ankiFields$["kanji:Sentence"]}
+          innerHTML={isServer ? undefined : ankiFields["kanji:Sentence"]}
         >
           {isServer ? "{{kanji:Sentence}}" : undefined}
         </div>
       </div>
 
-      {card.ready && ankiFields$.IsAudioCard && (
+      {card.ready && ankiFields.IsAudioCard && (
         <div class="flex gap-2 justify-center">
-          <AnkiFieldContextProvider
-            value={{ ankiFields: ankiFields$ as AnkiFields }}
-          >
-            <Lazy.AudioButtons position={1} />
-          </AnkiFieldContextProvider>
+          <Lazy.AudioButtons position={1} />
         </div>
       )}
 
-      {ankiFields$.Hint && (
+      {ankiFields.Hint && (
         <div
           class={`flex gap-2 items-center justify-center text-center border-t-1 hint`}
         >
-          <div innerHTML={isServer ? undefined : ankiFields$.Hint}>
+          <div innerHTML={isServer ? undefined : ankiFields.Hint}>
             {isServer ? "{{Hint}}" : undefined}
           </div>
         </div>

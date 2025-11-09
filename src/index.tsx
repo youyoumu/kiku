@@ -5,6 +5,7 @@ import "./tailwind.css";
 import { createStore } from "solid-js/store";
 import { Front } from "./components/Front.tsx";
 import {
+  AnkiFieldContextProvider,
   BreakpointContextProvider,
   CardStoreContextProvider,
   ConfigContextProvider,
@@ -15,7 +16,7 @@ import {
   updateConfigDataset,
   validateConfig,
 } from "./util/config.ts";
-import { env } from "./util/general.ts";
+import { env, getAnkiFields } from "./util/general.ts";
 
 declare global {
   var KIKU_STATE: {
@@ -84,29 +85,34 @@ export async function init({
     updateConfigDataset(root, config$);
 
     const [config, setConfig] = createStore(config$);
+    const ankiFields = getAnkiFields();
     window.KIKU_STATE.relax = false;
 
     if (side === "front") {
       const App = () => (
-        <CardStoreContextProvider>
-          <BreakpointContextProvider>
-            <ConfigContextProvider value={[config, setConfig]}>
-              <Front />
-            </ConfigContextProvider>
-          </BreakpointContextProvider>
-        </CardStoreContextProvider>
+        <AnkiFieldContextProvider value={{ ankiFields }}>
+          <CardStoreContextProvider>
+            <BreakpointContextProvider>
+              <ConfigContextProvider value={[config, setConfig]}>
+                <Front />
+              </ConfigContextProvider>
+            </BreakpointContextProvider>
+          </CardStoreContextProvider>
+        </AnkiFieldContextProvider>
       );
       if (ssr) return hydrate(App, root);
       render(App, root);
     } else if (side === "back") {
       const App = () => (
-        <CardStoreContextProvider>
-          <BreakpointContextProvider>
-            <ConfigContextProvider value={[config, setConfig]}>
-              <Back />
-            </ConfigContextProvider>
-          </BreakpointContextProvider>
-        </CardStoreContextProvider>
+        <AnkiFieldContextProvider value={{ ankiFields }}>
+          <CardStoreContextProvider>
+            <BreakpointContextProvider>
+              <ConfigContextProvider value={[config, setConfig]}>
+                <Back />
+              </ConfigContextProvider>
+            </BreakpointContextProvider>
+          </CardStoreContextProvider>
+        </AnkiFieldContextProvider>
       );
       if (ssr) return hydrate(App, root);
       render(App, root);

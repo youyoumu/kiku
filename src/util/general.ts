@@ -1,21 +1,11 @@
 import { isServer } from "solid-js/web";
-import {
-  type AnkiBackFields,
-  type AnkiFrontFields,
-  ankiFieldsSkeleton,
-  exampleFields6,
-} from "#/types";
+import { ankiFieldsSkeleton, exampleFields6 } from "#/types";
 
 export const env = {
   KIKU_CONFIG_FILE: "_kiku.config.json",
 };
 
-type GetAnkiFieldsType = {
-  front: AnkiFrontFields;
-  back: AnkiBackFields;
-};
-
-export function getAnkiFields<T extends "front" | "back">() {
+export function getAnkiFields() {
   let divs: NodeListOf<Element> | Element[] | undefined = isServer
     ? undefined
     : document.querySelectorAll("#anki-fields > div");
@@ -27,7 +17,7 @@ export function getAnkiFields<T extends "front" | "back">() {
       return div;
     });
   }
-  const ankiFields$ = divs
+  const ankiFields = divs
     ? Object.fromEntries(
         Array.from(divs).map((el) => [
           (el as HTMLDivElement).dataset.field,
@@ -35,5 +25,5 @@ export function getAnkiFields<T extends "front" | "back">() {
         ]),
       )
     : ankiFieldsSkeleton;
-  return ankiFields$ as GetAnkiFieldsType[T];
+  return ankiFields;
 }
