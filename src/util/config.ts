@@ -156,4 +156,12 @@ export function updateConfigDataset(el: HTMLElement, config: KikuConfig) {
   Object.entries(config).forEach(([key, value]) => {
     el.dataset[key] = value;
   });
+
+  const cssVar: CssVar = {
+    "--system-font-primary": config.systemFontPrimary,
+    "--system-font-secondary": config.systemFontSecondary,
+  };
+  Object.entries(cssVar).forEach(([key, value]) => {
+    document.documentElement.style.setProperty(key, value);
+  });
 }
