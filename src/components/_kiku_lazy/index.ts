@@ -2,8 +2,8 @@ import AudioButtons from "./AudioButtons";
 import BackBody from "./BackBody";
 import BackFooter from "./BackFooter";
 import Header from "./Header";
-import { ArrowLeftIcon } from "./Icons";
 import ImageModal from "./ImageModal";
+import PicturePagination from "./PicturePagination";
 import Pitches from "./Pitches";
 import Settings from "./Settings";
 
@@ -15,5 +15,5 @@ export {
   ImageModal,
   BackBody,
   Pitches,
-  ArrowLeftIcon,
+  PicturePagination,
 };

@@ -14,7 +14,7 @@ const Lazy = {
   ImageModal: lazy(async () => ({ default: (await import("./_kiku_lazy")).ImageModal, })),
   BackBody: lazy(async () => ({ default: (await import("./_kiku_lazy")).BackBody, })),
   Pitches: lazy(async () => ({ default: (await import("./_kiku_lazy")).Pitches, })),
-  ArrowLeftIcon: lazy(async () => ({ default: (await import("./_kiku_lazy")).ArrowLeftIcon, })),
+  PicturePagination: lazy(async () => ({ default: (await import("./_kiku_lazy")).PicturePagination, })),
 };
 
 export function Back() {
@@ -145,39 +145,9 @@ export function Back() {
                 </div>
               </div>
             </div>
-            {card.ready && (
-              <div class="flex justify-between py-1 text-base-content-soft items-center gap-2 animate-fade-in h-5 sm:h-8">
-                {card.pictures.length > 1 && (
-                  <>
-                    <Lazy.ArrowLeftIcon
-                      class="cursor-pointer size-5 sm:size-8 hover:scale-110 transition-transform"
-                      on:click={() => {
-                        setCard("pictureIndex", (prev) => {
-                          const newIndex =
-                            (prev - 1 + card.pictures.length) %
-                            card.pictures.length;
-                          const a = card.sentenceAudios;
-                          a?.[newIndex]?.click();
-                          return newIndex;
-                        });
-                      }}
-                    ></Lazy.ArrowLeftIcon>
-                    {`${card.pictureIndex + 1} / ${card.pictures.length}`}
-                    <Lazy.ArrowLeftIcon
-                      class="cursor-pointer size-5 sm:size-8 rotate-180 hover:scale-110 transition-transform"
-                      on:click={() => {
-                        setCard("pictureIndex", (prev) => {
-                          const newIndex = (prev + 1) % card.pictures.length;
-                          const a = card.sentenceAudios;
-                          a?.[newIndex]?.click();
-                          return newIndex;
-                        });
-                      }}
-                    ></Lazy.ArrowLeftIcon>
-                  </>
-                )}
-              </div>
-            )}
+            <div class="flex justify-between py-1 text-base-content-soft items-center gap-2 animate-fade-in h-5 sm:h-8">
+              {card.ready && <Lazy.PicturePagination />}
+            </div>
           </div>
           {card.ready && (
             <AnkiFieldContextProvider value={{ ankiFields: ankiFields$ }}>
