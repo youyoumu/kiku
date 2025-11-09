@@ -1,11 +1,11 @@
 import { createEffect, createSignal, onMount } from "solid-js";
 import { useAnkiField, useConfig } from "../shared/Context";
+import { SentenceBack } from "./Sentence";
 
 export default function BackBody(props: {
   onDefinitionPictureClick?: (picture: string) => void;
   sentenceIndex?: (sentencesLenght: number) => number | undefined;
 }) {
-  let sentenceEl: HTMLDivElement | undefined;
   let definitionEl: HTMLDivElement | undefined;
   const [config] = useConfig();
   const { ankiFields } = useAnkiField<"back">();
@@ -13,7 +13,6 @@ export default function BackBody(props: {
     ankiFields.SelectionText ? 0 : 1,
   );
   const [definitionPicture, setDefinitionPicture] = createSignal<string>();
-  const [sentences, setSentences] = createSignal<HTMLSpanElement[]>([]);
 
   const pages = [
     ankiFields.SelectionText,
@@ -44,13 +43,6 @@ export default function BackBody(props: {
     tempDiv.innerHTML = ankiFields.DefinitionPicture;
     setDefinitionPicture(tempDiv.querySelector("img")?.outerHTML ?? "");
 
-    if (sentenceEl) {
-      const ruby = sentenceEl.querySelectorAll("ruby");
-      ruby.forEach((el) => {
-        el.classList.add(..."[&_rt]:invisible hover:[&_rt]:visible".split(" "));
-      });
-    }
-
     if (definitionEl) {
       const spans = Array.from(definitionEl.querySelectorAll("span")).filter(
         (el) => {
@@ -66,26 +58,6 @@ export default function BackBody(props: {
       });
       i.forEach((el) => {
         el.dataset.jitendexI = "true";
-      });
-    }
-
-    if (sentenceEl) {
-      const spans = Array.from(sentenceEl.querySelectorAll("span")).filter(
-        (el) => el.parentNode === sentenceEl,
-      );
-      spans.forEach((span, index) => {
-        span.dataset.index = index.toString();
-      });
-      setSentences(spans);
-    }
-  });
-
-  createEffect(() => {
-    const sentencesIndex = props.sentenceIndex?.(sentences().length);
-    if (typeof sentencesIndex === "number") {
-      sentences().forEach((span) => {
-        span.style.display =
-          span.dataset.index === sentencesIndex.toString() ? "block" : "none";
       });
     }
   });
@@ -114,15 +86,7 @@ export default function BackBody(props: {
   return (
     <div class="flex sm:flex-col gap-8 flex-col-reverse animate-fade-in">
       <div class="flex justify-between gap-2 items-center text-center">
-        <div
-          class={`[&_b]:text-base-content-primary sentence font-secondary flex-1`}
-          ref={sentenceEl}
-          innerHTML={
-            ankiFields["furigana:SentenceFurigana"]
-              ? ankiFields["furigana:SentenceFurigana"]
-              : ankiFields["kanji:Sentence"]
-          }
-        ></div>
+        <SentenceBack />
       </div>
       {pagesWithContent.length > 0 && (
         <div>
