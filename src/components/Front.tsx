@@ -1,6 +1,7 @@
 import { lazy, onMount } from "solid-js";
 import { isServer } from "solid-js/web";
 import type { DatasetProp } from "#/util/config";
+import { useSentenceField } from "#/util/hooks";
 import { Layout } from "./Layout";
 import { useAnkiField, useCardStore } from "./shared/Context";
 
@@ -13,6 +14,7 @@ const Lazy = {
 export function Front() {
   const [card, setCard] = useCardStore();
   const { ankiFields } = useAnkiField<"front">();
+  const [sentences, setSentences] = useSentenceField();
 
   onMount(() => {
     setTimeout(() => {
@@ -62,6 +64,7 @@ export function Front() {
 
       <div class="sentence-front" {...sentenceFrontProp()}>
         <div
+          ref={(ref) => setCard("sentenceFieldRef", ref)}
           class={`[&_b]:text-base-content-primary sentence font-secondary`}
           innerHTML={isServer ? undefined : ankiFields["kanji:Sentence"]}
         >
