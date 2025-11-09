@@ -83,7 +83,7 @@ export function Front() {
       </div>
 
       {ready() && ankiFields$.IsAudioCard && (
-        <div class="flex gap-4 justify-center">
+        <div class="flex gap-2 justify-center">
           <AnkiFieldContextProvider
             value={{ ankiFields: ankiFields$ as AnkiFields }}
           >
