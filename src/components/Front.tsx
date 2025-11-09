@@ -9,6 +9,7 @@ import { useAnkiField, useCardStore } from "./shared/Context";
 const Lazy = {
   AudioButtons: lazy(async () => ({ default: (await import("./_kiku_lazy")).AudioButtons, })),
   Header: lazy(async () => ({ default: (await import("./_kiku_lazy")).Header, })),
+  PicturePagination: lazy(async () => ({ default: (await import("./_kiku_lazy")).PicturePagination, })),
 };
 
 export function Front() {
@@ -62,7 +63,11 @@ export function Front() {
           </div>
         </div>
       </div>
+      <div class="flex justify-between py-1 text-base-content-soft items-center gap-2 animate-fade-in h-5 sm:h-8">
+        {card.ready && <Lazy.PicturePagination />}
+      </div>
 
+      {/* TODO: animation */}
       <div class="sentence-front" {...sentenceFrontProp()}>
         <div
           ref={(ref) => setCard("sentenceFieldRef", ref)}
