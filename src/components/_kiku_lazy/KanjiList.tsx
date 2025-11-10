@@ -2,7 +2,10 @@ import { For } from "solid-js";
 import { useCardStore } from "../shared/Context";
 import { ArrowLeftIcon } from "./Icons";
 
-export default function KanjiList(props: { onBackClick?: () => void }) {
+export default function KanjiList(props: {
+  onBackClick?: () => void;
+  onNextClick?: (noteId: number) => void;
+}) {
   const [card, setCard] = useCardStore();
 
   return (
@@ -49,7 +52,12 @@ export default function KanjiList(props: { onBackClick?: () => void }) {
                                   class="text-xl text-base-content-calm font-secondary"
                                   innerHTML={data.fields.Sentence.value}
                                 ></div>
-                                <ArrowLeftIcon class="size-10 text-base-content-soft rotate-180 cursor-pointer"></ArrowLeftIcon>
+                                <ArrowLeftIcon
+                                  class="size-10 text-base-content-soft rotate-180 cursor-pointer"
+                                  on:click={() => {
+                                    props.onNextClick?.(data.noteId);
+                                  }}
+                                ></ArrowLeftIcon>
                               </li>
                             </>
                           );

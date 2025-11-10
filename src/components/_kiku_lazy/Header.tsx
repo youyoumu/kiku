@@ -1,14 +1,21 @@
-import { createSignal, onMount } from "solid-js";
+import { createSignal, onMount, Show } from "solid-js";
 import { nextTheme } from "#/util/theme";
-import { useAnkiField, useConfig } from "../shared/Context";
-import { BoltIcon, CircleChevronDownIcon, PaintbrushIcon } from "./Icons";
+import { useAnkiField, useCardStore, useConfig } from "../shared/Context";
+import {
+  ArrowLeftIcon,
+  BoltIcon,
+  CircleChevronDownIcon,
+  PaintbrushIcon,
+} from "./Icons";
 import { capitalize } from "./util/general";
 
 export default function Header(props: {
   onSettingsClick?: () => void;
   onKanjiClick?: () => void;
+  onBackClick?: () => void;
   side: "back" | "front";
 }) {
+  const [card, setCard] = useCardStore();
   const [config, setConfig] = useConfig();
   const [initDelay, setInitDelay] = createSignal<number | null>(null);
 
@@ -22,40 +29,48 @@ export default function Header(props: {
   return (
     <>
       <div class="flex gap-2 items-center animate-fade-in-sm">
-        <BoltIcon
-          class="size-5"
-          classList={{
-            "text-base-content-soft cursor-pointer": props.side === "back",
-            "text-base-content-subtle-100": props.side === "front",
-          }}
-          on:click={props.onSettingsClick}
-        ></BoltIcon>
-        <div
-          class="flex gap-2 items-center cursor-pointer"
-          on:click={() => {
-            setConfig("theme", nextTheme());
-          }}
-        >
-          <PaintbrushIcon class="size-5 cursor-pointer text-base-content-soft"></PaintbrushIcon>
-          <div class="text-base-content-soft text-sm">
-            {capitalize(config.theme)}
+        <Show when={props.onBackClick}>
+          <ArrowLeftIcon
+            class="size-5 cursor-pointer text-base-content-soft"
+            on:click={props.onBackClick}
+          ></ArrowLeftIcon>
+        </Show>
+        <Show when={!card.nested}>
+          <BoltIcon
+            class="size-5"
+            classList={{
+              "text-base-content-soft cursor-pointer": props.side === "back",
+              "text-base-content-subtle-100": props.side === "front",
+            }}
+            on:click={props.onSettingsClick}
+          ></BoltIcon>
+          <div
+            class="flex gap-2 items-center cursor-pointer"
+            on:click={() => {
+              setConfig("theme", nextTheme());
+            }}
+          >
+            <PaintbrushIcon class="size-5 cursor-pointer text-base-content-soft"></PaintbrushIcon>
+            <div class="text-base-content-soft text-sm">
+              {capitalize(config.theme)}
+            </div>
           </div>
-        </div>
 
-        <div class="text-base-content-soft bg-warning/10 rounded-sm px-1 text-sm">
-          {initDelay()}
-          {initDelay() && "ms"}
-        </div>
+          <div class="text-base-content-soft bg-warning/10 rounded-sm px-1 text-sm">
+            {initDelay()}
+            {initDelay() && "ms"}
+          </div>
+        </Show>
       </div>
       <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block animate-fade-in-sm z-10">
-        {props.onKanjiClick && (
+        <Show when={!card.nested && props.onKanjiClick}>
           <div
             class="text-base-content-soft cursor-pointer"
             on:click={props.onKanjiClick}
           >
             漢字
           </div>
-        )}
+        </Show>
         {props.side === "back" && <Frequency />}
       </div>
     </>

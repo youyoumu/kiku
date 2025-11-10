@@ -10,11 +10,12 @@ import {
 } from "solid-js";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
 import { getAnkiFields } from "#/util/general";
-import type {
-  AnkiBackFields,
-  AnkiFields,
-  AnkiFrontFields,
-  AnkiNote,
+import {
+  type AnkiBackFields,
+  type AnkiFields,
+  type AnkiFrontFields,
+  type AnkiNote,
+  ankiFieldsSkeleton,
 } from "../../types";
 import { type KikuConfig, updateConfigDataset } from "../../util/config";
 
@@ -49,8 +50,11 @@ const AnkiFieldContext = createContext<{
   ankiFields: AnkiFields;
 }>();
 
-export function AnkiFieldContextProvider(props: { children: JSX.Element }) {
-  const ankiFields = getAnkiFields();
+export function AnkiFieldContextProvider(props: {
+  children: JSX.Element;
+  ankiFields?: AnkiFields;
+}) {
+  const ankiFields = props.ankiFields ?? getAnkiFields();
 
   return (
     <AnkiFieldContext.Provider value={{ ankiFields }}>
@@ -151,7 +155,7 @@ type CardStore = {
   sentenceFieldRef?: HTMLDivElement;
   sentenceAudioRef?: HTMLDivElement;
   sentenceAudios?: HTMLAnchorElement[];
-  screen: "main" | "settings" | "kanji";
+  screen: "main" | "settings" | "kanji" | "nested";
   ready: boolean;
   imageModal?: string;
   pictureIndex: number;
@@ -165,12 +169,17 @@ type CardStore = {
       similar: AnkiNote[];
     }
   >;
+  nextedAnkiFields: AnkiFields;
+  nested: boolean;
 };
 
 const CardStoreContext =
   createContext<[Store<CardStore>, SetStoreFunction<CardStore>]>();
 
-export function CardStoreContextProvider(props: { children: JSX.Element }) {
+export function CardStoreContextProvider(props: {
+  children: JSX.Element;
+  nested?: boolean;
+}) {
   const store = createStore<CardStore>({
     pictureFieldRef: undefined,
     expressionAudioRef: undefined,
@@ -185,6 +194,8 @@ export function CardStoreContextProvider(props: { children: JSX.Element }) {
     isNsfw: false,
     clicked: false,
     kanji: {},
+    nextedAnkiFields: ankiFieldsSkeleton,
+    nested: props.nested ?? false,
   });
 
   return (

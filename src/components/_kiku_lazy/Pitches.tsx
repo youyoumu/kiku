@@ -1,8 +1,9 @@
 import type { DatasetProp } from "#/util/config";
 import { hatsuon } from "#/util/hatsuon";
-import { useAnkiField } from "../shared/Context";
+import { useAnkiField, useCardStore } from "../shared/Context";
 
 export default function Pitches() {
+  const [card, setCard] = useCardStore();
   const { ankiFields } = useAnkiField<"back">();
 
   const tempDiv = document.createElement("div");
@@ -15,11 +16,15 @@ export default function Pitches() {
       return Number(el.innerText);
     });
 
-  const kana = ankiFields.ExpressionFurigana
-    ? ankiFields["kana:ExpressionFurigana"]
-    : ankiFields.ExpressionReading;
+  const kana = () => {
+    if (card.nested) return ankiFields.ExpressionReading;
+    return ankiFields.ExpressionFurigana
+      ? ankiFields["kana:ExpressionFurigana"]
+      : ankiFields.ExpressionReading;
+  };
+
   return pitchNumber.map((pitchNum, index) => {
-    return <Pitch kana={kana} pitchNum={pitchNum} index={index} />;
+    return <Pitch kana={kana()} pitchNum={pitchNum} index={index} />;
   });
 }
 

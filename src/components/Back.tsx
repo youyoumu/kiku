@@ -1,12 +1,17 @@
 import { createEffect, lazy, Match, onMount, Suspense, Switch } from "solid-js";
 import { isServer } from "solid-js/web";
-import type { AnkiNote } from "#/types";
+import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import type { DatasetProp } from "#/util/config";
 import { extractKanji } from "#/util/general";
 import { usePictureField } from "#/util/hooks";
 import { worker } from "#/worker/workerClient";
 import { Layout } from "./Layout";
-import { useAnkiField, useCardStore } from "./shared/Context";
+import {
+  AnkiFieldContextProvider,
+  CardStoreContextProvider,
+  useAnkiField,
+  useCardStore,
+} from "./shared/Context";
 
 // biome-ignore format: this looks nicer
 const Lazy = {
@@ -21,7 +26,7 @@ const Lazy = {
   KanjiList: lazy(async () => ({ default: (await import("./_kiku_lazy")).KanjiList, })),
 };
 
-export function Back(props: { nexted?: boolean }) {
+export function Back(props: { onExitNested?: () => void }) {
   const [card, setCard] = useCardStore();
   const { ankiFields } = useAnkiField<"back">();
   usePictureField();
@@ -58,8 +63,9 @@ export function Back(props: { nexted?: boolean }) {
         ),
       );
     }
-    findKanjiNotes();
-    console.log(card.kanji);
+    if (!card.nested) {
+      findKanjiNotes();
+    }
   });
 
   createEffect(() => {
@@ -75,17 +81,62 @@ export function Back(props: { nexted?: boolean }) {
     "data-nsfw": card.isNsfw ? "true" : "false",
   });
 
+  const expressionInnerHtml = () => {
+    if (card.nested) return ankiFields.Expression;
+    return isServer
+      ? undefined
+      : ankiFields.ExpressionFurigana
+        ? ankiFields["furigana:ExpressionFurigana"]
+        : ankiFields.Expression;
+  };
+
   return (
     <Layout>
       <Switch>
-        <Match when={card.screen === "settings"}>
+        <Match when={card.screen === "settings" && !card.nested}>
           <Lazy.Settings
             onBackClick={() => setCard("screen", "main")}
             onCancelClick={() => setCard("screen", "main")}
           />
         </Match>
-        <Match when={card.screen === "kanji"}>
-          <Lazy.KanjiList onBackClick={() => setCard("screen", "main")} />
+        <Match when={card.screen === "kanji" && !card.nested}>
+          <Lazy.KanjiList
+            onBackClick={() => setCard("screen", "main")}
+            onNextClick={(noteId) => {
+              const shared = Object.values(card.kanji).flatMap(
+                (data) => data.shared,
+              );
+              const similar = Object.values(card.kanji).flatMap(
+                (data) => data.similar,
+              );
+              const notes = [...shared, ...similar];
+              const note = notes.find((note) => note.noteId === noteId);
+              if (!note) throw new Error("Note not found");
+              const ankiFields: AnkiFields = {
+                ...ankiFieldsSkeleton,
+                ...Object.fromEntries(
+                  Object.entries(note.fields).map(([key, value]) => {
+                    return [key, value.value];
+                  }),
+                ),
+                Tags: note.tags.join(" "),
+              };
+
+              setCard("nextedAnkiFields", ankiFields);
+              setCard("screen", "nested");
+            }}
+          />
+        </Match>
+        <Match when={card.screen === "nested" && !card.nested}>
+          <AnkiFieldContextProvider ankiFields={card.nextedAnkiFields}>
+            <CardStoreContextProvider nested>
+              <Back
+                onExitNested={() => {
+                  setCard("screen", "kanji");
+                }}
+              />
+            </CardStoreContextProvider>
+          </AnkiFieldContextProvider>
         </Match>
         <Match when={card.screen === "main"}>
           <div class="flex justify-between flex-row h-5 min-h-5">
@@ -93,6 +144,7 @@ export function Back(props: { nexted?: boolean }) {
               <Lazy.Header
                 side="back"
                 onSettingsClick={() => setCard("screen", "settings")}
+                onBackClick={props.onExitNested}
                 onKanjiClick={
                   Object.keys(card.kanji).length > 0
                     ? () => setCard("screen", "kanji")
@@ -111,13 +163,7 @@ export function Back(props: { nexted?: boolean }) {
               <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
                 <div
                   class="expression font-secondary"
-                  innerHTML={
-                    isServer
-                      ? undefined
-                      : ankiFields.ExpressionFurigana
-                        ? ankiFields["furigana:ExpressionFurigana"]
-                        : ankiFields.Expression
-                  }
+                  innerHTML={expressionInnerHtml()}
                 >
                   {isServer
                     ? "{{#ExpressionFurigana}}{{furigana:ExpressionFurigana}}{{/ExpressionFurigana}}{{^ExpressionFurigana}}{{Expression}}{{/ExpressionFurigana}}"
