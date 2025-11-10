@@ -58,7 +58,7 @@ self.onmessage = async (e: MessageEvent<QueryRequest>) => {
     self.postMessage({
       type: "success",
       totalFound: matchedNotes.length,
-      notes: matchedNotes,
+      notes: matchedNotes.sort((a, b) => b.mod - a.mod),
     } satisfies QueryResponse);
   } catch (err) {
     self.postMessage({

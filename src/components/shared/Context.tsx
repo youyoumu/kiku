@@ -10,7 +10,12 @@ import {
 } from "solid-js";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
 import { getAnkiFields } from "#/util/general";
-import type { AnkiBackFields, AnkiFields, AnkiFrontFields } from "../../types";
+import type {
+  AnkiBackFields,
+  AnkiFields,
+  AnkiFrontFields,
+  AnkiNote,
+} from "../../types";
 import { type KikuConfig, updateConfigDataset } from "../../util/config";
 
 const ConfigContext =
@@ -153,6 +158,13 @@ type CardStore = {
   pictures: HTMLImageElement[];
   isNsfw: boolean;
   clicked: boolean;
+  kanji: Record<
+    string,
+    {
+      shared: AnkiNote[];
+      similar: AnkiNote[];
+    }
+  >;
 };
 
 const CardStoreContext =
@@ -172,6 +184,7 @@ export function CardStoreContextProvider(props: { children: JSX.Element }) {
     pictures: [],
     isNsfw: false,
     clicked: false,
+    kanji: {},
   });
 
   return (

@@ -1,6 +1,8 @@
 import { createEffect, lazy, onMount, Suspense } from "solid-js";
 import { isServer } from "solid-js/web";
+import type { AnkiNote } from "#/types";
 import type { DatasetProp } from "#/util/config";
+import { extractKanji } from "#/util/general";
 import { usePictureField } from "#/util/hooks";
 import { worker } from "#/worker/workerClient";
 import { Layout } from "./Layout";
@@ -34,14 +36,29 @@ export function Back() {
     setCard("isNsfw", tags.map((tag) => tag.toLowerCase()).includes("nsfw"));
 
     async function findKanjiNotes() {
-      const kanjiList = ["学", "語", "日"];
-      const result = await worker.query(kanjiList, (info) => {
-        console.log(`Chunk ${info.chunk} — found ${info.found} matches`);
-      });
+      const kanjiList = extractKanji(
+        ankiFields.ExpressionFurigana
+          ? ankiFields["furigana:ExpressionFurigana"]
+          : ankiFields.Expression,
+      );
+      const result = await worker.query(kanjiList);
       console.log("✅ Total found:", result.totalFound);
-      console.log(result.notes);
+      setCard(
+        "kanji",
+        result.notes.reduce(
+          (acc, note) => {
+            kanjiList.forEach((k) => {
+              if (!acc[k]) acc[k] = { shared: [], similar: [] };
+              acc[k].shared.push(note);
+            });
+            return acc;
+          },
+          {} as Record<string, { shared: AnkiNote[]; similar: AnkiNote[] }>,
+        ),
+      );
     }
     findKanjiNotes();
+    console.log(card.kanji);
   });
 
   createEffect(() => {
