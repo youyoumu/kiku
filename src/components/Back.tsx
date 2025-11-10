@@ -1,6 +1,6 @@
 import { createEffect, lazy, Match, onMount, Suspense, Switch } from "solid-js";
 import { isServer } from "solid-js/web";
-import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
+import { type AnkiFields, ankiFieldsSkeleton } from "#/types";
 import type { DatasetProp } from "#/util/config";
 import { extractKanji } from "#/util/general";
 import { usePictureField } from "#/util/hooks";
@@ -49,19 +49,18 @@ export function Back(props: { onExitNested?: () => void }) {
       );
       const result = await worker.query(kanjiList);
       console.log("✅ Total found:", result.totalFound);
-      setCard(
-        "kanji",
-        result.notes.reduce(
-          (acc, note) => {
-            kanjiList.forEach((k) => {
-              if (!acc[k]) acc[k] = { shared: [], similar: [] };
+      const kanji = result.notes.reduce(
+        (acc, note) => {
+          kanjiList.forEach((k) => {
+            if (!acc[k]) acc[k] = { shared: [], similar: [] };
+            if (note.fields.Expression.value.includes(k))
               acc[k].shared.push(note);
-            });
-            return acc;
-          },
-          {} as Record<string, { shared: AnkiNote[]; similar: AnkiNote[] }>,
-        ),
+          });
+          return acc;
+        },
+        {} as typeof card.kanji,
       );
+      setCard("kanji", kanji);
     }
     if (!card.nested) {
       findKanjiNotes();
