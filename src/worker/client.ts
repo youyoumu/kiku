@@ -1,5 +1,5 @@
-import AppWorker from "#/worker/worker?worker&inline";
-import type { Key, WorkerChannels, WorkerResponse } from "./worker";
+import AppWorker from "#/worker/_kiku_worker?worker";
+import type { Key, WorkerChannels, WorkerResponse } from "./_kiku_worker";
 
 export class WorkerClient {
   worker: Worker;

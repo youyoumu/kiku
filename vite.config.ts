@@ -67,7 +67,16 @@ export default defineConfig({
           ],
         },
         chunkFileNames: "[name].js",
+        assetFileNames: "[name].[ext]",
         minify: false,
+      },
+    },
+  },
+  worker: {
+    format: "es",
+    rolldownOptions: {
+      output: {
+        entryFileNames: "[name].js",
       },
     },
   },

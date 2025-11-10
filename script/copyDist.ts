@@ -10,11 +10,12 @@ await stat(ANKI_MEDIA_DIR);
 
 // files to copy
 const FILES = [
+  "_kiku.css",
   "_kiku.js",
   "_kiku_lazy.js",
-  "_kiku_shared.js",
   "_kiku_libs.js",
-  "_kiku.css",
+  "_kiku_shared.js",
+  "_kiku_worker.js",
 ];
 
 for (const file of FILES) {
