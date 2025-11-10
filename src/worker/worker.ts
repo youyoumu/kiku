@@ -1,8 +1,6 @@
 import type { AnkiNote, KikuNotesManifest } from "#/types";
 import { env } from "#/util/general";
 
-const prefix = import.meta.env.DEV ? "/" : "";
-
 export type WorkerChannels = {
   query: {
     payload: string[];
@@ -19,6 +17,12 @@ export type WorkerChannels = {
     payload: string;
     result: string[];
   };
+  init: {
+    payload: {
+      baseUrl: string;
+    };
+    result: true;
+  };
 };
 export type Key = keyof WorkerChannels;
 export type WorkerResponse<T extends Key> =
@@ -33,11 +37,8 @@ type WorkerMethod = (
 ) => Promise<WorkerChannels[Key]["result"]>;
 
 class AppWorker {
+  static baseUrl = "";
   constructor() {
-    AppWorker.manifest = fetch(`${prefix}${env.KIKU_NOTES_MANIFEST}`).then(
-      (res) => res.json(),
-    );
-
     self.onmessage = async (e: MessageEvent<WorkerRequest<Key>>) => {
       const method = AppWorker[e.data.type] as WorkerMethod;
       method(e.data.payload)
@@ -58,11 +59,20 @@ class AppWorker {
     };
   }
 
+  static async init({
+    baseUrl,
+  }: {
+    baseUrl: string;
+  }): Promise<WorkerChannels["init"]["result"]> {
+    AppWorker.baseUrl = `${baseUrl}`;
+    return true;
+  }
+
   static async getSimilarKanji(
     kanji: string,
   ): Promise<WorkerChannels["getSimilarKanji"]["result"]> {
     const store: Record<string, { kanji: string; score: number }> = {};
-    const sources = AppWorker.similar_kanji_sources;
+    const sources = AppWorker.similar_kanji_sources();
     const similarKanjiDbs = await AppWorker.getSimilarKanjiDBs();
 
     sources.forEach((source) => {
@@ -95,13 +105,13 @@ class AppWorker {
     kanjiList: string[],
   ): Promise<WorkerChannels["query"]["result"]> {
     const result: Record<string, AnkiNote[]> = {};
-    const manifest = await AppWorker.manifest;
+    const manifest = await AppWorker.manifest();
 
     // Create a quick lookup for kanji to reduce nested loops
     const kanjiSet = new Set(kanjiList);
 
     for (const chunk of manifest.chunks) {
-      const res = await fetch(`/${chunk.file}`);
+      const res = await fetch(`${AppWorker.baseUrl}${chunk.file}`);
       if (!res.body) throw new Error(`No body for ${chunk.file}`);
 
       const ds = new DecompressionStream("gzip");
@@ -164,19 +174,26 @@ class AppWorker {
   }
 
   static similar_kanji_min_score = 0.5;
-  static manifest: Promise<KikuNotesManifest>;
+  static manifestCache: KikuNotesManifest | undefined;
+  static async manifest() {
+    if (AppWorker.manifestCache) return AppWorker.manifestCache;
+    const manifest = fetch(
+      `${AppWorker.baseUrl}${env.KIKU_NOTES_MANIFEST}`,
+    ).then((res) => res.json()) as Promise<KikuNotesManifest>;
+    return manifest;
+  }
 
   // biome-ignore format: this looks nicer
-  static similar_kanji_sources = [
-    { file: `${prefix}${env.KIKU_DB_SIMILAR_KANJI_FROM_KEISEI}`, base_score: 0.65, },
-    { file: `${prefix}${env.KIKU_DB_SIMILAR_KANJI_MANUAL}`, base_score: 0.9 },
-    { file: `${prefix}${env.KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO}`, base_score: 0.1, },
+  static similar_kanji_sources = () => [
+    { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_FROM_KEISEI}`, base_score: 0.65, },
+    { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_MANUAL}`, base_score: 0.9 },
+    { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO}`, base_score: 0.1, },
   ];
   // biome-ignore format: this looks nicer
-  static alternative_similar_kanji_sources = [
-  { file: `${prefix}${env.KIKU_DB_SIMILAR_KANJI_OLD_SCRIPT}`, base_score: 0.4 },
-  { file: `${prefix}${env.KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST}`, base_score: -0.2 },
-  { file: `${prefix}${env.KIKU_DB_SIMILAR_KANJI_YL_RADICAL}`, base_score: -0.2 },
+  static alternative_similar_kanji_sources = () => [
+  { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_OLD_SCRIPT}`, base_score: 0.4 },
+  { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST}`, base_score: -0.2 },
+  { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_YL_RADICAL}`, base_score: -0.2 },
 ];
 
   static dbCache:
@@ -190,12 +207,12 @@ class AppWorker {
     if (AppWorker.dbCache) return AppWorker.dbCache;
     AppWorker.dbCache = {};
     const allSources = [
-      ...AppWorker.similar_kanji_sources,
+      ...AppWorker.similar_kanji_sources(),
       // ...WorkerMain.alternative_similar_kanji_sources,
     ];
     for (const src of allSources) {
       if (!AppWorker.dbCache[src.file]) {
-        const res = await fetch(src.file);
+        const res = await fetch(`${src.file}`);
         if (!res.ok) throw new Error(`Failed to load ${src.file}`);
         AppWorker.dbCache[src.file] = await res.json();
       }
