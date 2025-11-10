@@ -40,14 +40,14 @@ class AppWorker {
       const method = AppWorker[e.data.type] as WorkerMethod;
       method(e.data.payload)
         .then((result) => {
-          AppWorker.postMessage({
+          self.postMessage({
             type: e.data.type,
             result,
             error: null,
           });
         })
         .catch((err) => {
-          AppWorker.postMessage({
+          self.postMessage({
             type: e.data.type,
             result: null,
             error: (err as Error).message,
@@ -67,14 +67,13 @@ class AppWorker {
       const db = similarKanjiDbs[source.file];
       if (!db || !(kanji in db)) return;
 
-      db[kanji].forEach((similarity_info: any) => {
+      db[kanji].forEach((similarity_info) => {
         const isObject =
           typeof similarity_info !== "string" && "kan" in similarity_info;
         const similar_kanji = isObject ? similarity_info.kan : similarity_info;
         const score =
           source.base_score + (isObject ? (similarity_info.score ?? 0) : 0);
 
-        // optionally check if score passes threshold
         const oldScore = store[similar_kanji]?.score ?? 0;
         if (
           score > AppWorker.similar_kanji_min_score ||
@@ -164,23 +163,24 @@ class AppWorker {
 
   static similar_kanji_min_score = 0.5;
   static manifest: Promise<KikuNotesManifest>;
-
   static similar_kanji_sources = [
     { file: `/${env.KIKU_DB_SIMILAR_KANJI_FROM_KEISEI}`, base_score: 0.65 },
     { file: `/${env.KIKU_DB_SIMILAR_KANJI_MANUAL}`, base_score: 0.9 },
     { file: `/${env.KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO}`, base_score: 0.1 },
   ];
-
+  //biome-ignore format: this looks nicer
   static alternative_similar_kanji_sources = [
     { file: `/${env.KIKU_DB_SIMILAR_KANJI_OLD_SCRIPT}`, base_score: 0.4 },
-    {
-      file: `/${env.KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST}`,
-      base_score: -0.2,
-    },
+    { file: `/${env.KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST}`, base_score: -0.2, },
     { file: `/${env.KIKU_DB_SIMILAR_KANJI_YL_RADICAL}`, base_score: -0.2 },
   ];
 
-  static dbCache: Record<string, Record<string, any>> | undefined = undefined;
+  static dbCache:
+    | Record<
+        string,
+        Record<string, Array<string | { score: number; kan: string }>>
+      >
+    | undefined = undefined;
 
   static async getSimilarKanjiDBs() {
     if (AppWorker.dbCache) return AppWorker.dbCache;
@@ -197,10 +197,6 @@ class AppWorker {
       }
     }
     return AppWorker.dbCache;
-  }
-
-  static postMessage(msg: WorkerResponse<Key>) {
-    self.postMessage(msg);
   }
 }
 

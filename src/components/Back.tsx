@@ -142,7 +142,11 @@ export function Back(props: { onExitNested?: () => void }) {
                 onSettingsClick={() => setCard("screen", "settings")}
                 onBackClick={props.onExitNested}
                 onKanjiClick={
-                  Object.keys(card.kanji).length > 0
+                  Object.keys(card.kanji).length > 0 &&
+                  Object.values(card.kanji).flatMap((data) => [
+                    ...data.shared,
+                    ...Object.values(data.similar),
+                  ]).length > 0
                     ? () => setCard("screen", "kanji")
                     : undefined
                 }
