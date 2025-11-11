@@ -377,6 +377,13 @@ body {
       @apply flex;
     }
   }
+
+  .hint-field {
+    @apply hidden;
+    &[data-has-hint="true"] {
+      @apply flex;
+    }
+  }
 }
 
 /*

@@ -148,6 +148,7 @@ export type Dataset = {
   "data-modal-hidden": "true" | "false";
   "data-modal-transparent": "true" | "false";
   "data-has-pitch": string
+  "data-has-hint": string
 };
 
 export type DatasetProp = Partial<Dataset>;

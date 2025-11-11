@@ -33,6 +33,14 @@ export function Front() {
     "data-clicked": card.clicked ? "true" : undefined,
   });
 
+  const hintFieldDataset: () => DatasetProp = () => ({
+    "data-has-hint": isServer
+      ? "{{#Hint}}true{{/Hint}}"
+      : ankiFields.Hint
+        ? "true"
+        : "",
+  });
+
   return (
     <Layout>
       <div class="flex justify-between flex-row h-5 min-h-5">
@@ -92,15 +100,14 @@ export function Front() {
         </div>
       )}
 
-      {ankiFields.Hint && (
-        <div
-          class={`flex gap-2 items-center justify-center text-center border-t-1 hint`}
-        >
-          <div innerHTML={isServer ? undefined : ankiFields.Hint}>
-            {isServer ? "{{Hint}}" : undefined}
-          </div>
+      <div
+        class={`flex gap-2 items-center justify-center text-center border-t-1 hint text-base-content-calm hint-field border-base-content-soft p-2`}
+        {...hintFieldDataset()}
+      >
+        <div innerHTML={isServer ? undefined : ankiFields.Hint}>
+          {isServer ? "{{Hint}}" : undefined}
         </div>
-      )}
+      </div>
     </Layout>
   );
 }
