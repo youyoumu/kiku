@@ -1,6 +1,37 @@
-import { onMount } from "solid-js";
+import { For, onMount, Show } from "solid-js";
 import { useAnkiField, useCardStore } from "../shared/Context";
 import { PlayIcon } from "./Icons";
+
+function AudioTag(props: { text: string }) {
+  // Find all `[sound:filename.mp3]` occurrences
+  const matches = [...props.text.matchAll(/\[sound:([^\]]+)\]/g)];
+  const sounds = matches.map((m) => m[1]);
+
+  const handleClick = (audio: HTMLAudioElement | undefined, e: MouseEvent) => {
+    e.preventDefault();
+    if (audio) {
+      audio.currentTime = 0;
+      void audio.play();
+    }
+  };
+
+  return (
+    <Show when={sounds.length > 0}>
+      <div class="flex flex-wrap gap-2">
+        <For each={sounds}>
+          {(src) => {
+            let audioRef: HTMLAudioElement | undefined;
+            return (
+              <a href="#" onClick={(e) => handleClick(audioRef, e)}>
+                <audio ref={audioRef} src={src} preload="none" />
+              </a>
+            );
+          }}
+        </For>
+      </div>
+    </Show>
+  );
+}
 
 export function NotePlayIcon(props: {
   "on:click"?: () => void;
@@ -39,13 +70,19 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
         <div
           style={hiddenStyle}
           ref={(ref) => setCard("expressionAudioRef", ref)}
-          innerHTML={ankiFields.ExpressionAudio}
-        ></div>
+          innerHTML={card.nested ? undefined : ankiFields.ExpressionAudio}
+        >
+          {card.nested && <AudioTag text={ankiFields.ExpressionAudio} />}
+        </div>
         <div
           style={hiddenStyle}
           ref={(ref) => setCard("sentenceAudioRef", ref)}
-          innerHTML={ankiFields.SentenceAudio}
-        ></div>
+          innerHTML={card.nested ? undefined : ankiFields.SentenceAudio}
+        >
+          {card.nested && (
+            <AudioTag text={ankiFields.SentenceAudio.repeat(2)} />
+          )}
+        </div>
         {ankiFields.ExpressionAudio && (
           <NotePlayIcon
             color="primary"

@@ -20,7 +20,9 @@
         "useButtonType": "off",
         "noSvgWithoutTitle": "off",
         "useSemanticElements": "off",
-        "useFocusableInteractive": "off"
+        "useFocusableInteractive": "off",
+        "useMediaCaption": "off",
+        "useValidAnchor": "off"
       },
       "correctness": {
         "noUnknownProperty": "info",
