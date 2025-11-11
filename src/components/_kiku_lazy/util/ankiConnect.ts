@@ -34,4 +34,23 @@ export const AnkiConnect = {
       data: base64.encodeString(JSON.stringify(config)),
     });
   },
+
+  getKikuFiles: async () => {
+    const res = await AnkiConnect.call("getMediaFilesNames", {
+      pattern: "_kiku*",
+    });
+    const sorted = res.result.sort((a: string, b: string) => {
+      // Extract the last extension (e.g. "json", "js", "gz")
+      const extA = a.split(".").pop();
+      const extB = b.split(".").pop();
+
+      if (extA !== extB) {
+        return extA?.localeCompare(extB ?? "");
+      }
+
+      // Compare alphabetically by full name
+      return a.localeCompare(b);
+    });
+    return sorted as Record<string, string>;
+  },
 };

@@ -34,6 +34,7 @@ export default function Settings(props: {
   const { ankiFields } = useAnkiField<"back">();
   const [isAnkiConnectAvailable, setIsAnkiConnectAvailable] =
     createSignal(false);
+  const [kikuFiles, setKikuFiles] = createSignal<string>();
 
   onMount(async () => {
     if (!bp.isAtLeast("sm")) return;
@@ -44,6 +45,8 @@ export default function Settings(props: {
     const version = await AnkiConnect.getVersion();
     if (version) {
       setIsAnkiConnectAvailable(true);
+      const files = await AnkiConnect.getKikuFiles();
+      setKikuFiles(JSON.stringify(files, null, 2));
     }
   }
 
@@ -646,6 +649,22 @@ export default function Settings(props: {
                   {JSON.stringify({ ...ankiFields }, null, 2)}
                 </pre>
               </div>
+              <Show when={kikuFiles()}>
+                <div class="flex flex-col gap-2">
+                  <div class="flex gap-2 items-center">
+                    <div class="text-lg">Kiku Files</div>
+                    <ClipboardCopyIcon
+                      class="size-5 text-base-content-calm cursor-pointer"
+                      on:click={() => {
+                        copyToClipboard(kikuFiles() ?? "");
+                      }}
+                    />
+                  </div>
+                  <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                    {kikuFiles()}
+                  </pre>
+                </div>
+              </Show>
             </div>
           </div>
         </div>
