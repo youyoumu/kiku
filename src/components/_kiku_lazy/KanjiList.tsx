@@ -34,9 +34,14 @@ export default function KanjiList(props: {
             return (
               <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
                 <input type="checkbox" checked={!card.selectedSimilarKanji} />
-                <div class="collapse-title justify-between flex items-center">
+                <div class="collapse-title justify-between flex items-center ps-2 sm:ps-4 pe-2 sm:pe-4 py-2 sm:py-4">
                   <div class="font-secondary expression">{kanji}</div>
-                  <Show when={!card.selectedSimilarKanji}>
+                  <Show
+                    when={
+                      !card.selectedSimilarKanji &&
+                      Object.keys(card.kanji[kanji].similar).length > 0
+                    }
+                  >
                     <div
                       class="flex gap-2 items-center btn z-10"
                       on:click={() => {
@@ -48,7 +53,7 @@ export default function KanjiList(props: {
                     </div>
                   </Show>
                 </div>
-                <div class="collapse-content text-sm">
+                <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4">
                   <ul class="list bg-base-100 rounded-box shadow-md">
                     <For each={Array.isArray(data) ? data : data.shared}>
                       {(data) => {
