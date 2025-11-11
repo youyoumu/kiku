@@ -10,11 +10,12 @@ from datetime import datetime
 def export_notes_background(col: Collection) -> str:
     """Runs in background thread; returns manifest path when done."""
 
-    # Read from add-on config
     config = mw.addonManager.getConfig(__name__)
     if not config:
         raise Exception("Add-on config not found.")
-    chunk_count = config.get("chunk_count", 10)  # default to 10 if not set
+
+    chunk_count = int(config.get("chunk_count", 10))
+    show_progress = bool(config.get("show_progress", True))
 
     db = col.db
     if not db:
@@ -68,7 +69,7 @@ def export_notes_background(col: Collection) -> str:
 
         processed += 1
         now = time.time()
-        if now - last_progress >= 0.1:
+        if show_progress and now - last_progress >= 0.1:
             percent = (processed / total) * 100
             mw.taskman.run_on_main(
                 lambda: mw.progress.update(
@@ -101,13 +102,16 @@ def export_notes_background(col: Collection) -> str:
             }
         )
         written += 1
-        mw.taskman.run_on_main(
-            lambda i=i, written=written, total_chunks=total_chunks: mw.progress.update(
-                label=f"Writing chunks... {written}/{total_chunks} ({(written / total_chunks) * 100:.1f}%)",
-                value=written,
-                max=total_chunks,
+        if show_progress:
+            mw.taskman.run_on_main(
+                lambda i=i,
+                written=written,
+                total_chunks=total_chunks: mw.progress.update(
+                    label=f"Writing chunks... {written}/{total_chunks} ({(written / total_chunks) * 100:.1f}%)",
+                    value=written,
+                    max=total_chunks,
+                )
             )
-        )
 
     manifest = {
         "profile": profile_name,
@@ -133,11 +137,20 @@ def on_export_failed(exc: Exception):
 
 
 def export_notes_json():
+    config = mw.addonManager.getConfig(__name__)
+    if not config:
+        raise Exception("Add-on config not found.")
+    show_progress = bool(config.get("show_progress", True))
+
     op = QueryOp(
         parent=mw,
         op=lambda col: export_notes_background(col),
         success=on_export_success,
-    ).with_progress(label="Exporting notes...")
+    )
+
+    if show_progress:
+        op = op.with_progress(label="Exporting notes...")
+
     op.failure(on_export_failed)
     op.run_in_background()
 
@@ -148,7 +161,7 @@ def add_menu_item():
     mw.form.menuTools.addMenu(kiku_menu)
 
     # Add Export JSON action inside submenu
-    export_action = QAction("Export Notes JSON (with Chunk Progress)", mw)
+    export_action = QAction("Export Notes JSON (with optional progress)", mw)
     qconnect(export_action.triggered, export_notes_json)
     kiku_menu.addAction(export_action)
 

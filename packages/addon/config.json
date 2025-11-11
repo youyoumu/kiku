@@ -1,3 +1,4 @@
 {
-  "chunk_count": 10
+  "chunk_count": 10,
+  "show_progress": true
 }
