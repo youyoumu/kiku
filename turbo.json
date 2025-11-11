@@ -10,6 +10,9 @@
     "typecheck": {
       "dependsOn": ["^typecheck"]
     },
+    "package": {
+      "dependsOn": ["^package"]
+    },
     "copyDist": {
       "dependsOn": ["^copyDist"]
     },

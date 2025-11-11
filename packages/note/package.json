@@ -11,7 +11,8 @@
     "copyDist": "node ./script/copyDist.ts",
     "updateNoteType": "node ./script/updateNoteType.ts",
     "generateTemplate": "npx vite-node ./script/generateTemplate.ts",
-    "apply": "pnpm run build && pnpm run generateTemplate && pnpm run copyDist && pnpm run updateNoteType"
+    "apply": "pnpm run build && pnpm run generateTemplate && pnpm run copyDist && pnpm run updateNoteType",
+    "package": "node ./script/package.ts"
   },
   "dependencies": {
     "solid-js": "^1.9.9"
