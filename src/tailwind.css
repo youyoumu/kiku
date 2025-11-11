@@ -5,7 +5,7 @@
   themes: false;
   include:
     properties, reset, rootcolor, rootscrollgutter, rootscrolllock, svg, scrollbar, button, input, label, fieldset, select, alert, badge,
-    toast, collapse, status, toggle, list;
+    toast, collapse, status, toggle, list, loading;
 }
 
 /* biome-ignore format: this looks nicer */

@@ -1,4 +1,4 @@
-import { createSignal, onMount, Show } from "solid-js";
+import { createSignal, Match, onMount, Show, Switch } from "solid-js";
 import { nextTheme } from "#/util/theme";
 import { useAnkiField, useCardStore, useConfig } from "../shared/Context";
 import {
@@ -63,14 +63,21 @@ export default function Header(props: {
         </Show>
       </div>
       <div class="flex gap-2 items-center relative hover:[&_>_#frequency]:block z-10">
-        <Show when={!card.nested && props.onKanjiClick}>
-          <div
-            class="text-base-content-soft cursor-pointer animate-fade-in-sm"
-            on:click={props.onKanjiClick}
+        <Switch>
+          <Match
+            when={!card.nested && card.kanjiLoading && props.side === "back"}
           >
-            漢字
-          </div>
-        </Show>
+            <span class="loading loading-spinner loading-xs text-base-content-soft animate-fade-in-sm"></span>
+          </Match>
+          <Match when={!card.nested && props.onKanjiClick}>
+            <div
+              class="text-base-content-soft cursor-pointer animate-fade-in-sm"
+              on:click={props.onKanjiClick}
+            >
+              漢字
+            </div>
+          </Match>
+        </Switch>
         {props.side === "back" && <Frequency />}
       </div>
     </>

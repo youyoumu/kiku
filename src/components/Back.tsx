@@ -50,6 +50,7 @@ export function Back(props: { onExitNested?: () => void }) {
         });
 
         setCard("kanji", kanji);
+        setCard("kanjiLoading", false);
       }
       if (!card.nested) {
         setKanji();
