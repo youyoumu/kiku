@@ -1,14 +1,14 @@
 from aqt import mw
 from aqt.qt import QAction, QMenu, qconnect
-from aqt.utils import showInfo
+from aqt.utils import showInfo, tooltip
 from aqt.operations import QueryOp
 from anki.collection import Collection
-import json, os, gzip, time, traceback
+import json, os, gzip, time
 from datetime import datetime
 
 
-def export_notes_background(col: Collection) -> str:
-    """Runs in background thread; returns manifest path when done."""
+def export_notes_background(col: Collection) -> tuple[str, bool]:
+    """Runs in background thread; returns (message, show_progress)."""
 
     config = mw.addonManager.getConfig(__name__)
     if not config:
@@ -80,7 +80,6 @@ def export_notes_background(col: Collection) -> str:
             )
             last_progress = now
 
-    # chunk writing progress
     total_chunks = len([c for c in chunks.values() if c])
     written = 0
     total_notes = 0
@@ -125,15 +124,19 @@ def export_notes_background(col: Collection) -> str:
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
 
-    return f"✅ Exported {total_notes} notes in {total_chunks} chunks.\nManifest: {manifest_path}"
+    return (f"✅ Exported {total_notes} notes to {total_chunks} chunks.", show_progress)
 
 
-def on_export_success(message: str):
-    showInfo(message)
+def on_export_success(result: tuple[str, bool]):
+    message, show_progress = result
+    if show_progress:
+        showInfo(message)
+    else:
+        tooltip(message, period=3000)
 
 
 def on_export_failed(exc: Exception):
-    showInfo(f"❌ Failed to export notes:\n{exc}\n\n{traceback.format_exc()}")
+    tooltip(f"❌ Failed to export notes: {exc}", period=5000)
 
 
 def export_notes_json():
@@ -156,11 +159,9 @@ def export_notes_json():
 
 
 def add_menu_item():
-    # Create submenu under Tools
     kiku_menu = QMenu("Kiku Note Manager", mw)
     mw.form.menuTools.addMenu(kiku_menu)
 
-    # Add Export JSON action inside submenu
     export_action = QAction("Export Notes JSON (with optional progress)", mw)
     qconnect(export_action.triggered, export_notes_json)
     kiku_menu.addAction(export_action)
