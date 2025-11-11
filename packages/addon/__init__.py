@@ -9,6 +9,13 @@ from datetime import datetime
 
 def export_notes_background(col: Collection) -> str:
     """Runs in background thread; returns manifest path when done."""
+
+    # Read from add-on config
+    config = mw.addonManager.getConfig(__name__)
+    if not config:
+        raise Exception("Add-on config not found.")
+    chunk_count = config.get("chunk_count", 10)  # default to 10 if not set
+
     db = col.db
     if not db:
         raise Exception("No database open.")
@@ -21,8 +28,8 @@ def export_notes_background(col: Collection) -> str:
     if total == 0:
         raise Exception("No notes found.")
 
-    chunks = {i: [] for i in range(10)}
-    stats = {i: {"count": 0, "min": None, "max": None} for i in range(10)}
+    chunks = {i: [] for i in range(chunk_count)}
+    stats = {i: {"count": 0, "min": None, "max": None} for i in range(chunk_count)}
 
     last_progress = 0
     processed = 0
@@ -51,7 +58,7 @@ def export_notes_background(col: Collection) -> str:
             "tags": note.tags,
         }
 
-        chunk_index = note.id % 10
+        chunk_index = note.id % chunk_count
         chunks[chunk_index].append(note_json)
 
         s = stats[chunk_index]
@@ -105,6 +112,7 @@ def export_notes_background(col: Collection) -> str:
     manifest = {
         "profile": profile_name,
         "totalNotes": total_notes,
+        "chunkCount": chunk_count,
         "chunks": manifest_chunks,
         "generatedAt": datetime.now().timestamp() * 1000,
     }
@@ -113,7 +121,7 @@ def export_notes_background(col: Collection) -> str:
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
 
-    return f"✅ Exported {total_notes} notes.\nManifest: {manifest_path}"
+    return f"✅ Exported {total_notes} notes in {total_chunks} chunks.\nManifest: {manifest_path}"
 
 
 def on_export_success(message: str):
