@@ -1,0 +1,14 @@
+{
+  "name": "@repo/addon",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "package": "node ./scripts/package.ts"
+  },
+  "devDependencies": {
+    "@types/archiver": "^7.0.0",
+    "@types/node": "^24.6.0",
+    "archiver": "^7.0.1",
+    "typescript": "~5.9.3"
+  }
+}
