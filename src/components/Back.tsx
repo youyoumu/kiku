@@ -56,6 +56,7 @@ export function Back(props: { onExitNested?: () => void }) {
           payload: null,
         });
         setCard("manifest", manifest);
+        setCard("worker", worker);
       }
       if (!card.nested) {
         setKanji();

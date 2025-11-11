@@ -1,4 +1,4 @@
-import type { AnkiNote, KikuNotesManifest } from "#/types";
+import type { AnkiNote, Kanji, KikuNotesManifest } from "#/types";
 import { env } from "#/util/general";
 
 // biome-ignore format: this looks nicer
@@ -22,6 +22,10 @@ export type WorkerChannels = {
   manifest: {
     payload: null;
     result: KikuNotesManifest;
+  };
+  lookup: {
+    payload: string;
+    result: Kanji | undefined;
   };
 };
 export type Key = keyof WorkerChannels;
@@ -182,6 +186,18 @@ class AppWorker {
       return result;
     },
   );
+
+  static lookupCache: Record<string, Kanji> | undefined;
+  static lookup = AppWorker.assignHandler("lookup", async (kanji) => {
+    if (AppWorker.lookupCache) return AppWorker.lookupCache[kanji];
+    const res = await fetch(
+      `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
+    );
+    if (!res.ok) throw new Error(`Failed to lookup ${kanji}`);
+    const lookupCache = await res.json();
+    AppWorker.lookupCache = lookupCache;
+    return lookupCache[kanji];
+  });
 
   static similar_kanji_min_score = 0.5;
   static manifestCache: KikuNotesManifest | undefined;

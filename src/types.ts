@@ -115,6 +115,15 @@ export interface KikuNotesManifest {
   generatedAt: number;
 }
 
+export type Kanji = {
+  level: number;
+  meanings: string[];
+  onyomi: string[];
+  kunyomi: string[];
+  important_reading: "onyomi" | "kunyomi";
+  nanori: string[];
+};
+
 // biome-ignore format: this looks nicer
 export const ankiFieldsSkeleton: AnkiFields = {
   "Expression": "",

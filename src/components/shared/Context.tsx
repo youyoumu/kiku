@@ -19,6 +19,7 @@ import {
 } from "#/types";
 import { type KikuConfig, updateConfigDataset } from "#/util/config";
 import { getAnkiFields } from "#/util/general";
+import type { WorkerClient } from "#/worker/client";
 
 const ConfigContext =
   createContext<[Store<KikuConfig>, SetStoreFunction<KikuConfig>]>();
@@ -175,6 +176,7 @@ type CardStore = {
   nestedAnkiFields: AnkiFields;
   nested: boolean;
   manifest: KikuNotesManifest | undefined;
+  worker: WorkerClient | undefined;
 };
 
 const CardStoreContext =
@@ -203,6 +205,7 @@ export function CardStoreContextProvider(props: {
     nestedAnkiFields: ankiFieldsSkeleton,
     nested: props.nested ?? false,
     manifest: undefined,
+    worker: undefined,
   });
 
   return (
