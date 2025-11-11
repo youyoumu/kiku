@@ -29,3 +29,4 @@ dist-ssr
 apps/docs/.vitepress/cache
 __pycache__
 packages/addon/meta.json
+.env
