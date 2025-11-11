@@ -25,9 +25,11 @@ export class WorkerClient {
     if (type !== "init") {
       await this.ready;
     }
+    const id = Math.random().toString(36).slice(2);
 
     return new Promise((resolve, reject) => {
       const handleMessage = (e: MessageEvent<WorkerResponse<T>>) => {
+        if (e.data.id !== id) return;
         const msg = e.data;
         if (msg.result) {
           this.worker.removeEventListener("message", handleMessage);
@@ -39,7 +41,7 @@ export class WorkerClient {
       };
 
       this.worker.addEventListener("message", handleMessage);
-      this.worker.postMessage({ type, payload });
+      this.worker.postMessage({ id, type, payload });
     });
   }
 

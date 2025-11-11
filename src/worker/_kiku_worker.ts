@@ -30,9 +30,10 @@ export type WorkerChannels = {
 };
 export type Key = keyof WorkerChannels;
 export type WorkerResponse<T extends Key> =
-  | { type: T; result: WorkerChannels[T]["result"]; error: null }
-  | { type: T; result: null; error: string };
+  | { id: string; type: T; result: WorkerChannels[T]["result"]; error: null }
+  | { id: string; type: T; result: null; error: string };
 export type WorkerRequest<T extends Key> = {
+  id: string;
   type: T;
   payload: WorkerChannels[T]["payload"];
 };
@@ -51,6 +52,7 @@ class AppWorker {
       handler(e.data.payload)
         .then((result) => {
           self.postMessage({
+            id: e.data.id,
             type: e.data.type,
             result,
             error: null,
@@ -58,6 +60,7 @@ class AppWorker {
         })
         .catch((err) => {
           self.postMessage({
+            id: e.data.id,
             type: e.data.type,
             result: null,
             error: (err as Error).message,
