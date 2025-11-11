@@ -27,3 +27,4 @@ dist-ssr
 .db
 .turbo
 apps/docs/.vitepress/cache
+__pycache__

@@ -1,0 +1,10 @@
+[project]
+name = "kiku_note_manager"
+version = "0.0.0"
+description = "Anki Add-on to manage Kiku note template"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "anki>=25.9.2",
+    "aqt>=25.9.2",
+]

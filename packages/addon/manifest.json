@@ -1,0 +1,11 @@
+{
+  "name": "Kiku Note Manager",
+  "package": "kiku_note_manager",
+  "conflicts": [],
+  "mod": 1,
+  "version": "1.0.0",
+  "author": "youyoumu",
+  "description": "Anki Add-on to manage Kiku note template",
+  "supported": ["anki-2.1.60"],
+  "min_point_version": 60
+}
