@@ -1,19 +1,14 @@
 from aqt import mw
-from aqt.qt import QAction, qconnect
+from aqt.qt import QAction, QMenu, qconnect
 from aqt.utils import showInfo
 from aqt.operations import QueryOp
 from anki.collection import Collection
-
-import json
-import os
-import gzip
-import time
-import traceback
+import json, os, gzip, time, traceback
 from datetime import datetime
 
 
 def export_notes_background(col: Collection) -> str:
-    """Runs in a background thread; returns manifest path when done."""
+    """Runs in background thread; returns manifest path when done."""
     db = col.db
     if not db:
         raise Exception("No database open.")
@@ -21,7 +16,6 @@ def export_notes_background(col: Collection) -> str:
     profile_name = mw.pm.name
     media_dir = col.media.dir()
 
-    # Get all note IDs first
     note_ids = db.list("SELECT id FROM notes")
     total = len(note_ids)
     if total == 0:
@@ -33,7 +27,6 @@ def export_notes_background(col: Collection) -> str:
     last_progress = 0
     processed = 0
 
-    # --- Stage 1: Export note data ---
     for nid in note_ids:
         note = col.get_note(nid)
         model = note.note_type()
@@ -43,11 +36,10 @@ def export_notes_background(col: Collection) -> str:
 
         card_ids = db.list("SELECT id FROM cards WHERE nid=?", nid)
 
-        field_objs = {}
-        for order, f in enumerate(model["flds"]):
-            name = f["name"]
-            value = note.fields[order] if order < len(note.fields) else ""
-            field_objs[name] = {"order": order, "value": value}
+        field_objs = {
+            f["name"]: {"order": order, "value": note.fields[order]}
+            for order, f in enumerate(model["flds"])
+        }
 
         note_json = {
             "cards": card_ids,
@@ -68,8 +60,6 @@ def export_notes_background(col: Collection) -> str:
         s["max"] = note.id if s["max"] is None else max(s["max"], note.id)
 
         processed += 1
-
-        # Update progress every ~0.1s
         now = time.time()
         if now - last_progress >= 0.1:
             percent = (processed / total) * 100
@@ -82,33 +72,19 @@ def export_notes_background(col: Collection) -> str:
             )
             last_progress = now
 
-    # --- Stage 2: Write chunk files ---
+    # chunk writing progress
+    total_chunks = len([c for c in chunks.values() if c])
+    written = 0
     total_notes = 0
     manifest_chunks = []
 
-    # Reset progress bar for chunk writing
-    mw.taskman.run_on_main(
-        lambda: mw.progress.update(label="Writing chunk files...", value=0, max=10)
-    )
-
-    for i in range(10):
-        chunk_data = chunks[i]
+    for i, chunk_data in chunks.items():
         if not chunk_data:
-            # Still increment progress for empty chunks to keep it smooth
-            mw.taskman.run_on_main(
-                lambda i=i: mw.progress.update(
-                    label=f"Writing chunk files... ({i + 1}/10)",
-                    value=i + 1,
-                    max=10,
-                )
-            )
             continue
-
         filename = f"_kiku_notes_{i}.json.gz"
         chunk_path = os.path.join(media_dir, filename)
         with gzip.open(chunk_path, "wt", encoding="utf-8") as f:
             json.dump(chunk_data, f, ensure_ascii=False)
-
         total_notes += len(chunk_data)
         manifest_chunks.append(
             {
@@ -117,20 +93,14 @@ def export_notes_background(col: Collection) -> str:
                 "range": [stats[i]["min"], stats[i]["max"]],
             }
         )
-
-        # Update chunk progress
+        written += 1
         mw.taskman.run_on_main(
-            lambda i=i: mw.progress.update(
-                label=f"Writing chunk files... ({i + 1}/10)",
-                value=i + 1,
-                max=10,
+            lambda i=i, written=written, total_chunks=total_chunks: mw.progress.update(
+                label=f"Writing chunks... {written}/{total_chunks} ({(written / total_chunks) * 100:.1f}%)",
+                value=written,
+                max=total_chunks,
             )
         )
-
-    # --- Stage 3: Write manifest ---
-    mw.taskman.run_on_main(
-        lambda: mw.progress.update(label="Writing manifest...", value=10, max=10)
-    )
 
     manifest = {
         "profile": profile_name,
@@ -165,9 +135,14 @@ def export_notes_json():
 
 
 def add_menu_item():
-    action = QAction("Export Notes JSON (with Chunk Progress)", mw)
-    qconnect(action.triggered, export_notes_json)
-    mw.form.menuTools.addAction(action)
+    # Create submenu under Tools
+    kiku_menu = QMenu("Kiku Note Manager", mw)
+    mw.form.menuTools.addMenu(kiku_menu)
+
+    # Add Export JSON action inside submenu
+    export_action = QAction("Export Notes JSON (with Chunk Progress)", mw)
+    qconnect(export_action.triggered, export_notes_json)
+    kiku_menu.addAction(export_action)
 
 
 add_menu_item()
