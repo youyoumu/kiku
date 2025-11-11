@@ -8,7 +8,7 @@ import {
 
 // biome-ignore format: this looks nicer
 export const env = {
-  KIKU_CONFIG_FILE: "_kiku.config.json",
+  KIKU_CONFIG_FILE: "_kiku_config.json",
   KIKU_NOTES_MANIFEST: "_kiku_notes_manifest.json",
   KIKU_DB_SIMILAR_KANJI_FROM_KEISEI: "_kiku_db_similar_kanji_from_keisei.json",
   KIKU_DB_SIMILAR_KANJI_LOOKUP: "_kiku_db_similar_kanji_lookup.json",

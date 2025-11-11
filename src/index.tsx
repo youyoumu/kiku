@@ -52,8 +52,8 @@ export async function init({
         await (await fetch(env.KIKU_CONFIG_FILE)).json(),
       );
       globalThis.KIKU_STATE.config = config$;
-    } catch (e) {
-      throw new Error("Failed to load config", { cause: e });
+    } catch {
+      config$ = defaultConfig;
     }
 
     const rootDataset = { ...root.dataset } as KikuConfig;

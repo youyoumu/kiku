@@ -27,7 +27,7 @@ export type KikuConfig = {
 // biome-ignore format: this looks nicer
 export const defaultConfig: KikuConfig = {
   kikuRoot: "true",
-  theme: "coffee",
+  theme: "light",
   webFontPrimary: "Klee One",
   systemFontPrimary: "'Inter', 'SF Pro Display', 'Liberation Sans', 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', 'Noto Sans JP', 'Meiryo', HanaMinA, HanaMinB, sans-serif",
   useSystemFontPrimary: "true",
