@@ -46,6 +46,15 @@ export async function init({
     if (!root) throw new Error("root not found");
     globalThis.KIKU_STATE.root = root;
 
+    const qa = document.querySelector("#qa");
+    if (qa?.shadowRoot) qa.shadowRoot.innerHTML = "";
+    const shadow = qa?.shadowRoot ?? qa?.attachShadow({ mode: "open" });
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "_kiku.css";
+    shadow?.appendChild(link);
+    shadow?.appendChild(root);
+
     let config$: KikuConfig;
     try {
       if (globalThis.KIKU_STATE.config) config$ = globalThis.KIKU_STATE.config;
