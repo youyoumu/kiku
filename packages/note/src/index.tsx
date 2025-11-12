@@ -55,7 +55,7 @@ export async function init({
     const shadow = qa?.shadowRoot ?? qa?.attachShadow({ mode: "open" });
     shadow?.appendChild(root);
     const tailwind = document.querySelector(
-      "[data-vite-dev-id='/home/yym/repos/kiku/packages/note/src/tailwind.css']",
+      "[data-vite-dev-id='/home/yym/repos/kiku/packages/note/src/styles/tailwind.css']",
     );
     if (tailwind) {
       shadow?.appendChild(tailwind.cloneNode(true));

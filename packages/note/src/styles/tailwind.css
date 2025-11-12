@@ -4,6 +4,7 @@
 @import "./tailwindFontSize.css";
 @import "./daisyui.css";
 @import "./dictionary.css";
+@import "./tailwindProperty.css";
 
 /* biome-ignore format: this looks nicer */
 @theme {
