@@ -1,4 +1,5 @@
-import { lazy, onMount } from "solid-js";
+import { createEffect, lazy, onMount } from "solid-js";
+import { createStore } from "solid-js/store";
 import { isServer } from "solid-js/web";
 import type { DatasetProp } from "#/util/config";
 import { usePictureField, useSentenceField } from "#/util/hooks";
@@ -20,17 +21,22 @@ export function Front() {
 
   onMount(() => {
     setTimeout(() => {
+      if (ankiFields.IsAudioCard && card.sentenceFieldRef) {
+        card.sentenceFieldRef.innerHTML =
+          card.sentenceFieldRef.innerHTML.replaceAll(
+            ankiFields.Expression,
+            "<span class='text-base-content-primary'>[...]<span>",
+          );
+      }
       setCard("ready", true);
     }, 100);
   });
 
-  // biome-ignore format: this looks nicer
-  const flexIfXCardProp: () => DatasetProp = () => ({
-    "data-is-audio-card": isServer ? "{{IsAudioCard}}" : undefined,
-    "data-is-sentence-card": isServer ? "{{IsSentenceCard}}" : undefined,
-    "data-is-word-and-sentence-card": isServer ? "{{IsWordAndSentenceCard}}" : undefined,
-    "data-is-click-card": isServer ? "{{IsClickCard}}" : undefined,
-    "data-clicked": card.clicked ? "true" : undefined,
+  createEffect(() => {
+    setFlexIfXCardProp(
+      "data-is-audio-card",
+      ankiFields.IsAudioCard ? (card.ready ? "ready" : undefined) : undefined,
+    );
   });
 
   const hintFieldDataset: () => DatasetProp = () => ({
@@ -39,6 +45,15 @@ export function Front() {
       : ankiFields.Hint
         ? "true"
         : "",
+  });
+
+  // biome-ignore format: this looks nicer
+  const [flexIfXCardProp, setFlexIfXCardProp] = createStore({
+    "data-is-audio-card": isServer ? "{{IsAudioCard}}" : undefined,
+    "data-is-sentence-card": isServer ? "{{IsSentenceCard}}" : undefined,
+    "data-is-word-and-sentence-card": isServer ? "{{IsWordAndSentenceCard}}" : undefined,
+    "data-is-click-card": isServer ? "{{IsClickCard}}" : undefined,
+    "data-clicked": card.clicked ? "true" : undefined,
   });
 
   return (
@@ -74,7 +89,7 @@ export function Front() {
         </div>
         <div
           class="hidden justify-between text-base-content-soft items-center gap-2 animate-fade-in h-5 sm:h-8 flex-if-x-card"
-          {...flexIfXCardProp()}
+          {...flexIfXCardProp}
         >
           {card.ready && <Lazy.PicturePagination />}
         </div>
@@ -83,7 +98,7 @@ export function Front() {
       {/* TODO: animation */}
       <div
         class="hidden flex-col gap-4 items-center text-center flex-if-x-card"
-        {...flexIfXCardProp()}
+        {...flexIfXCardProp}
       >
         <div
           ref={(ref) => setCard("sentenceFieldRef", ref)}

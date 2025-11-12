@@ -132,7 +132,7 @@
   }
 
   .flex-if-x-card {
-    &[data-is-audio-card]:not([data-is-audio-card=""]),
+    &[data-is-audio-card="ready"],
     &[data-is-sentence-card]:not([data-is-sentence-card=""]),
     &[data-is-word-and-sentence-card]:not([data-is-word-and-sentence-card=""]) {
       @apply flex;

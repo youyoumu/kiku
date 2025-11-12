@@ -135,7 +135,7 @@ export type Dataset = {
   "data-font-size-sm-hint": string;
   //
   "data-field": string;
-  "data-is-audio-card": "true" | "false" | "{{IsAudioCard}}";
+  "data-is-audio-card": "true" | "false" | "{{IsAudioCard}}" | "ready"
   "data-is-sentence-card": "true" | "false" | "{{IsSentenceCard}}";
   "data-is-word-and-sentence-card": | "true" | "false" | "{{IsWordAndSentenceCard}}";
   "data-is-click-card": "true" | "false" | "{{IsClickCard}}";
@@ -149,8 +149,6 @@ export type Dataset = {
   "data-modal-transparent": "true" | "false";
   "data-has-pitch": string
   "data-has-hint": string
-  // AnkiWeb
-  "data_is_by_kiku": "true"
 };
 
 export type DatasetProp = Partial<Dataset>;

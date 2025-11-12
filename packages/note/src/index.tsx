@@ -166,20 +166,6 @@ export async function init({
 }
 
 if (import.meta.env.DEV) {
-  // const fonts = [
-  //   "Hina+Mincho",
-  //   "Klee+One",
-  //   "Noto+Sans+JP",
-  //   "Noto+Serif+JP",
-  //   "IBM+Plex+Sans+JP",
-  // ];
-  //
-  // for (const font of fonts) {
-  //   const link = document.createElement("link");
-  //   link.rel = "stylesheet";
-  //   link.href = `https://fonts.googleapis.com/css2?family=${font}&display=swap`;
-  //   document.head.appendChild(link);
-  // }
   const params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop as string),
   });
