@@ -54,3 +54,14 @@ export function usePictureField() {
     }
   });
 }
+
+export function useAnkiWeb() {
+  const qaBox = document.querySelector("#qa_box");
+  qaBox?.setAttribute("data-is-by-kiku", "true");
+  const ansArea = document.querySelector("#ansarea");
+  ansArea?.setAttribute("data-is-by-kiku", "true");
+  const buttons = ansArea?.querySelectorAll("button");
+  buttons?.forEach((button) => {
+    button.setAttribute("data-is-by-kiku", "true");
+  });
+}

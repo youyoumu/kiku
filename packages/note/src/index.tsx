@@ -17,6 +17,7 @@ import {
   validateConfig,
 } from "./util/config.ts";
 import { env } from "./util/general.ts";
+import { useAnkiWeb } from "./util/hooks.ts";
 
 declare global {
   var KIKU_STATE: {
@@ -86,6 +87,7 @@ export async function init({
 
     const [config, setConfig] = createStore(config$);
     window.KIKU_STATE.relax = false;
+    useAnkiWeb();
 
     if (side === "front") {
       const App = () => (

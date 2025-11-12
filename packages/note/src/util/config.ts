@@ -149,6 +149,8 @@ export type Dataset = {
   "data-modal-transparent": "true" | "false";
   "data-has-pitch": string
   "data-has-hint": string
+  // AnkiWeb
+  "data_is_by_kiku": "true"
 };
 
 export type DatasetProp = Partial<Dataset>;

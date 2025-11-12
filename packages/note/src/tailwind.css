@@ -268,6 +268,20 @@ body {
   background: var(--color-base-100);
 }
 
+/*
+ *    ─────────────────────────────── AnkiWeb ───────────────────────────────
+*/
+
+#qa_box[data-is-by-kiku="true"],
+#ansarea[data-is-by-kiku="true"] {
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+}
+
+/*
+ *    ─────────────────────────────── AnkiWeb ───────────────────────────────
+*/
+
 @theme {
   --animate-fade-in: fade-in 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-fade-in-sm: fade-in-sm 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
