@@ -1,6 +1,7 @@
 import { createEffect, lazy, Match, onMount, Suspense, Switch } from "solid-js";
 import { isServer } from "solid-js/web";
 import { type AnkiFields, ankiFieldsSkeleton } from "#/types";
+import { useAnkiDroid } from "#/util/ankiDroid";
 import type { DatasetProp } from "#/util/config";
 import { extractKanji } from "#/util/general";
 import { usePictureField } from "#/util/hooks";
@@ -30,6 +31,13 @@ export function Back(props: { onExitNested?: () => void }) {
   const [card, setCard] = useCardStore();
   const { ankiFields } = useAnkiField<"back">();
   usePictureField();
+  if (
+    KIKU_STATE.root &&
+    (typeof AnkiDroidJS !== "undefined" ||
+      (!isServer && import.meta.env.DEV && window.innerWidth < 768))
+  ) {
+    useAnkiDroid(KIKU_STATE.root);
+  }
   const tags = ankiFields.Tags.split(" ");
 
   onMount(() => {
