@@ -1,7 +1,6 @@
 import { createEffect, lazy, Match, onMount, Suspense, Switch } from "solid-js";
 import { isServer } from "solid-js/web";
 import { type AnkiFields, ankiFieldsSkeleton } from "#/types";
-import { useAnkiDroid } from "#/util/ankiDroid";
 import type { DatasetProp } from "#/util/config";
 import { extractKanji } from "#/util/general";
 import { usePictureField } from "#/util/hooks";
@@ -25,13 +24,13 @@ const Lazy = {
   Pitches: lazy(async () => ({ default: (await import("./_kiku_lazy")).Pitches, })),
   PicturePagination: lazy(async () => ({ default: (await import("./_kiku_lazy")).PicturePagination, })),
   KanjiList: lazy(async () => ({ default: (await import("./_kiku_lazy")).KanjiList, })),
+  AnkiDroid: lazy(async () => ({ default: (await import("./_kiku_lazy")).AnkiDroid, })),
 };
 
 export function Back(props: { onExitNested?: () => void }) {
   const [card, setCard] = useCardStore();
   const { ankiFields } = useAnkiField<"back">();
   usePictureField();
-  useAnkiDroid();
 
   const tags = ankiFields.Tags.split(" ");
 
@@ -102,14 +101,15 @@ export function Back(props: { onExitNested?: () => void }) {
 
   return (
     <Layout>
+      {card.ready && <Lazy.AnkiDroid />}
       <Switch>
-        <Match when={card.screen === "settings" && !card.nested}>
+        <Match when={card.screen === "settings" && !card.nested && card.ready}>
           <Lazy.Settings
             onBackClick={() => setCard("screen", "main")}
             onCancelClick={() => setCard("screen", "main")}
           />
         </Match>
-        <Match when={card.screen === "kanji" && !card.nested}>
+        <Match when={card.screen === "kanji" && !card.nested && card.ready}>
           <Lazy.KanjiList
             onBackClick={() => {
               if (card.selectedSimilarKanji) {
@@ -142,7 +142,7 @@ export function Back(props: { onExitNested?: () => void }) {
             }}
           />
         </Match>
-        <Match when={card.screen === "nested" && !card.nested}>
+        <Match when={card.screen === "nested" && !card.nested && card.ready}>
           <AnkiFieldContextProvider ankiFields={card.nestedAnkiFields}>
             <CardStoreContextProvider nested side="back">
               <Back

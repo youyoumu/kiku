@@ -1,3 +1,4 @@
+import AnkiDroid from "./AnkiDroid";
 import AudioButtons from "./AudioButtons";
 import BackBody from "./BackBody";
 import BackFooter from "./BackFooter";
@@ -18,4 +19,5 @@ export {
   Pitches,
   PicturePagination,
   KanjiList,
+  AnkiDroid,
 };

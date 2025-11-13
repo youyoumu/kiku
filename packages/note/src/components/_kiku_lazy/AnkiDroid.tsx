@@ -90,7 +90,7 @@ function easeOutExpo(x: number): number {
   return x === 1 ? 1 : 1 - 2 ** (-10 * x);
 }
 
-export function useAnkiDroid() {
+export default function AnkiDroid() {
   if (isServer) return;
   if (window.innerWidth > 768) return;
   if (typeof AnkiDroidJS === "undefined" && !import.meta.env.DEV) return;
@@ -260,4 +260,6 @@ export function useAnkiDroid() {
       el.removeEventListener("touchend", handleTouchEnd);
     });
   });
+
+  return null;
 }
