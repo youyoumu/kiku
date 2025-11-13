@@ -162,7 +162,6 @@ type CardStore = {
   sentenceAudios?: HTMLAnchorElement[];
   screen: "main" | "settings" | "kanji" | "nested";
   ready: boolean;
-  slideDirection: undefined | "ease1" | "ease3";
   toast: {
     success: (message: string) => void;
     error: (message: string) => void;
@@ -210,7 +209,6 @@ export function CardStoreContextProvider(props: {
     sentenceAudios: undefined,
     screen: "main",
     ready: false,
-    slideDirection: undefined,
     toast: {
       success: (message: string) => {
         if (timeout) clearTimeout(timeout);

@@ -94,6 +94,8 @@ export default function AnkiDroid() {
   if (isServer) return;
   if (window.innerWidth > 768) return;
   if (typeof AnkiDroidJS === "undefined" && !import.meta.env.DEV) return;
+  const [config] = useConfig();
+  if (config.ankiDroidEnableIntegration === "false") return;
 
   const ankiDroidAPI =
     typeof AnkiDroidJS === "undefined"
@@ -102,32 +104,27 @@ export default function AnkiDroid() {
 
   let checkIconRef: SVGSVGElement | undefined;
   let xIconRef: SVGSVGElement | undefined;
-  const [config] = useConfig();
-  if (config.ankiDroidEnableIntegration === "false") return;
 
-  const [card, setCard] = useCardStore();
+  const [card] = useCardStore();
   const el$ = () => card.contentRef;
   const reverse = config.ankiDroidReverseSwipeDirection === "true";
 
-  const threshold = 80;
-  const deadzone = 10;
-  const scrollTolerance = 15;
+  const THRESHOLD = 80;
+  const DEADZONE = 10;
+  const SCROLL_TOLERANCE = 15;
 
   let startX = 0;
   let startY = 0;
   let deltaX = 0;
-  const isAnimating = false;
   let isScrolling = false;
 
   const [checkIconOffset, setCheckIconOffset] = createSignal(0);
   const [xIconOffset, setXIconOffset] = createSignal(0);
-  const [stage, setStage] = createSignal(0);
   const [progress, setProgress] = createSignal(0);
 
   function handleTouchStart(e: TouchEvent) {
     const el = el$();
     if (el === undefined) return;
-    if (isAnimating) return;
     const t = e.touches[0];
     startX = t.clientX;
     startY = t.clientY;
@@ -138,7 +135,7 @@ export default function AnkiDroid() {
 
   function handleTouchMove(e: TouchEvent) {
     const el = el$();
-    if (!el || isAnimating || isScrolling) return;
+    if (!el || isScrolling) return;
 
     const t = e.touches[0];
     const diffX = t.clientX - startX;
@@ -146,48 +143,22 @@ export default function AnkiDroid() {
 
     // Detect vertical scroll intent
     if (
-      Math.abs(diffY) > scrollTolerance &&
+      Math.abs(diffY) > SCROLL_TOLERANCE &&
       Math.abs(diffY) > Math.abs(diffX)
     ) {
       isScrolling = true;
-      el.style.transform = "";
       return;
     }
 
     // Only start sliding after passing deadzone
-    if (Math.abs(diffX) > deadzone) {
+    const abs = Math.abs(diffX);
+    if (abs > DEADZONE) {
+      deltaX = diffX;
       const direction = diffX > 0 ? 1 : -1;
-
-      // 3 stages of slide thresholds
-      const stage1 = threshold * 0;
-      const stage2 = threshold * 0.99;
-      const stage3 = threshold;
-
-      let stageValue = 0;
-      let stage: 0 | 1 | 2 | 3 = 0;
-
-      const abs = Math.abs(diffX);
-      if (abs < stage1) {
-        stageValue = 0;
-        stage = 0;
-      } else if (abs < stage2) {
-        stageValue = stage1;
-        stage = 1;
-      } else if (abs < stage3) {
-        stageValue = stage2;
-        stage = 2;
-      } else {
-        stageValue = stage3;
-        stage = 3;
-      }
-
-      setStage(stage);
-      const target = stageValue * direction;
-
-      const progress = Math.min(abs / threshold, 1);
+      const progress = Math.min(abs / THRESHOLD, 1);
       setProgress(progress);
-      const multiplier = easeOutQuad(Math.min(abs / threshold / 2, 1));
-      const offset = multiplier * Math.min(abs, threshold) * direction;
+      const multiplier = easeOutQuad(Math.min(abs / THRESHOLD / 2, 1));
+      const offset = multiplier * Math.min(abs, THRESHOLD);
 
       if (direction > 0) {
         requestAnimationFrame(() => {
@@ -198,24 +169,15 @@ export default function AnkiDroid() {
           setCheckIconOffset(Math.abs(offset));
         });
       }
-
-      deltaX = target;
-
-      // 💡 update store color only on stage ≥ 2
-      if (stage >= 2) {
-        let ease: "ease1" | "ease3" = direction > 0 ? "ease3" : "ease1";
-        if (reverse) ease = reverseEase(ease);
-        setCard("slideDirection", ease);
-      } else {
-        setCard("slideDirection", undefined);
-      }
     }
   }
 
   function handleTouchEnd() {
-    if (isAnimating || isScrolling) return;
+    setCheckIconOffset(0);
+    setXIconOffset(0);
 
-    if (Math.abs(deltaX) >= threshold) {
+    if (isScrolling) return;
+    if (Math.abs(deltaX) >= THRESHOLD) {
       let ease: "ease1" | "ease3" = deltaX > 0 ? "ease3" : "ease1";
       if (reverse) ease = reverseEase(ease);
       console.log(ease);
@@ -227,28 +189,19 @@ export default function AnkiDroid() {
         }
       }
     }
-    setCheckIconOffset(0);
-    setXIconOffset(0);
   }
 
   createEffect(() => {
     const el = el$();
     if (el === undefined) return;
     if (card.side !== "back" || card.screen !== "main" || card.nested) return;
-    el.addEventListener("touchstart", handleTouchStart, {
-      passive: true,
-    });
-    el.addEventListener("touchmove", handleTouchMove, {
-      passive: false,
-    });
-    el.addEventListener("touchend", handleTouchEnd, {
-      passive: true,
-    });
+    el.addEventListener("touchstart", handleTouchStart, { passive: true });
+    el.addEventListener("touchmove", handleTouchMove, { passive: false });
+    el.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     onCleanup(() => {
       const el = el$();
       if (el === undefined) return;
-
       el.removeEventListener("touchstart", handleTouchStart);
       el.removeEventListener("touchmove", handleTouchMove);
       el.removeEventListener("touchend", handleTouchEnd);
@@ -270,8 +223,8 @@ export default function AnkiDroid() {
             ref={xIconRef}
             class="size-12 rounded-full p-2 shadow-lg transition-all"
             classList={{
-              "bg-base-100 text-base-content-primary": stage() !== 3,
-              "bg-error text-error-content": stage() === 3,
+              "bg-base-100 text-base-content-primary": progress() !== 1,
+              "bg-error text-error-content": progress() === 1,
             }}
           />
         </div>
@@ -289,8 +242,8 @@ export default function AnkiDroid() {
             ref={checkIconRef}
             class="size-12 rounded-full p-2 transition-all shadow-lg"
             classList={{
-              "bg-base-100 text-base-content-primary": stage() !== 3,
-              "bg-success text-success-content": stage() === 3,
+              "bg-base-100 text-base-content-primary": progress() !== 1,
+              "bg-success text-success-content": progress() === 1,
             }}
           />
         </div>
