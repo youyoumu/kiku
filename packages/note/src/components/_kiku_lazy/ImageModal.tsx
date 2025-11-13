@@ -1,4 +1,5 @@
 import { createEffect, createSignal } from "solid-js";
+import { Portal } from "solid-js/web";
 import type { DatasetProp } from "#/util/config";
 
 export default function ImageModal(props: {
@@ -30,11 +31,13 @@ export default function ImageModal(props: {
   });
 
   return (
-    <div
-      class="picture-modal"
-      on:click={props["on:click"]}
-      {...pictureModalDataset()}
-      innerHTML={props.img}
-    ></div>
+    <Portal mount={KIKU_STATE.root}>
+      <div
+        class="picture-modal"
+        on:click={props["on:click"]}
+        {...pictureModalDataset()}
+        innerHTML={props.img}
+      ></div>
+    </Portal>
   );
 }
