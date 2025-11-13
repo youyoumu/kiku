@@ -179,6 +179,7 @@ body {
 
 [data-kiku-root] {
   position: relative;
+  overflow: hidden;
 }
 
 /* AnkiDroid */

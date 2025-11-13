@@ -1,6 +1,7 @@
-import { createEffect, onCleanup } from "solid-js";
-import { isServer } from "solid-js/web";
+import { createEffect, createSignal, onCleanup } from "solid-js";
+import { isServer, Portal } from "solid-js/web";
 import { useCardStore, useConfig } from "#/components/shared/Context";
+import { CheckIcon, XIcon } from "./Icons";
 
 type AnkiResponse<T = unknown> = {
   success: boolean;
@@ -85,9 +86,8 @@ declare global {
 function reverseEase(ease: "ease1" | "ease3") {
   return ease === "ease1" ? "ease3" : "ease1";
 }
-
-function easeOutExpo(x: number): number {
-  return x === 1 ? 1 : 1 - 2 ** (-10 * x);
+function easeOutQuad(x: number): number {
+  return 1 - (1 - x) * (1 - x);
 }
 
 export default function AnkiDroid() {
@@ -100,6 +100,8 @@ export default function AnkiDroid() {
       ? undefined
       : new AnkiDroidJS({ version: "0.0.3", developer: "youyoumu" });
 
+  let checkIconRef: SVGSVGElement | undefined;
+  let xIconRef: SVGSVGElement | undefined;
   const [config] = useConfig();
   if (config.ankiDroidEnableIntegration === "false") return;
 
@@ -107,16 +109,20 @@ export default function AnkiDroid() {
   const el$ = () => card.contentRef;
   const reverse = config.ankiDroidReverseSwipeDirection === "true";
 
-  const threshold = 120;
+  const threshold = 80;
   const deadzone = 10;
-  const duration = 150;
   const scrollTolerance = 15;
 
   let startX = 0;
   let startY = 0;
   let deltaX = 0;
-  let isAnimating = false;
+  const isAnimating = false;
   let isScrolling = false;
+
+  const [checkIconOffset, setCheckIconOffset] = createSignal(0);
+  const [xIconOffset, setXIconOffset] = createSignal(0);
+  const [stage, setStage] = createSignal(0);
+  const [progress, setProgress] = createSignal(0);
 
   function handleTouchStart(e: TouchEvent) {
     const el = el$();
@@ -175,13 +181,23 @@ export default function AnkiDroid() {
         stage = 3;
       }
 
+      setStage(stage);
       const target = stageValue * direction;
 
-      const multiplier = easeOutExpo(abs / threshold / 50);
-      const clamped = multiplier * Math.min(abs, threshold) * direction;
+      const progress = Math.min(abs / threshold, 1);
+      setProgress(progress);
+      const multiplier = easeOutQuad(Math.min(abs / threshold / 2, 1));
+      const offset = multiplier * Math.min(abs, threshold) * direction;
 
-      el.style.transition = `transform ${duration}ms ease-out`;
-      el.style.transform = `translateX(${clamped}px)`;
+      if (direction > 0) {
+        requestAnimationFrame(() => {
+          setXIconOffset(Math.abs(offset));
+        });
+      } else {
+        requestAnimationFrame(() => {
+          setCheckIconOffset(Math.abs(offset));
+        });
+      }
 
       deltaX = target;
 
@@ -210,31 +226,9 @@ export default function AnkiDroid() {
           ankiDroidAPI?.ankiAnswerEase3();
         }
       }
-      return;
     }
-    snapBack();
-  }
-
-  function snapBack() {
-    const el = el$();
-    if (el === undefined) return;
-    isAnimating = true;
-    el.style.transition = `transform ${duration}ms ease-out`;
-    el.style.transform = "translateX(0)";
-
-    const timer = setTimeout(cleanup, duration + 100);
-    const end = () => cleanup();
-
-    function cleanup() {
-      const el = el$();
-      if (el === undefined) return;
-      clearTimeout(timer);
-      el.removeEventListener("transitionend", end);
-      isAnimating = false;
-      el.style.transition = "";
-    }
-
-    el.addEventListener("transitionend", end);
+    setCheckIconOffset(0);
+    setXIconOffset(0);
   }
 
   createEffect(() => {
@@ -261,5 +255,46 @@ export default function AnkiDroid() {
     });
   });
 
-  return null;
+  return (
+    <>
+      <Portal mount={KIKU_STATE.root}>
+        <div
+          class="absolute top-1/2 -translate-y-1/2 left-0 bg-error/30 flex justify-center items-center rounded-full"
+          style={{
+            height: `${48 + 24 * progress()}px`,
+            width: `${48 + 24 * progress()}px`,
+            transform: `translateX(${(48 + 24 - xIconOffset()) * -1}px)`,
+          }}
+        >
+          <XIcon
+            ref={xIconRef}
+            class="size-12 rounded-full p-2 shadow-lg transition-all"
+            classList={{
+              "bg-base-100 text-base-content-primary": stage() !== 3,
+              "bg-error text-error-content": stage() === 3,
+            }}
+          />
+        </div>
+      </Portal>
+      <Portal mount={KIKU_STATE.root}>
+        <div
+          class="absolute top-1/2 -translate-y-1/2 right-0 bg-success/30 flex justify-center items-center rounded-full"
+          style={{
+            height: `${48 + 24 * progress()}px`,
+            width: `${48 + 24 * progress()}px`,
+            transform: `translateX(${48 + 24 - checkIconOffset()}px)`,
+          }}
+        >
+          <CheckIcon
+            ref={checkIconRef}
+            class="size-12 rounded-full p-2 transition-all shadow-lg"
+            classList={{
+              "bg-base-100 text-base-content-primary": stage() !== 3,
+              "bg-success text-success-content": stage() === 3,
+            }}
+          />
+        </div>
+      </Portal>
+    </>
+  );
 }
