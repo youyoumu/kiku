@@ -162,6 +162,7 @@ type CardStore = {
   sentenceAudios?: HTMLAnchorElement[];
   screen: "main" | "settings" | "kanji" | "nested";
   ready: boolean;
+  slideDirection: undefined | "ease1" | "ease3";
   imageModal?: string;
   pictureIndex: number;
   pictures: HTMLImageElement[];
@@ -201,6 +202,7 @@ export function CardStoreContextProvider(props: {
     sentenceAudios: undefined,
     screen: "main",
     ready: false,
+    slideDirection: undefined,
     imageModal: undefined,
     pictureIndex: 0,
     pictures: [],

@@ -13,7 +13,7 @@ export function useAnkiDroid() {
   if (window.innerWidth > 768) return;
   if (typeof AnkiDroidJS === "undefined" && !import.meta.env.DEV) return;
 
-  const [card] = useCardStore();
+  const [card, setCard] = useCardStore();
   const el$ = () => card.contentRef;
 
   const threshold = 80; // how far before triggering swipe
@@ -41,8 +41,7 @@ export function useAnkiDroid() {
 
   function handleTouchMove(e: TouchEvent) {
     const el = el$();
-    if (el === undefined) return;
-    if (isAnimating || isScrolling) return;
+    if (!el || isAnimating || isScrolling) return;
 
     const t = e.touches[0];
     const diffX = t.clientX - startX;
@@ -58,23 +57,32 @@ export function useAnkiDroid() {
       return;
     }
 
-    // only start sliding after passing deadzone
+    // Only start sliding after passing deadzone
     if (Math.abs(diffX) > deadzone) {
       const direction = diffX > 0 ? 1 : -1;
 
       // 3 stages of slide thresholds
-      const stage1 = threshold * 0.3; // small hint slide
-      const stage2 = threshold * 0.6; // medium slide
-      const stage3 = threshold; // full slide (will trigger)
+      const stage1 = threshold * 0.3;
+      const stage2 = threshold * 0.6;
+      const stage3 = threshold;
 
       let stageValue = 0;
+      let stage: 0 | 1 | 2 | 3 = 0;
 
       const abs = Math.abs(diffX);
-      if (abs < stage1)
-        stageValue = 0; // barely moved
-      else if (abs < stage2) stageValue = stage1;
-      else if (abs < stage3) stageValue = stage2;
-      else stageValue = stage3;
+      if (abs < stage1) {
+        stageValue = 0;
+        stage = 0;
+      } else if (abs < stage2) {
+        stageValue = stage1;
+        stage = 1;
+      } else if (abs < stage3) {
+        stageValue = stage2;
+        stage = 2;
+      } else {
+        stageValue = stage3;
+        stage = 3;
+      }
 
       const target = stageValue * direction;
 
@@ -83,17 +91,26 @@ export function useAnkiDroid() {
       el.style.transform = `translateX(${target}px)`;
 
       deltaX = target;
+
+      // 💡 update store color only on stage ≥ 2
+      if (stage >= 2) {
+        setCard("slideDirection", direction > 0 ? "ease3" : "ease1");
+      } else {
+        setCard("slideDirection", undefined);
+      }
     }
   }
 
   function handleTouchEnd() {
     if (isAnimating || isScrolling) return;
 
-    if (Math.abs(deltaX) > threshold && typeof AnkiDroidJS !== "undefined") {
+    if (Math.abs(deltaX) >= threshold) {
       if (deltaX > 0) {
-        AnkiDroidJS.ankiDroidInvoke("ease3");
+        console.log("ease3");
+        if (!import.meta.env.DEV) AnkiDroidJS.ankiDroidInvoke("ease3");
       } else {
-        AnkiDroidJS.ankiDroidInvoke("ease1");
+        console.log("ease1");
+        if (!import.meta.env.DEV) AnkiDroidJS?.ankiDroidInvoke("ease1");
       }
     }
 
