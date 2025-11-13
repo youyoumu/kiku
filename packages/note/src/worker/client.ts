@@ -5,6 +5,7 @@ export class WorkerClient {
   private ready: Promise<void>;
 
   constructor() {
+    //TODO: modular anki web stuff
     if (KIKU_STATE.isAnkiWeb) {
       this.worker = new Worker("/study/media/_kiku_worker.js", {
         type: "module",

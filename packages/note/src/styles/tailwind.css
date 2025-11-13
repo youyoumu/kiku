@@ -180,3 +180,8 @@ body {
 [data-kiku-root] {
   position: relative;
 }
+
+/* AnkiDroid */
+.android body > div#content {
+  margin: 0;
+}

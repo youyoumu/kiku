@@ -30,7 +30,7 @@ export function Layout(props: { children: JSX.Element }) {
   return (
     <div
       ref={setLayoutElement}
-      class="max-w-4xl mx-auto overflow-auto p-2 sm:p-4 gutter-stable h-[calc(100vh-1rem)] sm:h-svh font-primary"
+      class="max-w-4xl mx-auto overflow-auto p-2 sm:p-4 gutter-stable h-svh font-primary"
       style={{
         height: KIKU_STATE.isAnkiWeb
           ? `calc(100svh - ${offset()}px)`
