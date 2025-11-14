@@ -30,11 +30,19 @@ import {
   tailwindFontSizeLabel,
 } from "./util/tailwind";
 
+function toDashed(str: string) {
+  return str.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
+}
+
+function toDatasetKey(str: string) {
+  return `data-${str}`;
+}
+
 function toDatasetString(obj: Record<string, string | number>) {
   return Object.entries(obj)
     .map(([key, value]) => {
-      const dashed = key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
-      return `data-${dashed}="${value}"`;
+      const dashed = toDashed(key);
+      return `${toDatasetKey(dashed)}="${value}"`;
     })
     .join("\n");
 }
@@ -720,18 +728,33 @@ function DebugSettings() {
           Object.keys(cssVarMismatches()).length > 0
         }
       >
-        <div role="alert" class="alert alert-warning">
-          <TriangleAlertIcon />
-          <span>
-            <Show when={Object.keys(rootDatasetMismatches()).length > 0}>
-              Root Dataset mismatches,{" "}
-            </Show>
-            <Show when={Object.keys(cssVarMismatches()).length > 0}>
-              CSS Variable mismatches,{" "}
-            </Show>
-            <span>FOUC (Flash Of Unstyled Content) may occur.</span>
-          </span>
-        </div>
+        <Show when={Object.keys(rootDatasetMismatches()).length > 0}>
+          <div role="alert" class="alert alert-warning">
+            <TriangleAlertIcon />
+            <span>
+              Root Dataset mismatches, FOUC (Flash Of Unstyled Content) may
+              occur. <br />
+              <span class="text-xs">
+                {Object.keys(rootDatasetMismatches())
+                  .map((key) => toDatasetKey(toDashed(key)))
+                  .join(", ")}
+              </span>
+            </span>
+          </div>
+        </Show>
+
+        <Show when={Object.keys(cssVarMismatches()).length > 0}>
+          <div role="alert" class="alert alert-warning">
+            <TriangleAlertIcon />
+            <span>
+              CSS Variables mismatches, FOUC (Flash Of Unstyled Content) may
+              occur. <br />
+              <span class="text-xs">
+                {Object.keys(cssVarMismatches()).join(", ")}
+              </span>
+            </span>
+          </div>
+        </Show>
       </Show>
       <div class="pb-32">
         {/* NOTE: collapse arrow broke button color https://github.com/saadeghi/daisyui/issues/4209 */}
@@ -816,6 +839,7 @@ function DebugSettings() {
                     }}
                   />
                 </div>
+
                 <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
                   <span class="opacity-25 select-none">{"<div\n"}</span>
                   {toDatasetString(KIKU_STATE.rootDataset)}
