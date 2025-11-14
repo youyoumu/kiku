@@ -468,7 +468,7 @@ function FontSizeSettings() {
       <div>
         <div class="text-lg font-bold">Mobile</div>
         {/* biome-ignore format: this looks nicer */}
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(25rem,1fr))] rounded-box gap-x-4 gap-y-2">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] rounded-box gap-x-4 gap-y-4 sm:gap-y-2">
           <FontSizeSettingsFieldset configKey="fontSizeBaseExpression" label="Expression" />
           <FontSizeSettingsFieldset configKey="fontSizeBasePitch" label="Pitch" />
           <FontSizeSettingsFieldset configKey="fontSizeBaseSentence" label="Sentence" />
@@ -479,7 +479,7 @@ function FontSizeSettings() {
       <div>
         <div class="text-lg font-bold">Desktop</div>
         {/* biome-ignore format: this looks nicer */}
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(25rem,1fr))] rounded-box gap-x-4 gap-y-2">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] rounded-box gap-x-4 gap-y-4 sm:gap-y-2">
           <FontSizeSettingsFieldset configKey="fontSizeSmExpression" label="Expression" />
           <FontSizeSettingsFieldset configKey="fontSizeSmPitch" label="Pitch" />
           <FontSizeSettingsFieldset configKey="fontSizeSmSentence" label="Sentence" />
@@ -815,6 +815,7 @@ function DebugSettings() {
           <span>
             Root Dataset mismatches, FOUC (Flash Of Unstyled Content) may occur.{" "}
             <br />
+            <br />
             <span class="text-xs">
               {Object.keys(rootDatasetMismatches())
                 .filter((key) =>
@@ -832,6 +833,7 @@ function DebugSettings() {
             <span>
               CSS Variables mismatches, FOUC (Flash Of Unstyled Content) may
               occur. <br />
+              <br />
               <span class="text-xs">
                 {Object.keys(cssVarMismatches()).join(", ")}
               </span>
