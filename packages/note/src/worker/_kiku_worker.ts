@@ -6,13 +6,14 @@ type SimilarKanjiDB = Record<
   string,
   Array<string | { score: number; kan: string }>
 >;
-type SimilarKanjiDBSource = Record<string, SimilarKanjiDB>;
+type SimilarKanjiDBs = Record<string, SimilarKanjiDB>;
 
 export class Nex {
   assetsPath: string;
   env: Env;
   config: KikuConfig;
 
+  similar_kanji_min_score = 0.5;
   //biome-ignore format: this looks nicer
   similar_kanji_sources = () => [
     { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_FROM_KEISEI}`, base_score: 0.65, },
@@ -26,6 +27,8 @@ export class Nex {
     { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_YL_RADICAL}`, base_score: -0.2, },
   ];
 
+  cache = new Map();
+
   constructor(payload: {
     assetsPath: string;
     env: Env;
@@ -38,7 +41,7 @@ export class Nex {
   async getSimilarKanji(kanji: string) {
     const store: Record<string, { kanji: string; score: number }> = {};
     const sources = this.similar_kanji_sources();
-    const similarKanjiDbs = await this.getSimilarKanjiDBs();
+    const similarKanjiDbs = await this.similarKanjiDBs();
 
     sources.forEach((source) => {
       const db = similarKanjiDbs[source.file];
@@ -135,45 +138,48 @@ export class Nex {
     return result;
   }
 
-  lookupCache: Record<string, Kanji> | undefined;
-  async lookup(kanji: string) {
-    if (this.lookupCache) return this.lookupCache[kanji];
-    const res = await fetch(
-      `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
-    );
-    if (!res.ok) throw new Error(`Failed to lookup ${kanji}`);
-    const lookupCache = await res.json();
-    this.lookupCache = lookupCache;
-    return lookupCache[kanji];
+  async lookup(kanji: string): Promise<Kanji> {
+    const key = this.lookup.name;
+    const cache = this.cache.get(key);
+    if (!cache) {
+      const res = await fetch(
+        `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
+      );
+      if (!res.ok) throw new Error(`Failed to lookup ${kanji}`);
+      this.cache.set(key, await res.json());
+    }
+    return this.cache.get(key)[kanji];
   }
 
-  similar_kanji_min_score = 0.5;
-  manifestCache: KikuNotesManifest | undefined;
-  async manifest() {
-    if (this.manifestCache) return this.manifestCache;
-    const manifest = fetch(
+  async manifest(): Promise<KikuNotesManifest> {
+    const key = this.manifest.name;
+    if (this.cache.has(key)) return this.cache.get(key);
+    const res = await fetch(
       `${this.assetsPath}/${this.env.KIKU_NOTES_MANIFEST}`,
-    ).then((res) => res.json()) as Promise<KikuNotesManifest>;
+    );
+    if (!res.ok) throw new Error(`Failed to load manifest`);
+    const manifest = await res.json();
+    this.cache.set(key, manifest);
     return manifest;
   }
 
-  similarKanjiDbSource: SimilarKanjiDBSource | undefined = undefined;
-  async getSimilarKanjiDBs() {
-    if (this.similarKanjiDbSource) return this.similarKanjiDbSource;
-    const similarKanjiDbSource: SimilarKanjiDBSource = {};
+  async similarKanjiDBs(): Promise<SimilarKanjiDBs> {
+    const key = this.similarKanjiDBs.name;
+    if (this.cache.has(key)) return this.cache.get(key);
+    const similarKanjiDbs: SimilarKanjiDBs = {};
     const allSources = [
       ...this.similar_kanji_sources(),
       // ...this.alternative_similar_kanji_sources,
     ];
     for (const src of allSources) {
-      if (!similarKanjiDbSource[src.file]) {
-        const res = await fetch(`${src.file}`);
+      if (!similarKanjiDbs[src.file]) {
+        const res = await fetch(src.file);
         if (!res.ok) throw new Error(`Failed to load ${src.file}`);
-        similarKanjiDbSource[src.file] = await res.json();
+        similarKanjiDbs[src.file] = await res.json();
       }
     }
-    this.similarKanjiDbSource = similarKanjiDbSource;
-    return this.similarKanjiDbSource;
+    this.cache.set(key, similarKanjiDbs);
+    return this.cache.get(key);
   }
 }
 

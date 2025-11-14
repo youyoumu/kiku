@@ -10,7 +10,6 @@ export function wrap<T>(worker: Worker) {
     const { id, result, error } = e.data;
     const { resolve, reject } = pending.get(id);
     pending.delete(id);
-
     error ? reject(error) : resolve(result);
   };
 
