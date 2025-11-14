@@ -165,7 +165,7 @@ export default function AnkiDroid() {
       const direction = diffX > 0 ? 1 : -1;
       const progress = Math.min(abs / THRESHOLD, 1);
       setProgress(progress);
-      const multiplier = easeOutQuad(Math.min(abs / THRESHOLD / 2, 1));
+      const multiplier = easeOutQuad(Math.min(abs / THRESHOLD / 3, 1));
       const offset = multiplier * Math.min(abs, THRESHOLD);
 
       if (direction > 0) {
@@ -236,7 +236,8 @@ export default function AnkiDroid() {
           style={{
             height: `${48 + 24 * progress()}px`,
             width: `${48 + 24 * progress()}px`,
-            transform: `translateX(${(48 + 24 - xIconOffset()) * -1}px)`,
+            transform: `translateX(${(48 + 12 - xIconOffset()) * -1}px)`,
+            opacity: `${progress() - 0.2}`,
           }}
         >
           <XIcon
@@ -255,7 +256,8 @@ export default function AnkiDroid() {
           style={{
             height: `${48 + 24 * progress()}px`,
             width: `${48 + 24 * progress()}px`,
-            transform: `translateX(${48 + 24 - checkIconOffset()}px)`,
+            transform: `translateX(${48 + 12 - checkIconOffset()}px)`,
+            opacity: `${progress() - 0.2}`,
           }}
         >
           <CheckIcon
