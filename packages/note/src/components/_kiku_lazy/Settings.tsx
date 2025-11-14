@@ -64,6 +64,7 @@ export default function Settings(props: {
   async function checkAnkiConnect() {
     const version = await AnkiConnect.getVersion();
     if (version) {
+      KIKU_STATE.logger.info("AnkiConnect version:", version);
       setCard("ankiConnectAvailable", true);
     }
   }
@@ -95,6 +96,7 @@ export default function Settings(props: {
       fontSizeSmHint: config.fontSizeSmHint ? config.fontSizeSmHint : defaultConfig.fontSizeSmHint,
     };
     try {
+      KIKU_STATE.logger.debug("Saving config:", payload);
       await AnkiConnect.saveConfig(payload);
       card.toast.success("Saved! Restart Anki to apply changes.");
     } catch (e) {
@@ -554,6 +556,7 @@ function DebugSettings() {
   const [config] = useConfig();
   const [card] = useCardStore();
   const { ankiFields } = useAnkiField<"back">();
+  const [logs, setLogs] = createSignal<string>();
 
   const [kikuFiles, setKikuFiles] = createSignal<string>();
 

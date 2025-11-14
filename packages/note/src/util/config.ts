@@ -80,6 +80,7 @@ function validateResponsiveFontSize(
 
 export function validateConfig(config: KikuConfig): KikuConfig {
   try {
+    KIKU_STATE.logger.info("Validating config:", config);
     if (typeof config !== "object" || config === null) throw new Error();
 
     // biome-ignore format: this looks nicer

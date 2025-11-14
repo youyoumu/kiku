@@ -63,7 +63,9 @@ export function Back(props: { onExitNested?: () => void }) {
         nex
           .manifest()
           .then((manifest) => setCard("manifest", manifest))
-          .catch(() => {});
+          .catch(() => {
+            KIKU_STATE.logger.warn("Failed to load manifest");
+          });
       }
 
       if (!card.nested) {

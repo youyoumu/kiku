@@ -31,6 +31,7 @@ export function ConfigContextProvider(props: {
   const [config] = props.value;
   createEffect(() => {
     ({ ...config });
+    KIKU_STATE.logger.debug("Updating config:", config);
     if (!KIKU_STATE.root) throw new Error("Missing root");
     updateConfigDataset(KIKU_STATE.root, config);
   });

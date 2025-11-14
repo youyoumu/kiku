@@ -154,6 +154,7 @@ function KanjiText(props: { kanji: string }) {
       <div class="font-secondary expression">{props.kanji}</div>
       <div class="flex flex-col text-xs sm:text-sm text-base-content-calm leading-tight">
         <div>
+          {/* TODO: hide if unavailable */}
           <span>Meaning: </span>
           <span class="text-base-content-soft">
             {kanji()?.meanings.join(", ")}

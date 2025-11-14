@@ -1,5 +1,5 @@
 import { createEffect, createSignal, onMount } from "solid-js";
-import { useAnkiField, useConfig } from "../shared/Context";
+import { useAnkiField } from "../shared/Context";
 import { SentenceBack } from "./Sentence";
 
 export default function BackBody(props: {
@@ -7,7 +7,6 @@ export default function BackBody(props: {
   sentenceIndex?: (sentencesLenght: number) => number | undefined;
 }) {
   let definitionEl: HTMLDivElement | undefined;
-  const [config] = useConfig();
   const { ankiFields } = useAnkiField<"back">();
   const [definitionPage, setDefinitionPage] = createSignal(
     ankiFields.SelectionText ? 0 : 1,

@@ -17,6 +17,7 @@ export default function UseAnkiWeb() {
         if (offset === 0) return;
         counter = counter + 1;
         if (counter > 100) return;
+        KIKU_STATE.logger.trace("Resizing layout:", offset);
         setOffset(offset);
       }
       new ResizeObserver(autoResize).observe(el);

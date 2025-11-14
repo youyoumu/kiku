@@ -20,6 +20,10 @@ export function useSentenceField() {
       spans.forEach((span, index) => {
         span.dataset.index = index.toString();
       });
+      KIKU_STATE.logger.info(
+        "Number of detected spans on sentence:",
+        spans.length,
+      );
       setSentences(spans);
     }
   });
@@ -52,5 +56,6 @@ export function usePictureField() {
     if (card.pictureFieldRef) {
       card.pictureFieldRef.replaceChildren(...imgs);
     }
+    KIKU_STATE.logger.info("Number of detected picture:", imgs.length);
   });
 }

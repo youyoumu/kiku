@@ -3,7 +3,7 @@ import type { DatasetProp } from "#/util/config";
 import { useAnkiField, useCardStore } from "../shared/Context";
 
 export default function Pitches() {
-  const [card, setCard] = useCardStore();
+  const [card] = useCardStore();
   const { ankiFields } = useAnkiField<"back">();
 
   const tempDiv = document.createElement("div");
@@ -15,6 +15,7 @@ export default function Pitches() {
     .map((el) => {
       return Number(el.innerText);
     });
+  KIKU_STATE.logger.info("Detected pitch number:", pitchNumber);
 
   const kana = () => {
     if (card.nested) return ankiFields.ExpressionReading;

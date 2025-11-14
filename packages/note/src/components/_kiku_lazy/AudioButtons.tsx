@@ -7,6 +7,7 @@ function AudioTag(props: { text: string }) {
   // Find all `[sound:filename.mp3]` occurrences
   const matches = [...props.text.matchAll(/\[sound:([^\]]+)\]/g)];
   const sounds = matches.map((m) => m[1]);
+  KIKU_STATE.logger.info("Using sounds:", sounds);
 
   return (
     <Show when={sounds.length > 0}>
@@ -51,7 +52,16 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
   onMount(() => {
     const aaa = card.sentenceAudioRef?.querySelectorAll("a");
     if (aaa && !card.sentenceAudios) setCard("sentenceAudios", Array.from(aaa));
+    KIKU_STATE.logger.info(
+      "Number of detected anchor in sentence audios",
+      card.sentenceAudios?.length,
+    );
+
     const audios = card.sentenceAudioRef?.querySelectorAll("audio");
+    KIKU_STATE.logger.info(
+      "Number of detected audio in sentence audios",
+      audios?.length,
+    );
     if (aaa?.length === 0 && audios && audios.length > 0) {
       setCard("sentenceAudios", Array.from(audios));
     }

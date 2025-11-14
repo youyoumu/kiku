@@ -15,7 +15,7 @@ export default function Header(props: {
   onBackClick?: () => void;
   side: "back" | "front";
 }) {
-  const [card, setCard] = useCardStore();
+  const [card] = useCardStore();
   const [config, setConfig] = useConfig();
   const [initDelay, setInitDelay] = createSignal<number | null>(null);
 

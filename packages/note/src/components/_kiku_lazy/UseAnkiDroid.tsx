@@ -96,6 +96,7 @@ export default function UseAnkiDroid() {
   if (typeof AnkiDroidJS === "undefined" && !import.meta.env.DEV) return;
   const [config] = useConfig();
   if (config.ankiDroidEnableIntegration === "false") return;
+  KIKU_STATE.logger.info("Using AnkiDroid");
 
   const ankiDroidAPI =
     typeof AnkiDroidJS === "undefined"
