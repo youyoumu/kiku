@@ -6,7 +6,7 @@ import type { Nex as Nex$ } from "./_kiku_worker.ts";
 export class WorkerClient {
   nex: Promise<Remote<Nex$>>;
 
-  constructor(payload: { env: Env; baseUrl: string; config: KikuConfig }) {
+  constructor(payload: { env: Env; assetsPath: string; config: KikuConfig }) {
     let worker: Worker;
     if (KIKU_STATE.assetsPath !== window.location.origin) {
       worker = new Worker(`${KIKU_STATE.assetsPath}/_kiku_worker.js`, {

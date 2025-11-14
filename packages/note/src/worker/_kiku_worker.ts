@@ -4,15 +4,15 @@ import type { KikuConfig } from "#/util/config";
 import type { Env } from "#/util/general";
 
 export class Nex {
-  baseUrl: string;
+  assetsPath: string;
   env: Env;
   config: KikuConfig;
   constructor(payload: {
-    baseUrl: string;
+    assetsPath: string;
     env: Env;
     config: KikuConfig;
   }) {
-    this.baseUrl = payload.baseUrl;
+    this.assetsPath = payload.assetsPath;
     this.env = payload.env;
     this.config = payload.config;
   }
@@ -56,7 +56,7 @@ export class Nex {
     console.log("DEBUG[1059]: kanjiSet=", kanjiSet);
 
     for (const chunk of manifest.chunks) {
-      const res = await fetch(`${this.baseUrl}${chunk.file}`);
+      const res = await fetch(`${this.assetsPath}/${chunk.file}`);
       if (!res.body) throw new Error(`No body for ${chunk.file}`);
 
       const ds = new DecompressionStream("gzip");
@@ -120,7 +120,7 @@ export class Nex {
   async lookup(kanji: string) {
     if (this.lookupCache) return this.lookupCache[kanji];
     const res = await fetch(
-      `${this.baseUrl}${this.env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
+      `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
     );
     if (!res.ok) throw new Error(`Failed to lookup ${kanji}`);
     const lookupCache = await res.json();
@@ -133,35 +133,35 @@ export class Nex {
   async manifest() {
     if (this.manifestCache) return this.manifestCache;
     const manifest = fetch(
-      `${this.baseUrl}${this.env.KIKU_NOTES_MANIFEST}`,
+      `${this.assetsPath}/${this.env.KIKU_NOTES_MANIFEST}`,
     ).then((res) => res.json()) as Promise<KikuNotesManifest>;
     return manifest;
   }
   similar_kanji_sources = () => [
     {
-      file: `${this.baseUrl}${this.env.KIKU_DB_SIMILAR_KANJI_FROM_KEISEI}`,
+      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_FROM_KEISEI}`,
       base_score: 0.65,
     },
     {
-      file: `${this.baseUrl}${this.env.KIKU_DB_SIMILAR_KANJI_MANUAL}`,
+      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_MANUAL}`,
       base_score: 0.9,
     },
     {
-      file: `${this.baseUrl}${this.env.KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO}`,
+      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO}`,
       base_score: 0.1,
     },
   ];
   alternative_similar_kanji_sources = () => [
     {
-      file: `${this.baseUrl}${this.env.KIKU_DB_SIMILAR_KANJI_OLD_SCRIPT}`,
+      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_OLD_SCRIPT}`,
       base_score: 0.4,
     },
     {
-      file: `${this.baseUrl}${this.env.KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST}`,
+      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST}`,
       base_score: -0.2,
     },
     {
-      file: `${this.baseUrl}${this.env.KIKU_DB_SIMILAR_KANJI_YL_RADICAL}`,
+      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_YL_RADICAL}`,
       base_score: -0.2,
     },
   ];

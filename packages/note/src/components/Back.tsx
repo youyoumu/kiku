@@ -51,7 +51,7 @@ export function Back(props: { onExitNested?: () => void }) {
         const worker = new WorkerClient({
           env: env,
           config: unwrap(config),
-          baseUrl: import.meta.env.DEV ? "/" : `${KIKU_STATE.assetsPath}/`,
+          assetsPath: import.meta.env.DEV ? "" : KIKU_STATE.assetsPath,
         });
         const nex = await worker.nex;
         const kanji = await nex.querySharedAndSimilar(kanjiList);
