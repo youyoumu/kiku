@@ -10,7 +10,7 @@ export const base64 = {
 };
 
 export const AnkiConnect = {
-  call: async (action: string, params: Record<string, unknown> = {}) => {
+  invoke: async (action: string, params: Record<string, unknown> = {}) => {
     const res = await fetch("http://127.0.0.1:8765", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -25,18 +25,18 @@ export const AnkiConnect = {
   },
 
   getVersion: async () => {
-    return await AnkiConnect.call("version");
+    return await AnkiConnect.invoke("version");
   },
 
   saveConfig: async (config: KikuConfig) => {
-    return await AnkiConnect.call("storeMediaFile", {
+    return await AnkiConnect.invoke("storeMediaFile", {
       filename: env.KIKU_CONFIG_FILE,
       data: base64.encodeString(JSON.stringify(config)),
     });
   },
 
   getKikuFiles: async () => {
-    const res = await AnkiConnect.call("getMediaFilesNames", {
+    const res = await AnkiConnect.invoke("getMediaFilesNames", {
       pattern: "_kiku*",
     });
     const sorted = res.result.sort((a: string, b: string) => {
@@ -54,3 +54,5 @@ export const AnkiConnect = {
     return sorted as Record<string, string>;
   },
 };
+
+export type AnkiConnectClient = typeof AnkiConnect;

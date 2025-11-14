@@ -1,8 +1,14 @@
+import type { AnkiConnectClient } from "#/components/_kiku_lazy/util/ankiConnect";
 import type { AnkiNote, Kanji, KikuNotesManifest } from "#/types";
-import { env } from "#/util/general";
+import type { KikuConfig } from "#/util/config";
+import type { Env } from "#/util/general";
 
 // biome-ignore format: this looks nicer
 export type WorkerChannels = {
+  init: {
+    payload: { baseUrl: string; config: KikuConfig, env: Env };
+    result: true;
+  };
   query: {
     payload: string[];
     result: Record<string, AnkiNote[]>;
@@ -14,10 +20,6 @@ export type WorkerChannels = {
   getSimilarKanji: {
     payload: string;
     result: string[];
-  };
-  init: {
-    payload: { baseUrl: string; };
-    result: true;
   };
   manifest: {
     payload: null;
@@ -75,10 +77,19 @@ class AppWorker {
   }
 
   static baseUrl = "";
-  static init = AppWorker.assignHandler("init", async ({ baseUrl }) => {
-    AppWorker.baseUrl = `${baseUrl}`;
-    return true;
-  });
+  static AnkiConnect: AnkiConnectClient;
+  static config: KikuConfig;
+  static env: Env;
+  static init = AppWorker.assignHandler(
+    "init",
+    async ({ baseUrl, config, env }) => {
+      AppWorker.baseUrl = `${baseUrl}`;
+      AppWorker.config = config;
+      AppWorker.env = env;
+
+      return true;
+    },
+  );
 
   static getSimilarKanji = AppWorker.assignHandler(
     "getSimilarKanji",
@@ -124,6 +135,7 @@ class AppWorker {
 
       // Create a quick lookup for kanji to reduce nested loops
       const kanjiSet = new Set(kanjiList);
+      console.log("DEBUG[1059]: kanjiSet=", kanjiSet);
 
       for (const chunk of manifest.chunks) {
         const res = await fetch(`${AppWorker.baseUrl}${chunk.file}`);
@@ -194,7 +206,7 @@ class AppWorker {
   static lookup = AppWorker.assignHandler("lookup", async (kanji) => {
     if (AppWorker.lookupCache) return AppWorker.lookupCache[kanji];
     const res = await fetch(
-      `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
+      `${AppWorker.baseUrl}${AppWorker.env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
     );
     if (!res.ok) throw new Error(`Failed to lookup ${kanji}`);
     const lookupCache = await res.json();
@@ -207,22 +219,22 @@ class AppWorker {
   static manifest = AppWorker.assignHandler("manifest", async () => {
     if (AppWorker.manifestCache) return AppWorker.manifestCache;
     const manifest = fetch(
-      `${AppWorker.baseUrl}${env.KIKU_NOTES_MANIFEST}`,
+      `${AppWorker.baseUrl}${AppWorker.env.KIKU_NOTES_MANIFEST}`,
     ).then((res) => res.json()) as Promise<KikuNotesManifest>;
     return manifest;
   });
 
   // biome-ignore format: this looks nicer
   static similar_kanji_sources = () => [
-    { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_FROM_KEISEI}`, base_score: 0.65, },
-    { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_MANUAL}`, base_score: 0.9 },
-    { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO}`, base_score: 0.1, },
+    { file: `${AppWorker.baseUrl}${AppWorker.env.KIKU_DB_SIMILAR_KANJI_FROM_KEISEI}`, base_score: 0.65, },
+    { file: `${AppWorker.baseUrl}${AppWorker.env.KIKU_DB_SIMILAR_KANJI_MANUAL}`, base_score: 0.9 },
+    { file: `${AppWorker.baseUrl}${AppWorker.env.KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO}`, base_score: 0.1, },
   ];
   // biome-ignore format: this looks nicer
   static alternative_similar_kanji_sources = () => [
-  { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_OLD_SCRIPT}`, base_score: 0.4 },
-  { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST}`, base_score: -0.2 },
-  { file: `${AppWorker.baseUrl}${env.KIKU_DB_SIMILAR_KANJI_YL_RADICAL}`, base_score: -0.2 },
+  { file: `${AppWorker.baseUrl}${AppWorker.env.KIKU_DB_SIMILAR_KANJI_OLD_SCRIPT}`, base_score: 0.4 },
+  { file: `${AppWorker.baseUrl}${AppWorker.env.KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST}`, base_score: -0.2 },
+  { file: `${AppWorker.baseUrl}${AppWorker.env.KIKU_DB_SIMILAR_KANJI_YL_RADICAL}`, base_score: -0.2 },
 ];
 
   static dbCache:

@@ -15,6 +15,8 @@ export const env = {
   KIKU_DB_SIMILAR_KANJI_YL_RADICAL: "_kiku_db_similar_kanji_yl_radical.json",
 };
 
+export type Env = typeof env;
+
 export function extractKanji(str: string): string[] {
   // Match all CJK Unified Ideographs (Kanji range)
   const matches = str.match(/[\u4E00-\u9FFF]/g);

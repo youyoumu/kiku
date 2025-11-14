@@ -1,3 +1,6 @@
+import { AnkiConnect } from "#/components/_kiku_lazy/util/ankiConnect";
+import { defaultConfig } from "#/util/config";
+import { env } from "#/util/general";
 import type { Key, WorkerChannels, WorkerResponse } from "./_kiku_worker";
 
 export class WorkerClient {
@@ -19,6 +22,8 @@ export class WorkerClient {
       type: "init",
       payload: {
         baseUrl: import.meta.env.DEV ? "/" : `${KIKU_STATE.assetsPath}/`,
+        config: KIKU_STATE.config ?? defaultConfig,
+        env: env,
       },
     }).then(() => {});
   }
