@@ -142,12 +142,9 @@ function KanjiText(props: { kanji: string }) {
   const [kanji, setKanji] = createSignal<Kanji>();
 
   onMount(async () => {
-    const worker = card.worker;
-    if (worker) {
-      const lookup = await worker.invoke({
-        type: "lookup",
-        payload: props.kanji,
-      });
+    const nex = await card.worker?.nex;
+    if (nex) {
+      const lookup = await nex.lookup(props.kanji);
       setKanji(lookup);
     }
   });

@@ -1,8 +1,9 @@
 import { createEffect, lazy, Match, onMount, Suspense, Switch } from "solid-js";
+import { unwrap } from "solid-js/store";
 import { isServer } from "solid-js/web";
 import { type AnkiFields, ankiFieldsSkeleton } from "#/types";
 import type { DatasetProp } from "#/util/config";
-import { extractKanji } from "#/util/general";
+import { env, extractKanji } from "#/util/general";
 import { usePictureField } from "#/util/hooks";
 import { WorkerClient } from "#/worker/client";
 import { Layout } from "./Layout";
@@ -11,6 +12,7 @@ import {
   CardStoreContextProvider,
   useAnkiField,
   useCardStore,
+  useConfig,
 } from "./shared/Context";
 
 // biome-ignore format: this looks nicer
@@ -29,6 +31,7 @@ const Lazy = {
 
 export function Back(props: { onExitNested?: () => void }) {
   const [card, setCard] = useCardStore();
+  const [config] = useConfig();
   const { ankiFields } = useAnkiField<"back">();
   usePictureField();
 
@@ -45,18 +48,18 @@ export function Back(props: { onExitNested?: () => void }) {
             ? ankiFields["furigana:ExpressionFurigana"]
             : ankiFields.Expression,
         );
-        const worker = new WorkerClient();
-        const kanji = await worker.invoke({
-          type: "querySharedAndSimilar",
-          payload: kanjiList,
+        const worker = new WorkerClient({
+          env: env,
+          config: unwrap(config),
+          baseUrl: import.meta.env.DEV ? "/" : `${KIKU_STATE.assetsPath}/`,
         });
+        const nex = await worker.nex;
+        const kanji = await nex.querySharedAndSimilar(kanjiList);
 
         setCard("kanji", kanji);
         setCard("kanjiLoading", false);
-        const manifest = await worker.invoke({
-          type: "manifest",
-          payload: null,
-        });
+        const manifest = await nex.manifest();
+
         setCard("manifest", manifest);
         setCard("worker", worker);
       }
