@@ -51,19 +51,26 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
 
   onMount(() => {
     const aaa = card.sentenceAudioRef?.querySelectorAll("a");
-    if (aaa && !card.sentenceAudios) setCard("sentenceAudios", Array.from(aaa));
-    KIKU_STATE.logger.info(
-      "Number of detected anchor in sentence audios",
-      card.sentenceAudios?.length,
-    );
+    if (aaa && !card.sentenceAudios) {
+      setCard("sentenceAudios", Array.from(aaa));
+      KIKU_STATE.logger.info(
+        "Number of detected anchor in sentence audios",
+        aaa.length,
+      );
+    }
 
     const audios = card.sentenceAudioRef?.querySelectorAll("audio");
-    KIKU_STATE.logger.info(
-      "Number of detected audio in sentence audios",
-      audios?.length,
-    );
-    if (aaa?.length === 0 && audios && audios.length > 0) {
+    if (
+      aaa?.length === 0 &&
+      audios &&
+      audios.length > 0 &&
+      !card.sentenceAudios
+    ) {
       setCard("sentenceAudios", Array.from(audios));
+      KIKU_STATE.logger.info(
+        "Number of detected audio in sentence audios",
+        audios?.length,
+      );
     }
   });
 

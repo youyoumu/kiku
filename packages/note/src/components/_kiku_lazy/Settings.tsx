@@ -1,4 +1,4 @@
-import { createEffect, createSignal, onMount, Show } from "solid-js";
+import { createEffect, createSignal, onCleanup, onMount, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import {
   type CssVar,
@@ -556,8 +556,6 @@ function DebugSettings() {
   const [config] = useConfig();
   const [card] = useCardStore();
   const { ankiFields } = useAnkiField<"back">();
-  const [logs, setLogs] = createSignal<string>();
-
   const [kikuFiles, setKikuFiles] = createSignal<string>();
 
   createEffect(async () => {
@@ -565,6 +563,17 @@ function DebugSettings() {
       const files = await AnkiConnect.getKikuFiles();
       setKikuFiles(JSON.stringify(files, null, 2));
     }
+  });
+
+  const [logs, setLogs] = createSignal<string>();
+  onMount(() => {
+    const id = setInterval(() => {
+      setLogs(KIKU_STATE.logger.get());
+    }, 8000);
+    onCleanup(() => {
+      clearInterval(id);
+    });
+    setLogs(KIKU_STATE.logger.get());
   });
 
   function copyToClipboard(text: string) {
@@ -829,6 +838,27 @@ function DebugSettings() {
                   </pre>
                 </div>
               </Show>
+              <div class="flex flex-col gap-2">
+                <div class="flex gap-2 items-center">
+                  <div class="text-lg">Logs</div>
+                  <ClipboardCopyIcon
+                    class="size-5 text-base-content-calm cursor-pointer"
+                    on:click={() => {
+                      copyToClipboard(logs() ?? "");
+                    }}
+                  />
+
+                  <RefreshCwIcon
+                    class="size-5 text-base-content-calm cursor-pointer"
+                    on:click={() => {
+                      setLogs(KIKU_STATE.logger.get());
+                    }}
+                  />
+                </div>
+                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto max-h-[90svh]">
+                  {logs()}
+                </pre>
+              </div>
             </div>
           </div>
         </div>
