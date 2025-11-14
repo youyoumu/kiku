@@ -502,6 +502,12 @@ function FontSizeSettingsFieldset(props: {
     ? undefined
     : "sm";
 
+  const configValue = () => config[props.configKey];
+  const fontSizeClass = () => {
+    const label = tailwindFontSizeLabelShortMap[configValue()];
+    return getTailwindFontSizeShort(label);
+  };
+
   if (config.kikuRoot)
     return (
       <div class="w-full">
@@ -519,32 +525,37 @@ function FontSizeSettingsFieldset(props: {
               }}
             />
           </legend>
-          <input
-            on:change={(e) => {
-              const target = e.target as HTMLInputElement;
-              const value = tailwindFontSizeLabelShort[
-                Number(target.value)
-              ] as TailwindFontSizeLabelShort;
-              const tailwindFontSize = getTailwindFontSizeShort(
-                value,
-                breakpoint,
-              );
-              setConfig(props.configKey, tailwindFontSize);
-            }}
-            type="range"
-            min="0"
-            max={tailwindFontSizeLabelShort.length.toString()}
-            value={(() => {
-              const configValue = config[props.configKey];
-              const label = tailwindFontSizeLabelShortMap[configValue];
-              const index = tailwindFontSizeLabelShort
-                .indexOf(label)
-                .toString();
-              return index;
-            })()}
-            class="range range-xs w-full "
-            step="1"
-          />
+
+          <div class="tooltip">
+            <div class="tooltip-content">
+              <div class={`font-secondary ${fontSizeClass()}`}>あ</div>
+            </div>
+            <input
+              on:change={(e) => {
+                const target = e.target as HTMLInputElement;
+                const value = tailwindFontSizeLabelShort[
+                  Number(target.value)
+                ] as TailwindFontSizeLabelShort;
+                const tailwindFontSize = getTailwindFontSizeShort(
+                  value,
+                  breakpoint,
+                );
+                setConfig(props.configKey, tailwindFontSize);
+              }}
+              type="range"
+              min="0"
+              max={(tailwindFontSizeLabelShort.length - 1).toString()}
+              value={(() => {
+                const label = tailwindFontSizeLabelShortMap[configValue()];
+                const index = tailwindFontSizeLabelShort
+                  .indexOf(label)
+                  .toString();
+                return index;
+              })()}
+              class="range range-xs w-full "
+              step="1"
+            />
+          </div>
           <div class="flex justify-between px-2 mt-1 text-xs">
             <For each={tailwindFontSizeLabelShort}>{(_) => <span>|</span>}</For>
           </div>

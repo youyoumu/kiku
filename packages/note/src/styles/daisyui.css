@@ -2,7 +2,9 @@
   root: ":root:not([data-theme='none'])";
   themes: all;
   include:
-    properties, reset, rootcolor, rootscrollgutter, rootscrolllock, svg, scrollbar, button, input, label, fieldset, select, alert, badge, toast, collapse, status, toggle, list, loading, range;
+    properties, reset, rootcolor, rootscrollgutter, rootscrolllock, svg, scrollbar, button, input,
+    label, fieldset, select, alert, badge, toast, collapse, status, toggle, list, loading, range,
+    tooltip;
 }
 
 /* biome-ignore format: this looks nicer */
