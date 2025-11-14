@@ -62,12 +62,25 @@ export default function Header(props: {
           </div>
         </Show>
       </div>
-      <div class="flex gap-2 items-center">
+      <div class="flex gap-4 items-center">
         <Switch>
           <Match
-            when={!card.nested && card.kanjiLoading && props.side === "back"}
+            when={
+              !card.nested &&
+              card.kanjiStatus === "loading" &&
+              props.side === "back"
+            }
           >
             <span class="loading loading-spinner loading-xs text-base-content-faint animate-fade-in-sm"></span>
+          </Match>
+          <Match
+            when={
+              !card.nested &&
+              card.kanjiStatus === "error" &&
+              props.side === "back"
+            }
+          >
+            <div class="status status-error animate-ping"></div>
           </Match>
           <Match when={!card.nested && props.onKanjiClick}>
             <div

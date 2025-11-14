@@ -43,29 +43,37 @@ export function Back(props: { onExitNested?: () => void }) {
       KIKU_STATE.relax = true;
 
       async function setKanji() {
-        const kanjiList = extractKanji(
-          ankiFields.ExpressionFurigana
-            ? ankiFields["furigana:ExpressionFurigana"]
-            : ankiFields.Expression,
-        );
-        const worker = new WorkerClient({
-          env: env,
-          config: unwrap(config),
-          assetsPath: import.meta.env.DEV ? "" : KIKU_STATE.assetsPath,
-        });
-        const nex = await worker.nex;
-        const kanji = await nex.querySharedAndSimilar(kanjiList);
-
-        setCard("kanji", kanji);
-        setCard("kanjiLoading", false);
-        setCard("worker", worker);
-
-        nex
-          .manifest()
-          .then((manifest) => setCard("manifest", manifest))
-          .catch(() => {
-            KIKU_STATE.logger.warn("Failed to load manifest");
+        try {
+          const kanjiList = extractKanji(
+            ankiFields.ExpressionFurigana
+              ? ankiFields["furigana:ExpressionFurigana"]
+              : ankiFields.Expression,
+          );
+          const worker = new WorkerClient({
+            env: env,
+            config: unwrap(config),
+            assetsPath: import.meta.env.DEV ? "" : KIKU_STATE.assetsPath,
           });
+          const nex = await worker.nex;
+          const kanji = await nex.querySharedAndSimilar(kanjiList);
+
+          setCard("kanji", kanji);
+          setCard("kanjiStatus", "success");
+          setCard("worker", worker);
+
+          nex
+            .manifest()
+            .then((manifest) => setCard("manifest", manifest))
+            .catch(() => {
+              KIKU_STATE.logger.warn("Failed to load manifest");
+            });
+        } catch (e) {
+          setCard("kanjiStatus", "error");
+          KIKU_STATE.logger.error(
+            "Failed to load kanji information:",
+            e instanceof Error ? e.message : "",
+          );
+        }
       }
 
       if (!card.nested) {

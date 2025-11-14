@@ -181,7 +181,7 @@ type CardStore = {
       similar: Record<string, AnkiNote[]>;
     }
   >;
-  kanjiLoading: boolean;
+  kanjiStatus: "success" | "error" | "loading";
   selectedSimilarKanji: string | undefined;
   nestedAnkiFields: AnkiFields;
   nested: boolean;
@@ -236,7 +236,7 @@ export function CardStoreContextProvider(props: {
     isNsfw: false,
     clicked: false,
     kanji: {},
-    kanjiLoading: true,
+    kanjiStatus: "loading",
     selectedSimilarKanji: undefined,
     nestedAnkiFields: ankiFieldsSkeleton,
     nested: props.nested ?? false,
