@@ -1,4 +1,11 @@
-import { createEffect, createSignal, onCleanup, onMount, Show } from "solid-js";
+import {
+  createEffect,
+  createSignal,
+  For,
+  onCleanup,
+  onMount,
+  Show,
+} from "solid-js";
 import { Portal } from "solid-js/web";
 import {
   type CssVar,
@@ -26,9 +33,13 @@ import { AnkiConnect } from "./util/ankiConnect";
 import { capitalize } from "./util/general";
 import {
   getTailwindFontSize,
+  getTailwindFontSizeShort,
   type TailwindBreakpoint,
   type TailwindFontSizeLabel,
+  type TailwindFontSizeLabelShort,
   tailwindFontSizeLabel,
+  tailwindFontSizeLabelShort,
+  tailwindFontSizeLabelShortMap,
 } from "./util/tailwind";
 
 function toDashed(str: string) {
@@ -457,7 +468,7 @@ function FontSizeSettings() {
       <div>
         <div class="text-lg font-bold">Mobile</div>
         {/* biome-ignore format: this looks nicer */}
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] rounded-box gap-x-4 gap-y-2">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(25rem,1fr))] rounded-box gap-x-4 gap-y-2">
           <FontSizeSettingsFieldset configKey="fontSizeBaseExpression" label="Expression" />
           <FontSizeSettingsFieldset configKey="fontSizeBasePitch" label="Pitch" />
           <FontSizeSettingsFieldset configKey="fontSizeBaseSentence" label="Sentence" />
@@ -468,7 +479,7 @@ function FontSizeSettings() {
       <div>
         <div class="text-lg font-bold">Desktop</div>
         {/* biome-ignore format: this looks nicer */}
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] rounded-box gap-x-4 gap-y-2">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(25rem,1fr))] rounded-box gap-x-4 gap-y-2">
           <FontSizeSettingsFieldset configKey="fontSizeSmExpression" label="Expression" />
           <FontSizeSettingsFieldset configKey="fontSizeSmPitch" label="Pitch" />
           <FontSizeSettingsFieldset configKey="fontSizeSmSentence" label="Sentence" />
@@ -490,6 +501,63 @@ function FontSizeSettingsFieldset(props: {
   )
     ? undefined
     : "sm";
+
+  if (config.kikuRoot)
+    return (
+      <div class="w-full">
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">
+            {props.label}{" "}
+            <UndoIcon
+              class="h-4 w-4 cursor-pointer"
+              classList={{
+                hidden:
+                  config[props.configKey] === defaultConfig[props.configKey],
+              }}
+              on:click={() => {
+                setConfig(props.configKey, defaultConfig[props.configKey]);
+              }}
+            />
+          </legend>
+          <input
+            on:change={(e) => {
+              const target = e.target as HTMLInputElement;
+              const value = tailwindFontSizeLabelShort[
+                Number(target.value)
+              ] as TailwindFontSizeLabelShort;
+              const tailwindFontSize = getTailwindFontSizeShort(
+                value,
+                breakpoint,
+              );
+              setConfig(props.configKey, tailwindFontSize);
+            }}
+            type="range"
+            min="0"
+            max={tailwindFontSizeLabelShort.length.toString()}
+            value={(() => {
+              const configValue = config[props.configKey];
+              const label = tailwindFontSizeLabelShortMap[configValue];
+              const index = tailwindFontSizeLabelShort
+                .indexOf(label)
+                .toString();
+              return index;
+            })()}
+            class="range range-xs w-full "
+            step="1"
+          />
+          <div class="flex justify-between px-2 mt-1 text-xs">
+            <For each={tailwindFontSizeLabelShort}>{(_) => <span>|</span>}</For>
+          </div>
+          <div class="flex justify-between px-2 mt-1 text-xs">
+            <For each={tailwindFontSizeLabelShort}>
+              {(label) => <span>{label}</span>}
+            </For>
+          </div>
+        </fieldset>
+      </div>
+    );
+
+  //NOTE: dead code, keep for a while
   return (
     <fieldset
       class="fieldset"
