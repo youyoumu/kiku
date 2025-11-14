@@ -114,7 +114,7 @@ export default function UseAnkiDroid() {
   const el$ = () => card.contentRef;
   const reverse = config.ankiDroidReverseSwipeDirection === "true";
 
-  const THRESHOLD = 80;
+  const THRESHOLD = 60;
   const DEADZONE = 10;
   const SCROLL_TOLERANCE = 15;
 
@@ -170,7 +170,7 @@ export default function UseAnkiDroid() {
       const direction = diffX > 0 ? 1 : -1;
       const progress = Math.min(abs / THRESHOLD, 1);
       setProgress(progress);
-      const multiplier = easeOutQuad(Math.min(abs / THRESHOLD / 3, 1));
+      const multiplier = easeOutQuad(Math.min(abs / THRESHOLD / 2, 1));
       const offset = multiplier * Math.min(abs, THRESHOLD);
 
       if (direction > 0) {
