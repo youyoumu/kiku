@@ -1,12 +1,31 @@
-import { expose } from "comlink";
 import type { AnkiNote, Kanji, KikuNotesManifest } from "#/types";
 import type { KikuConfig } from "#/util/config";
 import type { Env } from "#/util/general";
+
+type SimilarKanjiDB = Record<
+  string,
+  Array<string | { score: number; kan: string }>
+>;
+type SimilarKanjiDBSource = Record<string, SimilarKanjiDB>;
 
 export class Nex {
   assetsPath: string;
   env: Env;
   config: KikuConfig;
+
+  //biome-ignore format: this looks nicer
+  similar_kanji_sources = () => [
+    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_FROM_KEISEI}`, base_score: 0.65, },
+    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_MANUAL}`, base_score: 0.9, },
+    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO}`, base_score: 0.1, },
+  ];
+  //biome-ignore format: this looks nicer
+  alternative_similar_kanji_sources = () => [
+    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_OLD_SCRIPT}`, base_score: 0.4, },
+    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST}`, base_score: -0.2, },
+    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_YL_RADICAL}`, base_score: -0.2, },
+  ];
+
   constructor(payload: {
     assetsPath: string;
     env: Env;
@@ -137,62 +156,59 @@ export class Nex {
     ).then((res) => res.json()) as Promise<KikuNotesManifest>;
     return manifest;
   }
-  similar_kanji_sources = () => [
-    {
-      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_FROM_KEISEI}`,
-      base_score: 0.65,
-    },
-    {
-      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_MANUAL}`,
-      base_score: 0.9,
-    },
-    {
-      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO}`,
-      base_score: 0.1,
-    },
-  ];
-  alternative_similar_kanji_sources = () => [
-    {
-      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_OLD_SCRIPT}`,
-      base_score: 0.4,
-    },
-    {
-      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST}`,
-      base_score: -0.2,
-    },
-    {
-      file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_YL_RADICAL}`,
-      base_score: -0.2,
-    },
-  ];
 
-  dbCache:
-    | Record<
-        string,
-        Record<string, Array<string | { score: number; kan: string }>>
-      >
-    | undefined = undefined;
-
+  similarKanjiDbSource: SimilarKanjiDBSource | undefined = undefined;
   async getSimilarKanjiDBs() {
-    if (this.dbCache) return this.dbCache;
-    const dbCache: Record<
-      string,
-      Record<string, Array<string | { score: number; kan: string }>>
-    > = {};
+    if (this.similarKanjiDbSource) return this.similarKanjiDbSource;
+    const similarKanjiDbSource: SimilarKanjiDBSource = {};
     const allSources = [
       ...this.similar_kanji_sources(),
-      // ...WorkerMain.alternative_similar_kanji_sources,
+      // ...this.alternative_similar_kanji_sources,
     ];
     for (const src of allSources) {
-      if (!dbCache[src.file]) {
+      if (!similarKanjiDbSource[src.file]) {
         const res = await fetch(`${src.file}`);
         if (!res.ok) throw new Error(`Failed to load ${src.file}`);
-        dbCache[src.file] = await res.json();
+        similarKanjiDbSource[src.file] = await res.json();
       }
     }
-    this.dbCache = dbCache;
-    return this.dbCache;
+    this.similarKanjiDbSource = similarKanjiDbSource;
+    return this.similarKanjiDbSource;
   }
 }
 
-expose(Nex);
+function expose(api: Record<string, unknown>) {
+  self.onmessage = async (e) => {
+    const { id, fn, args } = e.data;
+    let result: unknown;
+    try {
+      const maybeFn = api[fn];
+      if (typeof maybeFn === "function") {
+        result = await maybeFn(...args);
+      } else {
+        result = maybeFn;
+      }
+      postMessage({ id, result });
+    } catch (error) {
+      postMessage({ id, error });
+    }
+  };
+}
+
+let nex: Nex;
+type NexKey = keyof typeof Nex.prototype | "init";
+type NexApi$ = Partial<Record<NexKey, unknown>>;
+
+//biome-ignore format: this looks nicer
+const nexApi = {
+  async init(payload: ConstructorParameters<typeof Nex>[0]) { nex = new Nex(payload); },
+  manifest: () => nex.manifest(),
+  query: (...args: Parameters<typeof nex.query>) => nex.query(...args),
+  getSimilarKanji: (...args: Parameters<typeof nex.getSimilarKanji>) => nex.getSimilarKanji(...args),
+  querySharedAndSimilar: ( ...args: Parameters<typeof nex.querySharedAndSimilar>) => nex.querySharedAndSimilar(...args),
+  lookup: (...args: Parameters<typeof nex.lookup>) => nex.lookup(...args),
+} satisfies NexApi$;
+
+export type NexApi = typeof nexApi;
+
+expose(nexApi);

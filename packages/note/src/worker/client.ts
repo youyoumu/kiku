@@ -1,10 +1,37 @@
-import { type Remote, wrap } from "comlink";
 import type { KikuConfig } from "#/util/config";
 import type { Env } from "#/util/general";
-import type { Nex as Nex$ } from "./_kiku_worker.ts";
+import type { NexApi } from "./_kiku_worker.ts";
+
+export function wrap<T>(worker: Worker) {
+  let msgId = 0;
+  const pending = new Map();
+
+  worker.onmessage = (e) => {
+    const { id, result, error } = e.data;
+    const { resolve, reject } = pending.get(id);
+    pending.delete(id);
+
+    error ? reject(error) : resolve(result);
+  };
+
+  return new Proxy(
+    {},
+    {
+      get(_, fn) {
+        if (fn === "then") return undefined;
+        return (...args: unknown[]) =>
+          new Promise((resolve, reject) => {
+            const id = ++msgId;
+            pending.set(id, { resolve, reject });
+            worker.postMessage({ id, fn, args });
+          });
+      },
+    },
+  ) as T;
+}
 
 export class WorkerClient {
-  nex: Promise<Remote<Nex$>>;
+  nex: Promise<NexApi>;
 
   constructor(payload: { env: Env; assetsPath: string; config: KikuConfig }) {
     let worker: Worker;
@@ -17,7 +44,11 @@ export class WorkerClient {
         type: "module",
       });
     }
-    const Nex = wrap<typeof Nex$>(worker);
-    this.nex = new Nex(payload);
+    const Nex = wrap<NexApi>(worker);
+    this.nex = new Promise<NexApi>((resolve) => {
+      Nex.init(payload).then(() => {
+        resolve(Nex);
+      });
+    });
   }
 }

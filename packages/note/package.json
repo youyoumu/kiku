@@ -15,7 +15,6 @@
     "package": "node ./script/package.ts"
   },
   "dependencies": {
-    "comlink": "^4.4.2",
     "solid-js": "^1.9.9"
   },
   "devDependencies": {
