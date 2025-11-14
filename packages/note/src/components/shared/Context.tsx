@@ -17,7 +17,7 @@ import {
   ankiFieldsSkeleton,
   type KikuNotesManifest,
 } from "#/types";
-import { type KikuConfig, updateConfigDataset } from "#/util/config";
+import { type KikuConfig, updateConfigState } from "#/util/config";
 import { getAnkiFields } from "#/util/general";
 import type { WorkerClient } from "#/worker/client";
 
@@ -33,7 +33,7 @@ export function ConfigContextProvider(props: {
     ({ ...config });
     KIKU_STATE.logger.debug("Updating config:", config);
     if (!KIKU_STATE.root) throw new Error("Missing root");
-    updateConfigDataset(KIKU_STATE.root, config);
+    updateConfigState(KIKU_STATE.root, config);
   });
 
   return (

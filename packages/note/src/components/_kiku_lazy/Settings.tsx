@@ -57,6 +57,9 @@ export default function Settings(props: {
   const [card, setCard] = useCardStore();
 
   onMount(async () => {
+    //NOTE: move this to somewhere higher
+    AnkiConnect.changePort(Number(config.ankiConnectPort));
+
     if (!bp.isAtLeast("sm")) return;
     await checkAnkiConnect();
   });
@@ -82,8 +85,7 @@ export default function Settings(props: {
       useSystemFontSecondary: config.useSystemFontSecondary ? config.useSystemFontSecondary : defaultConfig.useSystemFontSecondary,
       showTheme: config.showTheme ? config.showTheme : defaultConfig.showTheme,
       showStartupTime: config.showStartupTime ? config.showStartupTime : defaultConfig.showStartupTime,
-      //TODO: configurable
-      ankiConnectPort: "8765",
+      ankiConnectPort: config.ankiConnectPort ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
       ankiDroidEnableIntegration: config.ankiDroidEnableIntegration ? config.ankiDroidEnableIntegration : defaultConfig.ankiDroidEnableIntegration,
       ankiDroidReverseSwipeDirection: config.ankiDroidReverseSwipeDirection ? config.ankiDroidReverseSwipeDirection : defaultConfig.ankiDroidReverseSwipeDirection,
       fontSizeBaseExpression: config.fontSizeBaseExpression ? config.fontSizeBaseExpression : defaultConfig.fontSizeBaseExpression,
@@ -738,23 +740,55 @@ function DebugSettings() {
           <div class="collapse-title text-lg font-bold">Debug</div>
           <div class="collapse-content text-sm">
             <div class="flex flex-col gap-4 animate-fade-in ">
-              <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-64 py-4">
-                <legend class="fieldset-legend">Show Startup Time</legend>
-                <label class="label">
+              <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] rounded-box gap-x-4 gap-y-2">
+                <fieldset class="fieldset">
+                  <legend class="fieldset-legend">
+                    AnkiConnect Port
+                    <UndoIcon
+                      class="h-4 w-4 cursor-pointer"
+                      classList={{
+                        hidden:
+                          config.ankiConnectPort ===
+                          defaultConfig.ankiConnectPort,
+                      }}
+                      on:click={() => {
+                        setConfig(
+                          "ankiConnectPort",
+                          defaultConfig.ankiConnectPort,
+                        );
+                      }}
+                    />
+                  </legend>
                   <input
-                    type="checkbox"
-                    checked={config.showStartupTime === "true"}
-                    class="toggle"
-                    on:change={(e) => {
-                      setConfig(
-                        "showStartupTime",
-                        e.target.checked ? "true" : "false",
-                      );
+                    type="text"
+                    class="input w-full"
+                    placeholder={defaultConfig.ankiConnectPort}
+                    value={config.ankiConnectPort}
+                    on:input={(e) => {
+                      let value = (e.target as HTMLInputElement).value;
+                      value = value.replaceAll(/[^0-9]/g, "");
+                      (e.target as HTMLInputElement).value = value;
+                      setConfig("ankiConnectPort", value);
                     }}
                   />
-                </label>
-              </fieldset>
-
+                </fieldset>
+                <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-64 py-4">
+                  <legend class="fieldset-legend">Show Startup Time</legend>
+                  <label class="label">
+                    <input
+                      type="checkbox"
+                      checked={config.showStartupTime === "true"}
+                      class="toggle"
+                      on:change={(e) => {
+                        setConfig(
+                          "showStartupTime",
+                          e.target.checked ? "true" : "false",
+                        );
+                      }}
+                    />
+                  </label>
+                </fieldset>
+              </div>
               <div class="flex flex-col gap-2">
                 <div class="flex gap-2 items-center">
                   <div class="text-lg">Expected Root Dataset</div>

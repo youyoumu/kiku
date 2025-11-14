@@ -8,9 +8,11 @@ type SimilarKanjiDB = Record<
 >;
 type SimilarKanjiDBs = Record<string, SimilarKanjiDB>;
 
+let ankiConnectPort = 8765;
+
 export const AnkiConnect = {
   invoke: async (action: string, params: Record<string, unknown> = {}) => {
-    const res = await fetch("http://127.0.0.1:8765", {
+    const res = await fetch(`http://127.0.0.1:${ankiConnectPort}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action, version: 6, params }),
@@ -85,6 +87,7 @@ export class Nex {
     this.assetsPath = payload.assetsPath;
     this.env = payload.env;
     this.config = payload.config;
+    ankiConnectPort = Number(this.config.ankiConnectPort);
   }
   async getSimilarKanji(kanji: string) {
     const store: Record<string, { kanji: string; score: number }> = {};

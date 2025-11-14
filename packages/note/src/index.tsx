@@ -12,7 +12,7 @@ import {
 import {
   defaultConfig,
   type KikuConfig,
-  updateConfigDataset,
+  updateConfigState,
   validateConfig,
 } from "./util/config.ts";
 import { env } from "./util/general.ts";
@@ -149,7 +149,7 @@ export async function init({
       };
       KIKU_STATE.rootDataset = rootDataset$;
     })();
-    updateConfigDataset(root, config$);
+    updateConfigState(root, config$);
 
     const [config, setConfig] = createStore(config$);
     KIKU_STATE.relax = false;

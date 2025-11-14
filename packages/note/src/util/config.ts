@@ -99,7 +99,7 @@ export function validateConfig(config: KikuConfig): KikuConfig {
       useSystemFontSecondary: typeof config.useSystemFontSecondary === "string" ? config.useSystemFontSecondary === "true" ? "true" : "false" : defaultConfig.useSystemFontSecondary,
       showTheme: typeof config.showTheme === "string" ? config.showTheme === "true" ? "true" : "false" : defaultConfig.showTheme,
       showStartupTime: typeof config.showStartupTime === "string" ? config.showStartupTime === "true" ? "true" : "false" : defaultConfig.showStartupTime,
-      ankiConnectPort: typeof config.ankiConnectPort === "string" && Number(config.ankiConnectPort) > 0 ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
+      ankiConnectPort: typeof config.ankiConnectPort === "string" && Number(config.ankiConnectPort) > 0 && Number(config.ankiConnectPort) < 65535 ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
       ankiDroidEnableIntegration: typeof config.ankiDroidEnableIntegration === "string" ? config.ankiDroidEnableIntegration === "true" ? "true" : "false" : defaultConfig.ankiDroidEnableIntegration,
       ankiDroidReverseSwipeDirection: typeof config.ankiDroidReverseSwipeDirection === "string" ? config.ankiDroidReverseSwipeDirection === "true" ? "true" : "false" : defaultConfig.ankiDroidReverseSwipeDirection,
       fontSizeBaseExpression: validateResponsiveFontSize( config.fontSizeBaseExpression, defaultConfig.fontSizeBaseExpression,),
@@ -166,7 +166,7 @@ export type Dataset = {
 
 export type DatasetProp = Partial<Dataset>;
 
-export function updateConfigDataset(el: HTMLElement, config: KikuConfig) {
+export function updateConfigState(el: HTMLElement, config: KikuConfig) {
   const dataTheme = document.documentElement.getAttribute("data-theme");
   if (dataTheme !== "none") {
     document.documentElement.setAttribute("data-theme", config.theme);

@@ -9,9 +9,15 @@ export const base64 = {
     base64.encode(new TextEncoder().encode(s).buffer),
 };
 
+let ankiConnectPort = 8765;
+
 export const AnkiConnect = {
+  changePort: (port: number) => {
+    ankiConnectPort = port;
+  },
+
   invoke: async (action: string, params: Record<string, unknown> = {}) => {
-    const res = await fetch("http://127.0.0.1:8765", {
+    const res = await fetch(`http://127.0.0.1:${ankiConnectPort}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action, version: 6, params }),
