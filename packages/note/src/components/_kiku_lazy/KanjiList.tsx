@@ -153,15 +153,22 @@ function KanjiText(props: { kanji: string }) {
     <div class="flex gap-2 sm:gap-4 ">
       <div class="font-secondary expression">{props.kanji}</div>
       <div class="flex flex-col text-xs sm:text-sm text-base-content-calm leading-tight">
-        <div>
-          {/* TODO: hide if unavailable */}
+        <div
+          classList={{
+            hidden: !kanji()?.meanings.length,
+          }}
+        >
           <span>Meaning: </span>
           <span class="text-base-content-soft">
             {kanji()?.meanings.join(", ")}
           </span>
         </div>
-        <div>
-          <span>Frequency: </span>
+        <div
+          classList={{
+            hidden: typeof kanji()?.level !== "number",
+          }}
+        >
+          <span>Difficulty: </span>
           <span class="text-base-content-soft">{kanji()?.level}</span>
         </div>
         <div
