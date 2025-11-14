@@ -173,7 +173,7 @@ export default function Settings(props: {
         <div class="max-w-4xl mx-auto w-full relative">
           <div class="flex flex-row gap-2 justify-end animate-fade-in absolute bottom-0 right-0 mx-4 mb-4">
             <button class="btn" on:click={props.onCancelClick}>
-              Cancel
+              Back
             </button>
             <button
               class="btn"
@@ -344,7 +344,7 @@ function FontSettings() {
 
           <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-64 py-4">
             <legend class="fieldset-legend">Use System Font</legend>
-            <label class="label">
+            <label class="label text-base-content-soft">
               <input
                 type="checkbox"
                 checked={config.useSystemFontPrimary === "true"}
@@ -438,7 +438,7 @@ function FontSettings() {
 
           <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-64 py-4">
             <legend class="fieldset-legend">Use System Font</legend>
-            <label class="label">
+            <label class="label text-base-content-soft">
               <input
                 type="checkbox"
                 checked={config.useSystemFontSecondary === "true"}
