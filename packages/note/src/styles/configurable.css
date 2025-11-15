@@ -1,0 +1,96 @@
+:root,
+:host {
+  --font-primary: "";
+  --font-secondary: "";
+
+  /* BASE sizes */
+  --font-size-base-expression: var(--text-base);
+  --line-height-base-expression: var(--text-base--line-height);
+
+  --font-size-base-pitch: var(--text-base);
+  --line-height-base-pitch: var(--text-base--line-height);
+
+  --font-size-base-sentence: var(--text-base);
+  --line-height-base-sentence: var(--text-base--line-height);
+
+  --font-size-base-misc-info: var(--text-base);
+  --line-height-base-misc-info: var(--text-base--line-height);
+
+  --font-size-base-hint: var(--text-base);
+  --line-height-base-hint: var(--text-base--line-height);
+
+  /* SM sizes */
+  --font-size-sm-expression: var(--text-lg);
+  --line-height-sm-expression: var(--text-lg--line-height);
+
+  --font-size-sm-pitch: var(--text-lg);
+  --line-height-sm-pitch: var(--text-lg--line-height);
+
+  --font-size-sm-sentence: var(--text-lg);
+  --line-height-sm-sentence: var(--text-lg--line-height);
+
+  --font-size-sm-misc-info: var(--text-lg);
+  --line-height-sm-misc-info: var(--text-lg--line-height);
+
+  --font-size-sm-hint: var(--text-lg);
+  --line-height-sm-hint: var(--text-lg--line-height);
+}
+
+.font-primary {
+  font-family: var(--font-primary);
+}
+.font-secondary {
+  font-family: var(--font-secondary);
+}
+
+.expression {
+  font-size: var(--font-size-base-expression);
+  line-height: var(--line-height-base-expression);
+}
+
+.pitch {
+  font-size: var(--font-size-base-pitch);
+  line-height: var(--line-height-base-pitch);
+}
+
+.sentence {
+  font-size: var(--font-size-base-sentence);
+  line-height: var(--line-height-base-sentence);
+}
+
+.misc-info {
+  font-size: var(--font-size-base-misc-info);
+  line-height: var(--line-height-base-misc-info);
+}
+
+.hint {
+  font-size: var(--font-size-base-hint);
+  line-height: var(--line-height-base-hint);
+}
+
+@media (min-width: 40rem) {
+  .expression {
+    font-size: var(--font-size-sm-expression);
+    line-height: var(--line-height-sm-expression);
+  }
+
+  .pitch {
+    font-size: var(--font-size-sm-pitch);
+    line-height: var(--line-height-sm-pitch);
+  }
+
+  .sentence {
+    font-size: var(--font-size-sm-sentence);
+    line-height: var(--line-height-sm-sentence);
+  }
+
+  .misc-info {
+    font-size: var(--font-size-sm-misc-info);
+    line-height: var(--line-height-sm-misc-info);
+  }
+
+  .hint {
+    font-size: var(--font-size-sm-hint);
+    line-height: var(--line-height-sm-hint);
+  }
+}

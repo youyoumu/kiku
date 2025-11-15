@@ -13,6 +13,8 @@ import {
   defaultConfig,
   type KikuConfig,
   rootDatasetConfigWhitelist,
+  type TailwindSize,
+  tailwindSize,
 } from "#/util/config";
 import { type WebFont, webFonts } from "#/util/fonts";
 import { daisyUIThemes } from "#/util/theme";
@@ -31,16 +33,6 @@ import {
 } from "./Icons";
 import { AnkiConnect } from "./util/ankiConnect";
 import { capitalize } from "./util/general";
-import {
-  getTailwindFontSize,
-  getTailwindFontSizeShort,
-  type TailwindBreakpoint,
-  type TailwindFontSizeLabel,
-  type TailwindFontSizeLabelShort,
-  tailwindFontSizeLabel,
-  tailwindFontSizeLabelShort,
-  tailwindFontSizeLabelShortMap,
-} from "./util/tailwind";
 
 function toDashed(str: string) {
   return str.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
@@ -496,17 +488,7 @@ function FontSizeSettingsFieldset(props: {
   label: string;
 }) {
   const [config, setConfig] = useConfig();
-  const breakpoint: TailwindBreakpoint | undefined = props.configKey.startsWith(
-    "fontSizeBase",
-  )
-    ? undefined
-    : "sm";
-
-  const configValue = () => config[props.configKey];
-  const fontSizeClass = () => {
-    const label = tailwindFontSizeLabelShortMap[configValue()];
-    return getTailwindFontSizeShort(label);
-  };
+  const configValue = () => config[props.configKey] as TailwindSize;
 
   if (config.kikuRoot)
     return (
@@ -528,86 +510,74 @@ function FontSizeSettingsFieldset(props: {
 
           <div class="tooltip">
             <div class="tooltip-content">
-              <div class={`font-secondary ${fontSizeClass()}`}>あ</div>
+              <div class={`font-secondary`}>あ</div>
             </div>
             <input
               on:change={(e) => {
                 const target = e.target as HTMLInputElement;
-                const value = tailwindFontSizeLabelShort[
+                const value = tailwindSize[
                   Number(target.value)
-                ] as TailwindFontSizeLabelShort;
-                const tailwindFontSize = getTailwindFontSizeShort(
-                  value,
-                  breakpoint,
-                );
-                setConfig(props.configKey, tailwindFontSize);
+                ] as TailwindSize;
+                setConfig(props.configKey, value);
               }}
               type="range"
               min="0"
-              max={(tailwindFontSizeLabelShort.length - 1).toString()}
-              value={(() => {
-                const label = tailwindFontSizeLabelShortMap[configValue()];
-                const index = tailwindFontSizeLabelShort
-                  .indexOf(label)
-                  .toString();
-                return index;
-              })()}
+              max={(tailwindSize.length - 1).toString()}
+              value={tailwindSize.indexOf(configValue()).toString()}
               class="range range-xs w-full "
               step="1"
             />
           </div>
           <div class="flex justify-between px-2 mt-1 text-xs">
-            <For each={tailwindFontSizeLabelShort}>{(_) => <span>|</span>}</For>
+            <For each={tailwindSize}>{(_) => <span>|</span>}</For>
           </div>
           <div class="flex justify-between px-2 mt-1 text-xs">
-            <For each={tailwindFontSizeLabelShort}>
-              {(label) => <span>{label}</span>}
-            </For>
+            <For each={tailwindSize}>{(label) => <span>{label}</span>}</For>
           </div>
         </fieldset>
       </div>
     );
 
   //NOTE: dead code, keep for a while
-  return (
-    <fieldset
-      class="fieldset"
-      on:change={(e) => {
-        const target = e.target as HTMLSelectElement;
-        const value = target.value as TailwindFontSizeLabel;
-        const tailwindFontSize = getTailwindFontSize(value, breakpoint);
-        setConfig(props.configKey, tailwindFontSize);
-      }}
-    >
-      <legend class="fieldset-legend">
-        {props.label}{" "}
-        <UndoIcon
-          class="h-4 w-4 cursor-pointer"
-          classList={{
-            hidden: config[props.configKey] === defaultConfig[props.configKey],
-          }}
-          on:click={() => {
-            setConfig(props.configKey, defaultConfig[props.configKey]);
-          }}
-        />
-      </legend>
-      <select class="select w-full">
-        {tailwindFontSizeLabel.map((label) => {
-          return (
-            <option
-              value={label}
-              selected={
-                config[props.configKey] ===
-                getTailwindFontSize(label, breakpoint)
-              }
-            >
-              {label}
-            </option>
-          );
-        })}
-      </select>
-    </fieldset>
-  );
+  // return (
+  //   <fieldset
+  //     class="fieldset"
+  //     on:change={(e) => {
+  //       const target = e.target as HTMLSelectElement;
+  //       const value = target.value as TailwindFontSizeLabel;
+  //       const tailwindFontSize = getTailwindFontSize(value, breakpoint);
+  //       setConfig(props.configKey, tailwindFontSize);
+  //     }}
+  //   >
+  //     <legend class="fieldset-legend">
+  //       {props.label}{" "}
+  //       <UndoIcon
+  //         class="h-4 w-4 cursor-pointer"
+  //         classList={{
+  //           hidden: config[props.configKey] === defaultConfig[props.configKey],
+  //         }}
+  //         on:click={() => {
+  //           setConfig(props.configKey, defaultConfig[props.configKey]);
+  //         }}
+  //       />
+  //     </legend>
+  //     <select class="select w-full">
+  //       {tailwindFontSizeLabel.map((label) => {
+  //         return (
+  //           <option
+  //             value={label}
+  //             selected={
+  //               config[props.configKey] ===
+  //               getTailwindFontSize(label, breakpoint)
+  //             }
+  //           >
+  //             {label}
+  //           </option>
+  //         );
+  //       })}
+  //     </select>
+  //   </fieldset>
+  // );
 }
 
 function AnkiDroidSettings() {
@@ -730,66 +700,74 @@ function DebugSettings() {
     Record<string, string>
   >({});
   function getCurrentCssVar() {
-    const key1 = "--system-font-primary" as const;
-    const key2 = "--system-font-secondary" as const;
-    const cssVar: CssVar = {
-      [key1]: window
-        .getComputedStyle(document.documentElement)
-        .getPropertyValue(key1),
-      [key2]: window
-        .getComputedStyle(document.documentElement)
-        .getPropertyValue(key2),
-    };
-    return cssVar;
+    //TODO: css var
+    return {};
+    // const key1 = "--system-font-primary" as const;
+    // const key2 = "--system-font-secondary" as const;
+    // const cssVar: CssVar = {
+    //   [key1]: window
+    //     .getComputedStyle(document.documentElement)
+    //     .getPropertyValue(key1),
+    //   [key2]: window
+    //     .getComputedStyle(document.documentElement)
+    //     .getPropertyValue(key2),
+    // };
+    // return cssVar;
   }
   function getCssVarMismatches() {
-    const mismatches: Array<[keyof CssVar, string]> = [];
-    const cssVar = getCurrentCssVar();
-    function trimFontFamiliy(str: string) {
-      return str
-        .replaceAll("\n", "")
-        .split(",")
-        .map((font) => font.trim().replaceAll('"', "'"))
-        .join(", ");
-    }
-    const systemFontPrimaryConfigTrim = trimFontFamiliy(
-      config.systemFontPrimary,
-    );
-    const systemFontPrimaryTrim = trimFontFamiliy(
-      cssVar["--system-font-primary"],
-    );
-    const systemFontSecondaryConfigTrim = trimFontFamiliy(
-      config.systemFontSecondary,
-    );
-    const systemFontSecondaryTrim = trimFontFamiliy(
-      cssVar["--system-font-secondary"],
-    );
-
-    if (systemFontPrimaryConfigTrim !== systemFontPrimaryTrim) {
-      mismatches.push([
-        "--system-font-primary",
-        cssVar["--system-font-primary"],
-      ]);
-    }
-    if (systemFontSecondaryConfigTrim !== systemFontSecondaryTrim) {
-      mismatches.push([
-        "--system-font-secondary",
-        cssVar["--system-font-secondary"],
-      ]);
-    }
-
-    if (window.document.documentElement.getAttribute("data-theme") === "none")
-      return {};
-    return Object.fromEntries(mismatches);
+    //TODO: css var
+    return {};
+    //
+    // const mismatches: Array<[keyof CssVar, string]> = [];
+    // const cssVar = getCurrentCssVar();
+    // function trimFontFamiliy(str: string) {
+    //   return str
+    //     .replaceAll("\n", "")
+    //     .split(",")
+    //     .map((font) => font.trim().replaceAll('"', "'"))
+    //     .join(", ");
+    // }
+    // const systemFontPrimaryConfigTrim = trimFontFamiliy(
+    //   config.systemFontPrimary,
+    // );
+    // const systemFontPrimaryTrim = trimFontFamiliy(
+    //   cssVar["--system-font-primary"],
+    // );
+    // const systemFontSecondaryConfigTrim = trimFontFamiliy(
+    //   config.systemFontSecondary,
+    // );
+    // const systemFontSecondaryTrim = trimFontFamiliy(
+    //   cssVar["--system-font-secondary"],
+    // );
+    //
+    // if (systemFontPrimaryConfigTrim !== systemFontPrimaryTrim) {
+    //   mismatches.push([
+    //     "--system-font-primary",
+    //     cssVar["--system-font-primary"],
+    //   ]);
+    // }
+    // if (systemFontSecondaryConfigTrim !== systemFontSecondaryTrim) {
+    //   mismatches.push([
+    //     "--system-font-secondary",
+    //     cssVar["--system-font-secondary"],
+    //   ]);
+    // }
+    //
+    // if (window.document.documentElement.getAttribute("data-theme") === "none")
+    //   return {};
+    // return Object.fromEntries(mismatches);
   }
 
   const [cssVar, setCssVar] = createSignal<Record<string, string>>({});
   function getCssVar() {
-    const cssVar: CssVar = {
-      "--system-font-primary": config.systemFontPrimary,
-      "--system-font-secondary": config.systemFontSecondary,
-    };
-    return cssVar;
+    // TODO: css var
+    return {};
+
+    // const cssVar: CssVar = {
+    //   "--system-font-primary": config.systemFontPrimary,
+    //   "--system-font-secondary": config.systemFontSecondary,
+    // };
+    // return cssVar;
   }
 
   createEffect(() => {

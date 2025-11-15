@@ -1,10 +1,10 @@
 /* https://github.com/saadeghi/daisyui/issues/4209#issuecomment-3512250505 */
 @layer theme, base, components, utilities.daisyui.component;
 @import "tailwindcss";
-@import "./tailwindFontSize.css";
 @import "./daisyui.css";
 @import "./dictionary.css";
 @import "./tailwindProperty.css";
+@import "./configurable.css";
 
 /* biome-ignore format: this looks nicer */
 @theme {
@@ -21,53 +21,6 @@
 }
 
 @custom-variant hover (&:hover);
-
-/* biome-ignore format: this looks nicer */
-@layer base {
-  @font-face {
-    font-family: "Hina Mincho";
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url("_kiku_font_hina-mincho.woff2") format("woff2");
-  }
-
-  @font-face {
-    font-family: "Klee One";
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url("_kiku_font_klee-one.woff2") format("woff2");
-  }
-
-  @font-face {
-    font-family: "IBM Plex Sans JP";
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url("_kiku_font_ibm-plex-sans-jp.woff2") format("woff2");
-  }
-  [data-use-system-font-primary="true"] .font-primary { font-family: var(--system-font-primary); }
-  [data-use-system-font-secondary="true"] .font-secondary { font-family: var(--system-font-secondary); }
-
-  [data-use-system-font-primary="false"][data-web-font-primary="Hina Mincho"] .font-primary,
-  [data-use-system-font-primary="false"][data-web-font-primary="Hina Mincho"][data-font-scope="local"] .font-primary,
-  [data-use-system-font-secondary="false"][data-web-font-secondary="Hina Mincho"] .font-secondary,
-  [data-use-system-font-secondary="false"][data-web-font-secondary="Hina Mincho"][data-font-scope="local"] .font-secondary
-  { font-family: "Hina Mincho", serif; font-weight: 400; font-style: normal; }
-
-  [data-use-system-font-primary="false"][data-web-font-primary="Klee One"] .font-primary,
-  [data-use-system-font-primary="false"][data-web-font-primary="Klee One"][data-font-scope="local"] .font-primary,
-  [data-use-system-font-secondary="false"][data-web-font-secondary="Klee One"] .font-secondary,
-  [data-use-system-font-secondary="false"][data-web-font-secondary="Klee One"][data-font-scope="local"] .font-secondary
-  { font-family: "Klee One", cursive; font-weight: 400; font-style: normal; }
-
-  [data-use-system-font-primary="false"][data-web-font-primary="IBM Plex Sans JP"] .font-primary,
-  [data-use-system-font-primary="false"][data-web-font-primary="IBM Plex Sans JP"][data-font-scope="local"] .font-primary,
-  [data-use-system-font-secondary="false"][data-web-font-secondary="IBM Plex Sans JP"] .font-secondary,
-  [data-use-system-font-secondary="false"][data-web-font-secondary="IBM Plex Sans JP"][data-font-scope="local"] .font-secondary
-  { font-family: "IBM Plex Sans JP", sans-serif; font-weight: 400; font-style: normal; }
-}
 
 @utility gutter-stable {
   scrollbar-gutter: stable;
@@ -158,6 +111,30 @@
       @apply flex;
     }
   }
+}
+
+@font-face {
+  font-family: "Hina Mincho";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("_kiku_font_hina-mincho.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Klee One";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("_kiku_font_klee-one.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Sans JP";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("_kiku_font_ibm-plex-sans-jp.woff2") format("woff2");
 }
 
 :root {

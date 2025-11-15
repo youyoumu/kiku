@@ -1,4 +1,3 @@
-import type { ResponsiveFontSize } from "#/components/_kiku_lazy/util/tailwind";
 import { type WebFont, webFonts } from "./fonts";
 import { type DaisyUITheme, daisyUIThemes } from "./theme";
 
@@ -16,16 +15,16 @@ export type KikuConfig = {
   ankiConnectPort: string;
   ankiDroidEnableIntegration: "true" | "false";
   ankiDroidReverseSwipeDirection: "true" | "false";
-  fontSizeBaseExpression: ResponsiveFontSize;
-  fontSizeBasePitch: ResponsiveFontSize;
-  fontSizeBaseSentence: ResponsiveFontSize;
-  fontSizeBaseMiscInfo: ResponsiveFontSize;
-  fontSizeBaseHint: ResponsiveFontSize;
-  fontSizeSmExpression: ResponsiveFontSize;
-  fontSizeSmPitch: ResponsiveFontSize;
-  fontSizeSmSentence: ResponsiveFontSize;
-  fontSizeSmMiscInfo: ResponsiveFontSize;
-  fontSizeSmHint: ResponsiveFontSize;
+  fontSizeBaseExpression: TailwindSize;
+  fontSizeBasePitch: TailwindSize;
+  fontSizeBaseSentence: TailwindSize;
+  fontSizeBaseMiscInfo: TailwindSize;
+  fontSizeBaseHint: TailwindSize;
+  fontSizeSmExpression: TailwindSize;
+  fontSizeSmPitch: TailwindSize;
+  fontSizeSmSentence: TailwindSize;
+  fontSizeSmMiscInfo: TailwindSize;
+  fontSizeSmHint: TailwindSize;
 };
 
 // biome-ignore format: this looks nicer
@@ -43,18 +42,39 @@ export const defaultConfig: KikuConfig = {
   ankiConnectPort: "8765",
   ankiDroidEnableIntegration: "true",
   ankiDroidReverseSwipeDirection: "false",
-  fontSizeBaseExpression: "text-5xl",
-  fontSizeBasePitch: "text-xl",
-  fontSizeBaseSentence: "text-2xl",
-  fontSizeBaseMiscInfo: "text-sm",
-  fontSizeBaseHint: "text-lg",
-  fontSizeSmExpression: "sm:text-6xl",
-  fontSizeSmPitch: "sm:text-2xl",
-  fontSizeSmSentence: "sm:text-4xl",
-  fontSizeSmMiscInfo: "sm:text-sm",
-  fontSizeSmHint: "sm:text-2xl",
+  fontSizeBaseExpression: "5xl",
+  fontSizeBasePitch: "xl",
+  fontSizeBaseSentence: "2xl",
+  fontSizeBaseMiscInfo: "sm",
+  fontSizeBaseHint: "lg",
+  fontSizeSmExpression: "6xl",
+  fontSizeSmPitch: "2xl",
+  fontSizeSmSentence: "4xl",
+  fontSizeSmMiscInfo: "sm",
+  fontSizeSmHint: "2xl",
 };
 
+//biome-ignore format: this looks nicer
+export const tailwindSize = [ "xs", "sm", "md", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl", "7xl", "8xl", "9xl", ] as const;
+export type TailwindSize = (typeof tailwindSize)[number];
+//biome-ignore format: this looks nicer
+export const tailwindFontSizeVar = {
+  xs: { fontSize: "var(--text-xs)", lineHeight: "var(--text-xs--line-height)", },
+  sm: { fontSize: "var(--text-sm)", lineHeight: "var(--text-sm--line-height)", },
+  md: { fontSize: "var(--text-base)", lineHeight: "var(--text-base--line-height)", },
+  lg: { fontSize: "var(--text-lg)", lineHeight: "var(--text-lg--line-height)", },
+  xl: { fontSize: "var(--text-xl)", lineHeight: "var(--text-xl--line-height)", },
+  "2xl": { fontSize: "var(--text-2xl)", lineHeight: "var(--text-2xl--line-height)", },
+  "3xl": { fontSize: "var(--text-3xl)", lineHeight: "var(--text-3xl--line-height)", },
+  "4xl": { fontSize: "var(--text-4xl)", lineHeight: "var(--text-4xl--line-height)", },
+  "5xl": { fontSize: "var(--text-5xl)", lineHeight: "var(--text-5xl--line-height)", },
+  "6xl": { fontSize: "var(--text-6xl)", lineHeight: "var(--text-6xl--line-height)", },
+  "7xl": { fontSize: "var(--text-7xl)", lineHeight: "var(--text-7xl--line-height)", },
+  "8xl": { fontSize: "var(--text-8xl)", lineHeight: "var(--text-8xl--line-height)", },
+  "9xl": { fontSize: "var(--text-9xl)", lineHeight: "var(--text-9xl--line-height)", },
+} as const;
+
+//TODO: css var
 export const rootDatasetConfigWhitelist = new Set<keyof KikuConfig>([
   "theme",
   "webFontPrimary",
@@ -69,30 +89,11 @@ Object.keys(defaultConfig).forEach((key) => {
     rootDatasetConfigWhitelist.add(key as keyof KikuConfig);
 });
 
-// biome-ignore format: this looks nicer
-export const tailwindResponsiveFontSizes = [
-  "text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl", "text-3xl", "text-4xl",
-  "text-5xl", "text-6xl", "text-7xl", "text-8xl", "text-9xl", "sm:text-xs", "sm:text-sm", "sm:text-base",
-  "sm:text-lg", "sm:text-xl", "sm:text-2xl", "sm:text-3xl", "sm:text-4xl", "sm:text-5xl", "sm:text-6xl", "sm:text-7xl",
-  "sm:text-8xl", "sm:text-9xl", "md:text-xs", "md:text-sm", "md:text-base", "md:text-lg", "md:text-xl", "md:text-2xl",
-  "md:text-3xl", "md:text-4xl", "md:text-5xl", "md:text-6xl", "md:text-7xl", "md:text-8xl", "md:text-9xl", "lg:text-xs",
-  "lg:text-sm", "lg:text-base", "lg:text-lg", "lg:text-xl", "lg:text-2xl", "lg:text-3xl", "lg:text-4xl", "lg:text-5xl",
-  "lg:text-6xl", "lg:text-7xl", "lg:text-8xl", "lg:text-9xl", "xl:text-xs", "xl:text-sm", "xl:text-base", "xl:text-lg",
-  "xl:text-xl", "xl:text-2xl", "xl:text-3xl", "xl:text-4xl", "xl:text-5xl", "xl:text-6xl", "xl:text-7xl", "xl:text-8xl",
-  "xl:text-9xl", "2xl:text-xs", "2xl:text-sm", "2xl:text-base", "2xl:text-lg", "2xl:text-xl", "2xl:text-2xl", "2xl:text-3xl",
-  "2xl:text-4xl", "2xl:text-5xl", "2xl:text-6xl", "2xl:text-7xl", "2xl:text-8xl", "2xl:text-9xl",
-];
-export const tailwindResponsiveFontSizesSet = new Set(
-  tailwindResponsiveFontSizes,
-);
-export type TailwindResponsiveFontSize =
-  (typeof tailwindResponsiveFontSizes)[number];
-
 function validateResponsiveFontSize(
-  value: ResponsiveFontSize,
-  fallback: ResponsiveFontSize,
-): ResponsiveFontSize {
-  if (tailwindResponsiveFontSizesSet.has(value)) return value;
+  value: TailwindSize,
+  fallback: TailwindSize,
+): TailwindSize {
+  if (tailwindSize.includes(value)) return value;
   return fallback;
 }
 
@@ -135,8 +136,30 @@ export function validateConfig(config: KikuConfig): KikuConfig {
 }
 
 export type CssVar = {
-  "--system-font-primary": string;
-  "--system-font-secondary": string;
+  "--font-primary": string;
+  "--font-secondary": string;
+
+  "--font-size-base-expression": string;
+  "--line-height-base-expression": string;
+  "--font-size-base-pitch": string;
+  "--line-height-base-pitch": string;
+  "--font-size-base-sentence": string;
+  "--line-height-base-sentence": string;
+  "--font-size-base-misc-info": string;
+  "--line-height-base-misc-info": string;
+  "--font-size-base-hint": string;
+  "--line-height-base-hint": string;
+
+  "--font-size-sm-expression": string;
+  "--line-height-sm-expression": string;
+  "--font-size-sm-pitch": string;
+  "--line-height-sm-pitch": string;
+  "--font-size-sm-sentence": string;
+  "--line-height-sm-sentence": string;
+  "--font-size-sm-misc-info": string;
+  "--line-height-sm-misc-info": string;
+  "--font-size-sm-hint": string;
+  "--line-height-sm-hint": string;
 };
 
 // biome-ignore format: this looks nicer
@@ -181,17 +204,37 @@ export type Dataset = {
 export type DatasetProp = Partial<Dataset>;
 
 export function updateConfigState(el: HTMLElement, config: KikuConfig) {
-  const dataTheme = document.documentElement.getAttribute("data-theme");
-  if (dataTheme !== "none") {
+  if (document.documentElement.getAttribute("data-theme") !== "none") {
     document.documentElement.setAttribute("data-theme", config.theme);
   }
-  Object.entries(config).forEach(([key, value]) => {
-    el.dataset[key] = value;
-  });
+  el.dataset.theme = config.theme;
 
+  //biome-ignore format: this looks nicer
   const cssVar: CssVar = {
-    "--system-font-primary": config.systemFontPrimary,
-    "--system-font-secondary": config.systemFontSecondary,
+    "--font-primary": config.useSystemFontPrimary ? config.systemFontPrimary : config.webFontPrimary,
+    "--font-secondary": config.useSystemFontSecondary ? config.systemFontSecondary : config.webFontSecondary,
+
+    "--font-size-base-expression": tailwindFontSizeVar[config.fontSizeBaseExpression].fontSize,
+    "--line-height-base-expression": tailwindFontSizeVar[config.fontSizeBaseExpression].lineHeight,
+    "--font-size-base-pitch": tailwindFontSizeVar[config.fontSizeBasePitch].fontSize,
+    "--line-height-base-pitch": tailwindFontSizeVar[config.fontSizeBasePitch].lineHeight,
+    "--font-size-base-sentence": tailwindFontSizeVar[config.fontSizeBaseSentence].fontSize,
+    "--line-height-base-sentence": tailwindFontSizeVar[config.fontSizeBaseSentence].lineHeight,
+    "--font-size-base-misc-info": tailwindFontSizeVar[config.fontSizeBaseMiscInfo].fontSize,
+    "--line-height-base-misc-info": tailwindFontSizeVar[config.fontSizeBaseMiscInfo].lineHeight,
+    "--font-size-base-hint": tailwindFontSizeVar[config.fontSizeBaseHint].fontSize,
+    "--line-height-base-hint": tailwindFontSizeVar[config.fontSizeBaseHint].lineHeight,
+
+    "--font-size-sm-expression": tailwindFontSizeVar[config.fontSizeSmExpression].fontSize,
+    "--line-height-sm-expression": tailwindFontSizeVar[config.fontSizeSmExpression].lineHeight,
+    "--font-size-sm-pitch": tailwindFontSizeVar[config.fontSizeSmPitch].fontSize,
+    "--line-height-sm-pitch": tailwindFontSizeVar[config.fontSizeSmPitch].lineHeight,
+    "--font-size-sm-sentence": tailwindFontSizeVar[config.fontSizeSmSentence].fontSize,
+    "--line-height-sm-sentence": tailwindFontSizeVar[config.fontSizeSmSentence].lineHeight,
+    "--font-size-sm-misc-info": tailwindFontSizeVar[config.fontSizeSmMiscInfo].fontSize,
+    "--line-height-sm-misc-info": tailwindFontSizeVar[config.fontSizeSmMiscInfo].lineHeight,
+    "--font-size-sm-hint": tailwindFontSizeVar[config.fontSizeSmHint].fontSize,
+    "--line-height-sm-hint": tailwindFontSizeVar[config.fontSizeSmHint].lineHeight,
   };
   Object.entries(cssVar).forEach(([key, value]) => {
     document.documentElement.style.setProperty(key, value);
