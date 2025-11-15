@@ -86,35 +86,9 @@ export default function Settings(props: {
   }
 
   const saveConfig = async () => {
-    // biome-ignore format: this looks nicer
-    const payload: KikuConfig = {
-      kikuRoot: "true",
-      theme: config.theme ? config.theme : defaultConfig.theme,
-      webFontPrimary: config.webFontPrimary ? config.webFontPrimary : defaultConfig.webFontPrimary,
-      systemFontPrimary: config.systemFontPrimary ? config.systemFontPrimary : defaultConfig.systemFontPrimary,
-      useSystemFontPrimary: config.useSystemFontPrimary ? config.useSystemFontPrimary : defaultConfig.useSystemFontPrimary,
-      webFontSecondary: config.webFontSecondary ? config.webFontSecondary : defaultConfig.webFontSecondary,
-      systemFontSecondary: config.systemFontSecondary ? config.systemFontSecondary : defaultConfig.systemFontSecondary,
-      useSystemFontSecondary: config.useSystemFontSecondary ? config.useSystemFontSecondary : defaultConfig.useSystemFontSecondary,
-      showTheme: config.showTheme ? config.showTheme : defaultConfig.showTheme,
-      showStartupTime: config.showStartupTime ? config.showStartupTime : defaultConfig.showStartupTime,
-      ankiConnectPort: config.ankiConnectPort ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
-      ankiDroidEnableIntegration: config.ankiDroidEnableIntegration ? config.ankiDroidEnableIntegration : defaultConfig.ankiDroidEnableIntegration,
-      ankiDroidReverseSwipeDirection: config.ankiDroidReverseSwipeDirection ? config.ankiDroidReverseSwipeDirection : defaultConfig.ankiDroidReverseSwipeDirection,
-      fontSizeBaseExpression: config.fontSizeBaseExpression ? config.fontSizeBaseExpression : defaultConfig.fontSizeBaseExpression,
-      fontSizeBasePitch: config.fontSizeBasePitch ? config.fontSizeBasePitch : defaultConfig.fontSizeBasePitch,
-      fontSizeBaseSentence: config.fontSizeBaseSentence ? config.fontSizeBaseSentence : defaultConfig.fontSizeBaseSentence,
-      fontSizeBaseMiscInfo: config.fontSizeBaseMiscInfo ? config.fontSizeBaseMiscInfo : defaultConfig.fontSizeBaseMiscInfo,
-      fontSizeBaseHint: config.fontSizeBaseHint ? config.fontSizeBaseHint : defaultConfig.fontSizeBaseHint,
-      fontSizeSmExpression: config.fontSizeSmExpression ? config.fontSizeSmExpression : defaultConfig.fontSizeSmExpression,
-      fontSizeSmPitch: config.fontSizeSmPitch ? config.fontSizeSmPitch : defaultConfig.fontSizeSmPitch,
-      fontSizeSmSentence: config.fontSizeSmSentence ? config.fontSizeSmSentence : defaultConfig.fontSizeSmSentence,
-      fontSizeSmMiscInfo: config.fontSizeSmMiscInfo ? config.fontSizeSmMiscInfo : defaultConfig.fontSizeSmMiscInfo,
-      fontSizeSmHint: config.fontSizeSmHint ? config.fontSizeSmHint : defaultConfig.fontSizeSmHint,
-    };
     try {
-      KIKU_STATE.logger.debug("Saving config:", payload);
-      await AnkiConnect.saveConfig(payload);
+      KIKU_STATE.logger.debug("Saving config:", config);
+      await AnkiConnect.saveConfig(config);
       card.toast.success("Saved! Restart Anki to apply changes.");
     } catch (e) {
       card.toast.error(
