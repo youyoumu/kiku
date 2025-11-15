@@ -725,13 +725,13 @@ function DebugSettings() {
                   <input
                     type="text"
                     class="input w-full"
-                    placeholder={defaultConfig.ankiConnectPort}
+                    placeholder={defaultConfig.ankiConnectPort.toString()}
                     value={config.ankiConnectPort}
                     on:input={(e) => {
                       let value = (e.target as HTMLInputElement).value;
                       value = value.replaceAll(/[^0-9]/g, "");
                       (e.target as HTMLInputElement).value = value;
-                      setConfig("ankiConnectPort", value);
+                      setConfig("ankiConnectPort", Number(value));
                     }}
                   />
                 </fieldset>

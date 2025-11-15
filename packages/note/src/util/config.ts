@@ -12,7 +12,7 @@ export type KikuConfig = {
   useSystemFontSecondary: boolean;
   showTheme: boolean;
   showStartupTime: boolean;
-  ankiConnectPort: string;
+  ankiConnectPort: number;
   ankiDroidEnableIntegration: boolean;
   ankiDroidReverseSwipeDirection: boolean;
   fontSizeBaseExpression: TailwindSize;
@@ -39,7 +39,7 @@ export const defaultConfig: KikuConfig = {
   useSystemFontSecondary: true,
   showTheme: true,
   showStartupTime: true,
-  ankiConnectPort: "8765",
+  ankiConnectPort: 8765,
   ankiDroidEnableIntegration: true,
   ankiDroidReverseSwipeDirection: false,
   fontSizeBaseExpression: "5xl",
@@ -131,7 +131,7 @@ export function validateConfig(config: KikuConfig): KikuConfig {
       useSystemFontSecondary: typeof config.useSystemFontSecondary === "boolean" ? config.useSystemFontSecondary : defaultConfig.useSystemFontSecondary,
       showTheme: typeof config.showTheme === "boolean" ? config.showTheme : defaultConfig.showTheme,
       showStartupTime: typeof config.showStartupTime === "boolean" ? config.showStartupTime : defaultConfig.showStartupTime,
-      ankiConnectPort: typeof config.ankiConnectPort === "string" && Number(config.ankiConnectPort) > 0 && Number(config.ankiConnectPort) < 65535 ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
+      ankiConnectPort: typeof config.ankiConnectPort === "number" && config.ankiConnectPort > 0 && config.ankiConnectPort < 65535 ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
       ankiDroidEnableIntegration: typeof config.ankiDroidEnableIntegration === "boolean" ? config.ankiDroidEnableIntegration : defaultConfig.ankiDroidEnableIntegration,
       ankiDroidReverseSwipeDirection: typeof config.ankiDroidReverseSwipeDirection === "boolean" ? config.ankiDroidReverseSwipeDirection : defaultConfig.ankiDroidReverseSwipeDirection,
       fontSizeBaseExpression: tailwindSize.includes(config.fontSizeBaseExpression) ? config.fontSizeBaseExpression : defaultConfig.fontSizeBaseExpression,
