@@ -131,32 +131,40 @@ export default function Settings(props: {
           )}
         </div>
       </div>
-      <ThemeSettings />
-      <FontSettings />
-      <FontSizeSettings />
-      <AnkiDroidSettings />
-      <DebugSettings />
-      <Portal mount={KIKU_STATE.root}>
-        <div class="max-w-4xl mx-auto w-full relative">
-          <div class="flex flex-row gap-2 justify-end animate-fade-in absolute bottom-0 right-0 mx-4 mb-4">
-            <button class="btn" on:click={props.onCancelClick}>
-              Back
-            </button>
-            <button
-              class="btn"
-              classList={{
-                "btn-primary": card.ankiConnectAvailable,
-                "btn-disabled bg-base-300 text-base-content-faint":
-                  !card.ankiConnectAvailable,
-              }}
-              disabled={!card.ankiConnectAvailable}
-              on:click={saveConfig}
-            >
-              Save
-            </button>
+      <div>
+        <ThemeSettings />
+        <div class="divider"></div>
+        <FontSettings />
+        <div class="divider"></div>
+        <FontSizeSettings />
+        <div class="divider"></div>
+        <AnkiDroidSettings />
+        <div class="divider"></div>
+        <DebugSettings />
+        <div class="divider"></div>
+        <div class="pb-16"></div>
+        <Portal mount={KIKU_STATE.root}>
+          <div class="max-w-4xl mx-auto w-full relative">
+            <div class="flex flex-row gap-2 justify-end animate-fade-in absolute bottom-0 right-0 mx-4 mb-4">
+              <button class="btn" on:click={props.onCancelClick}>
+                Back
+              </button>
+              <button
+                class="btn"
+                classList={{
+                  "btn-primary": card.ankiConnectAvailable,
+                  "btn-disabled bg-base-300 text-base-content-faint":
+                    !card.ankiConnectAvailable,
+                }}
+                disabled={!card.ankiConnectAvailable}
+                on:click={saveConfig}
+              >
+                Save
+              </button>
+            </div>
           </div>
-        </div>
-      </Portal>
+        </Portal>
+      </div>
     </>
   );
 }
@@ -420,27 +428,33 @@ function FontSettings() {
 function FontSizeSettings() {
   return (
     <div class="flex flex-col gap-4 animate-fade-in">
-      <div class="text-2xl font-bold">Font Size</div>
-      <div>
-        <div class="text-lg font-bold">Mobile</div>
-        {/* biome-ignore format: this looks nicer */}
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] rounded-box gap-x-4 gap-y-4 sm:gap-y-2">
+      <div tabindex="0" class="collapse gap-4 collapse-arrow">
+        <div class="collapse-title p-0">
+          <div class="text-2xl font-bold">Font Size</div>
+        </div>
+        <div class="collapse-content p-0 flex flex-col gap-4">
+          <div>
+            <div class="text-lg font-bold">Mobile</div>
+            {/* biome-ignore format: this looks nicer */}
+            <div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] rounded-box gap-x-4 gap-y-4 sm:gap-y-2">
           <FontSizeSettingsFieldset configKey="fontSizeBaseExpression" label="Expression" />
           <FontSizeSettingsFieldset configKey="fontSizeBasePitch" label="Pitch" />
           <FontSizeSettingsFieldset configKey="fontSizeBaseSentence" label="Sentence" />
           <FontSizeSettingsFieldset configKey="fontSizeBaseMiscInfo" label="Misc Info" />
           <FontSizeSettingsFieldset configKey="fontSizeBaseHint" label="Hint" />
         </div>
-      </div>
-      <div>
-        <div class="text-lg font-bold">Desktop</div>
-        {/* biome-ignore format: this looks nicer */}
-        <div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] rounded-box gap-x-4 gap-y-4 sm:gap-y-2">
+          </div>
+          <div>
+            <div class="text-lg font-bold">Desktop</div>
+            {/* biome-ignore format: this looks nicer */}
+            <div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] rounded-box gap-x-4 gap-y-4 sm:gap-y-2">
           <FontSizeSettingsFieldset configKey="fontSizeSmExpression" label="Expression" />
           <FontSizeSettingsFieldset configKey="fontSizeSmPitch" label="Pitch" />
           <FontSizeSettingsFieldset configKey="fontSizeSmSentence" label="Sentence" />
           <FontSizeSettingsFieldset configKey="fontSizeSmMiscInfo" label="Misc Info" />
           <FontSizeSettingsFieldset configKey="fontSizeSmHint" label="Hint" />
+        </div>
+          </div>
         </div>
       </div>
     </div>
@@ -641,176 +655,169 @@ function DebugSettings() {
   const cssVar = () => getCssVar(config);
 
   return (
-    <div class="pb-32">
-      <div class="collapse bg-base-100 border border-base-300">
-        <input type="checkbox" />
-        <div class="collapse-title text-lg font-bold">Debug</div>
-        <div class="collapse-content text-sm">
-          <div class="flex flex-col gap-4 animate-fade-in ">
-            <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] rounded-box gap-x-4 gap-y-2">
-              <fieldset class="fieldset">
-                <legend class="fieldset-legend">
-                  AnkiConnect Port
-                  <UndoIcon
-                    class="h-4 w-4 cursor-pointer"
-                    classList={{
-                      hidden:
-                        config.ankiConnectPort ===
-                        defaultConfig.ankiConnectPort,
-                    }}
-                    on:click={() => {
-                      setConfig(
-                        "ankiConnectPort",
-                        defaultConfig.ankiConnectPort,
-                      );
-                    }}
-                  />
-                </legend>
+    <div tabindex="0" class="collapse collapse-arrow">
+      <div class="collapse-title text-2xl font-bold p-0">Debug</div>
+      <div class="collapse-content p-0">
+        <div class="flex flex-col gap-4 animate-fade-in ">
+          <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] rounded-box gap-x-4 gap-y-2">
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">
+                AnkiConnect Port
+                <UndoIcon
+                  class="h-4 w-4 cursor-pointer"
+                  classList={{
+                    hidden:
+                      config.ankiConnectPort === defaultConfig.ankiConnectPort,
+                  }}
+                  on:click={() => {
+                    setConfig("ankiConnectPort", defaultConfig.ankiConnectPort);
+                  }}
+                />
+              </legend>
+              <input
+                type="text"
+                class="input w-full"
+                placeholder={defaultConfig.ankiConnectPort.toString()}
+                value={config.ankiConnectPort}
+                on:input={(e) => {
+                  let value = (e.target as HTMLInputElement).value;
+                  value = value.replaceAll(/[^0-9]/g, "");
+                  (e.target as HTMLInputElement).value = value;
+                  setConfig("ankiConnectPort", Number(value));
+                }}
+              />
+            </fieldset>
+            <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-64 py-4">
+              <legend class="fieldset-legend">Show Startup Time</legend>
+              <label class="label">
                 <input
-                  type="text"
-                  class="input w-full"
-                  placeholder={defaultConfig.ankiConnectPort.toString()}
-                  value={config.ankiConnectPort}
-                  on:input={(e) => {
-                    let value = (e.target as HTMLInputElement).value;
-                    value = value.replaceAll(/[^0-9]/g, "");
-                    (e.target as HTMLInputElement).value = value;
-                    setConfig("ankiConnectPort", Number(value));
+                  type="checkbox"
+                  checked={config.showStartupTime}
+                  class="toggle"
+                  on:change={(e) => {
+                    setConfig("showStartupTime", e.target.checked);
                   }}
                 />
-              </fieldset>
-              <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-64 py-4">
-                <legend class="fieldset-legend">Show Startup Time</legend>
-                <label class="label">
-                  <input
-                    type="checkbox"
-                    checked={config.showStartupTime}
-                    class="toggle"
-                    on:change={(e) => {
-                      setConfig("showStartupTime", e.target.checked);
-                    }}
-                  />
-                </label>
-              </fieldset>
+              </label>
+            </fieldset>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex gap-2 items-center">
+              <div class="text-lg">Expected Root Dataset</div>
+              <ClipboardCopyIcon
+                class="size-5 text-base-content-calm cursor-pointer"
+                classList={{
+                  hidden: typeof pycmd !== "undefined",
+                }}
+                on:click={() => {
+                  copyToClipboard(toDatasetString(rootDataset()));
+                }}
+              />
             </div>
+            <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+              <span class="opacity-25 select-none">{"<div\n"}</span>
+              {toDatasetString(rootDataset())}
+              <span class="opacity-25 select-none">{"\n>"}</span>
+            </pre>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <div class="flex gap-2 items-center">
+              <div class="text-lg">Expected CSS Variable</div>
+              <ClipboardCopyIcon
+                class="size-5 text-base-content-calm cursor-pointer"
+                classList={{
+                  hidden: typeof pycmd !== "undefined",
+                }}
+                on:click={() => {
+                  copyToClipboard(toCssVarString(cssVar()));
+                }}
+              />
+            </div>
+            <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+              <span class="opacity-25 select-none">{":root, :host {\n"}</span>
+              {toCssVarString(cssVar())}
+              <span class="opacity-25 select-none">{"\n}"}</span>
+            </pre>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <div class="flex gap-2 items-center">
+              <div class="text-lg">Config</div>
+              <ClipboardCopyIcon
+                class="size-5 text-base-content-calm cursor-pointer"
+                classList={{
+                  hidden: typeof pycmd !== "undefined",
+                }}
+                on:click={() => {
+                  copyToClipboard(JSON.stringify({ ...config }, null, 2));
+                }}
+              />
+            </div>
+            <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+              {JSON.stringify({ ...config }, null, 2)}
+            </pre>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <div class="flex gap-2 items-center">
+              <div class="text-lg">Anki Fields</div>
+              <ClipboardCopyIcon
+                class="size-5 text-base-content-calm cursor-pointer"
+                classList={{
+                  hidden: typeof pycmd !== "undefined",
+                }}
+                on:click={() => {
+                  copyToClipboard(JSON.stringify({ ...ankiFields }, null, 2));
+                }}
+              />
+            </div>
+            <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+              {JSON.stringify({ ...ankiFields }, null, 2)}
+            </pre>
+          </div>
+          <Show when={kikuFiles()}>
             <div class="flex flex-col gap-2">
               <div class="flex gap-2 items-center">
-                <div class="text-lg">Expected Root Dataset</div>
+                <div class="text-lg">Kiku Files</div>
                 <ClipboardCopyIcon
                   class="size-5 text-base-content-calm cursor-pointer"
                   classList={{
                     hidden: typeof pycmd !== "undefined",
                   }}
                   on:click={() => {
-                    copyToClipboard(toDatasetString(rootDataset()));
+                    copyToClipboard(kikuFiles() ?? "");
                   }}
                 />
               </div>
               <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                <span class="opacity-25 select-none">{"<div\n"}</span>
-                {toDatasetString(rootDataset())}
-                <span class="opacity-25 select-none">{"\n>"}</span>
+                {kikuFiles()}
               </pre>
             </div>
+          </Show>
+          <div class="flex flex-col gap-2">
+            <div class="flex gap-2 items-center">
+              <div class="text-lg">Logs</div>
+              <ClipboardCopyIcon
+                class="size-5 text-base-content-calm cursor-pointer"
+                classList={{
+                  hidden: typeof pycmd !== "undefined",
+                }}
+                on:click={() => {
+                  copyToClipboard(logs() ?? "");
+                }}
+              />
 
-            <div class="flex flex-col gap-2">
-              <div class="flex gap-2 items-center">
-                <div class="text-lg">Expected CSS Variable</div>
-                <ClipboardCopyIcon
-                  class="size-5 text-base-content-calm cursor-pointer"
-                  classList={{
-                    hidden: typeof pycmd !== "undefined",
-                  }}
-                  on:click={() => {
-                    copyToClipboard(toCssVarString(cssVar()));
-                  }}
-                />
-              </div>
-              <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                <span class="opacity-25 select-none">{":root, :host {\n"}</span>
-                {toCssVarString(cssVar())}
-                <span class="opacity-25 select-none">{"\n}"}</span>
-              </pre>
+              <RefreshCwIcon
+                class="size-5 text-base-content-calm cursor-pointer"
+                on:click={() => {
+                  setLogs(KIKU_STATE.logger.get());
+                }}
+              />
             </div>
-
-            <div class="flex flex-col gap-2">
-              <div class="flex gap-2 items-center">
-                <div class="text-lg">Config</div>
-                <ClipboardCopyIcon
-                  class="size-5 text-base-content-calm cursor-pointer"
-                  classList={{
-                    hidden: typeof pycmd !== "undefined",
-                  }}
-                  on:click={() => {
-                    copyToClipboard(JSON.stringify({ ...config }, null, 2));
-                  }}
-                />
-              </div>
-              <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                {JSON.stringify({ ...config }, null, 2)}
-              </pre>
-            </div>
-
-            <div class="flex flex-col gap-2">
-              <div class="flex gap-2 items-center">
-                <div class="text-lg">Anki Fields</div>
-                <ClipboardCopyIcon
-                  class="size-5 text-base-content-calm cursor-pointer"
-                  classList={{
-                    hidden: typeof pycmd !== "undefined",
-                  }}
-                  on:click={() => {
-                    copyToClipboard(JSON.stringify({ ...ankiFields }, null, 2));
-                  }}
-                />
-              </div>
-              <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                {JSON.stringify({ ...ankiFields }, null, 2)}
-              </pre>
-            </div>
-            <Show when={kikuFiles()}>
-              <div class="flex flex-col gap-2">
-                <div class="flex gap-2 items-center">
-                  <div class="text-lg">Kiku Files</div>
-                  <ClipboardCopyIcon
-                    class="size-5 text-base-content-calm cursor-pointer"
-                    classList={{
-                      hidden: typeof pycmd !== "undefined",
-                    }}
-                    on:click={() => {
-                      copyToClipboard(kikuFiles() ?? "");
-                    }}
-                  />
-                </div>
-                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                  {kikuFiles()}
-                </pre>
-              </div>
-            </Show>
-            <div class="flex flex-col gap-2">
-              <div class="flex gap-2 items-center">
-                <div class="text-lg">Logs</div>
-                <ClipboardCopyIcon
-                  class="size-5 text-base-content-calm cursor-pointer"
-                  classList={{
-                    hidden: typeof pycmd !== "undefined",
-                  }}
-                  on:click={() => {
-                    copyToClipboard(logs() ?? "");
-                  }}
-                />
-
-                <RefreshCwIcon
-                  class="size-5 text-base-content-calm cursor-pointer"
-                  on:click={() => {
-                    setLogs(KIKU_STATE.logger.get());
-                  }}
-                />
-              </div>
-              <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto max-h-[90svh]">
-                {logs()}
-              </pre>
-            </div>
+            <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto max-h-[90svh]">
+              {logs()}
+            </pre>
           </div>
         </div>
       </div>
