@@ -114,7 +114,9 @@ export async function init({
       } else {
         logger.info("config cache miss");
         config$ = validateConfig(
-          await (await fetch(env.KIKU_CONFIG_FILE)).json(),
+          await (
+            await fetch(env.KIKU_CONFIG_FILE, { cache: "no-store" })
+          ).json(),
         );
         sessionStorage.setItem("kiku-config", JSON.stringify(config$));
       }
