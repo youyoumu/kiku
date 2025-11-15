@@ -22,7 +22,7 @@ globalThis.KIKU_STATE = {
 };
 
 export function getSsrTemplate() {
-  const frontTemplate = renderToString(() => (
+  const frontSsrTemplate = renderToString(() => (
     <AnkiFieldContextProvider>
       <CardStoreContextProvider side="front">
         <BreakpointContextProvider>
@@ -33,7 +33,7 @@ export function getSsrTemplate() {
       </CardStoreContextProvider>
     </AnkiFieldContextProvider>
   ));
-  const backTemplate = renderToString(() => (
+  const backSsrTemplate = renderToString(() => (
     <AnkiFieldContextProvider>
       <CardStoreContextProvider side="back">
         <BreakpointContextProvider>
@@ -48,8 +48,8 @@ export function getSsrTemplate() {
   const hydrationScript = generateHydrationScript();
 
   const result = {
-    frontTemplate,
-    backTemplate,
+    frontSsrTemplate,
+    backSsrTemplate,
     hydrationScript,
   };
   console.log(result);

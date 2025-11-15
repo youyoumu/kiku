@@ -74,34 +74,6 @@ export const tailwindFontSizeVar = {
   "9xl": { fontSize: "var(--text-9xl)", lineHeight: "var(--text-9xl--line-height)", },
 } as const;
 
-//biome-ignore format: this looks nicer
-export const defaultCssVar: CssVar = {
-  "--font-primary": defaultConfig.systemFontPrimary,
-  "--font-secondary": defaultConfig.systemFontSecondary,
-
-  "--font-size-base-expression": tailwindFontSizeVar[defaultConfig.fontSizeBaseExpression].fontSize,
-  "--line-height-base-expression": tailwindFontSizeVar[defaultConfig.fontSizeBaseExpression].lineHeight,
-  "--font-size-base-pitch": tailwindFontSizeVar[defaultConfig.fontSizeBasePitch].fontSize,
-  "--line-height-base-pitch": tailwindFontSizeVar[defaultConfig.fontSizeBasePitch].lineHeight,
-  "--font-size-base-sentence": tailwindFontSizeVar[defaultConfig.fontSizeBaseSentence].fontSize,
-  "--line-height-base-sentence": tailwindFontSizeVar[defaultConfig.fontSizeBaseSentence].lineHeight,
-  "--font-size-base-misc-info": tailwindFontSizeVar[defaultConfig.fontSizeBaseMiscInfo].fontSize,
-  "--line-height-base-misc-info": tailwindFontSizeVar[defaultConfig.fontSizeBaseMiscInfo].lineHeight,
-  "--font-size-base-hint": tailwindFontSizeVar[defaultConfig.fontSizeBaseHint].fontSize,
-  "--line-height-base-hint": tailwindFontSizeVar[defaultConfig.fontSizeBaseHint].lineHeight,
-
-  "--font-size-sm-expression": tailwindFontSizeVar[defaultConfig.fontSizeSmExpression].fontSize,
-  "--line-height-sm-expression": tailwindFontSizeVar[defaultConfig.fontSizeSmExpression].lineHeight,
-  "--font-size-sm-pitch": tailwindFontSizeVar[defaultConfig.fontSizeSmPitch].fontSize,
-  "--line-height-sm-pitch": tailwindFontSizeVar[defaultConfig.fontSizeSmPitch].lineHeight,
-  "--font-size-sm-sentence": tailwindFontSizeVar[defaultConfig.fontSizeSmSentence].fontSize,
-  "--line-height-sm-sentence": tailwindFontSizeVar[defaultConfig.fontSizeSmSentence].lineHeight,
-  "--font-size-sm-misc-info": tailwindFontSizeVar[defaultConfig.fontSizeSmMiscInfo].fontSize,
-  "--line-height-sm-misc-info": tailwindFontSizeVar[defaultConfig.fontSizeSmMiscInfo].lineHeight,
-  "--font-size-sm-hint": tailwindFontSizeVar[defaultConfig.fontSizeSmHint].fontSize,
-  "--line-height-sm-hint": tailwindFontSizeVar[defaultConfig.fontSizeSmHint].lineHeight,    
-};
-
 const rootDatasetArray = ["kikuRoot", "theme"] as const;
 export type RootDatasetKey = (typeof rootDatasetArray)[number];
 export type RootDataset = Partial<Record<RootDatasetKey, string>>;
@@ -246,4 +218,12 @@ export function updateConfigState(el: HTMLElement, config: KikuConfig) {
     document.documentElement.style.setProperty(key, value);
     el.style.setProperty(key, value);
   });
+}
+
+export function generateCssVars(vars: Record<string, string>): string {
+  const lines = Object.entries(vars)
+    .map(([key, value]) => `  ${key}: ${value};`)
+    .join("\n");
+
+  return `:root,\n:host {\n${lines}\n}`;
 }

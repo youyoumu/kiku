@@ -1,6 +1,6 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
-import { AnkiConnect } from "./util.ts";
+import { AnkiConnect } from "./util.js";
 
 async function main() {
   const deckName = "Kiku"; // change to your deck name

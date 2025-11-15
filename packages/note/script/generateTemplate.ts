@@ -4,31 +4,37 @@ import { getSsrTemplate } from "./ssr.js";
 
 async function main() {
   const frontSrcPath = join(import.meta.dirname, "../src/front.html");
-  const frontDestPath = join(import.meta.dirname, "../dist/front.html");
+  const frontDestPath = join(import.meta.dirname, "../dist/_kiku_front.html");
   const backSrcPath = join(import.meta.dirname, "../src/back.html");
-  const backDestPath = join(import.meta.dirname, "../dist/back.html");
+  const backDestPath = join(import.meta.dirname, "../dist/_kiku_back.html");
+  const styleSrcPath = join(import.meta.dirname, "../src/style.css");
+  const styleDestPath = join(import.meta.dirname, "../dist/_kiku_style.css");
   const cssSrcPath = join(import.meta.dirname, "../dist/_kiku.css");
   const cssDestPath = join(import.meta.dirname, "../dist/_kiku.css");
 
-  const [frontSrc, backSrc, cssSrc] = await Promise.all([
+  const [frontSrc, backSrc, styleSrc, cssSrc] = await Promise.all([
     readFile(frontSrcPath, "utf8"),
     readFile(backSrcPath, "utf8"),
+    readFile(styleSrcPath, "utf8"),
     readFile(cssSrcPath, "utf8"),
   ]);
 
-  let { frontTemplate, backTemplate, hydrationScript } = getSsrTemplate();
+  const { frontSsrTemplate, backSsrTemplate, hydrationScript } =
+    getSsrTemplate();
 
-  frontTemplate = frontSrc
-    .replace("<!-- SSR_TEMPLATE -->", frontTemplate)
+  const frontTemplate = frontSrc
+    .replace("<!-- SSR_TEMPLATE -->", frontSsrTemplate)
     .replace("<!-- HYDRATION_SCRIPT -->", hydrationScript);
-  backTemplate = backSrc
-    .replace("<!-- SSR_TEMPLATE -->", backTemplate)
+  const backTemplate = backSrc
+    .replace("<!-- SSR_TEMPLATE -->", backSsrTemplate)
     .replace("<!-- HYDRATION_SCRIPT -->", hydrationScript);
+  const styleTemplate = styleSrc;
   const cssTemplate = cssSrc;
 
   await Promise.all([
     writeFile(frontDestPath, frontTemplate),
     writeFile(backDestPath, backTemplate),
+    writeFile(styleDestPath, styleTemplate),
     writeFile(cssDestPath, cssTemplate),
   ]);
 }

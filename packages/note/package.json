@@ -9,7 +9,7 @@
     "typecheck": "tsc -b",
     "preview": "vite preview",
     "copyDist": "node ./script/copyDist.ts",
-    "updateNoteType": "node ./script/updateNoteType.ts",
+    "updateNoteType": "npx vite-node ./script/updateNoteType.ts",
     "generateTemplate": "npx vite-node ./script/generateTemplate.ts",
     "apply": "pnpm run build && pnpm run generateTemplate && pnpm run copyDist && pnpm run updateNoteType",
     "package": "node ./script/package.ts"

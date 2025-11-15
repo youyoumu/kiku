@@ -1,20 +1,28 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { AnkiConnect } from "./util.ts";
+import {
+  defaultConfig,
+  generateCssVars,
+  getCssVar,
+} from "../src/util/config.js";
+import { AnkiConnect } from "./util.js";
 
 async function main() {
   const noteType = "Kiku";
   const cardType = "Mining";
-  const frontPath = join(import.meta.dirname, "../dist/front.html");
-  const backPath = join(import.meta.dirname, "../dist/back.html");
-  const stylePath = join(import.meta.dirname, "../src/style.css");
+  const frontPath = join(import.meta.dirname, "../dist/_kiku_front.html");
+  const backPath = join(import.meta.dirname, "../dist/_kiku_back.html");
+  const stylePath = join(import.meta.dirname, "../dist/_kiku_style.css");
 
   // Read your local HTML templates
-  const [front, back, style] = await Promise.all([
+  const [frontSrc, backSrc, styleSrc] = await Promise.all([
     readFile(frontPath, "utf8"),
     readFile(backPath, "utf8"),
     readFile(stylePath, "utf8"),
   ]);
+
+  const frontTemplate = frontSrc.replace("__DATA_THEME__", "light");
+  const backTemplate = backSrc.replace("__DATA_THEME__", "light");
 
   // Send them to AnkiConnect
   const result = await AnkiConnect.call("updateModelTemplates", {
@@ -22,8 +30,8 @@ async function main() {
       name: noteType,
       templates: {
         [cardType]: {
-          Front: front,
-          Back: back,
+          Front: frontTemplate,
+          Back: backTemplate,
         },
       },
     },
@@ -34,10 +42,16 @@ async function main() {
     `✅ Updated Anki note type "${noteType}" Front/Back from ${frontPath} and ${backPath}`,
   );
 
+  const cssVarTemplate = generateCssVars(getCssVar(defaultConfig));
+  const styleTemplate = styleSrc.replace(
+    "/* __CSS_VARIABLE__ */",
+    cssVarTemplate,
+  );
+
   const result2 = await AnkiConnect.call("updateModelStyling", {
     model: {
       name: noteType,
-      css: style,
+      css: styleTemplate,
     },
   });
 

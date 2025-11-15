@@ -10,9 +10,7 @@ import {
   ConfigContextProvider,
 } from "./components/shared/Context.tsx";
 import {
-  type CssVar,
   defaultConfig,
-  defaultCssVar,
   type KikuConfig,
   type RootDataset,
   updateConfigState,

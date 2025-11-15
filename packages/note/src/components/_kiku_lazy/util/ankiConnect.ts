@@ -1,4 +1,4 @@
-import type { KikuConfig } from "#/util/config";
+import { generateCssVars, getCssVar, type KikuConfig } from "#/util/config";
 import { env } from "#/util/general";
 
 export const base64 = {
@@ -35,9 +35,43 @@ export const AnkiConnect = {
   },
 
   saveConfig: async (config: KikuConfig) => {
-    return await AnkiConnect.invoke("storeMediaFile", {
+    await AnkiConnect.invoke("storeMediaFile", {
       filename: env.KIKU_CONFIG_FILE,
       data: base64.encodeString(JSON.stringify(config)),
+    });
+
+    const [frontSrc, backSrc, styleSrc] = await Promise.all([
+      await (await fetch(env.KIKU_FRONT_FILE)).text(),
+      await (await fetch(env.KIKU_BACK_FILE)).text(),
+      await (await fetch(env.KIKU_STYLE_FILE)).text(),
+    ]);
+
+    const frontTemplate = frontSrc.replace("__DATA_THEME__", config.theme);
+    const backTemplate = backSrc.replace("__DATA_THEME__", config.theme);
+    const cssVar = getCssVar(config);
+    const cssVarTemplate = generateCssVars(cssVar);
+    const styleTemplate = styleSrc.replace(
+      "/* __CSS_VARIABLE__ */",
+      cssVarTemplate,
+    );
+
+    await AnkiConnect.invoke("updateModelTemplates", {
+      model: {
+        name: env.KIKU_NOTE_TYPE,
+        templates: {
+          [env.KIKU_CARD_TYPE]: {
+            Front: frontTemplate,
+            Back: backTemplate,
+          },
+        },
+      },
+    });
+
+    await AnkiConnect.invoke("updateModelStyling", {
+      model: {
+        name: env.KIKU_NOTE_TYPE,
+        css: styleTemplate,
+      },
     });
   },
 
