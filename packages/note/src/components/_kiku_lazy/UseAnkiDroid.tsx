@@ -1,4 +1,4 @@
-import { createEffect, createSignal, onCleanup } from "solid-js";
+import { createEffect, createSignal, Match, onCleanup, Switch } from "solid-js";
 import { isServer, Portal } from "solid-js/web";
 import { useCardStore, useConfig } from "#/components/shared/Context";
 import { CheckIcon, XIcon } from "./Icons";
@@ -124,8 +124,8 @@ export default function UseAnkiDroid() {
   let isScrolling = false;
   let isSwiping = false;
 
-  const [checkIconOffset, setCheckIconOffset] = createSignal(0);
-  const [xIconOffset, setXIconOffset] = createSignal(0);
+  const [rightIconOffset, setCheckIconOffset] = createSignal(0);
+  const [leftIconOffset, setXIconOffset] = createSignal(0);
   const [progress, setProgress] = createSignal(0);
 
   function handleTouchStart(e: TouchEvent) {
@@ -234,49 +234,72 @@ export default function UseAnkiDroid() {
   if (card.side === "front") return null;
 
   return (
-    <>
-      <Portal mount={KIKU_STATE.root}>
-        <div
-          class="absolute top-1/2 -translate-y-1/2 left-0 bg-error/30 flex justify-center items-center rounded-full transition-transform"
-          style={{
-            height: xIconOffset() > 0 ? `${48 + 24 * progress()}px` : undefined,
-            width: xIconOffset() > 0 ? `${48 + 24 * progress()}px` : undefined,
-            transform: `translateX(${(48 + 12 - xIconOffset()) * -1}px)`,
-            opacity: `${progress() - 0.2}`,
-          }}
-        >
+    <Portal mount={KIKU_STATE.root}>
+      <Icon
+        ref={xIconRef}
+        side="left"
+        color={reverse ? "error" : "success"}
+        offset={leftIconOffset()}
+        progress={progress()}
+      />
+      <Icon
+        ref={checkIconRef}
+        side="right"
+        color={reverse ? "success" : "error"}
+        offset={rightIconOffset()}
+        progress={progress()}
+      />
+    </Portal>
+  );
+}
+
+function Icon(props: {
+  ref: SVGSVGElement | undefined;
+  offset: number;
+  side: "left" | "right";
+  color: "success" | "error";
+  progress: number;
+}) {
+  const direction = () => (props.side === "right" ? 1 : -1);
+
+  return (
+    <div
+      class="absolute top-1/2 -translate-y-1/2 flex justify-center items-center rounded-full transition-transform"
+      classList={{
+        "bg-error/30": props.color === "error",
+        "bg-success/30": props.color === "success",
+      }}
+      style={{
+        left: props.side === "left" ? "0" : undefined,
+        right: props.side === "right" ? "0" : undefined,
+        height: props.offset > 0 ? `${48 + 24 * props.progress}px` : undefined,
+        width: props.offset > 0 ? `${48 + 24 * props.progress}px` : undefined,
+        transform: `translateX(${(48 + 12 - props.offset) * direction()}px)`,
+        opacity: `${props.progress - 0.2}`,
+      }}
+    >
+      <Switch>
+        <Match when={props.color === "error"}>
           <XIcon
-            ref={xIconRef}
+            ref={props.ref}
             class="size-12 rounded-full p-2 shadow-lg transition-colors"
             classList={{
-              "bg-base-100 text-base-content-primary": progress() !== 1,
-              "bg-error text-error-content": progress() === 1,
+              "bg-base-100 text-base-content-primary": props.progress !== 1,
+              "bg-error text-error-content": props.progress === 1,
             }}
           />
-        </div>
-      </Portal>
-      <Portal mount={KIKU_STATE.root}>
-        <div
-          class="absolute top-1/2 -translate-y-1/2 right-0 bg-success/30 flex justify-center items-center rounded-full transition-transform"
-          style={{
-            height:
-              checkIconOffset() > 0 ? `${48 + 24 * progress()}px` : undefined,
-            width:
-              checkIconOffset() > 0 ? `${48 + 24 * progress()}px` : undefined,
-            transform: `translateX(${48 + 12 - checkIconOffset()}px)`,
-            opacity: `${progress() - 0.2}`,
-          }}
-        >
+        </Match>
+        <Match when={props.color === "success"}>
           <CheckIcon
-            ref={checkIconRef}
-            class="size-12 rounded-full p-2 transition-colors shadow-lg"
+            ref={props.ref}
+            class="size-12 rounded-full p-2 shadow-lg transition-colors"
             classList={{
-              "bg-base-100 text-base-content-primary": progress() !== 1,
-              "bg-success text-success-content": progress() === 1,
+              "bg-base-100 text-base-content-primary": props.progress !== 1,
+              "bg-success text-success-content": props.progress === 1,
             }}
           />
-        </div>
-      </Portal>
-    </>
+        </Match>
+      </Switch>
+    </div>
   );
 }
