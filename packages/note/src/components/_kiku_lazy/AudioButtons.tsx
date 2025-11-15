@@ -123,7 +123,7 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
 
   if (props.position === 2)
     return (
-      <Portal mount={card.layoutRef}>
+      <Portal mount={KIKU_STATE.root}>
         <div class="absolute bottom-4 left-4 flex sm:hidden flex-col gap-2 items-center">
           <NotePlayIcons />
         </div>

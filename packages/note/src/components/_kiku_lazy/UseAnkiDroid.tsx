@@ -191,7 +191,6 @@ export default function UseAnkiDroid() {
 
   function handleTouchEnd() {
     if (card.side === "front") {
-      console.log("DEBUG[1056]: isSwiping=", isSwiping);
       if (isSwiping) return;
       ankiDroidAPI?.ankiShowAnswer();
     } else if (card.side === "back") {
