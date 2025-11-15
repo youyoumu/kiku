@@ -12,7 +12,6 @@ import {
 import {
   defaultConfig,
   type KikuConfig,
-  type RootDataset,
   updateConfigState,
   validateConfig,
 } from "./util/config.ts";
@@ -28,7 +27,6 @@ declare global {
     startupTime?: number;
     config?: KikuConfig;
     root?: HTMLElement;
-    rootDataset: RootDataset;
     isAnkiWeb?: boolean;
     assetsPath: string;
     logger: Logger;
@@ -36,7 +34,6 @@ declare global {
   var pycmd: () => void;
 }
 globalThis.KIKU_STATE = {
-  rootDataset: defaultConfig,
   isAnkiWeb: window.location.origin.includes("ankiuser.net"),
   assetsPath: window.location.origin,
   logger,
@@ -120,9 +117,6 @@ export async function init({
       logger.warn("Failed to load config, using default config");
       config$ = defaultConfig;
     }
-
-    const rootDataset = { ...root.dataset } as RootDataset;
-    KIKU_STATE.rootDataset = rootDataset;
 
     updateConfigState(root, config$);
 

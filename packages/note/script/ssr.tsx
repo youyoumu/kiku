@@ -16,7 +16,6 @@ const [config, setConfig] = createStore(defaultConfig);
 const logger = new Logger();
 
 globalThis.KIKU_STATE = {
-  rootDataset: defaultConfig,
   assetsPath: "",
   logger,
 };

@@ -28,7 +28,6 @@ import {
   ArrowLeftIcon,
   ClipboardCopyIcon,
   RefreshCwIcon,
-  TriangleAlertIcon,
   UndoIcon,
 } from "./Icons";
 import { AnkiConnect } from "./util/ankiConnect";
@@ -648,18 +647,6 @@ function DebugSettings() {
       });
   }
 
-  const rootDatasetMismatches = () => {
-    const mismatches = Object.fromEntries(
-      Object.entries(config).filter(([key, value]) => {
-        return (
-          rootDatasetConfigWhitelist.has(key as RootDatasetKey) &&
-          KIKU_STATE.rootDataset[key as RootDatasetKey] !== value
-        );
-      }),
-    );
-    return mismatches;
-  };
-
   const rootDataset = () => {
     return Object.fromEntries(
       Object.entries(config).filter(([key]) => {
@@ -674,228 +661,179 @@ function DebugSettings() {
   });
 
   return (
-    <>
-      <Show
-        when={
-          Object.keys(rootDatasetMismatches()).length > 0 &&
-          Object.keys(rootDatasetMismatches()).some((key) =>
-            rootDatasetConfigWhitelist.has(key as RootDatasetKey),
-          )
-        }
-      >
-        <div role="alert" class="alert alert-warning">
-          <TriangleAlertIcon />
-          <span>
-            Root Dataset mismatches, FOUC (Flash Of Unstyled Content) may occur.{" "}
-            <br />
-            <br />
-            <span class="text-xs">
-              {Object.keys(rootDatasetMismatches())
-                .map((key) => toDatasetKey(toDashed(key)))
-                .join(", ")}
-            </span>
-          </span>
-        </div>
-      </Show>
-      <div class="pb-32">
-        <div class="collapse bg-base-100 border border-base-300">
-          <input type="checkbox" />
-          <div class="collapse-title text-lg font-bold">Debug</div>
-          <div class="collapse-content text-sm">
-            <div class="flex flex-col gap-4 animate-fade-in ">
-              <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] rounded-box gap-x-4 gap-y-2">
-                <fieldset class="fieldset">
-                  <legend class="fieldset-legend">
-                    AnkiConnect Port
-                    <UndoIcon
-                      class="h-4 w-4 cursor-pointer"
-                      classList={{
-                        hidden:
-                          config.ankiConnectPort ===
-                          defaultConfig.ankiConnectPort,
-                      }}
-                      on:click={() => {
-                        setConfig(
-                          "ankiConnectPort",
-                          defaultConfig.ankiConnectPort,
-                        );
-                      }}
-                    />
-                  </legend>
-                  <input
-                    type="text"
-                    class="input w-full"
-                    placeholder={defaultConfig.ankiConnectPort.toString()}
-                    value={config.ankiConnectPort}
-                    on:input={(e) => {
-                      let value = (e.target as HTMLInputElement).value;
-                      value = value.replaceAll(/[^0-9]/g, "");
-                      (e.target as HTMLInputElement).value = value;
-                      setConfig("ankiConnectPort", Number(value));
-                    }}
-                  />
-                </fieldset>
-                <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-64 py-4">
-                  <legend class="fieldset-legend">Show Startup Time</legend>
-                  <label class="label">
-                    <input
-                      type="checkbox"
-                      checked={config.showStartupTime}
-                      class="toggle"
-                      on:change={(e) => {
-                        setConfig("showStartupTime", e.target.checked);
-                      }}
-                    />
-                  </label>
-                </fieldset>
-              </div>
-              <div class="flex flex-col gap-2">
-                <div class="flex gap-2 items-center">
-                  <div class="text-lg">Expected Root Dataset</div>
-                  <ClipboardCopyIcon
-                    class="size-5 text-base-content-calm cursor-pointer"
+    <div class="pb-32">
+      <div class="collapse bg-base-100 border border-base-300">
+        <input type="checkbox" />
+        <div class="collapse-title text-lg font-bold">Debug</div>
+        <div class="collapse-content text-sm">
+          <div class="flex flex-col gap-4 animate-fade-in ">
+            <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] rounded-box gap-x-4 gap-y-2">
+              <fieldset class="fieldset">
+                <legend class="fieldset-legend">
+                  AnkiConnect Port
+                  <UndoIcon
+                    class="h-4 w-4 cursor-pointer"
                     classList={{
-                      hidden: typeof pycmd !== "undefined",
+                      hidden:
+                        config.ankiConnectPort ===
+                        defaultConfig.ankiConnectPort,
                     }}
                     on:click={() => {
-                      copyToClipboard(toDatasetString(rootDataset()));
-                    }}
-                  />
-                </div>
-                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                  <span class="opacity-25 select-none">{"<div\n"}</span>
-                  {toDatasetString(rootDataset())}
-                  <span class="opacity-25 select-none">{"\n>"}</span>
-                </pre>
-              </div>
-
-              <div class="flex flex-col gap-2">
-                <div class="flex gap-2 items-center">
-                  <div class="text-lg">Current Root Dataset</div>
-                  <ClipboardCopyIcon
-                    class="size-5 text-base-content-calm cursor-pointer"
-                    classList={{
-                      hidden: typeof pycmd !== "undefined",
-                    }}
-                    on:click={() => {
-                      copyToClipboard(toDatasetString(KIKU_STATE.rootDataset));
-                    }}
-                  />
-                </div>
-
-                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                  <span class="opacity-25 select-none">{"<div\n"}</span>
-                  {toDatasetString(KIKU_STATE.rootDataset)}
-                  <span class="opacity-25 select-none">{"\n>"}</span>
-                </pre>
-              </div>
-
-              <div class="flex flex-col gap-2">
-                <div class="flex gap-2 items-center">
-                  <div class="text-lg">Expected CSS Variable</div>
-                  <ClipboardCopyIcon
-                    class="size-5 text-base-content-calm cursor-pointer"
-                    classList={{
-                      hidden: typeof pycmd !== "undefined",
-                    }}
-                    on:click={() => {
-                      copyToClipboard(toCssVarString(cssVar()));
-                    }}
-                  />
-                </div>
-                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                  <span class="opacity-25 select-none">
-                    {":root, :host {\n"}
-                  </span>
-                  {toCssVarString(cssVar())}
-                  <span class="opacity-25 select-none">{"\n}"}</span>
-                </pre>
-              </div>
-
-              <div class="flex flex-col gap-2">
-                <div class="flex gap-2 items-center">
-                  <div class="text-lg">Config</div>
-                  <ClipboardCopyIcon
-                    class="size-5 text-base-content-calm cursor-pointer"
-                    classList={{
-                      hidden: typeof pycmd !== "undefined",
-                    }}
-                    on:click={() => {
-                      copyToClipboard(JSON.stringify({ ...config }, null, 2));
-                    }}
-                  />
-                </div>
-                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                  {JSON.stringify({ ...config }, null, 2)}
-                </pre>
-              </div>
-
-              <div class="flex flex-col gap-2">
-                <div class="flex gap-2 items-center">
-                  <div class="text-lg">Anki Fields</div>
-                  <ClipboardCopyIcon
-                    class="size-5 text-base-content-calm cursor-pointer"
-                    classList={{
-                      hidden: typeof pycmd !== "undefined",
-                    }}
-                    on:click={() => {
-                      copyToClipboard(
-                        JSON.stringify({ ...ankiFields }, null, 2),
+                      setConfig(
+                        "ankiConnectPort",
+                        defaultConfig.ankiConnectPort,
                       );
                     }}
                   />
-                </div>
-                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                  {JSON.stringify({ ...ankiFields }, null, 2)}
-                </pre>
+                </legend>
+                <input
+                  type="text"
+                  class="input w-full"
+                  placeholder={defaultConfig.ankiConnectPort.toString()}
+                  value={config.ankiConnectPort}
+                  on:input={(e) => {
+                    let value = (e.target as HTMLInputElement).value;
+                    value = value.replaceAll(/[^0-9]/g, "");
+                    (e.target as HTMLInputElement).value = value;
+                    setConfig("ankiConnectPort", Number(value));
+                  }}
+                />
+              </fieldset>
+              <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-64 py-4">
+                <legend class="fieldset-legend">Show Startup Time</legend>
+                <label class="label">
+                  <input
+                    type="checkbox"
+                    checked={config.showStartupTime}
+                    class="toggle"
+                    on:change={(e) => {
+                      setConfig("showStartupTime", e.target.checked);
+                    }}
+                  />
+                </label>
+              </fieldset>
+            </div>
+            <div class="flex flex-col gap-2">
+              <div class="flex gap-2 items-center">
+                <div class="text-lg">Expected Root Dataset</div>
+                <ClipboardCopyIcon
+                  class="size-5 text-base-content-calm cursor-pointer"
+                  classList={{
+                    hidden: typeof pycmd !== "undefined",
+                  }}
+                  on:click={() => {
+                    copyToClipboard(toDatasetString(rootDataset()));
+                  }}
+                />
               </div>
-              <Show when={kikuFiles()}>
-                <div class="flex flex-col gap-2">
-                  <div class="flex gap-2 items-center">
-                    <div class="text-lg">Kiku Files</div>
-                    <ClipboardCopyIcon
-                      class="size-5 text-base-content-calm cursor-pointer"
-                      classList={{
-                        hidden: typeof pycmd !== "undefined",
-                      }}
-                      on:click={() => {
-                        copyToClipboard(kikuFiles() ?? "");
-                      }}
-                    />
-                  </div>
-                  <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                    {kikuFiles()}
-                  </pre>
-                </div>
-              </Show>
+              <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                <span class="opacity-25 select-none">{"<div\n"}</span>
+                {toDatasetString(rootDataset())}
+                <span class="opacity-25 select-none">{"\n>"}</span>
+              </pre>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <div class="flex gap-2 items-center">
+                <div class="text-lg">Expected CSS Variable</div>
+                <ClipboardCopyIcon
+                  class="size-5 text-base-content-calm cursor-pointer"
+                  classList={{
+                    hidden: typeof pycmd !== "undefined",
+                  }}
+                  on:click={() => {
+                    copyToClipboard(toCssVarString(cssVar()));
+                  }}
+                />
+              </div>
+              <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                <span class="opacity-25 select-none">{":root, :host {\n"}</span>
+                {toCssVarString(cssVar())}
+                <span class="opacity-25 select-none">{"\n}"}</span>
+              </pre>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <div class="flex gap-2 items-center">
+                <div class="text-lg">Config</div>
+                <ClipboardCopyIcon
+                  class="size-5 text-base-content-calm cursor-pointer"
+                  classList={{
+                    hidden: typeof pycmd !== "undefined",
+                  }}
+                  on:click={() => {
+                    copyToClipboard(JSON.stringify({ ...config }, null, 2));
+                  }}
+                />
+              </div>
+              <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                {JSON.stringify({ ...config }, null, 2)}
+              </pre>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <div class="flex gap-2 items-center">
+                <div class="text-lg">Anki Fields</div>
+                <ClipboardCopyIcon
+                  class="size-5 text-base-content-calm cursor-pointer"
+                  classList={{
+                    hidden: typeof pycmd !== "undefined",
+                  }}
+                  on:click={() => {
+                    copyToClipboard(JSON.stringify({ ...ankiFields }, null, 2));
+                  }}
+                />
+              </div>
+              <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                {JSON.stringify({ ...ankiFields }, null, 2)}
+              </pre>
+            </div>
+            <Show when={kikuFiles()}>
               <div class="flex flex-col gap-2">
                 <div class="flex gap-2 items-center">
-                  <div class="text-lg">Logs</div>
+                  <div class="text-lg">Kiku Files</div>
                   <ClipboardCopyIcon
                     class="size-5 text-base-content-calm cursor-pointer"
                     classList={{
                       hidden: typeof pycmd !== "undefined",
                     }}
                     on:click={() => {
-                      copyToClipboard(logs() ?? "");
-                    }}
-                  />
-
-                  <RefreshCwIcon
-                    class="size-5 text-base-content-calm cursor-pointer"
-                    on:click={() => {
-                      setLogs(KIKU_STATE.logger.get());
+                      copyToClipboard(kikuFiles() ?? "");
                     }}
                   />
                 </div>
-                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto max-h-[90svh]">
-                  {logs()}
+                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
+                  {kikuFiles()}
                 </pre>
               </div>
+            </Show>
+            <div class="flex flex-col gap-2">
+              <div class="flex gap-2 items-center">
+                <div class="text-lg">Logs</div>
+                <ClipboardCopyIcon
+                  class="size-5 text-base-content-calm cursor-pointer"
+                  classList={{
+                    hidden: typeof pycmd !== "undefined",
+                  }}
+                  on:click={() => {
+                    copyToClipboard(logs() ?? "");
+                  }}
+                />
+
+                <RefreshCwIcon
+                  class="size-5 text-base-content-calm cursor-pointer"
+                  on:click={() => {
+                    setLogs(KIKU_STATE.logger.get());
+                  }}
+                />
+              </div>
+              <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto max-h-[90svh]">
+                {logs()}
+              </pre>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
