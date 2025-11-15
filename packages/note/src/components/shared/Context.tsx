@@ -18,7 +18,7 @@ import {
   type KikuNotesManifest,
 } from "#/types";
 import { type KikuConfig, updateConfigState } from "#/util/config";
-import { getAnkiFields } from "#/util/general";
+import { env, getAnkiFields } from "#/util/general";
 import type { WorkerClient } from "#/worker/client";
 
 const ConfigContext =
@@ -34,6 +34,10 @@ export function ConfigContextProvider(props: {
     KIKU_STATE.logger.debug("Updating config:", config);
     if (!KIKU_STATE.root) throw new Error("Missing root");
     updateConfigState(KIKU_STATE.root, config);
+    sessionStorage.setItem(
+      env.KIKU_CONFIG_SESSION_STORAGE_KEY,
+      JSON.stringify(config),
+    );
   });
 
   return (

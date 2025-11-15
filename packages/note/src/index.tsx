@@ -107,7 +107,7 @@ export async function init({
 
     let config$: KikuConfig;
     try {
-      const cache = sessionStorage.getItem("kiku-config");
+      const cache = sessionStorage.getItem(env.KIKU_CONFIG_SESSION_STORAGE_KEY);
       if (cache) {
         logger.info("config cache hit");
         config$ = JSON.parse(cache);
@@ -118,7 +118,10 @@ export async function init({
             await fetch(env.KIKU_CONFIG_FILE, { cache: "no-store" })
           ).json(),
         );
-        sessionStorage.setItem("kiku-config", JSON.stringify(config$));
+        sessionStorage.setItem(
+          env.KIKU_CONFIG_SESSION_STORAGE_KEY,
+          JSON.stringify(config$),
+        );
       }
     } catch {
       logger.warn("Failed to load config, using default config");
