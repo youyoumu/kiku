@@ -74,28 +74,38 @@ export const tailwindFontSizeVar = {
   "9xl": { fontSize: "var(--text-9xl)", lineHeight: "var(--text-9xl--line-height)", },
 } as const;
 
-//TODO: css var
-export const rootDatasetConfigWhitelist = new Set<keyof KikuConfig>([
-  "theme",
-  "webFontPrimary",
-  "systemFontPrimary",
-  "useSystemFontPrimary",
-  "webFontSecondary",
-  "systemFontSecondary",
-  "useSystemFontSecondary",
-]);
-Object.keys(defaultConfig).forEach((key) => {
-  if (key.startsWith("fontSize"))
-    rootDatasetConfigWhitelist.add(key as keyof KikuConfig);
-});
+//biome-ignore format: this looks nicer
+export const defaultCssVar: CssVar = {
+  "--font-primary": defaultConfig.systemFontPrimary,
+  "--font-secondary": defaultConfig.systemFontSecondary,
 
-function validateResponsiveFontSize(
-  value: TailwindSize,
-  fallback: TailwindSize,
-): TailwindSize {
-  if (tailwindSize.includes(value)) return value;
-  return fallback;
-}
+  "--font-size-base-expression": tailwindFontSizeVar[defaultConfig.fontSizeBaseExpression].fontSize,
+  "--line-height-base-expression": tailwindFontSizeVar[defaultConfig.fontSizeBaseExpression].lineHeight,
+  "--font-size-base-pitch": tailwindFontSizeVar[defaultConfig.fontSizeBasePitch].fontSize,
+  "--line-height-base-pitch": tailwindFontSizeVar[defaultConfig.fontSizeBasePitch].lineHeight,
+  "--font-size-base-sentence": tailwindFontSizeVar[defaultConfig.fontSizeBaseSentence].fontSize,
+  "--line-height-base-sentence": tailwindFontSizeVar[defaultConfig.fontSizeBaseSentence].lineHeight,
+  "--font-size-base-misc-info": tailwindFontSizeVar[defaultConfig.fontSizeBaseMiscInfo].fontSize,
+  "--line-height-base-misc-info": tailwindFontSizeVar[defaultConfig.fontSizeBaseMiscInfo].lineHeight,
+  "--font-size-base-hint": tailwindFontSizeVar[defaultConfig.fontSizeBaseHint].fontSize,
+  "--line-height-base-hint": tailwindFontSizeVar[defaultConfig.fontSizeBaseHint].lineHeight,
+
+  "--font-size-sm-expression": tailwindFontSizeVar[defaultConfig.fontSizeSmExpression].fontSize,
+  "--line-height-sm-expression": tailwindFontSizeVar[defaultConfig.fontSizeSmExpression].lineHeight,
+  "--font-size-sm-pitch": tailwindFontSizeVar[defaultConfig.fontSizeSmPitch].fontSize,
+  "--line-height-sm-pitch": tailwindFontSizeVar[defaultConfig.fontSizeSmPitch].lineHeight,
+  "--font-size-sm-sentence": tailwindFontSizeVar[defaultConfig.fontSizeSmSentence].fontSize,
+  "--line-height-sm-sentence": tailwindFontSizeVar[defaultConfig.fontSizeSmSentence].lineHeight,
+  "--font-size-sm-misc-info": tailwindFontSizeVar[defaultConfig.fontSizeSmMiscInfo].fontSize,
+  "--line-height-sm-misc-info": tailwindFontSizeVar[defaultConfig.fontSizeSmMiscInfo].lineHeight,
+  "--font-size-sm-hint": tailwindFontSizeVar[defaultConfig.fontSizeSmHint].fontSize,
+  "--line-height-sm-hint": tailwindFontSizeVar[defaultConfig.fontSizeSmHint].lineHeight,    
+};
+
+export const rootDatasetConfigWhitelist = new Set<keyof KikuConfig>([
+  "kikuRoot",
+  "theme",
+]);
 
 export function validateConfig(config: KikuConfig): KikuConfig {
   try {
@@ -117,16 +127,16 @@ export function validateConfig(config: KikuConfig): KikuConfig {
       ankiConnectPort: typeof config.ankiConnectPort === "string" && Number(config.ankiConnectPort) > 0 && Number(config.ankiConnectPort) < 65535 ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
       ankiDroidEnableIntegration: typeof config.ankiDroidEnableIntegration === "string" ? config.ankiDroidEnableIntegration === "true" ? "true" : "false" : defaultConfig.ankiDroidEnableIntegration,
       ankiDroidReverseSwipeDirection: typeof config.ankiDroidReverseSwipeDirection === "string" ? config.ankiDroidReverseSwipeDirection === "true" ? "true" : "false" : defaultConfig.ankiDroidReverseSwipeDirection,
-      fontSizeBaseExpression: validateResponsiveFontSize( config.fontSizeBaseExpression, defaultConfig.fontSizeBaseExpression,),
-      fontSizeBasePitch: validateResponsiveFontSize( config.fontSizeBasePitch, defaultConfig.fontSizeBasePitch,),
-      fontSizeBaseSentence: validateResponsiveFontSize( config.fontSizeBaseSentence, defaultConfig.fontSizeBaseSentence,),
-      fontSizeBaseMiscInfo: validateResponsiveFontSize( config.fontSizeBaseMiscInfo, defaultConfig.fontSizeBaseMiscInfo,),
-      fontSizeBaseHint: validateResponsiveFontSize( config.fontSizeBaseHint, defaultConfig.fontSizeBaseHint,),
-      fontSizeSmExpression: validateResponsiveFontSize( config.fontSizeSmExpression, defaultConfig.fontSizeSmExpression,),
-      fontSizeSmPitch: validateResponsiveFontSize( config.fontSizeSmPitch, defaultConfig.fontSizeSmPitch,),
-      fontSizeSmSentence: validateResponsiveFontSize( config.fontSizeSmSentence, defaultConfig.fontSizeSmSentence,),
-      fontSizeSmMiscInfo: validateResponsiveFontSize( config.fontSizeSmMiscInfo, defaultConfig.fontSizeSmMiscInfo,),
-      fontSizeSmHint: validateResponsiveFontSize( config.fontSizeSmHint, defaultConfig.fontSizeSmHint,),
+      fontSizeBaseExpression: tailwindSize.includes(config.fontSizeBaseExpression) ? config.fontSizeBaseExpression : defaultConfig.fontSizeBaseExpression,
+      fontSizeBasePitch: tailwindSize.includes(config.fontSizeBasePitch) ? config.fontSizeBasePitch : defaultConfig.fontSizeBasePitch,
+      fontSizeBaseSentence: tailwindSize.includes(config.fontSizeBaseSentence) ? config.fontSizeBaseSentence : defaultConfig.fontSizeBaseSentence,
+      fontSizeBaseMiscInfo: tailwindSize.includes(config.fontSizeBaseMiscInfo) ? config.fontSizeBaseMiscInfo : defaultConfig.fontSizeBaseMiscInfo,
+      fontSizeBaseHint: tailwindSize.includes(config.fontSizeBaseHint) ? config.fontSizeBaseHint : defaultConfig.fontSizeBaseHint,
+      fontSizeSmExpression: tailwindSize.includes(config.fontSizeSmExpression) ? config.fontSizeSmExpression : defaultConfig.fontSizeSmExpression,
+      fontSizeSmPitch: tailwindSize.includes(config.fontSizeSmPitch) ? config.fontSizeSmPitch : defaultConfig.fontSizeSmPitch,
+      fontSizeSmSentence: tailwindSize.includes(config.fontSizeSmSentence) ? config.fontSizeSmSentence : defaultConfig.fontSizeSmSentence,
+      fontSizeSmMiscInfo: tailwindSize.includes(config.fontSizeSmMiscInfo) ? config.fontSizeSmMiscInfo : defaultConfig.fontSizeSmMiscInfo,
+      fontSizeSmHint: tailwindSize.includes(config.fontSizeSmHint) ? config.fontSizeSmHint : defaultConfig.fontSizeSmHint,
     };
 
     return valid;
@@ -166,23 +176,6 @@ export type CssVar = {
 export type Dataset = {
   "data-kiku-root": "true" | "false";
   "data-theme": string;
-  "data-web-font-primary": string;
-  "data-system-font-primary": string;
-  "data-use-system-font-primary": "true" | "false";
-  "data-web-font-secondary": string;
-  "data-system-font-secondary": string;
-  "data-use-system-font-secondary": "true" | "false";
-  "data-anki-connect-port": string;
-  "data-font-size-base-expression": string;
-  "data-font-size-base-pitch": string;
-  "data-font-size-base-sentence": string;
-  "data-font-size-base-misc-info": string;
-  "data-font-size-base-hint": string;
-  "data-font-size-sm-expression": string;
-  "data-font-size-sm-pitch": string;
-  "data-font-size-sm-sentence": string;
-  "data-font-size-sm-misc-info": string;
-  "data-font-size-sm-hint": string;
   //
   "data-field": string;
   "data-is-audio-card": "true" | "false" | "{{IsAudioCard}}" | "ready"
@@ -203,12 +196,7 @@ export type Dataset = {
 
 export type DatasetProp = Partial<Dataset>;
 
-export function updateConfigState(el: HTMLElement, config: KikuConfig) {
-  if (document.documentElement.getAttribute("data-theme") !== "none") {
-    document.documentElement.setAttribute("data-theme", config.theme);
-  }
-  el.dataset.theme = config.theme;
-
+export function getCssVar(config: KikuConfig) {
   //biome-ignore format: this looks nicer
   const cssVar: CssVar = {
     "--font-primary": config.useSystemFontPrimary ? config.systemFontPrimary : config.webFontPrimary,
@@ -236,6 +224,17 @@ export function updateConfigState(el: HTMLElement, config: KikuConfig) {
     "--font-size-sm-hint": tailwindFontSizeVar[config.fontSizeSmHint].fontSize,
     "--line-height-sm-hint": tailwindFontSizeVar[config.fontSizeSmHint].lineHeight,
   };
+
+  return cssVar;
+}
+
+export function updateConfigState(el: HTMLElement, config: KikuConfig) {
+  if (document.documentElement.getAttribute("data-theme") !== "none") {
+    document.documentElement.setAttribute("data-theme", config.theme);
+  }
+  el.dataset.theme = config.theme;
+
+  const cssVar = getCssVar(config);
   Object.entries(cssVar).forEach(([key, value]) => {
     document.documentElement.style.setProperty(key, value);
     el.style.setProperty(key, value);

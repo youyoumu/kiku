@@ -7,7 +7,7 @@ async function main() {
   const cardType = "Mining";
   const frontPath = join(import.meta.dirname, "../dist/front.html");
   const backPath = join(import.meta.dirname, "../dist/back.html");
-  const stylePath = join(import.meta.dirname, "./systemFont.css");
+  const stylePath = join(import.meta.dirname, "../src/style.css");
 
   // Read your local HTML templates
   const [front, back, style] = await Promise.all([

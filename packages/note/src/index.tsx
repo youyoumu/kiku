@@ -10,7 +10,9 @@ import {
   ConfigContextProvider,
 } from "./components/shared/Context.tsx";
 import {
+  type CssVar,
   defaultConfig,
+  defaultCssVar,
   type KikuConfig,
   updateConfigState,
   validateConfig,
@@ -121,35 +123,8 @@ export async function init({
     }
 
     const rootDataset = { ...root.dataset } as KikuConfig;
-    // biome-ignore format: this looks nicer
-    (() => {
-      const rootDataset$: KikuConfig = {
-        kikuRoot: rootDataset.kikuRoot,
-        theme: rootDataset.theme,
-        webFontPrimary: rootDataset.webFontPrimary,
-        systemFontPrimary: rootDataset.systemFontPrimary,
-        useSystemFontPrimary: rootDataset.useSystemFontPrimary,
-        webFontSecondary: rootDataset.webFontSecondary,
-        systemFontSecondary: rootDataset.systemFontSecondary,
-        useSystemFontSecondary: rootDataset.useSystemFontSecondary,
-        showTheme: rootDataset.showTheme,
-        showStartupTime: rootDataset.showStartupTime,
-        ankiConnectPort: rootDataset.ankiConnectPort,
-        ankiDroidEnableIntegration: rootDataset.ankiDroidEnableIntegration,
-        ankiDroidReverseSwipeDirection: rootDataset.ankiDroidReverseSwipeDirection,
-        fontSizeBaseExpression: rootDataset.fontSizeBaseExpression,
-        fontSizeBasePitch: rootDataset.fontSizeBasePitch,
-        fontSizeBaseSentence: rootDataset.fontSizeBaseSentence,
-        fontSizeBaseMiscInfo: rootDataset.fontSizeBaseMiscInfo,
-        fontSizeBaseHint: rootDataset.fontSizeBaseHint,
-        fontSizeSmExpression: rootDataset.fontSizeSmExpression,
-        fontSizeSmPitch: rootDataset.fontSizeSmPitch,
-        fontSizeSmSentence: rootDataset.fontSizeSmSentence,
-        fontSizeSmMiscInfo: rootDataset.fontSizeSmMiscInfo,
-        fontSizeSmHint: rootDataset.fontSizeSmHint,
-      };
-      KIKU_STATE.rootDataset = rootDataset$;
-    })();
+    KIKU_STATE.rootDataset = rootDataset;
+
     updateConfigState(root, config$);
 
     const [config, setConfig] = createStore(config$);

@@ -8,9 +8,8 @@ import {
 } from "solid-js";
 import { Portal } from "solid-js/web";
 import {
-  type CssVar,
-  type DatasetProp,
   defaultConfig,
+  getCssVar,
   type KikuConfig,
   rootDatasetConfigWhitelist,
   type TailwindSize,
@@ -54,6 +53,7 @@ function toDatasetString(obj: Record<string, string | number>) {
 function toCssVarString(obj: Record<string, string>) {
   const txt = Object.entries(obj)
     .map(([key, value]) => {
+      if (value === "") value = "undefined";
       return `${key}: ${value.replaceAll("\n", "").replaceAll("'", '"')};`;
     })
     .join("\n");
@@ -278,18 +278,14 @@ function FontSettings() {
             <legend class="fieldset-legend">Web Font</legend>
             <select class="select w-full">
               {webFonts.map((font) => {
-                const dataSetProp: DatasetProp = {
-                  "data-web-font-primary": font,
-                  "data-use-system-font-primary": "false",
-                  "data-font-scope": "local",
-                };
                 return (
                   <option
                     value={font}
                     selected={config.webFontPrimary === font}
-                    {...dataSetProp}
                   >
-                    <span class="font-primary">{font}</span>
+                    <span class="font-primary" style={{ "font-family": font }}>
+                      {font}
+                    </span>
                   </option>
                 );
               })}
@@ -372,18 +368,17 @@ function FontSettings() {
             <legend class="fieldset-legend">Web Font</legend>
             <select class="select w-full">
               {webFonts.map((font) => {
-                const dataSetProp: DatasetProp = {
-                  "data-web-font-secondary": font,
-                  "data-use-system-font-secondary": "false",
-                  "data-font-scope": "local",
-                };
                 return (
                   <option
                     value={font}
                     selected={config.webFontSecondary === font}
-                    {...dataSetProp}
                   >
-                    <span class="font-secondary">{font}</span>
+                    <span
+                      class="font-secondary"
+                      style={{ "font-family": font }}
+                    >
+                      {font}
+                    </span>
                   </option>
                 );
               })}
@@ -664,119 +659,27 @@ function DebugSettings() {
       });
   }
 
-  const [rootDatasetMismatches, setRootDatasetMismatches] = createSignal<
-    Record<string, string>
-  >({});
-  function getRootDatasetMismatches() {
-    const mismatches = Object.entries(config).filter(([key, value]) => {
-      const rootDataValue = KIKU_STATE.rootDataset[key as keyof KikuConfig];
-      return (
-        String(rootDataValue).replaceAll('"', "'") !==
-        value.toString().replaceAll('"', "'")
-      );
-    });
-    const mismatches$ = mismatches.map(([key]) => {
-      return [key, KIKU_STATE.rootDataset[key as keyof KikuConfig]];
-    });
-
-    const mismatches$2 = Object.fromEntries(mismatches$);
-    return mismatches$2;
-  }
-
-  const [rootDataset, setRootDataset] = createSignal<Record<string, string>>(
-    {},
-  );
-  function getRootDataset() {
-    const dataset = Object.entries(config);
-    const dataset$ = Object.fromEntries(
-      dataset.map(([key, value]) => {
-        return [key, value.toString().replaceAll('"', "'")];
+  const rootDatasetMismatches = () => {
+    const mismatches = Object.fromEntries(
+      Object.entries(config).filter(([key, value]) => {
+        return (
+          rootDatasetConfigWhitelist.has(key as keyof KikuConfig) &&
+          KIKU_STATE.rootDataset[key as keyof KikuConfig] !== value
+        );
       }),
     );
-    return dataset$;
-  }
+    return mismatches;
+  };
 
-  const [cssVarMismatches, setCssVarMismatches] = createSignal<
-    Record<string, string>
-  >({});
-  function getCurrentCssVar() {
-    //TODO: css var
-    return {};
-    // const key1 = "--system-font-primary" as const;
-    // const key2 = "--system-font-secondary" as const;
-    // const cssVar: CssVar = {
-    //   [key1]: window
-    //     .getComputedStyle(document.documentElement)
-    //     .getPropertyValue(key1),
-    //   [key2]: window
-    //     .getComputedStyle(document.documentElement)
-    //     .getPropertyValue(key2),
-    // };
-    // return cssVar;
-  }
-  function getCssVarMismatches() {
-    //TODO: css var
-    return {};
-    //
-    // const mismatches: Array<[keyof CssVar, string]> = [];
-    // const cssVar = getCurrentCssVar();
-    // function trimFontFamiliy(str: string) {
-    //   return str
-    //     .replaceAll("\n", "")
-    //     .split(",")
-    //     .map((font) => font.trim().replaceAll('"', "'"))
-    //     .join(", ");
-    // }
-    // const systemFontPrimaryConfigTrim = trimFontFamiliy(
-    //   config.systemFontPrimary,
-    // );
-    // const systemFontPrimaryTrim = trimFontFamiliy(
-    //   cssVar["--system-font-primary"],
-    // );
-    // const systemFontSecondaryConfigTrim = trimFontFamiliy(
-    //   config.systemFontSecondary,
-    // );
-    // const systemFontSecondaryTrim = trimFontFamiliy(
-    //   cssVar["--system-font-secondary"],
-    // );
-    //
-    // if (systemFontPrimaryConfigTrim !== systemFontPrimaryTrim) {
-    //   mismatches.push([
-    //     "--system-font-primary",
-    //     cssVar["--system-font-primary"],
-    //   ]);
-    // }
-    // if (systemFontSecondaryConfigTrim !== systemFontSecondaryTrim) {
-    //   mismatches.push([
-    //     "--system-font-secondary",
-    //     cssVar["--system-font-secondary"],
-    //   ]);
-    // }
-    //
-    // if (window.document.documentElement.getAttribute("data-theme") === "none")
-    //   return {};
-    // return Object.fromEntries(mismatches);
-  }
+  const rootDataset = () => {
+    return Object.fromEntries(
+      Object.entries(config).filter(([key]) => {
+        return rootDatasetConfigWhitelist.has(key as keyof KikuConfig);
+      }),
+    );
+  };
 
-  const [cssVar, setCssVar] = createSignal<Record<string, string>>({});
-  function getCssVar() {
-    // TODO: css var
-    return {};
-
-    // const cssVar: CssVar = {
-    //   "--system-font-primary": config.systemFontPrimary,
-    //   "--system-font-secondary": config.systemFontSecondary,
-    // };
-    // return cssVar;
-  }
-
-  createEffect(() => {
-    ({ ...config });
-    setRootDatasetMismatches(getRootDatasetMismatches());
-    setRootDataset(getRootDataset());
-    setCssVarMismatches(getCssVarMismatches());
-    setCssVar(getCssVar());
-  });
+  const cssVar = () => getCssVar(config);
 
   return (
     <>
@@ -796,28 +699,11 @@ function DebugSettings() {
             <br />
             <span class="text-xs">
               {Object.keys(rootDatasetMismatches())
-                .filter((key) =>
-                  rootDatasetConfigWhitelist.has(key as keyof KikuConfig),
-                )
                 .map((key) => toDatasetKey(toDashed(key)))
                 .join(", ")}
             </span>
           </span>
         </div>
-
-        <Show when={Object.keys(cssVarMismatches()).length > 0}>
-          <div role="alert" class="alert alert-warning">
-            <TriangleAlertIcon />
-            <span>
-              CSS Variables mismatches, FOUC (Flash Of Unstyled Content) may
-              occur. <br />
-              <br />
-              <span class="text-xs">
-                {Object.keys(cssVarMismatches()).join(", ")}
-              </span>
-            </span>
-          </div>
-        </Show>
       </Show>
       <div class="pb-32">
         {/* NOTE: collapse arrow broke button color https://github.com/saadeghi/daisyui/issues/4209 */}
@@ -930,28 +816,10 @@ function DebugSettings() {
                   />
                 </div>
                 <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                  <span class="opacity-25 select-none">{":root {\n"}</span>
+                  <span class="opacity-25 select-none">
+                    {":root, :host {\n"}
+                  </span>
                   {toCssVarString(cssVar())}
-                  <span class="opacity-25 select-none">{"\n}"}</span>
-                </pre>
-              </div>
-
-              <div class="flex flex-col gap-2">
-                <div class="flex gap-2 items-center">
-                  <div class="text-lg">Current CSS Variable</div>
-                  <ClipboardCopyIcon
-                    class="size-5 text-base-content-calm cursor-pointer"
-                    classList={{
-                      hidden: typeof pycmd !== "undefined",
-                    }}
-                    on:click={() => {
-                      copyToClipboard(toCssVarString(getCurrentCssVar()));
-                    }}
-                  />
-                </div>
-                <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
-                  <span class="opacity-25 select-none">{":root {\n"}</span>
-                  {toCssVarString(getCurrentCssVar())}
                   <span class="opacity-25 select-none">{"\n}"}</span>
                 </pre>
               </div>

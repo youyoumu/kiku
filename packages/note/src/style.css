@@ -1,0 +1,32 @@
+:root,
+:host {
+  --font-primary:
+    "Inter", "SF Pro Display", "Liberation Sans", "Segoe UI",
+    "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", "Noto Sans JP", "Meiryo",
+    HanaMinA, HanaMinB, sans-serif;
+  --font-secondary:
+    "Hiragino Mincho ProN", "Noto Serif CJK JP", "Noto Serif JP", "Yu Mincho",
+    HanaMinA, HanaMinB, serif;
+
+  --font-size-base-expression: var(--text-5xl);
+  --line-height-base-expression: var(--text-5xl--line-height);
+  --font-size-base-pitch: var(--text-xl);
+  --line-height-base-pitch: var(--text-xl--line-height);
+  --font-size-base-sentence: var(--text-2xl);
+  --line-height-base-sentence: var(--text-2xl--line-height);
+  --font-size-base-misc-info: var(--text-sm);
+  --line-height-base-misc-info: var(--text-sm--line-height);
+  --font-size-base-hint: var(--text-lg);
+  --line-height-base-hint: var(--text-lg--line-height);
+
+  --font-size-sm-expression: var(--text-6xl);
+  --line-height-sm-expression: var(--text-6xl--line-height);
+  --font-size-sm-pitch: var(--text-2xl);
+  --line-height-sm-pitch: var(--text-2xl--line-height);
+  --font-size-sm-sentence: var(--text-4xl);
+  --line-height-sm-sentence: var(--text-4xl--line-height);
+  --font-size-sm-misc-info: var(--text-sm);
+  --line-height-sm-misc-info: var(--text-sm--line-height);
+  --font-size-sm-hint: var(--text-2xl);
+  --line-height-sm-hint: var(--text-2xl--line-height);
+}
