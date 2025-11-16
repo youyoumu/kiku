@@ -1,5 +1,6 @@
 import { createSignal, For, onMount, Show } from "solid-js";
 import type { Kanji } from "#/types";
+import { useNavigationTransition } from "#/util/hooks";
 import { useCardStore } from "../shared/Context";
 import { ArrowLeftIcon } from "./Icons";
 
@@ -8,6 +9,7 @@ export default function KanjiList(props: {
   onNextClick?: (noteId: number) => void;
 }) {
   const [card, setCard] = useCardStore();
+  const navigate = useNavigationTransition();
 
   return (
     <>
@@ -51,7 +53,9 @@ export default function KanjiList(props: {
                     <div
                       class="flex gap-2 items-center btn btn-sm sm:btn-md z-10"
                       on:click={() => {
-                        setCard("selectedSimilarKanji", kanji);
+                        navigate("kanji", "forward", () => {
+                          setCard("selectedSimilarKanji", kanji);
+                        });
                       }}
                     >
                       <div class="text-base-content-calm">Similar</div>

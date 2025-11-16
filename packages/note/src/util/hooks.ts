@@ -1,5 +1,9 @@
 import { createEffect, createSignal, onMount } from "solid-js";
-import { useAnkiField, useCardStore } from "#/components/shared/Context";
+import {
+  useAnkiField,
+  useBreakpoint,
+  useCardStore,
+} from "#/components/shared/Context";
 
 export function useSentenceField() {
   const [card] = useCardStore();
@@ -58,4 +62,28 @@ export function usePictureField() {
     }
     KIKU_STATE.logger.info("Number of detected picture:", imgs.length);
   });
+}
+
+export function useNavigationTransition() {
+  const [card, setCard] = useCardStore();
+  const bp = useBreakpoint();
+
+  function navigate(
+    page: "main" | "settings" | "nested" | "kanji",
+    direction: "back" | "forward",
+    callback?: () => void,
+  ) {
+    document.documentElement.dataset.transitionDirection = direction;
+
+    if (document.startViewTransition && !bp.isAtLeast("sm")) {
+      console.log("test");
+      document.startViewTransition(() => {
+        callback?.() ?? setCard("screen", page);
+      });
+    } else {
+      callback?.() ?? setCard("screen", page);
+    }
+  }
+
+  return navigate;
 }

@@ -18,12 +18,51 @@
     from { opacity: 0; transform: translateY(2px); }
     to { opacity: 1; transform: translateY(0); }
   }
+
+  --animate-slide-to-left: slide-to-left 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-to-right: slide-to-right 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-from-left: slide-from-left 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-slide-from-right: slide-from-right 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  @keyframes slide-to-left {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-100%); }
+  }
+  @keyframes slide-to-right {
+    from { transform: translateX(0); }
+    to   { transform: translateX(100%); }
+  }
+  @keyframes slide-from-left {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }
+  }
+  @keyframes slide-from-right {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+  }
 }
 
 @custom-variant hover (&:hover);
 
 @utility gutter-stable {
   scrollbar-gutter: stable;
+}
+
+@layer components {
+  :root[data-transition-direction="forward"]::view-transition-old(slide-root) {
+    animation: var(--animate-slide-to-left);
+  }
+  :root[data-transition-direction="forward"]::view-transition-new(slide-root) {
+    animation: var(--animate-slide-from-right);
+  }
+  :root[data-transition-direction="back"]::view-transition-old(slide-root) {
+    animation: var(--animate-slide-to-right);
+  }
+  :root[data-transition-direction="back"]::view-transition-new(slide-root) {
+    animation: var(--animate-slide-from-left);
+  }
+  ::part(root-part) {
+    view-transition-name: slide-root;
+  }
 }
 
 @layer utilities {

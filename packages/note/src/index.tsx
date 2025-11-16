@@ -97,6 +97,7 @@ export async function init({
     if (style) {
       shadow?.appendChild(style.cloneNode(true));
     }
+    root.part.add("root-part");
     const tailwind = document.querySelector(
       "[data-vite-dev-id='/home/yym/repos/kiku/packages/note/src/styles/tailwind.css']",
     );

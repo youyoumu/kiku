@@ -4,7 +4,7 @@ import { isServer } from "solid-js/web";
 import { type AnkiFields, ankiFieldsSkeleton } from "#/types";
 import type { DatasetProp } from "#/util/config";
 import { env, extractKanji } from "#/util/general";
-import { usePictureField } from "#/util/hooks";
+import { useNavigationTransition, usePictureField } from "#/util/hooks";
 import { WorkerClient } from "#/worker/client";
 import { Layout } from "./Layout";
 import {
@@ -30,6 +30,7 @@ const Lazy = {
 };
 
 export function Back(props: { onExitNested?: () => void }) {
+  const navigate = useNavigationTransition();
   const [card, setCard] = useCardStore();
   const [config] = useConfig();
   const { ankiFields } = useAnkiField<"back">();
@@ -127,17 +128,24 @@ export function Back(props: { onExitNested?: () => void }) {
       <Switch>
         <Match when={card.screen === "settings" && !card.nested && card.ready}>
           <Lazy.Settings
-            onBackClick={() => setCard("screen", "main")}
-            onCancelClick={() => setCard("screen", "main")}
+            onBackClick={() => {
+              navigate("main", "back");
+            }}
+            onCancelClick={() => {
+              navigate("main", "back");
+            }}
           />
         </Match>
         <Match when={card.screen === "kanji" && !card.nested && card.ready}>
           <Lazy.KanjiList
             onBackClick={() => {
               if (card.selectedSimilarKanji) {
-                return setCard("selectedSimilarKanji", undefined);
+                navigate("kanji", "back", () => {
+                  return setCard("selectedSimilarKanji", undefined);
+                });
+              } else {
+                navigate("main", "back");
               }
-              setCard("screen", "main");
             }}
             onNextClick={(noteId) => {
               const shared = Object.values(card.kanji).flatMap(
@@ -160,7 +168,7 @@ export function Back(props: { onExitNested?: () => void }) {
               };
 
               setCard("nestedAnkiFields", ankiFields);
-              setCard("screen", "nested");
+              navigate("nested", "forward");
             }}
           />
         </Match>
@@ -169,7 +177,7 @@ export function Back(props: { onExitNested?: () => void }) {
             <CardStoreContextProvider nested side="back">
               <Back
                 onExitNested={() => {
-                  setCard("screen", "kanji");
+                  navigate("kanji", "back");
                 }}
               />
             </CardStoreContextProvider>
@@ -180,7 +188,9 @@ export function Back(props: { onExitNested?: () => void }) {
             {card.ready && (
               <Lazy.Header
                 side="back"
-                onSettingsClick={() => setCard("screen", "settings")}
+                onSettingsClick={() => {
+                  navigate("settings", "forward");
+                }}
                 onBackClick={props.onExitNested}
                 onKanjiClick={
                   Object.keys(card.kanji).length > 0 &&
@@ -188,7 +198,9 @@ export function Back(props: { onExitNested?: () => void }) {
                     ...data.shared,
                     ...Object.values(data.similar),
                   ]).length > 0
-                    ? () => setCard("screen", "kanji")
+                    ? () => {
+                        navigate("kanji", "forward");
+                      }
                     : undefined
                 }
               />
