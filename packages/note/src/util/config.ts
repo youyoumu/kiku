@@ -15,6 +15,7 @@ export type KikuConfig = {
   ankiConnectPort: number;
   ankiDroidEnableIntegration: boolean;
   ankiDroidReverseSwipeDirection: boolean;
+  volume: number;
   fontSizeBaseExpression: TailwindSize;
   fontSizeBasePitch: TailwindSize;
   fontSizeBaseSentence: TailwindSize;
@@ -42,6 +43,7 @@ export const defaultConfig: KikuConfig = {
   ankiConnectPort: 8765,
   ankiDroidEnableIntegration: true,
   ankiDroidReverseSwipeDirection: false,
+  volume: 50,
   fontSizeBaseExpression: "5xl",
   fontSizeBasePitch: "xl",
   fontSizeBaseSentence: "2xl",
@@ -106,6 +108,7 @@ export function validateConfig(config: KikuConfig): KikuConfig {
       ankiConnectPort: typeof config.ankiConnectPort === "number" && config.ankiConnectPort > 0 && config.ankiConnectPort < 65535 ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
       ankiDroidEnableIntegration: typeof config.ankiDroidEnableIntegration === "boolean" ? config.ankiDroidEnableIntegration : defaultConfig.ankiDroidEnableIntegration,
       ankiDroidReverseSwipeDirection: typeof config.ankiDroidReverseSwipeDirection === "boolean" ? config.ankiDroidReverseSwipeDirection : defaultConfig.ankiDroidReverseSwipeDirection,
+      volume: typeof config.volume === "number" && config.volume >= 0 && config.volume <= 100 ? config.volume : defaultConfig.volume,
       fontSizeBaseExpression: tailwindSize.includes(config.fontSizeBaseExpression) ? config.fontSizeBaseExpression : defaultConfig.fontSizeBaseExpression,
       fontSizeBasePitch: tailwindSize.includes(config.fontSizeBasePitch) ? config.fontSizeBasePitch : defaultConfig.fontSizeBasePitch,
       fontSizeBaseSentence: tailwindSize.includes(config.fontSizeBaseSentence) ? config.fontSizeBaseSentence : defaultConfig.fontSizeBaseSentence,
@@ -157,11 +160,6 @@ export type Dataset = {
   "data-theme": string;
   //
   "data-field": string;
-  "data-is-audio-card": "true" | "false" | "{{IsAudioCard}}" | "ready"
-  "data-is-sentence-card": "true" | "false" | "{{IsSentenceCard}}";
-  "data-is-word-and-sentence-card": | "true" | "false" | "{{IsWordAndSentenceCard}}";
-  "data-is-click-card": "true" | "false" | "{{IsClickCard}}";
-  "data-clicked": "true" | "false";
   "data-font-scope": "local";
   "data-transition": "true" | "false";
   "data-tags": string;

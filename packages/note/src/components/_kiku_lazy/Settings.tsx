@@ -129,6 +129,8 @@ export default function Settings(props: {
         </div>
       </div>
       <div>
+        <GeneralSettings />
+        <div class="divider"></div>
         <ThemeSettings />
         <div class="divider"></div>
         <FontSettings />
@@ -163,6 +165,47 @@ export default function Settings(props: {
         </Portal>
       </div>
     </>
+  );
+}
+
+function GeneralSettings() {
+  const [config, setConfig] = useConfig();
+
+  return (
+    <div class="flex flex-col gap-4 animate-fade-in">
+      <div class="text-2xl font-bold">General</div>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] rounded-box gap-4 p-2">
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Volume</legend>
+
+          <input
+            on:change={(e) => {
+              const value = e.target.value;
+              setConfig("volume", Number(value));
+            }}
+            type="range"
+            min="0"
+            max={"100"}
+            value={config.volume.toString()}
+            class="range w-full "
+            step="1"
+          />
+        </fieldset>
+        <fieldset class="fieldset py-0">
+          <legend class="fieldset-legend">Show Theme</legend>
+          <label class="label">
+            <input
+              type="checkbox"
+              checked={config.showTheme}
+              class="toggle"
+              on:change={(e) => {
+                setConfig("showTheme", e.target.checked);
+              }}
+            />
+          </label>
+        </fieldset>
+      </div>
+    </div>
   );
 }
 
@@ -220,19 +263,6 @@ function ThemeSettings() {
           );
         })}
       </div>
-      <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-64 py-4">
-        <legend class="fieldset-legend">Show Theme</legend>
-        <label class="label">
-          <input
-            type="checkbox"
-            checked={config.showTheme}
-            class="toggle"
-            on:change={(e) => {
-              setConfig("showTheme", e.target.checked);
-            }}
-          />
-        </label>
-      </fieldset>
     </div>
   );
 }
