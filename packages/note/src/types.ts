@@ -68,7 +68,13 @@ export type AnkiFieldNodes = {
 
 const frontKeys = [
   "Expression",
+  "Sentence",
   "kanji:Sentence",
+  "furigana:Sentence",
+  "SentenceFurigana",
+  "furigana:SentenceFurigana",
+  "kana:SentenceFurigana",
+
   "IsWordAndSentenceCard",
   "IsSentenceCard",
   "IsClickCard",
