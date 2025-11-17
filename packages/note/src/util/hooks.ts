@@ -12,7 +12,7 @@ export function useViewTransition() {
       beforeCallback?: () => void;
     } = {},
   ) {
-    if (document.startViewTransition) {
+    if (document.startViewTransition && typeof pycmd === "undefined") {
       beforeCallback?.();
       return document.startViewTransition(callback);
     } else {
