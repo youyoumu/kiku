@@ -286,7 +286,6 @@ function PictureSection() {
         {isServer ? "{{Picture}}" : undefined}
       </div>
       <div
-        ref={(ref) => setCard("pictureFieldRef", ref)}
         class="picture-field"
         on:click={() => {
           setCard("imageModal", group.pictureField);

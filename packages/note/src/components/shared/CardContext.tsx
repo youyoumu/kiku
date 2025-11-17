@@ -13,7 +13,6 @@ type CardStore = {
   side: "front" | "back";
   layoutRef?: HTMLDivElement;
   contentRef?: HTMLDivElement;
-  pictureFieldRef?: HTMLDivElement;
   expressionAudioRef?: HTMLDivElement;
   sentenceFieldRef?: HTMLDivElement;
   sentenceAudioRef?: HTMLDivElement;
@@ -58,7 +57,6 @@ export function CardStoreContextProvider(props: {
     side: props.side,
     layoutRef: undefined,
     contentRef: undefined,
-    pictureFieldRef: undefined,
     expressionAudioRef: undefined,
     sentenceFieldRef: undefined,
     sentenceAudioRef: undefined,
