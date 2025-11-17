@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import https from "node:https";
 import path from "node:path";
+import { createGzip } from "node:zlib";
 
 const baseUrl =
   "https://raw.githubusercontent.com/youyoumu/wanikani-userscripts/refs/heads/master/wanikani-similar-kanji/db/";
@@ -36,20 +37,40 @@ function downloadFile(url: string, dest: string) {
   });
 }
 
+async function gzipFile(src: string) {
+  return new Promise<void>((resolve, reject) => {
+    const dest = `${src}.gz`;
+    const gzip = createGzip();
+
+    const input = fs.createReadStream(src);
+    const output = fs.createWriteStream(dest);
+
+    input.pipe(gzip).pipe(output);
+
+    output.on("finish", () => {
+      // Optionally delete the original JSON file
+      fs.unlink(src, () => resolve());
+    });
+    output.on("error", reject);
+  });
+}
+
 async function main() {
   console.log(`Downloading databases to ${outputDir}...\n`);
   for (const file of dbFiles) {
     const url = `${baseUrl}${file}`;
     const fileName = `_kiku_db_similar_kanji_${file}`;
     const dest = path.join(outputDir, fileName);
+
     console.log(`→ ${file}`);
     try {
       await downloadFile(url, dest);
+      await gzipFile(dest);
     } catch (err) {
-      console.error(`Failed to download ${file}:`, err.message);
+      console.error(`Failed for ${file}:`, err.message);
     }
   }
-  console.log("\n✅ All downloads complete!");
+  console.log("\n✅ All downloads + gzip complete!");
 }
 
 main();

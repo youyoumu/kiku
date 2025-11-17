@@ -197,8 +197,13 @@ export class Nex {
       const res = await fetch(
         `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
       );
-      if (!res.ok) throw new Error(`Failed to lookup ${kanji}`);
-      this.cache.set(key, await res.json());
+      if (!res.body) throw new Error(`Failed to lookup ${kanji}`);
+      const ds = new DecompressionStream("gzip");
+      const decompressed = res.body.pipeThrough(ds);
+      const text = await new Response(decompressed).text();
+      const lookupDb = JSON.parse(text);
+
+      this.cache.set(key, lookupDb);
     }
     return this.cache.get(key)[kanji];
   }
@@ -226,8 +231,13 @@ export class Nex {
     for (const src of allSources) {
       if (!similarKanjiDbs[src.file]) {
         const res = await fetch(src.file);
-        if (!res.ok) throw new Error(`Failed to load ${src.file}`);
-        similarKanjiDbs[src.file] = await res.json();
+        if (!res.body) throw new Error(`Failed to load ${src.file}`);
+        const ds = new DecompressionStream("gzip");
+        const decompressed = res.body.pipeThrough(ds);
+        const text = await new Response(decompressed).text();
+        const db = JSON.parse(text);
+
+        similarKanjiDbs[src.file] = db;
       }
     }
     this.cache.set(key, similarKanjiDbs);

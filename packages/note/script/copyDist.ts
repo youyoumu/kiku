@@ -36,13 +36,13 @@ const FONTS = [
 ];
 
 const DBS = [
-  "_kiku_db_similar_kanji_from_keisei.json",
-  "_kiku_db_similar_kanji_lookup.json",
-  "_kiku_db_similar_kanji_manual.json",
-  "_kiku_db_similar_kanji_old_script.json",
-  "_kiku_db_similar_kanji_stroke_edit_dist.json",
-  "_kiku_db_similar_kanji_wk_niai_noto.json",
-  "_kiku_db_similar_kanji_yl_radical.json",
+  "_kiku_db_similar_kanji_from_keisei.json.gz",
+  "_kiku_db_similar_kanji_lookup.json.gz",
+  "_kiku_db_similar_kanji_manual.json.gz",
+  "_kiku_db_similar_kanji_old_script.json.gz",
+  "_kiku_db_similar_kanji_stroke_edit_dist.json.gz",
+  "_kiku_db_similar_kanji_wk_niai_noto.json.gz",
+  "_kiku_db_similar_kanji_yl_radical.json.gz",
 ];
 
 for (const file of FONTS) {
