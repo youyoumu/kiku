@@ -71,21 +71,28 @@ export function useNavigationTransition() {
   const bp = useBreakpoint();
 
   function navigate(
-    page: "main" | "settings" | "nested" | "kanji",
+    destination: "main" | "settings" | "nested" | "kanji" | (() => void),
     direction: "back" | "forward",
-    callback?: () => void,
   ) {
     if (document.startViewTransition && !bp.isAtLeast("sm")) {
       document.documentElement.dataset.transitionDirection = direction;
       document
         .startViewTransition(() => {
-          callback?.() ?? setCard("page", page);
+          if (typeof destination === "function") {
+            destination();
+          } else {
+            setCard("page", destination);
+          }
         })
         .finished.then(() => {
           document.documentElement.removeAttribute("data-transition-direction");
         });
     } else {
-      callback?.() ?? setCard("page", page);
+      if (typeof destination === "function") {
+        destination();
+      } else {
+        setCard("page", destination);
+      }
     }
   }
 

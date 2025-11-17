@@ -140,9 +140,10 @@ export function Back(props: { onExitNested?: () => void }) {
           <Lazy.KanjiList
             onBackClick={() => {
               if (card.selectedSimilarKanji) {
-                navigate("kanji", "back", () => {
-                  return setCard("selectedSimilarKanji", undefined);
-                });
+                navigate(
+                  () => setCard("selectedSimilarKanji", undefined),
+                  "back",
+                );
               } else {
                 navigate("main", "back");
               }

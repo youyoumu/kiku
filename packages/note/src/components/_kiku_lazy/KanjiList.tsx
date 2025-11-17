@@ -53,9 +53,10 @@ export default function KanjiList(props: {
                     <div
                       class="flex gap-2 items-center btn btn-sm sm:btn-md z-10"
                       on:click={() => {
-                        navigate("kanji", "forward", () => {
-                          setCard("selectedSimilarKanji", kanji);
-                        });
+                        navigate(
+                          () => setCard("selectedSimilarKanji", kanji),
+                          "forward",
+                        );
                       }}
                     >
                       <div class="text-base-content-calm">Similar</div>
