@@ -98,6 +98,20 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       })
       .join("");
 
+    let dummyImg: HTMLImageElement | undefined;
+    if (
+      !Array.from(groupIds)
+        .map(Number)
+        .some((id) => id <= 0) &&
+      (sentenceFieldWithoutGroupHtml.trim() ||
+        sentenceAudioFieldWithoutGroupHtml.trim())
+    ) {
+      const img = document.createElement("img");
+      img.dataset.groupId = "0";
+      dummyImg = img;
+      groupIds.add("0");
+    }
+
     if (groupIds.size > 0) {
       const sorted = Array.from(groupIds)
         .map((id) => Number(id))
@@ -110,7 +124,10 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
         sentenceField = Array.from(sentenceFieldWithGroup).find(
           (el) => (el as HTMLSpanElement).dataset.groupId === id.toString(),
         )?.outerHTML;
-        pictureField = Array.from(pictureFieldWithGroup).find((el) => {
+
+        const pictureFieldArray = Array.from(pictureFieldWithGroup);
+        if (dummyImg) pictureFieldArray.push(dummyImg);
+        pictureField = pictureFieldArray.find((el) => {
           return (el as HTMLSpanElement).dataset.groupId === id.toString();
         })?.outerHTML;
         sentenceAudioField = Array.from(sentenceAudioFieldWithGroup).find(
