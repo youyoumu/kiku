@@ -66,33 +66,52 @@ export function usePictureField() {
   });
 }
 
+export function useViewTransition() {
+  function startViewTransition(
+    callback: () => void,
+    {
+      beforeCallback,
+    }: {
+      beforeCallback?: () => void;
+    } = {},
+  ) {
+    if (document.startViewTransition) {
+      beforeCallback?.();
+      return document.startViewTransition(callback);
+    } else {
+      callback();
+    }
+  }
+  return startViewTransition;
+}
+
 export function useNavigationTransition() {
   const [card, setCard] = useCardStore();
   const bp = useBreakpoint();
+  const startViewTransition = useViewTransition();
 
   function navigate(
     destination: "main" | "settings" | "nested" | "kanji" | (() => void),
     direction: "back" | "forward",
   ) {
-    if (document.startViewTransition && !bp.isAtLeast("sm")) {
-      document.documentElement.dataset.transitionDirection = direction;
-      document
-        .startViewTransition(() => {
-          if (typeof destination === "function") {
-            destination();
-          } else {
-            setCard("page", destination);
-          }
-        })
-        .finished.then(() => {
-          document.documentElement.removeAttribute("data-transition-direction");
-        });
-    } else {
+    const start = () => {
       if (typeof destination === "function") {
         destination();
       } else {
         setCard("page", destination);
       }
+    };
+
+    if (!bp.isAtLeast("sm")) {
+      startViewTransition(start, {
+        beforeCallback() {
+          document.documentElement.dataset.transitionDirection = direction;
+        },
+      })?.finished.then(() => {
+        document.documentElement.removeAttribute("data-transition-direction");
+      });
+    } else {
+      start();
     }
   }
 
@@ -101,20 +120,16 @@ export function useNavigationTransition() {
 
 export function useThemeTransition() {
   const [config, setConfig] = useConfig();
+  const startViewTransition = useViewTransition();
 
   function changeTheme(theme: DaisyUITheme) {
-    if (document.startViewTransition) {
-      document.documentElement.dataset.themeTransition = "true";
-      document
-        .startViewTransition(() => {
-          setConfig("theme", theme);
-        })
-        .finished.then(() => {
-          document.documentElement.removeAttribute("data-theme-transition");
-        });
-    } else {
-      setConfig("theme", theme);
-    }
+    startViewTransition(() => setConfig("theme", theme), {
+      beforeCallback() {
+        document.documentElement.dataset.themeTransition = "true";
+      },
+    })?.finished.then(() => {
+      document.documentElement.removeAttribute("data-theme-transition");
+    });
   }
   return changeTheme;
 }
