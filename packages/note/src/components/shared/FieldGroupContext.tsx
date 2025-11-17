@@ -16,6 +16,7 @@ const FieldGroupContext = createContext<{
   setGroup: (group: GroupStore) => void;
   nextGroup: () => void;
   prevGroup: () => void;
+  groupIds: Set<string>;
 }>();
 
 export function FieldGroupContextProvider(props: { children: JSX.Element }) {
@@ -30,7 +31,7 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
     index: 0,
   });
 
-  const groupId = new Set<string>();
+  const groupIds = new Set<string>();
 
   createEffect(() => {
     const tempDivSentenceField = document.createElement("div");
@@ -39,7 +40,7 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       tempDivSentenceField.querySelectorAll("[data-group-id]");
     sentenceFieldWithGroup.forEach((el) => {
       const id = (el as HTMLSpanElement).dataset.groupId;
-      if (id) groupId.add(id);
+      if (id) groupIds.add(id);
     });
     const sentenceFieldWithoutGroup = Array.from(
       tempDivSentenceField.childNodes,
@@ -59,11 +60,11 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
     pictureFieldWithGroup.forEach((el, i) => {
       const id = (el as HTMLSpanElement).dataset.groupId;
       if (id) {
-        groupId.add(id);
+        groupIds.add(id);
       } else {
         const id = (i * -1).toString();
         el.dataset.groupId = id;
-        groupId.add(id);
+        groupIds.add(id);
       }
     });
 
@@ -73,7 +74,7 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       tempDivSentenceAudioField.querySelectorAll("[data-group-id]");
     sentenceAudioFieldWithGroup.forEach((el) => {
       const id = (el as HTMLSpanElement).dataset.groupId;
-      if (id) groupId.add(id);
+      if (id) groupIds.add(id);
     });
 
     const sentenceAudioFieldWithoutGroup = Array.from(
@@ -88,8 +89,8 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       })
       .join("");
 
-    if (groupId.size > 0) {
-      const sorted = Array.from(groupId)
+    if (groupIds.size > 0) {
+      const sorted = Array.from(groupIds)
         .map((id) => Number(id))
         .sort((a, b) => b - a);
       const id = sorted[groupStore.index];
@@ -122,14 +123,14 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
 
   function next() {
     setGroupStore("index", (prev) => {
-      const newIndex = (prev + 1 + groupId.size) % groupId.size;
+      const newIndex = (prev + 1 + groupIds.size) % groupIds.size;
       return newIndex;
     });
   }
 
   function prev() {
     setGroupStore("index", (prev) => {
-      const newIndex = (prev - 1 + groupId.size) % groupId.size;
+      const newIndex = (prev - 1 + groupIds.size) % groupIds.size;
       return newIndex;
     });
   }
@@ -141,6 +142,7 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
         setGroup: setGroupStore,
         nextGroup: next,
         prevGroup: prev,
+        groupIds,
       }}
     >
       {props.children}

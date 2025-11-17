@@ -4,7 +4,7 @@ import { ArrowLeftIcon } from "./Icons";
 
 export default function PicturePagination() {
   const [card, setCard] = useCardStore();
-  const { group, nextGroup, prevGroup } = useFieldGroup();
+  const { group, nextGroup, prevGroup, groupIds } = useFieldGroup();
 
   return (
     card.pictures.length > 1 && (
@@ -23,7 +23,7 @@ export default function PicturePagination() {
             // });
           }}
         ></ArrowLeftIcon>
-        {`${card.pictureIndex + 1} / ${card.pictures.length}`}
+        {`${group.index + 1} / ${groupIds.size}`}
         <ArrowLeftIcon
           class="cursor-pointer size-5 sm:size-8 rotate-180 hover:scale-110 transition-transform"
           on:click={() => {
