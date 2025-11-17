@@ -126,7 +126,7 @@ export function Back(props: { onExitNested?: () => void }) {
     <Layout>
       {card.ready && !card.nested && <Lazy.UseAnkiDroid />}
       <Switch>
-        <Match when={card.screen === "settings" && !card.nested && card.ready}>
+        <Match when={card.page === "settings" && !card.nested && card.ready}>
           <Lazy.Settings
             onBackClick={() => {
               navigate("main", "back");
@@ -136,7 +136,7 @@ export function Back(props: { onExitNested?: () => void }) {
             }}
           />
         </Match>
-        <Match when={card.screen === "kanji" && !card.nested && card.ready}>
+        <Match when={card.page === "kanji" && !card.nested && card.ready}>
           <Lazy.KanjiList
             onBackClick={() => {
               if (card.selectedSimilarKanji) {
@@ -172,7 +172,7 @@ export function Back(props: { onExitNested?: () => void }) {
             }}
           />
         </Match>
-        <Match when={card.screen === "nested" && !card.nested && card.ready}>
+        <Match when={card.page === "nested" && !card.nested && card.ready}>
           <AnkiFieldContextProvider ankiFields={card.nestedAnkiFields}>
             <CardStoreContextProvider nested side="back">
               <Back
@@ -183,7 +183,7 @@ export function Back(props: { onExitNested?: () => void }) {
             </CardStoreContextProvider>
           </AnkiFieldContextProvider>
         </Match>
-        <Match when={card.screen === "main"}>
+        <Match when={card.page === "main"}>
           <div class="flex justify-between flex-row h-5 min-h-5">
             {card.ready && (
               <Lazy.Header

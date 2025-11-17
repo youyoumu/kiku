@@ -165,7 +165,7 @@ type CardStore = {
   sentenceFieldRef?: HTMLDivElement;
   sentenceAudioRef?: HTMLDivElement;
   sentenceAudios?: HTMLAnchorElement[] | HTMLAudioElement[];
-  screen: "main" | "settings" | "kanji" | "nested";
+  page: "main" | "settings" | "kanji" | "nested";
   ready: boolean;
   toast: {
     success: (message: string) => void;
@@ -212,7 +212,7 @@ export function CardStoreContextProvider(props: {
     sentenceFieldRef: undefined,
     sentenceAudioRef: undefined,
     sentenceAudios: undefined,
-    screen: "main",
+    page: "main",
     ready: false,
     toast: {
       success: (message: string) => {

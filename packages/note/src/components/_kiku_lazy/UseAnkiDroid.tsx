@@ -219,7 +219,7 @@ export default function UseAnkiDroid() {
   createEffect(() => {
     const el = el$();
     if (el === undefined) return;
-    if (card.screen !== "main" || card.nested) return;
+    if (card.page !== "main" || card.nested) return;
     el.addEventListener("touchstart", handleTouchStart, { passive: true });
     el.addEventListener("touchmove", handleTouchMove, { passive: false });
     el.addEventListener("touchend", handleTouchEnd, { passive: true });

@@ -79,13 +79,13 @@ export function useNavigationTransition() {
       document.documentElement.dataset.transitionDirection = direction;
       document
         .startViewTransition(() => {
-          callback?.() ?? setCard("screen", page);
+          callback?.() ?? setCard("page", page);
         })
         .finished.then(() => {
           document.documentElement.removeAttribute("data-transition-direction");
         });
     } else {
-      callback?.() ?? setCard("screen", page);
+      callback?.() ?? setCard("page", page);
     }
   }
 
