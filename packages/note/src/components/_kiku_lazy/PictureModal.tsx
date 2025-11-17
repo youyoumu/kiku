@@ -1,18 +1,25 @@
 import { createEffect, createSignal } from "solid-js";
 import { Portal } from "solid-js/web";
 import { useViewTransition } from "#/util/hooks";
+import { useCardStore } from "../shared/Context";
 
 export default function PictureModal(props: {
   img: string | undefined;
   "on:click"?: () => void;
 }) {
   const [img, setImg] = createSignal(props.img);
+  const [card] = useCardStore();
   const startViewTransition = useViewTransition();
 
   createEffect(() => {
-    props.img;
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = props.img ?? "";
+    const imgs = Array.from(tempDiv.querySelectorAll("img"));
+    imgs.forEach((img, index) => {
+      img.style.display = card.pictureIndex === index ? "block" : "none";
+    });
     startViewTransition(() => {
-      setImg(props.img);
+      setImg(tempDiv.innerHTML);
     });
   });
 
