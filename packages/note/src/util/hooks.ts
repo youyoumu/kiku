@@ -58,15 +58,20 @@ export function useNavigationTransition() {
 export function useThemeTransition() {
   const [config, setConfig] = useConfig();
   const startViewTransition = useViewTransition();
+  const [card, setCard] = useCardStore();
 
   function changeTheme(theme: DaisyUITheme) {
-    startViewTransition(() => setConfig("theme", theme), {
-      beforeCallback() {
-        document.documentElement.dataset.themeTransition = "true";
-      },
-    })?.finished.then(() => {
-      document.documentElement.removeAttribute("data-theme-transition");
-    });
+    if (card.kanjiStatus === "loading") {
+      setConfig("theme", theme);
+    } else {
+      startViewTransition(() => setConfig("theme", theme), {
+        beforeCallback() {
+          document.documentElement.dataset.themeTransition = "true";
+        },
+      })?.finished.then(() => {
+        document.documentElement.removeAttribute("data-theme-transition");
+      });
+    }
   }
   return changeTheme;
 }
