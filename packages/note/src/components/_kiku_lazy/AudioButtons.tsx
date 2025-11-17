@@ -52,6 +52,8 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
     position: "absolute",
   } as const;
 
+  let autoPlay = true;
+
   createEffect(() => {
     group.sentenceAudioField;
     const anchors = card.sentenceAudioRef?.querySelectorAll("a");
@@ -70,6 +72,20 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
         "Number of detected audio in sentence audios",
         audios?.length,
       );
+    }
+
+    if (card.nested && autoPlay) {
+      autoPlay = false;
+      const audio = card.expressionAudioRef?.querySelector("audio");
+      if (audio) {
+        audio.play();
+        audio.onpause = () => {
+          const audio = card.sentenceAudioRef?.querySelectorAll("audio")[0];
+          if (audio) {
+            audio.play();
+          }
+        };
+      }
     }
   });
 
