@@ -2,6 +2,7 @@ import { createStore } from "solid-js/store";
 import { generateHydrationScript, renderToString } from "solid-js/web";
 import { Front } from "#/components/Front";
 import { CardStoreContextProvider } from "#/components/shared/CardContext";
+import { FieldGroupContextProvider } from "#/components/shared/FieldGroupContext";
 import { Logger } from "#/util/logger";
 import { Back } from "../src/components/Back";
 import {
@@ -26,7 +27,9 @@ export function getSsrTemplate() {
       <CardStoreContextProvider side="front">
         <BreakpointContextProvider>
           <ConfigContextProvider value={[config, setConfig]}>
-            <Front />
+            <FieldGroupContextProvider>
+              <Front />
+            </FieldGroupContextProvider>
           </ConfigContextProvider>
         </BreakpointContextProvider>
       </CardStoreContextProvider>
@@ -37,7 +40,9 @@ export function getSsrTemplate() {
       <CardStoreContextProvider side="back">
         <BreakpointContextProvider>
           <ConfigContextProvider value={[config, setConfig]}>
-            <Back />
+            <FieldGroupContextProvider>
+              <Back />
+            </FieldGroupContextProvider>
           </ConfigContextProvider>
         </BreakpointContextProvider>
       </CardStoreContextProvider>

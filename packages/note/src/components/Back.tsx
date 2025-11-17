@@ -16,7 +16,10 @@ import {
   useAnkiField,
   useConfig,
 } from "./shared/Context";
-import { useFieldGroup } from "./shared/FieldGroupContext";
+import {
+  FieldGroupContextProvider,
+  useFieldGroup,
+} from "./shared/FieldGroupContext";
 
 // biome-ignore format: this looks nicer
 const Lazy = {
@@ -166,11 +169,13 @@ export function Back(props: { onExitNested?: () => void }) {
         <Match when={card.page === "nested" && !card.nested && card.ready}>
           <AnkiFieldContextProvider ankiFields={card.nestedAnkiFields}>
             <CardStoreContextProvider nested side="back">
-              <Back
-                onExitNested={() => {
-                  navigate("kanji", "back");
-                }}
-              />
+              <FieldGroupContextProvider>
+                <Back
+                  onExitNested={() => {
+                    navigate("kanji", "back");
+                  }}
+                />
+              </FieldGroupContextProvider>
             </CardStoreContextProvider>
           </AnkiFieldContextProvider>
         </Match>

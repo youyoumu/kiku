@@ -8,18 +8,10 @@ import {
   onMount,
   useContext,
 } from "solid-js";
-import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
-import {
-  type AnkiBackFields,
-  type AnkiFields,
-  type AnkiFrontFields,
-  type AnkiNote,
-  ankiFieldsSkeleton,
-  type KikuNotesManifest,
-} from "#/types";
+import type { SetStoreFunction, Store } from "solid-js/store";
+import type { AnkiBackFields, AnkiFields, AnkiFrontFields } from "#/types";
 import { type KikuConfig, updateConfigState } from "#/util/config";
 import { env, getAnkiFields } from "#/util/general";
-import type { WorkerClient } from "#/worker/client";
 
 const ConfigContext =
   createContext<[Store<KikuConfig>, SetStoreFunction<KikuConfig>]>();
