@@ -6,7 +6,7 @@ Kiku is a modern, fully interactive Anki note type.
 
 ## Get Started
 
-To get started, read the documentation [here](https://kiku.youyoumu.my.id).
+To get started, read the documentation [here](https://kiku-docs.vercel.app/).
 
 ## Credit
 
