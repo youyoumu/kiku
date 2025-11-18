@@ -146,30 +146,35 @@ export async function init({
       render(App, root);
     }
   } catch (e) {
-    document.body.style.margin = "0";
-    document.body.style.padding = "0";
-    document.body.style.height = "100vh";
-    document.body.style.width = "100vw";
-    document.body.style.display = "flex";
-    document.body.style.flexDirection = "column";
-    document.body.style.justifyContent = "center";
-    document.body.style.alignItems = "center";
-    document.body.style.backgroundColor = "#000000";
-    document.body.style.color = "#ff0000";
-    document.body.style.textAlign = "center";
+    Object.assign(document.body.style, {
+      margin: 0,
+      padding: 0,
+      height: "100vh",
+      width: "100vw",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#000",
+      color: "#f00",
+      textAlign: "center",
+    });
 
-    const error =
-      e instanceof Error
-        ? `
-      <span>Failed to render card.</span>
-      <span><b>Error Name:</b> ${e.name}</span>
-      <span><b>Error Message:</b> ${e.message}</span>
-      <span><b>Error Cause:</b> ${e.cause ?? "N/A"}</span>
-      <span><b>Error Stack:</b><br><pre style="white-space: pre-wrap; background: #f3f4f6; padding: 8px;">${e.stack}</pre></span>
-    `
-        : `<span>Something went wrong.</span>`;
+    const isError = e instanceof Error;
 
-    document.body.innerHTML = error;
+    document.body.innerHTML = isError
+      ? `
+        <span>Failed to render card.</span>
+        <span><b>Error Name:</b> ${e.name}</span>
+        <span><b>Error Message:</b> ${e.message}</span>
+        <span><b>Error Cause:</b> ${e.cause ?? "N/A"}</span>
+        <span><b>Error Stack:</b><br>
+          <pre style="white-space: pre-wrap; background: #f3f4f6; padding: 8px;">
+            ${e.stack}
+          </pre>
+        </span>
+      `
+      : `<span>Something went wrong.</span>`;
   }
 }
 
