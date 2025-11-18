@@ -21,6 +21,11 @@ export default defineConfig({
           },
         ],
       },
+
+      {
+        text: "Learn More",
+        items: [{ text: "Features", link: "/features" }],
+      },
     ],
 
     socialLinks: [{ icon: "github", link: "https://github.com/youyoumu/kiku" }],

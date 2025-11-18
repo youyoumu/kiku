@@ -4,7 +4,9 @@ outline: deep
 
 # Installation
 
-Kiku is made to be compatible with [Lapis](https://github.com/donkuri/lapis), so the installation process is very similar to that of Lapis.
+:::info
+Kiku is made to be compatible with [Lapis](https://github.com/donkuri/lapis), so the installation process is very similar to Lapis.
+:::
 
 ::: warning
 This documentation assumes you already know about Anki, Yomitan, and mining-stuff.
@@ -12,7 +14,7 @@ This documentation assumes you already know about Anki, Yomitan, and mining-stuf
 
 ## Installing notetype
 
-Download the latest release `Kiku.apkg` from [GitHub](https://github.com/youyoumu/kiku/releases/latest), and then import it to your Anki. After that the `Kiku` notetype should be available in your `Note Types` list.
+Download the latest release `Kiku.apkg` from [Release](https://github.com/youyoumu/kiku/releases/latest), and then import it to your Anki. After that the `Kiku` notetype should be available in your `Note Types` list.
 
 ## Yomitan Setup
 
@@ -47,4 +49,6 @@ Credit to [Lapis](https://github.com/donkuri/lapis) for the table
 
 ## [Kiku Note Manager](https://ankiweb.net/shared/info/408592650?cb=1763445474367) addon
 
+This addon is optional.
 Currently this addon is only used to generate notes cache, so the Kanji View feature works across all platforms.
+Install this addon, then go to `Tools` > `Kiku Note Manager` > `Generate notes cache`.
