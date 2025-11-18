@@ -2,9 +2,13 @@ import { cp, stat } from "node:fs/promises";
 import { join } from "node:path";
 
 // folders
+
+const BASE_DIR = process.platform === "win32" ? process.env.APPDATA : process.env.HOME + "/.local/share";
+const USER = "yym";
+// const USER = "User 1";
 const ANKI_MEDIA_DIR = join(
-  process.env.HOME || "",
-  ".local/share/Anki2/yym/collection.media",
+  BASE_DIR || "",
+  `Anki2/${USER}/collection.media`,
 );
 await stat(ANKI_MEDIA_DIR);
 

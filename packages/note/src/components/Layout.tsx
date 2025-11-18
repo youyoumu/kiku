@@ -9,7 +9,7 @@ export function Layout(props: { children: JSX.Element }) {
   return (
     <div
       ref={(ref) => setCard("layoutRef", ref)}
-      class="max-w-4xl mx-auto overflow-y-auto overflow-x-hidden gutter-stable h-svh font-primary transition-colors relative"
+      class="max-w-4xl mx-auto overflow-hidden gutter-stable h-svh font-primary transition-colors relative"
     >
       <UseAnkiWeb />
       <div
