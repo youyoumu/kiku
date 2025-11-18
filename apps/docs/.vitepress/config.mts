@@ -8,18 +8,12 @@ export default defineConfig({
   description: "Modern Anki notes, built like web apps.",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    nav: [
-      { text: "Home", link: "/" },
-      { text: "Reference", link: "/markdown-examples" },
-    ],
+    nav: [{ text: "Home", link: "/" }],
 
     sidebar: [
       {
-        text: "Examples",
-        items: [
-          { text: "Markdown Examples", link: "/markdown-examples" },
-          { text: "Runtime API Examples", link: "/api-examples" },
-        ],
+        text: "Getting Started",
+        items: [{ text: "Installation", link: "/installation" }],
       },
     ],
 

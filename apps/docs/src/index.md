@@ -12,16 +12,13 @@ hero:
   actions:
     - theme: brand
       text: Getting Started
-      link: /markdown-examples
-    - theme: alt
-      text: Reference
-      link: /api-examples
+      link: /installation
 
 features:
-  - title: 35 Built-in Themes
-    details: Switch between 35 ready-to-use themes instantly, from light and minimal to dark and focused.
-  - title: Kanji Panel
-    details: View notes that share the same or similar kanji, and quickly jump between related expressions.
+  - title: Built-in Themes
+    details: Instantly switch between 35 ready-to-use themes, ranging from light and minimal to dark and focused.
+  - title: Kanji View
+    details: Explore notes that share the same or similar kanji, and quickly jump between related expressions.
   - title: Settings Panel
-    details: Adjust your theme, font, and size from a simple, built-in panel to match your study preferences.
+    details: Adjust your theme, font, size, and other configuration options directly within the note.
 ---
