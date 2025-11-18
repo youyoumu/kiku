@@ -44,3 +44,7 @@ Open your Yomitan settings, go to `Anki` > `Configure Anki flashcard`, select `K
 | MiscInfo              | `{document-title}` If you want your cards to include the title of the tab they were mined from, such as for light novels (LNs), please use this feature.   |
 
 Credit to [Lapis](https://github.com/donkuri/lapis) for the table
+
+## [Kiku Note Manager](https://ankiweb.net/shared/info/408592650?cb=1763445474367) addon
+
+Currently this addon is only used to generate notes cache, so the Kanji View feature works across all platforms.
