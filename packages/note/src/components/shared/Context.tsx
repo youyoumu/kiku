@@ -6,16 +6,10 @@ import {
   type JSX,
   onCleanup,
   onMount,
-  type Signal,
   useContext,
 } from "solid-js";
 import type { SetStoreFunction, Store } from "solid-js/store";
-import type {
-  AnkiBackFields,
-  AnkiFields,
-  AnkiFrontFields,
-  Plugin,
-} from "#/types";
+import type { AnkiBackFields, AnkiFields, AnkiFrontFields } from "#/types";
 import { type KikuConfig, updateConfigState } from "#/util/config";
 import { env, getAnkiFields } from "#/util/general";
 
@@ -53,7 +47,6 @@ export function useConfig() {
 
 const AnkiFieldContext = createContext<{
   ankiFields: AnkiFields;
-  plugin$: Signal<Plugin | undefined>;
 }>();
 
 export function AnkiFieldContextProvider(props: {
@@ -61,10 +54,9 @@ export function AnkiFieldContextProvider(props: {
   ankiFields?: AnkiFields;
 }) {
   const ankiFields = props.ankiFields ?? getAnkiFields();
-  const plugin$ = createSignal<Plugin | undefined>();
 
   return (
-    <AnkiFieldContext.Provider value={{ ankiFields, plugin$ }}>
+    <AnkiFieldContext.Provider value={{ ankiFields }}>
       {props.children}
     </AnkiFieldContext.Provider>
   );
@@ -73,11 +65,9 @@ export function AnkiFieldContextProvider(props: {
 type useAnkiFieldType = {
   front: {
     ankiFields: AnkiFrontFields;
-    plugin$: Signal<Plugin | undefined>;
   };
   back: {
     ankiFields: AnkiBackFields;
-    plugin$: Signal<Plugin | undefined>;
   };
 };
 

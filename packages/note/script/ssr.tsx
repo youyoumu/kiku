@@ -3,6 +3,7 @@ import { generateHydrationScript, renderToString } from "solid-js/web";
 import { Front } from "#/components/Front";
 import { CardStoreContextProvider } from "#/components/shared/CardContext";
 import { FieldGroupContextProvider } from "#/components/shared/FieldGroupContext";
+import { PluginContextProvider } from "#/components/shared/PluginContextProvider";
 import { Logger } from "#/util/logger";
 import { Back } from "../src/components/Back";
 import {
@@ -23,30 +24,34 @@ globalThis.KIKU_STATE = {
 
 export function getSsrTemplate() {
   const frontSsrTemplate = renderToString(() => (
-    <AnkiFieldContextProvider>
-      <CardStoreContextProvider side="front">
-        <BreakpointContextProvider>
-          <ConfigContextProvider value={[config, setConfig]}>
-            <FieldGroupContextProvider>
-              <Front />
-            </FieldGroupContextProvider>
-          </ConfigContextProvider>
-        </BreakpointContextProvider>
-      </CardStoreContextProvider>
-    </AnkiFieldContextProvider>
+    <PluginContextProvider>
+      <AnkiFieldContextProvider>
+        <CardStoreContextProvider side="front">
+          <BreakpointContextProvider>
+            <ConfigContextProvider value={[config, setConfig]}>
+              <FieldGroupContextProvider>
+                <Front />
+              </FieldGroupContextProvider>
+            </ConfigContextProvider>
+          </BreakpointContextProvider>
+        </CardStoreContextProvider>
+      </AnkiFieldContextProvider>
+    </PluginContextProvider>
   ));
   const backSsrTemplate = renderToString(() => (
-    <AnkiFieldContextProvider>
-      <CardStoreContextProvider side="back">
-        <BreakpointContextProvider>
-          <ConfigContextProvider value={[config, setConfig]}>
-            <FieldGroupContextProvider>
-              <Back />
-            </FieldGroupContextProvider>
-          </ConfigContextProvider>
-        </BreakpointContextProvider>
-      </CardStoreContextProvider>
-    </AnkiFieldContextProvider>
+    <PluginContextProvider>
+      <AnkiFieldContextProvider>
+        <CardStoreContextProvider side="back">
+          <BreakpointContextProvider>
+            <ConfigContextProvider value={[config, setConfig]}>
+              <FieldGroupContextProvider>
+                <Back />
+              </FieldGroupContextProvider>
+            </ConfigContextProvider>
+          </BreakpointContextProvider>
+        </CardStoreContextProvider>
+      </AnkiFieldContextProvider>
+    </PluginContextProvider>
   ));
 
   const hydrationScript = generateHydrationScript();

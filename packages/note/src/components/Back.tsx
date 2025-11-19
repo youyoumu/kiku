@@ -21,6 +21,7 @@ import {
   FieldGroupContextProvider,
   useFieldGroup,
 } from "./shared/FieldGroupContext";
+import { usePlugin } from "./shared/PluginContextProvider";
 
 // biome-ignore format: this looks nicer
 const Lazy = {
@@ -40,8 +41,8 @@ export function Back(props: { onExitNested?: () => void }) {
   const navigate = useNavigationTransition();
   const [card, setCard] = useCardStore();
   const [config] = useConfig();
-  const { ankiFields, plugin$ } = useAnkiField<"back">();
-  const [plugin, setPlugin] = plugin$;
+  const { ankiFields } = useAnkiField<"back">();
+  const [plugin, setPlugin] = usePlugin();
 
   const tags = ankiFields.Tags.split(" ");
 

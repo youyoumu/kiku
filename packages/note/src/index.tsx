@@ -18,6 +18,7 @@ import { env } from "./util/general.ts";
 import "./styles/tailwind.css";
 import { CardStoreContextProvider } from "./components/shared/CardContext.tsx";
 import { FieldGroupContextProvider } from "./components/shared/FieldGroupContext.tsx";
+import { PluginContextProvider } from "./components/shared/PluginContextProvider.tsx";
 import { Logger } from "./util/logger.ts";
 
 const logger = new Logger();
@@ -102,33 +103,37 @@ export async function init({
 
     if (side === "front") {
       const App = () => (
-        <AnkiFieldContextProvider>
-          <CardStoreContextProvider side="front">
-            <BreakpointContextProvider>
-              <ConfigContextProvider value={[config, setConfig]}>
-                <FieldGroupContextProvider>
-                  <Front />
-                </FieldGroupContextProvider>
-              </ConfigContextProvider>
-            </BreakpointContextProvider>
-          </CardStoreContextProvider>
-        </AnkiFieldContextProvider>
+        <PluginContextProvider>
+          <AnkiFieldContextProvider>
+            <CardStoreContextProvider side="front">
+              <BreakpointContextProvider>
+                <ConfigContextProvider value={[config, setConfig]}>
+                  <FieldGroupContextProvider>
+                    <Front />
+                  </FieldGroupContextProvider>
+                </ConfigContextProvider>
+              </BreakpointContextProvider>
+            </CardStoreContextProvider>
+          </AnkiFieldContextProvider>
+        </PluginContextProvider>
       );
       if (ssr) return hydrate(App, root);
       render(App, root);
     } else if (side === "back") {
       const App = () => (
-        <AnkiFieldContextProvider>
-          <CardStoreContextProvider side="back">
-            <BreakpointContextProvider>
-              <ConfigContextProvider value={[config, setConfig]}>
-                <FieldGroupContextProvider>
-                  <Back />
-                </FieldGroupContextProvider>
-              </ConfigContextProvider>
-            </BreakpointContextProvider>
-          </CardStoreContextProvider>
-        </AnkiFieldContextProvider>
+        <PluginContextProvider>
+          <AnkiFieldContextProvider>
+            <CardStoreContextProvider side="back">
+              <BreakpointContextProvider>
+                <ConfigContextProvider value={[config, setConfig]}>
+                  <FieldGroupContextProvider>
+                    <Back />
+                  </FieldGroupContextProvider>
+                </ConfigContextProvider>
+              </BreakpointContextProvider>
+            </CardStoreContextProvider>
+          </AnkiFieldContextProvider>
+        </PluginContextProvider>
       );
       if (ssr) return hydrate(App, root);
       render(App, root);
