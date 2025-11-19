@@ -1,3 +1,6 @@
+import type { Plugin } from "./_kiku_plugin";
+import type { Logger } from "./util/logger";
+
 export type AnkiFields = {
   Expression: string;
   ExpressionFurigana: string;
@@ -158,4 +161,94 @@ export const ankiFieldsSkeleton: AnkiFields = {
   "kanji:Sentence": "",
   "furigana:SentenceFurigana": "",
   "kana:SentenceFurigana": ""
+}
+
+type AnkiResponse<T = unknown> = {
+  success: boolean;
+  value?: T;
+  error?: string;
+};
+
+type AnkiDroidAPI = {
+  ankiGetNewCardCount(): Promise<AnkiResponse>;
+  ankiGetLrnCardCount(): Promise<AnkiResponse>;
+  ankiGetRevCardCount(): Promise<AnkiResponse>;
+  ankiGetETA(): Promise<AnkiResponse>;
+  ankiGetCardMark(): Promise<AnkiResponse>;
+  ankiGetCardFlag(): Promise<AnkiResponse>;
+  ankiGetNextTime1(): Promise<AnkiResponse>;
+  ankiGetNextTime2(): Promise<AnkiResponse>;
+  ankiGetNextTime3(): Promise<AnkiResponse>;
+  ankiGetNextTime4(): Promise<AnkiResponse>;
+  ankiGetCardReps(): Promise<AnkiResponse>;
+  ankiGetCardInterval(): Promise<AnkiResponse>;
+  ankiGetCardFactor(): Promise<AnkiResponse>;
+  ankiGetCardMod(): Promise<AnkiResponse>;
+  ankiGetCardId(): Promise<AnkiResponse>;
+  ankiGetCardNid(): Promise<AnkiResponse>;
+  ankiGetCardType(): Promise<AnkiResponse>;
+  ankiGetCardDid(): Promise<AnkiResponse>;
+  ankiGetCardLeft(): Promise<AnkiResponse>;
+  ankiGetCardODid(): Promise<AnkiResponse>;
+  ankiGetCardODue(): Promise<AnkiResponse>;
+  ankiGetCardQueue(): Promise<AnkiResponse>;
+  ankiGetCardLapses(): Promise<AnkiResponse>;
+  ankiGetCardDue(): Promise<AnkiResponse>;
+  ankiIsInFullscreen(): Promise<AnkiResponse>;
+  ankiIsTopbarShown(): Promise<AnkiResponse>;
+  ankiIsInNightMode(): Promise<AnkiResponse>;
+  ankiIsDisplayingAnswer(): Promise<AnkiResponse>;
+  ankiGetDeckName(): Promise<AnkiResponse>;
+  ankiIsActiveNetworkMetered(): Promise<AnkiResponse>;
+  ankiTtsFieldModifierIsAvailable(): Promise<AnkiResponse>;
+  ankiTtsIsSpeaking(): Promise<AnkiResponse>;
+  ankiTtsStop(): Promise<AnkiResponse>;
+  ankiBuryCard(): Promise<AnkiResponse>;
+  ankiBuryNote(): Promise<AnkiResponse>;
+  ankiSuspendCard(): Promise<AnkiResponse>;
+  ankiSuspendNote(): Promise<AnkiResponse>;
+  ankiAddTagToCard(): Promise<AnkiResponse>;
+  ankiResetProgress(): Promise<AnkiResponse>;
+  ankiMarkCard(): Promise<AnkiResponse>;
+  ankiToggleFlag(): Promise<AnkiResponse>;
+  ankiSearchCard(): Promise<AnkiResponse>;
+  ankiSearchCardWithCallback(): Promise<AnkiResponse>;
+  ankiTtsSpeak(): Promise<AnkiResponse>;
+  ankiTtsSetLanguage(): Promise<AnkiResponse>;
+  ankiTtsSetPitch(): Promise<AnkiResponse>;
+  ankiTtsSetSpeechRate(): Promise<AnkiResponse>;
+  ankiEnableHorizontalScrollbar(): Promise<AnkiResponse>;
+  ankiEnableVerticalScrollbar(): Promise<AnkiResponse>;
+  ankiSetCardDue(): Promise<AnkiResponse>;
+  ankiShowNavigationDrawer(): Promise<AnkiResponse>;
+  ankiShowOptionsMenu(): Promise<AnkiResponse>;
+  ankiShowToast(): Promise<AnkiResponse>;
+  ankiShowAnswer(): Promise<AnkiResponse>;
+  ankiAnswerEase1(): Promise<AnkiResponse>;
+  ankiAnswerEase2(): Promise<AnkiResponse>;
+  ankiAnswerEase3(): Promise<AnkiResponse>;
+  ankiAnswerEase4(): Promise<AnkiResponse>;
+  ankiSttSetLanguage(): Promise<AnkiResponse>;
+  ankiSttStart(): Promise<AnkiResponse>;
+  ankiSttStop(): Promise<AnkiResponse>;
+  ankiAddTagToNote(): Promise<AnkiResponse>;
+  ankiSetNoteTags(): Promise<AnkiResponse>;
+  ankiGetNoteTags(): Promise<AnkiResponse>;
+};
+
+declare global {
+  var KIKU_STATE: {
+    relax?: boolean;
+    startupTime?: number;
+    root?: HTMLElement;
+    isAnkiWeb?: boolean;
+    assetsPath: string;
+    logger: Logger;
+    plugin?: Plugin;
+  };
+  var pycmd: () => void;
+  var AnkiDroidJS: {
+    new (contract: { version: string; developer?: string }): AnkiDroidAPI;
+    prototype: AnkiDroidAPI;
+  };
 }

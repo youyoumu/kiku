@@ -16,7 +16,6 @@ import {
 } from "./util/config.ts";
 import { env } from "./util/general.ts";
 import "./styles/tailwind.css";
-import type { Plugin } from "./_kiku_plugin";
 import { CardStoreContextProvider } from "./components/shared/CardContext.tsx";
 import { FieldGroupContextProvider } from "./components/shared/FieldGroupContext.tsx";
 import { Logger } from "./util/logger.ts";
@@ -25,18 +24,6 @@ import { getPlugin } from "./util/plugin.ts";
 const logger = new Logger();
 logger.attachToGlobalErrors();
 
-declare global {
-  var KIKU_STATE: {
-    relax?: boolean;
-    startupTime?: number;
-    root?: HTMLElement;
-    isAnkiWeb?: boolean;
-    assetsPath: string;
-    logger: Logger;
-    plugin?: Plugin;
-  };
-  var pycmd: () => void;
-}
 globalThis.KIKU_STATE = {
   isAnkiWeb: window.location.origin.includes("ankiuser.net"),
   assetsPath: window.location.origin,
