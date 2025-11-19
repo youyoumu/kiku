@@ -16,9 +16,11 @@ import {
 } from "./util/config.ts";
 import { env } from "./util/general.ts";
 import "./styles/tailwind.css";
+import type { Plugin } from "./_kiku_plugin";
 import { CardStoreContextProvider } from "./components/shared/CardContext.tsx";
 import { FieldGroupContextProvider } from "./components/shared/FieldGroupContext.tsx";
 import { Logger } from "./util/logger.ts";
+import { getPlugin } from "./util/plugin.ts";
 
 const logger = new Logger();
 logger.attachToGlobalErrors();
@@ -31,6 +33,7 @@ declare global {
     isAnkiWeb?: boolean;
     assetsPath: string;
     logger: Logger;
+    plugin?: Plugin;
   };
   var pycmd: () => void;
 }
@@ -47,6 +50,8 @@ export async function init({
   side: "front" | "back";
   ssr?: boolean;
 }) {
+  KIKU_STATE.plugin = await getPlugin();
+
   try {
     if (KIKU_STATE.isAnkiWeb) {
       logger.info("AnkiWeb detected");

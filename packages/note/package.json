@@ -15,6 +15,7 @@
     "package": "npx vite-node ./script/package.ts"
   },
   "dependencies": {
+    "@solidjs/h": "2.0.0-experimental.0",
     "solid-js": "^1.9.9"
   },
   "devDependencies": {
