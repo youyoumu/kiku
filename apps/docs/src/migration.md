@@ -2,7 +2,7 @@
 outline: deep
 ---
 
-# Switching from other note types
+# Switching From Other Note Types
 
 ## Switching from [Lapis](https://github.com/donkuri/lapis)
 

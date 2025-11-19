@@ -2,7 +2,7 @@
 outline: deep
 ---
 
-# Field grouping
+# Field Grouping
 
 ## The Steps
 

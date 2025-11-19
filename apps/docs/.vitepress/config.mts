@@ -16,7 +16,7 @@ export default defineConfig({
         items: [
           { text: "Installation", link: "/installation" },
           {
-            text: "Switching from Lapis",
+            text: "Switching From Lapis",
             link: "/migration",
           },
         ],
@@ -27,12 +27,12 @@ export default defineConfig({
         items: [
           { text: "Features", link: "/features" },
           {
-            text: "Field grouping",
+            text: "Field Grouping",
             link: "/field-grouping",
           },
           {
-            text: "How things works",
-            link: "/how-things-works",
+            text: "How Things Work",
+            link: "/how-things-work",
           },
         ],
       },
