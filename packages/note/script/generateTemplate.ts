@@ -11,6 +11,7 @@ async function main() {
   const styleDestPath = join(import.meta.dirname, "../dist/_kiku_style.css");
   const cssSrcPath = join(import.meta.dirname, "../dist/_kiku.css");
   const cssDestPath = join(import.meta.dirname, "../dist/_kiku.css");
+  const pluginDestPath = join(import.meta.dirname, "../dist/_kiku_plugin.js");
 
   const [frontSrc, backSrc, styleSrc, cssSrc] = await Promise.all([
     readFile(frontSrcPath, "utf8"),
@@ -36,6 +37,7 @@ async function main() {
     writeFile(backDestPath, backTemplate),
     writeFile(styleDestPath, styleTemplate),
     writeFile(cssDestPath, cssTemplate),
+    writeFile(pluginDestPath, "export const plugin = {}"),
   ]);
 }
 main()

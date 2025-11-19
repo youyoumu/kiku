@@ -19,6 +19,7 @@ const FILES = [
   "_kiku_libs.js",
   "_kiku_shared.js",
   "_kiku_worker.js",
+  "_kiku_plugin.js",
 ];
 
 for (const file of FILES) {

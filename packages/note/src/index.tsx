@@ -37,8 +37,6 @@ export async function init({
   side: "front" | "back";
   ssr?: boolean;
 }) {
-  KIKU_STATE.plugin = await getPlugin();
-
   try {
     if (KIKU_STATE.isAnkiWeb) {
       logger.info("AnkiWeb detected");
@@ -47,6 +45,8 @@ export async function init({
       const kikuCss = document.getElementById("kiku-css");
       kikuCss?.remove();
     }
+
+    KIKU_STATE.plugin = await getPlugin();
 
     const root =
       document.getElementById("root") ??
