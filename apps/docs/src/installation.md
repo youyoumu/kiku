@@ -5,7 +5,7 @@ outline: deep
 # Installation
 
 :::info
-Kiku is made to be compatible with [Lapis](https://github.com/donkuri/lapis), so the installation process is very similar to Lapis.
+Kiku is designed to be compatible with [Lapis](https://github.com/donkuri/lapis), so the installation process is very similar. You can refer to their installation guide.
 :::
 
 ::: warning
@@ -14,7 +14,7 @@ This documentation assumes you already know about Anki, Yomitan, and mining-stuf
 
 ## Installing notetype
 
-Download the latest release `Kiku.apkg` from [Release](https://github.com/youyoumu/kiku/releases/latest), and then import it to your Anki. After that the `Kiku` notetype should be available in your `Note Types` list.
+Download the latest release `Kiku_v*.apkg` from [Release](https://github.com/youyoumu/kiku/releases/latest), and then import it to your Anki. After that the `Kiku` notetype should be available in your `Note Types` list.
 
 ## Yomitan Setup
 

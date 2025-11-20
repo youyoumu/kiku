@@ -35,6 +35,10 @@ export default defineConfig({
             link: "/plugin",
           },
           {
+            text: "Updating Kiku",
+            link: "/updating",
+          },
+          {
             text: "How Things Work",
             link: "/how-things-work",
           },

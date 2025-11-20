@@ -1,0 +1,14 @@
+---
+outline: deep
+---
+
+# Updating Kiku
+
+Download the latest `Kiku_v*.apkg` from the [Release page](https://github.com/youyoumu/kiku/releases).
+
+Before importing the `.apkg`, you need to delete all existing [Kiku files](./how-things-work.md#kiku-files).  
+This is required because Anki will not overwrite files that already exist.
+
+You may keep `_kiku_config.json` and `_kiku_plugin.js`.
+
+After that, import the `.apkg` into Anki as usual.
