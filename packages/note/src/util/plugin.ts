@@ -1,4 +1,4 @@
-import type { Plugin } from "#/types";
+import type { KikuPlugin } from "#/plugins/pluginTypes";
 import { env } from "./general";
 
 export async function getPlugin() {
@@ -8,7 +8,7 @@ export async function getPlugin() {
         /* @vite-ignore */
         `${KIKU_STATE.assetsPath}/${env.KIKU_PLUGIN_MODULE}`
       )
-    ).plugin as Plugin;
+    ).plugin as KikuPlugin;
     return plugin;
   } catch (e) {
     KIKU_STATE.logger.warn(

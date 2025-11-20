@@ -235,20 +235,6 @@ export type AnkiDroidAPI = {
   ankiGetNoteTags(): Promise<AnkiResponse>;
 };
 
-import type { JSX } from "solid-js";
-import type { HyperScript } from "solid-js/h/types/hyperscript.d.ts";
-
-export type Plugin = {
-  ExternalLinks?: (props: {
-    DefaultExternalLinks: () => JSX.Element;
-    ctx: {
-      ankiFields: AnkiFields;
-      h: HyperScript;
-      ankiDroidAPI: () => AnkiDroidAPI | undefined;
-    };
-  }) => JSX.Element | JSX.Element[];
-};
-
 declare global {
   var KIKU_STATE: {
     relax?: boolean;

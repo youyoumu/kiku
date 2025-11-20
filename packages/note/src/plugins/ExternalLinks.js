@@ -1,9 +1,9 @@
 /**
- * @import {Plugin} from "#/types";
+ * @import {KikuPlugin} from "#/plugins/pluginTypes";
  */
 
 /**
- * @type {Plugin}
+ * @type {KikuPlugin}
  */
 export const plugin = {
   ExternalLinks: (props) => {

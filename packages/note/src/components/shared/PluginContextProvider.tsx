@@ -1,11 +1,11 @@
 import { createContext, createSignal, type Signal, useContext } from "solid-js";
 import type { JSX } from "solid-js/jsx-runtime";
-import type { Plugin } from "#/types";
+import type { KikuPlugin } from "#/plugins/pluginTypes";
 
-const PluginContext = createContext<Signal<Plugin | undefined>>();
+const PluginContext = createContext<Signal<KikuPlugin | undefined>>();
 
 export function PluginContextProvider(props: { children: JSX.Element }) {
-  const plugin$ = createSignal<Plugin | undefined>(undefined);
+  const plugin$ = createSignal<KikuPlugin | undefined>(undefined);
 
   return (
     <PluginContext.Provider value={plugin$}>
