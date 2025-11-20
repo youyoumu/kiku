@@ -4,7 +4,10 @@ import { env } from "./general";
 export async function getPlugin() {
   try {
     const plugin = (
-      await import(`${KIKU_STATE.assetsPath}/${env.KIKU_PLUGIN_MODULE}`)
+      await import(
+        /* @vite-ignore */
+        `${KIKU_STATE.assetsPath}/${env.KIKU_PLUGIN_MODULE}`
+      )
     ).plugin as Plugin;
     return plugin;
   } catch (e) {
