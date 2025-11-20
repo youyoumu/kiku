@@ -40,10 +40,28 @@ export const AnkiConnect = {
       data: base64.encodeString(JSON.stringify(config)),
     });
 
+    const [frontRes, backRes, styleRes] = await Promise.all([
+      fetch(env.KIKU_FRONT_FILE),
+      fetch(env.KIKU_BACK_FILE),
+      fetch(env.KIKU_STYLE_FILE),
+    ]);
+
+    if (!frontRes.ok || !backRes.ok || !styleRes.ok) {
+      throw new Error(
+        `Failed to load template files: ${[
+          !frontRes.ok && env.KIKU_FRONT_FILE,
+          !backRes.ok && env.KIKU_BACK_FILE,
+          !styleRes.ok && env.KIKU_STYLE_FILE,
+        ]
+          .filter(Boolean)
+          .join(", ")}`,
+      );
+    }
+
     const [frontSrc, backSrc, styleSrc] = await Promise.all([
-      await (await fetch(env.KIKU_FRONT_FILE)).text(),
-      await (await fetch(env.KIKU_BACK_FILE)).text(),
-      await (await fetch(env.KIKU_STYLE_FILE)).text(),
+      frontRes.text(),
+      backRes.text(),
+      styleRes.text(),
     ]);
 
     const frontTemplate = frontSrc.replace("__DATA_THEME__", config.theme);
