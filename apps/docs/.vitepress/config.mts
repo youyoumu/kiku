@@ -44,6 +44,13 @@ export default defineConfig({
           },
         ],
       },
+
+      {
+        text: "Recipes",
+        items: [
+          { text: "Add More External Links", link: "/add-more-external-links" },
+        ],
+      },
     ],
 
     socialLinks: [{ icon: "github", link: "https://github.com/youyoumu/kiku" }],
