@@ -20,7 +20,7 @@ export const env = {
   KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO: "_kiku_db_similar_kanji_wk_niai_noto.json.gz",
   KIKU_DB_SIMILAR_KANJI_YL_RADICAL: "_kiku_db_similar_kanji_yl_radical.json.gz",
   KIKU_PLUGIN_MODULE: "_kiku_plugin.js",
-  KIKU_VERSION: "1.0.0",
+  KIKU_VERSION: "1.1.0",
 };
 
 export type Env = typeof env;
