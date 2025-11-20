@@ -21,6 +21,31 @@ export const env = {
   KIKU_DB_SIMILAR_KANJI_YL_RADICAL: "_kiku_db_similar_kanji_yl_radical.json.gz",
   KIKU_PLUGIN_MODULE: "_kiku_plugin.js",
   KIKU_VERSION: "1.1.0",
+  KIKU_IMPORTANT_FILES: [
+    "_kiku.js",
+    "_kiku_libs.js",
+    "_kiku_shared.js",
+    "_kiku_lazy.js",
+    "_kiku_worker.js",
+    "_kiku_plugin.js",
+
+    "_kiku_front.html",
+    "_kiku_back.html",
+    "_kiku_style.css",
+    "_kiku.css",
+
+    "_kiku_font_hina-mincho.woff2",
+    "_kiku_font_ibm-plex-sans-jp.woff2",
+    "_kiku_font_klee-one.woff2",
+
+    "_kiku_db_similar_kanji_from_keisei.json.gz",
+    "_kiku_db_similar_kanji_lookup.json.gz",
+    "_kiku_db_similar_kanji_manual.json.gz",
+    "_kiku_db_similar_kanji_old_script.json.gz",
+    "_kiku_db_similar_kanji_stroke_edit_dist.json.gz",
+    "_kiku_db_similar_kanji_wk_niai_noto.json.gz",
+    "_kiku_db_similar_kanji_yl_radical.json.gz",
+  ]
 };
 
 export type Env = typeof env;

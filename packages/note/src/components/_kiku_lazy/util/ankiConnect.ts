@@ -109,7 +109,7 @@ export const AnkiConnect = {
       // Compare alphabetically by full name
       return a.localeCompare(b);
     });
-    return sorted as Record<string, string>;
+    return sorted as string[];
   },
 };
 

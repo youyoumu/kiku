@@ -629,11 +629,16 @@ function DebugSettings() {
   const [card] = useCardStore();
   const { ankiFields } = useAnkiField<"back">();
   const [kikuFiles, setKikuFiles] = createSignal<string>();
+  const [missingFiles, setMissingFiles] = createSignal<string>();
 
   createEffect(async () => {
     if (card.ankiConnectAvailable) {
       const files = await AnkiConnect.getKikuFiles();
       setKikuFiles(JSON.stringify(files, null, 2));
+      const missing = env.KIKU_IMPORTANT_FILES.filter((file) => {
+        return !files.includes(file);
+      });
+      setMissingFiles(missing.join(", "));
     }
   });
 
@@ -807,6 +812,16 @@ function DebugSettings() {
                   }}
                 />
               </div>
+
+              <Show when={missingFiles()}>
+                <div role="alert" class="alert alert-warning">
+                  <span>
+                    Some files are missing, things may not work as expected.
+                    <br />
+                    <span class="text-xs ">{missingFiles()}</span>
+                  </span>
+                </div>
+              </Show>
               <pre class="text-xs bg-base-200 p-4 rounded-lg overflow-auto">
                 {kikuFiles()}
               </pre>
