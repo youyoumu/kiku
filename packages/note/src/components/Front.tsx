@@ -110,7 +110,7 @@ export function Front() {
       </div>
 
       <div
-        class="flex-col gap-4 items-center text-center"
+        class="flex flex-col gap-4 items-center text-center justify-center"
         classList={{
           hidden: hidden(),
         }}

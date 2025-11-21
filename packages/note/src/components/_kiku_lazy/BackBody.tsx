@@ -80,7 +80,7 @@ export default function BackBody(props: {
         "flex-col": !config.swapSentenceAndDefinitionOnMobile,
       }}
     >
-      <div class="flex justify-between gap-2 items-center text-center">
+      <div class="flex flex-col justify-center gap-2 items-center text-center">
         <Sentence />
       </div>
       {pagesWithContent.length > 0 && (
