@@ -53,6 +53,10 @@ export default defineConfig({
             text: "Display Extra Fields",
             link: "/display-extra-fields",
           },
+          {
+            text: "Custom Theme",
+            link: "/custom-theme",
+          },
         ],
       },
     ],
