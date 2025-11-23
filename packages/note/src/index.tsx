@@ -3,7 +3,7 @@ import { createStore } from "solid-js/store";
 import { hydrate, render } from "solid-js/web";
 import { Back } from "./components/Back.tsx";
 import { Front } from "./components/Front.tsx";
-import { BreakpointContextProvider } from "./components/shared/Context.tsx";
+import { BreakpointContextProvider } from "./components/shared/BreakpointContext.tsx";
 import {
   defaultConfig,
   type KikuConfig,

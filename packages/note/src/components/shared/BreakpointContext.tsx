@@ -29,7 +29,7 @@ function getBreakpoint(width: number) {
   return "2xl";
 }
 
-export function createBreakpoint() {
+function createBreakpoint() {
   const [breakpoint, setBreakpoint] = createSignal<Breakpoint>("base");
 
   const update = () => {
@@ -73,7 +73,7 @@ export function BreakpointContextProvider(props: { children: JSX.Element }) {
   );
 }
 
-export function useBreakpoint() {
+export function useBreakpointContext() {
   const breakpointSignal = useContext(BreakpointContext);
   if (!breakpointSignal) throw new Error("Missing BreakpointContext");
   return breakpointSignal;

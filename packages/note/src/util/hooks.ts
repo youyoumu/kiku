@@ -1,6 +1,6 @@
+import { useBreakpointContext } from "#/components/shared/BreakpointContext";
 import { useCardContext } from "#/components/shared/CardContext";
 import { useConfigContext } from "#/components/shared/ConfigContext";
-import { useBreakpoint } from "#/components/shared/Context";
 
 import type { DaisyUITheme } from "./theme";
 
@@ -25,7 +25,7 @@ export function useViewTransition() {
 
 export function useNavigationTransition() {
   const [$card, $setCard] = useCardContext();
-  const bp = useBreakpoint();
+  const bp = useBreakpointContext();
   const startViewTransition = useViewTransition();
 
   function navigate(

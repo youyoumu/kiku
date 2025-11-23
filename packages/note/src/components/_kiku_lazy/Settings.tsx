@@ -23,8 +23,8 @@ import { env } from "#/util/general";
 import { useThemeTransition } from "#/util/hooks";
 import { daisyUIThemes } from "#/util/theme";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
+import { useBreakpointContext } from "../shared/BreakpointContext";
 import { useConfigContext } from "../shared/ConfigContext";
-import { useBreakpoint } from "../shared/Context";
 import { useGeneralContext } from "../shared/GeneralContext";
 import {
   ArrowLeftIcon,
@@ -66,7 +66,7 @@ export default function Settings(props: {
   onBackClick?: () => void;
   onCancelClick?: () => void;
 }) {
-  const bp = useBreakpoint();
+  const bp = useBreakpointContext();
   const [$config] = useConfigContext();
   const [$card, $setCard] = useCardContext();
 

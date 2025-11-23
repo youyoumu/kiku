@@ -2,8 +2,8 @@ import { createEffect, For, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import { useCardContext } from "#/components/shared/CardContext";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
+import { useBreakpointContext } from "../shared/BreakpointContext";
 import { useConfigContext } from "../shared/ConfigContext";
-import { useBreakpoint } from "../shared/Context";
 import { useFieldGroupContext } from "../shared/FieldGroupContext";
 import { PlayIcon } from "./Icons";
 
@@ -48,7 +48,7 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
   const [$card, $setCard] = useCardContext();
   const { $group } = useFieldGroupContext();
   const [$config] = useConfigContext();
-  const bp = useBreakpoint();
+  const bp = useBreakpointContext();
   const hiddenStyle = {
     width: "0",
     height: "0",
