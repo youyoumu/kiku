@@ -64,7 +64,7 @@ export class Logger {
     return `[${time}] [${level.toUpperCase()}] ${msg}`;
   }
 
-  private push(level: LogLevel, args: unknown[]) {
+  push(level: LogLevel, args: unknown[]) {
     if (Logger.levels.indexOf(level) < this.minLevelIndex) return;
 
     const line = this.format(level, args);

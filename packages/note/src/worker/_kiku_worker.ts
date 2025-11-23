@@ -10,6 +10,14 @@ type SimilarKanjiDBs = Record<string, SimilarKanjiDB>;
 
 let ankiConnectPort = 8765;
 
+const logger = {
+  trace: (...args: unknown[]) => postMessage({ log: { level: "trace", args } }),
+  debug: (...args: unknown[]) => postMessage({ log: { level: "debug", args } }),
+  info: (...args: unknown[]) => postMessage({ log: { level: "info", args } }),
+  warn: (...args: unknown[]) => postMessage({ log: { level: "warn", args } }),
+  error: (...args: unknown[]) => postMessage({ log: { level: "error", args } }),
+};
+
 const AnkiConnect = {
   invoke: async (action: string, params: Record<string, unknown> = {}) => {
     const res = await fetch(`http://127.0.0.1:${ankiConnectPort}`, {
@@ -96,6 +104,8 @@ export class Nex {
     config: KikuConfig;
     preferAnkiConnect: boolean;
   }) {
+    logger.debug("init Worker", payload);
+
     this.assetsPath = payload.assetsPath;
     this.env = payload.env;
     this.config = payload.config;
@@ -191,18 +201,26 @@ export class Nex {
 
     if (this.preferAnkiConnect) {
       try {
+        logger.info("Querying with AnkiConnect");
         return await AnkiConnect.queryFieldContains({
           kanjiList,
           readingList,
         });
       } catch {
+        logger.warn(
+          "Failed to query with AnkiConnect, falling back to notes cache",
+        );
         return await queryWithNotesCache();
       }
     }
 
     try {
+      logger.info("Querying with notes cache");
       return await queryWithNotesCache();
     } catch {
+      logger.warn(
+        "Failed to query with notes cache, falling back to AnkiConnect",
+      );
       return await AnkiConnect.queryFieldContains({
         kanjiList,
         readingList,
@@ -219,6 +237,11 @@ export class Nex {
     readingList: string[];
     ankiFields: AnkiFields;
   }) {
+    logger.debug("querySharedAndSimilar:", {
+      kanjiList,
+      readingList,
+      ankiFields,
+    });
     const similarKanji: Record<string, string[]> = Object.fromEntries(
       await Promise.all(
         kanjiList.map(async (k) => [k, await this.getSimilarKanji(k)]),
@@ -279,7 +302,10 @@ export class Nex {
       const res = await fetch(
         `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
       );
-      if (!res.body) throw new Error(`Failed to lookup ${kanji}`);
+      if (!res.body) {
+        logger.error("Failed to lookup", kanji);
+        throw new Error(`Failed to lookup ${kanji}`);
+      }
       const ds = new DecompressionStream("gzip");
       const decompressed = res.body.pipeThrough(ds);
       const text = await new Response(decompressed).text();
@@ -296,7 +322,10 @@ export class Nex {
     const res = await fetch(
       `${this.assetsPath}/${this.env.KIKU_NOTES_MANIFEST}`,
     );
-    if (!res.ok) throw new Error(`Failed to load manifest`);
+    if (!res.ok) {
+      logger.error("Failed to load manifest");
+      throw new Error(`Failed to load manifest`);
+    }
     const manifest = await res.json();
     this.cache.set(key, manifest);
     return manifest;
@@ -313,7 +342,10 @@ export class Nex {
     for (const src of allSources) {
       if (!similarKanjiDbs[src.file]) {
         const res = await fetch(src.file);
-        if (!res.body) throw new Error(`Failed to load ${src.file}`);
+        if (!res.body) {
+          logger.error("Failed to load", src.file);
+          throw new Error(`Failed to load ${src.file}`);
+        }
         const ds = new DecompressionStream("gzip");
         const decompressed = res.body.pipeThrough(ds);
         const text = await new Response(decompressed).text();
