@@ -39,7 +39,7 @@ export function Back(props: { onExitNested?: () => void }) {
   const [$card, $setCard] = useCardContext();
   const [$config] = useConfigContext();
   const { ankiFields } = useAnkiField<"back">();
-  const [generalStore, setGeneralStore] = useGeneralContext();
+  const [$general, $setGeneral] = useGeneralContext();
 
   const tags = ankiFields.Tags.split(" ");
 
@@ -48,7 +48,7 @@ export function Back(props: { onExitNested?: () => void }) {
       $setCard("ready", true);
       KIKU_STATE.relax = true;
       getPlugin().then((plugin) => {
-        setGeneralStore("plugin", plugin);
+        $setGeneral("plugin", plugin);
       });
 
       async function setKanji() {

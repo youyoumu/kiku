@@ -11,7 +11,7 @@ const GeneralContext =
   createContext<[Store<GeneralStore>, SetStoreFunction<GeneralStore>]>();
 
 export function GeneralContextProvider(props: { children: JSX.Element }) {
-  const [generalStore, setGeneralStore] = createStore<GeneralStore>({
+  const [$general, $setGeneral] = createStore<GeneralStore>({
     plugin: undefined,
     isThemeChanged: isServer
       ? false
@@ -23,7 +23,7 @@ export function GeneralContextProvider(props: { children: JSX.Element }) {
   });
 
   return (
-    <GeneralContext.Provider value={[generalStore, setGeneralStore]}>
+    <GeneralContext.Provider value={[$general, $setGeneral]}>
       {props.children}
     </GeneralContext.Provider>
   );

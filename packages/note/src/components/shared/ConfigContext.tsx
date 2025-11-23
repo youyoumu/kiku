@@ -14,7 +14,7 @@ export function ConfigContextProvider(props: {
   value: [Store<KikuConfig>, SetStoreFunction<KikuConfig>];
 }) {
   const [$config] = props.value;
-  const [generalStore, setGeneralStore] = useGeneralContext();
+  const [$general, $setGeneral] = useGeneralContext();
 
   let initialTheme: DaisyUITheme | undefined;
   createEffect(() => {
@@ -33,7 +33,7 @@ export function ConfigContextProvider(props: {
         env.KIKU_IS_THEME_CHANGED_SESSION_STORAGE_KEY,
         "true",
       );
-      setGeneralStore("isThemeChanged", true);
+      $setGeneral("isThemeChanged", true);
     }
   });
 

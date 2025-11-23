@@ -242,7 +242,7 @@ function GeneralSettings() {
 }
 
 function ThemeSettings() {
-  const [generalStore] = useGeneralContext();
+  const [$general] = useGeneralContext();
   const [$config, $setConfig] = useConfigContext();
   const changeTheme = useThemeTransition();
 
@@ -250,7 +250,7 @@ function ThemeSettings() {
     <div class="flex flex-col gap-4 animate-fade-in">
       <div class="text-2xl font-bold">Theme</div>
 
-      <Show when={generalStore.isThemeChanged}>
+      <Show when={$general.isThemeChanged}>
         <div role="alert" class="alert alert-warning">
           <span>
             A quick flash of the wrong theme may occur until you click Save and

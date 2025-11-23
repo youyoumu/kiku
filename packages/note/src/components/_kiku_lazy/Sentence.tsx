@@ -8,7 +8,7 @@ import { useGeneralContext } from "../shared/GeneralContext";
 export default function Sentence() {
   const [$card, $setCard] = useCardContext();
   const { group } = useFieldGroup();
-  const [generalStore] = useGeneralContext();
+  const [$general] = useGeneralContext();
   const { ankiFields } = useAnkiField();
 
   createEffect(() => {
@@ -32,7 +32,7 @@ export default function Sentence() {
 
   return (
     <ErrorBoundary fallback={<DefaultSentence />}>
-      <Show when={generalStore.plugin?.Sentence} fallback={<DefaultSentence />}>
+      <Show when={$general.plugin?.Sentence} fallback={<DefaultSentence />}>
         {(get) => {
           const Sentence = get();
           return (

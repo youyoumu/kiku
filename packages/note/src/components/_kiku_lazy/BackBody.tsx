@@ -127,12 +127,12 @@ export default function BackBody(props: {
 
 function ExternalLinks() {
   const { ankiFields } = useAnkiField<"back">();
-  const [generalStore] = useGeneralContext();
+  const [$general] = useGeneralContext();
 
   return (
     <ErrorBoundary fallback={<DefaultExternalLinks />}>
       <Show
-        when={generalStore.plugin?.ExternalLinks}
+        when={$general.plugin?.ExternalLinks}
         fallback={<DefaultExternalLinks />}
       >
         {(get) => {

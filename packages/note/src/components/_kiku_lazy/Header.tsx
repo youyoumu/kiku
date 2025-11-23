@@ -21,7 +21,7 @@ export default function Header(props: {
 }) {
   const [$card] = useCardContext();
   const [$config, $setConfig] = useConfigContext();
-  const [generalStore] = useGeneralContext();
+  const [$general] = useGeneralContext();
   const [startupTime, setStartupTime] = createSignal<number | null>(null);
   const changeTheme = useThemeTransition();
 
@@ -49,7 +49,7 @@ export default function Header(props: {
               }}
               on:click={props.onSettingsClick}
             ></BoltIcon>
-            <Show when={generalStore.isThemeChanged}>
+            <Show when={$general.isThemeChanged}>
               <div class="status status-warning absolute top-0 right-0 translate-x-0.5 -translate-y-0.5"></div>
             </Show>
           </div>
