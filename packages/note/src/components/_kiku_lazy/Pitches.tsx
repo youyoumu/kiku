@@ -1,11 +1,11 @@
 import { hatsuon } from "#/components/_kiku_lazy/util/hatsuon";
 import { useCardContext } from "#/components/shared/CardContext";
 import type { DatasetProp } from "#/util/config";
-import { useAnkiField } from "../shared/Context";
+import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 
 export default function Pitches() {
   const [$card] = useCardContext();
-  const { ankiFields } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiFieldContext<"back">();
 
   const tempDiv = document.createElement("div");
   tempDiv.innerHTML = ankiFields.PitchPosition;

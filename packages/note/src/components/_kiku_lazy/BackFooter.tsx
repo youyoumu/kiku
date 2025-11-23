@@ -1,8 +1,8 @@
-import { useAnkiField } from "../shared/Context";
+import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { InfoIcon } from "./Icons";
 
 export default function BackFooter(props: { tags: string[] }) {
-  const { ankiFields } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiFieldContext<"back">();
 
   return (
     <>

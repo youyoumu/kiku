@@ -1,16 +1,14 @@
 import { createStore } from "solid-js/store";
 import { generateHydrationScript, renderToString } from "solid-js/web";
 import { Front } from "#/components/Front";
+import { AnkiFieldContextProvider } from "#/components/shared/AnkiFieldsContext";
 import { CardStoreContextProvider } from "#/components/shared/CardContext";
 import { ConfigContextProvider } from "#/components/shared/ConfigContext";
 import { FieldGroupContextProvider } from "#/components/shared/FieldGroupContext";
 import { GeneralContextProvider } from "#/components/shared/GeneralContext";
 import { Logger } from "#/util/logger";
 import { Back } from "../src/components/Back";
-import {
-  AnkiFieldContextProvider,
-  BreakpointContextProvider,
-} from "../src/components/shared/Context";
+import { BreakpointContextProvider } from "../src/components/shared/Context";
 import { defaultConfig } from "../src/util/config";
 
 const [config, setConfig] = createStore(defaultConfig);

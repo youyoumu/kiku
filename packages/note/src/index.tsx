@@ -3,10 +3,7 @@ import { createStore } from "solid-js/store";
 import { hydrate, render } from "solid-js/web";
 import { Back } from "./components/Back.tsx";
 import { Front } from "./components/Front.tsx";
-import {
-  AnkiFieldContextProvider,
-  BreakpointContextProvider,
-} from "./components/shared/Context.tsx";
+import { BreakpointContextProvider } from "./components/shared/Context.tsx";
 import {
   defaultConfig,
   type KikuConfig,
@@ -15,6 +12,7 @@ import {
 } from "./util/config.ts";
 import { env } from "./util/general.ts";
 import "./styles/tailwind.css";
+import { AnkiFieldContextProvider } from "./components/shared/AnkiFieldsContext.tsx";
 import { CardStoreContextProvider } from "./components/shared/CardContext.tsx";
 import { ConfigContextProvider } from "./components/shared/ConfigContext.tsx";
 import { FieldGroupContextProvider } from "./components/shared/FieldGroupContext.tsx";

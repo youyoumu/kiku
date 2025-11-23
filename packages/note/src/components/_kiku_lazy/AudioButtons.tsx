@@ -1,8 +1,9 @@
 import { createEffect, For, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import { useCardContext } from "#/components/shared/CardContext";
+import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useConfigContext } from "../shared/ConfigContext";
-import { useAnkiField, useBreakpoint } from "../shared/Context";
+import { useBreakpoint } from "../shared/Context";
 import { useFieldGroupContext } from "../shared/FieldGroupContext";
 import { PlayIcon } from "./Icons";
 
@@ -43,7 +44,7 @@ export function NotePlayIcon(props: {
 }
 
 export default function AudioButtons(props: { position: 1 | 2 }) {
-  const { ankiFields } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiFieldContext<"back">();
   const [$card, $setCard] = useCardContext();
   const { $group } = useFieldGroupContext();
   const [$config] = useConfigContext();

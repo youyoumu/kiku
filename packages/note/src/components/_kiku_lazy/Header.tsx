@@ -2,8 +2,8 @@ import { createSignal, Match, onMount, Show, Switch } from "solid-js";
 import { useCardContext } from "#/components/shared/CardContext";
 import { useThemeTransition } from "#/util/hooks";
 import { nextTheme } from "#/util/theme";
+import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useConfigContext } from "../shared/ConfigContext";
-import { useAnkiField } from "../shared/Context";
 import { useGeneralContext } from "../shared/GeneralContext";
 import {
   ArrowLeftIcon,
@@ -111,7 +111,7 @@ export default function Header(props: {
 }
 
 function Frequency() {
-  const { ankiFields } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiFieldContext<"back">();
   return (
     <div class="flex gap-2 items-center animate-fade-in-sm relative hover:[&_#frequency]:block z-10">
       <div class="text-base-content-soft" innerHTML={ankiFields.FreqSort}></div>

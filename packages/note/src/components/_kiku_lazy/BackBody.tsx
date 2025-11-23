@@ -6,8 +6,8 @@ import {
   Show,
 } from "solid-js";
 import h from "solid-js/h";
+import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useConfigContext } from "../shared/ConfigContext";
-import { useAnkiField } from "../shared/Context";
 import { useGeneralContext } from "../shared/GeneralContext";
 import Sentence from "./Sentence";
 
@@ -15,7 +15,7 @@ export default function BackBody(props: {
   onDefinitionPictureClick?: (picture: string) => void;
 }) {
   let definitionEl: HTMLDivElement | undefined;
-  const { ankiFields } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiFieldContext<"back">();
   const [$config] = useConfigContext();
   const [definitionPage, setDefinitionPage] = createSignal(
     ankiFields.SelectionText ? 0 : 1,
@@ -126,7 +126,7 @@ export default function BackBody(props: {
 }
 
 function ExternalLinks() {
-  const { ankiFields } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiFieldContext<"back">();
   const [$general] = useGeneralContext();
 
   return (
@@ -154,7 +154,7 @@ function ExternalLinks() {
 }
 
 function DefaultExternalLinks() {
-  const { ankiFields } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiFieldContext<"back">();
 
   return (
     <>

@@ -12,8 +12,11 @@ import { useNavigationTransition } from "#/util/hooks";
 import { getPlugin } from "#/util/plugin";
 import { WorkerClient } from "#/worker/client";
 import { Layout } from "./Layout";
+import {
+  AnkiFieldContextProvider,
+  useAnkiFieldContext,
+} from "./shared/AnkiFieldsContext";
 import { useConfigContext } from "./shared/ConfigContext";
-import { AnkiFieldContextProvider, useAnkiField } from "./shared/Context";
 import {
   FieldGroupContextProvider,
   useFieldGroupContext,
@@ -38,7 +41,7 @@ export function Back(props: { onExitNested?: () => void }) {
   const navigate = useNavigationTransition();
   const [$card, $setCard] = useCardContext();
   const [$config] = useConfigContext();
-  const { ankiFields } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiFieldContext<"back">();
   const [$general, $setGeneral] = useGeneralContext();
 
   const tags = ankiFields.Tags.split(" ");

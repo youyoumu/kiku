@@ -3,7 +3,7 @@ import { isServer } from "solid-js/web";
 import { useCardContext } from "#/components/shared/CardContext";
 import type { DatasetProp } from "#/util/config";
 import { Layout } from "./Layout";
-import { useAnkiField } from "./shared/Context";
+import { useAnkiFieldContext } from "./shared/AnkiFieldsContext";
 import { useFieldGroupContext } from "./shared/FieldGroupContext";
 
 // biome-ignore format: this looks nicer
@@ -17,7 +17,7 @@ const Lazy = {
 
 export function Front() {
   const [$card, $setCard] = useCardContext();
-  const { ankiFields } = useAnkiField<"front">();
+  const { ankiFields } = useAnkiFieldContext<"front">();
   const [clicked, setClicked] = createSignal(false);
   const { $group } = useFieldGroupContext();
 

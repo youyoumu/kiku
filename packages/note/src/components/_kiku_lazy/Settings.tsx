@@ -22,8 +22,9 @@ import { type WebFont, webFonts } from "#/util/fonts";
 import { env } from "#/util/general";
 import { useThemeTransition } from "#/util/hooks";
 import { daisyUIThemes } from "#/util/theme";
+import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useConfigContext } from "../shared/ConfigContext";
-import { useAnkiField, useBreakpoint } from "../shared/Context";
+import { useBreakpoint } from "../shared/Context";
 import { useGeneralContext } from "../shared/GeneralContext";
 import {
   ArrowLeftIcon,
@@ -639,7 +640,7 @@ function AnkiDroidSettings() {
 function DebugSettings() {
   const [$config, $setConfig] = useConfigContext();
   const [$card] = useCardContext();
-  const { ankiFields } = useAnkiField<"back">();
+  const { ankiFields } = useAnkiFieldContext<"back">();
   const [kikuFiles, setKikuFiles] = createSignal<string>();
   const [missingFiles, setMissingFiles] = createSignal<string>();
 

@@ -7,40 +7,6 @@ import {
   onMount,
   useContext,
 } from "solid-js";
-import type { AnkiBackFields, AnkiFields, AnkiFrontFields } from "#/types";
-import { getAnkiFields } from "#/util/general";
-
-const AnkiFieldContext = createContext<{
-  ankiFields: AnkiFields;
-}>();
-
-export function AnkiFieldContextProvider(props: {
-  children: JSX.Element;
-  ankiFields?: AnkiFields;
-}) {
-  const ankiFields = props.ankiFields ?? getAnkiFields();
-
-  return (
-    <AnkiFieldContext.Provider value={{ ankiFields }}>
-      {props.children}
-    </AnkiFieldContext.Provider>
-  );
-}
-
-type useAnkiFieldType = {
-  front: {
-    ankiFields: AnkiFrontFields;
-  };
-  back: {
-    ankiFields: AnkiBackFields;
-  };
-};
-
-export function useAnkiField<T extends "front" | "back">() {
-  const ankiField = useContext(AnkiFieldContext);
-  if (!ankiField) throw new Error("Missing AnkiFieldContext");
-  return ankiField as useAnkiFieldType[T];
-}
 
 // Tailwind’s default breakpoints
 const breakpoints = {

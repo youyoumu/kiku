@@ -1,7 +1,7 @@
 import { createEffect, ErrorBoundary, Show } from "solid-js";
 import h from "solid-js/h";
 import { useCardContext } from "#/components/shared/CardContext";
-import { useAnkiField } from "../shared/Context";
+import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useFieldGroupContext } from "../shared/FieldGroupContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 
@@ -9,7 +9,7 @@ export default function Sentence() {
   const [$card, $setCard] = useCardContext();
   const { $group } = useFieldGroupContext();
   const [$general] = useGeneralContext();
-  const { ankiFields } = useAnkiField();
+  const { ankiFields } = useAnkiFieldContext();
 
   createEffect(() => {
     if ($card.sentenceFieldRef && $group.sentenceField) {
