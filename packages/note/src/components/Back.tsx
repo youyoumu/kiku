@@ -33,7 +33,7 @@ const Lazy = {
   BackBody: lazy(async () => ({ default: (await import("./_kiku_lazy")).BackBody, })),
   Pitches: lazy(async () => ({ default: (await import("./_kiku_lazy")).Pitches, })),
   PicturePagination: lazy(async () => ({ default: (await import("./_kiku_lazy")).PicturePagination, })),
-  KanjiList: lazy(async () => ({ default: (await import("./_kiku_lazy")).KanjiList, })),
+  KanjiPage: lazy(async () => ({ default: (await import("./_kiku_lazy")).KanjiPage, })),
   UseAnkiDroid: lazy(async () => ({ default: (await import("./_kiku_lazy")).UseAnkiDroid, })),
 };
 
@@ -135,7 +135,7 @@ export function Back(props: { onExitNested?: () => void }) {
           />
         </Match>
         <Match when={$card.page === "kanji" && !$card.nested && $card.ready}>
-          <Lazy.KanjiList
+          <Lazy.KanjiPage
             onBackClick={() => {
               if ($card.selectedSimilarKanji) {
                 navigate(

@@ -9,6 +9,11 @@ import {
 } from "#/types";
 import type { WorkerClient } from "#/worker/client";
 
+export type KanjiData = {
+  shared: AnkiNote[];
+  similar: Record<string, AnkiNote[]>;
+};
+
 type CardStore = {
   side: "front" | "back";
   layoutRef?: HTMLDivElement;
@@ -27,13 +32,7 @@ type CardStore = {
   toastType: "success" | "error";
   imageModal?: string;
   isNsfw: boolean;
-  kanji: Record<
-    string,
-    {
-      shared: AnkiNote[];
-      similar: Record<string, AnkiNote[]>;
-    }
-  >;
+  kanji: Record<string, KanjiData>;
   kanjiStatus: "success" | "error" | "loading";
   selectedSimilarKanji: string | undefined;
   nestedAnkiFields: AnkiFields;

@@ -2,7 +2,7 @@ import AudioButtons from "./AudioButtons";
 import BackBody from "./BackBody";
 import BackFooter from "./BackFooter";
 import Header from "./Header";
-import KanjiList from "./KanjiList";
+import KanjiPage from "./KanjiPage";
 import PictureModal from "./PictureModal";
 import PicturePagination from "./PicturePagination";
 import Pitches from "./Pitches";
@@ -19,7 +19,7 @@ export {
   BackBody,
   Pitches,
   PicturePagination,
-  KanjiList,
+  KanjiPage,
   UseAnkiDroid,
   Sentence,
 };
