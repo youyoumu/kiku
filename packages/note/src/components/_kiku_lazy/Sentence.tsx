@@ -2,17 +2,17 @@ import { createEffect, ErrorBoundary, Show } from "solid-js";
 import h from "solid-js/h";
 import { useCardContext } from "#/components/shared/CardContext";
 import { useAnkiField } from "../shared/Context";
-import { useFieldGroup } from "../shared/FieldGroupContext";
+import { useFieldGroupContext } from "../shared/FieldGroupContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 
 export default function Sentence() {
   const [$card, $setCard] = useCardContext();
-  const { group } = useFieldGroup();
+  const { $group } = useFieldGroupContext();
   const [$general] = useGeneralContext();
   const { ankiFields } = useAnkiField();
 
   createEffect(() => {
-    if ($card.sentenceFieldRef && group.sentenceField) {
+    if ($card.sentenceFieldRef && $group.sentenceField) {
       const ruby = $card.sentenceFieldRef.querySelectorAll("ruby");
       ruby.forEach((el) => {
         el.classList.add(..."[&_rt]:invisible hover:[&_rt]:visible".split(" "));
@@ -25,7 +25,7 @@ export default function Sentence() {
       <div
         class={`[&_b]:text-base-content-primary sentence font-secondary animate-fade-in`}
         ref={(ref) => $setCard("sentenceFieldRef", ref)}
-        innerHTML={group.sentenceField}
+        innerHTML={$group.sentenceField}
       ></div>
     );
   }

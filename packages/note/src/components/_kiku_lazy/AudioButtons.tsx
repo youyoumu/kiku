@@ -3,7 +3,7 @@ import { Portal } from "solid-js/web";
 import { useCardContext } from "#/components/shared/CardContext";
 import { useConfigContext } from "../shared/ConfigContext";
 import { useAnkiField, useBreakpoint } from "../shared/Context";
-import { useFieldGroup } from "../shared/FieldGroupContext";
+import { useFieldGroupContext } from "../shared/FieldGroupContext";
 import { PlayIcon } from "./Icons";
 
 function AudioTag(props: { text: string }) {
@@ -45,7 +45,7 @@ export function NotePlayIcon(props: {
 export default function AudioButtons(props: { position: 1 | 2 }) {
   const { ankiFields } = useAnkiField<"back">();
   const [$card, $setCard] = useCardContext();
-  const { group } = useFieldGroup();
+  const { $group } = useFieldGroupContext();
   const [$config] = useConfigContext();
   const bp = useBreakpoint();
   const hiddenStyle = {
@@ -56,7 +56,7 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
   } as const;
 
   createEffect(() => {
-    group.sentenceAudioField;
+    $group.sentenceAudioField;
     const anchors = $card.sentenceAudioRef?.querySelectorAll("a");
     if (anchors?.length) {
       $setCard("sentenceAudios", Array.from(anchors));
@@ -80,7 +80,7 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
 
   let autoPlay = true;
   createEffect(() => {
-    group.sentenceAudioField;
+    $group.sentenceAudioField;
     $card.expressionAudioRef?.querySelectorAll("audio").forEach((el) => {
       el.volume = bp.isAtLeast("sm") ? $config.volume / 100 : 1;
     });
@@ -143,9 +143,9 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
         <div
           style={hiddenStyle}
           ref={(ref) => $setCard("sentenceAudioRef", ref)}
-          innerHTML={$card.nested ? undefined : group.sentenceAudioField}
+          innerHTML={$card.nested ? undefined : $group.sentenceAudioField}
         >
-          {$card.nested && <AudioTag text={group.sentenceAudioField} />}
+          {$card.nested && <AudioTag text={$group.sentenceAudioField} />}
         </div>
         <NotePlayIcons />
       </>

@@ -4,7 +4,7 @@ import { useCardContext } from "#/components/shared/CardContext";
 import type { DatasetProp } from "#/util/config";
 import { Layout } from "./Layout";
 import { useAnkiField } from "./shared/Context";
-import { useFieldGroup } from "./shared/FieldGroupContext";
+import { useFieldGroupContext } from "./shared/FieldGroupContext";
 
 // biome-ignore format: this looks nicer
 const Lazy = {
@@ -19,7 +19,7 @@ export function Front() {
   const [$card, $setCard] = useCardContext();
   const { ankiFields } = useAnkiField<"front">();
   const [clicked, setClicked] = createSignal(false);
-  const { group } = useFieldGroup();
+  const { $group } = useFieldGroupContext();
 
   onMount(() => {
     setTimeout(() => {
@@ -31,7 +31,7 @@ export function Front() {
     if (
       ankiFields.IsAudioCard &&
       $card.sentenceFieldRef &&
-      group.sentenceField
+      $group.sentenceField
     ) {
       $card.sentenceFieldRef.innerHTML =
         $card.sentenceFieldRef.innerHTML.replaceAll(

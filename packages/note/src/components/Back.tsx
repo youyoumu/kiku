@@ -16,7 +16,7 @@ import { useConfigContext } from "./shared/ConfigContext";
 import { AnkiFieldContextProvider, useAnkiField } from "./shared/Context";
 import {
   FieldGroupContextProvider,
-  useFieldGroup,
+  useFieldGroupContext,
 } from "./shared/FieldGroupContext";
 import { useGeneralContext } from "./shared/GeneralContext";
 
@@ -275,7 +275,7 @@ export function Back(props: { onExitNested?: () => void }) {
 
 function PictureSection() {
   const [$card, $setCard] = useCardContext();
-  const { group } = useFieldGroup();
+  const { $group } = useFieldGroupContext();
 
   const pictureFieldDataset: () => DatasetProp = () => ({
     "data-transition": $card.ready ? "true" : undefined,
@@ -287,17 +287,17 @@ function PictureSection() {
     <div class="sm:max-w-1/2 bg-base-200 flex sm:items-center rounded-lg relative overflow-hidden justify-center">
       <div
         class="picture-field-background"
-        innerHTML={isServer ? undefined : group.pictureField}
+        innerHTML={isServer ? undefined : $group.pictureField}
       >
         {isServer ? "{{Picture}}" : undefined}
       </div>
       <div
         class="picture-field"
         on:click={() => {
-          $setCard("imageModal", group.pictureField);
+          $setCard("imageModal", $group.pictureField);
         }}
         {...pictureFieldDataset()}
-        innerHTML={isServer ? undefined : group.pictureField}
+        innerHTML={isServer ? undefined : $group.pictureField}
       >
         {isServer ? "{{Picture}}" : undefined}
       </div>
