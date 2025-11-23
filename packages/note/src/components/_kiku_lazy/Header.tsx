@@ -177,6 +177,9 @@ function Frequency() {
       <div
         class="text-base-content-soft text-sm sm:text-base"
         innerHTML={ankiFields.FreqSort}
+        classList={{
+          hidden: ankiFields.FreqSort === "9999999",
+        }}
       ></div>
       {ankiFields.Frequency && (
         <>

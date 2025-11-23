@@ -319,7 +319,7 @@ export const exampleFields10: AnkiFields = {
   "PitchPosition": "",
   "PitchCategories": "",
   "Frequency": "",
-  "FreqSort": "",
+  "FreqSort": "9999999",
   "MiscInfo": "",
   "Tags": "Yuuna",
   "furigana:ExpressionFurigana": "<ruby><rb>こっそり</rb><rt> </rt></ruby>",
