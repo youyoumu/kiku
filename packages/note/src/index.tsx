@@ -80,7 +80,7 @@ export async function init({
       const cache = sessionStorage.getItem(env.KIKU_CONFIG_SESSION_STORAGE_KEY);
       if (cache) {
         logger.info("config cache hit:", cache);
-        config$ = JSON.parse(cache);
+        config$ = validateConfig(JSON.parse(cache));
       } else {
         logger.info("config cache miss");
         config$ = validateConfig(
