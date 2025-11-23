@@ -262,13 +262,14 @@ export class Nex {
     > = {};
 
     const filterSameNote = (note: AnkiNote) => {
+      // TODO: use CardID to filter same note
+      //https://github.com/ankitects/anki/pull/4046
+      //only available in Anki >25.9
       if (
         note.fields.Expression.value === ankiFields.Expression &&
-        note.fields.Picture.value === ankiFields.Picture &&
         note.fields.Sentence.value === ankiFields.Sentence &&
-        note.fields.MainDefinition.value === ankiFields.MainDefinition &&
-        note.fields.Glossary.value === ankiFields.Glossary &&
-        note.fields.SelectionText.value === ankiFields.SelectionText
+        note.fields.Hint.value === ankiFields.Hint &&
+        note.fields.MiscInfo.value === ankiFields.MiscInfo
       )
         return false;
       return true;
