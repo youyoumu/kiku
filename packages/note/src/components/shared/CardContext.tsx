@@ -39,7 +39,6 @@ type CardStore = {
   nestedAnkiFields: AnkiFields;
   nested: boolean;
   manifest: KikuNotesManifest | undefined;
-  worker: WorkerClient | undefined;
   ankiConnectAvailable: boolean;
 };
 
@@ -91,7 +90,6 @@ export function CardStoreContextProvider(props: {
     nestedAnkiFields: ankiFieldsSkeleton,
     nested: props.nested ?? false,
     manifest: undefined,
-    worker: undefined,
     ankiConnectAvailable: false,
   });
 

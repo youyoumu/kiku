@@ -115,7 +115,8 @@ export function useKanji() {
       $setCard("kanji", kanjiResult);
       $setCard("sameReadingNote", readingResult[ankiFields.ExpressionReading]);
       $setCard("kanjiStatus", "success");
-      $setCard("worker", worker);
+      if (KIKU_STATE.worker) KIKU_STATE.worker.worker.terminate();
+      KIKU_STATE.worker = worker;
 
       nex
         .manifest()

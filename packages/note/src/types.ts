@@ -1,4 +1,5 @@
 import type { Logger } from "./util/logger";
+import type { WorkerClient } from "./worker/client";
 
 export type AnkiFields = {
   Expression: string;
@@ -245,6 +246,7 @@ declare global {
     logger: Logger;
     ankiDroidAPI?: AnkiDroidAPI;
     isAnkiDesktop?: boolean;
+    worker?: WorkerClient;
   };
   var pycmd: () => void;
   var AnkiDroidJS: {

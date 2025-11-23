@@ -262,11 +262,10 @@ function AnkiNoteItem(props: {
 }
 
 function KanjiText(props: { kanji: string }) {
-  const [$card] = useCardContext();
   const [kanji, setKanji] = createSignal<Kanji>();
 
   onMount(async () => {
-    const nex = await $card.worker?.nex;
+    const nex = await KIKU_STATE.worker?.nex;
     if (nex) {
       const lookup = await nex.lookup(props.kanji);
       setKanji(lookup);

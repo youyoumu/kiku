@@ -27,6 +27,7 @@ globalThis.KIKU_STATE = {
   assetsPath: window.location.origin,
   logger,
   isAnkiDesktop: typeof pycmd !== "undefined",
+  worker: globalThis.KIKU_STATE?.worker,
 };
 
 export async function init({
