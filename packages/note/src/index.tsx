@@ -38,6 +38,10 @@ export async function init({
   ssr?: boolean;
 }) {
   try {
+    window.addEventListener("unload", () => {
+      if (KIKU_STATE.isAnkiDesktop) sessionStorage.clear();
+    });
+
     if (KIKU_STATE.isAnkiWeb) {
       logger.info("AnkiWeb detected");
       document.documentElement.setAttribute("data-theme", "none");
@@ -142,6 +146,7 @@ export async function init({
       render(App, root);
     }
   } catch (e) {
+    sessionStorage.clear();
     Object.assign(document.body.style, {
       margin: 0,
       padding: 0,
