@@ -3,7 +3,7 @@ import { generateHydrationScript, renderToString } from "solid-js/web";
 import { Front } from "#/components/Front";
 import { CardStoreContextProvider } from "#/components/shared/CardContext";
 import { FieldGroupContextProvider } from "#/components/shared/FieldGroupContext";
-import { PluginContextProvider } from "#/components/shared/PluginContextProvider";
+import { GeneralContextProvider } from "#/components/shared/GeneralContextProvider";
 import { Logger } from "#/util/logger";
 import { Back } from "../src/components/Back";
 import {
@@ -24,7 +24,7 @@ globalThis.KIKU_STATE = {
 
 export function getSsrTemplate() {
   const frontSsrTemplate = renderToString(() => (
-    <PluginContextProvider>
+    <GeneralContextProvider>
       <AnkiFieldContextProvider>
         <CardStoreContextProvider side="front">
           <BreakpointContextProvider>
@@ -36,10 +36,10 @@ export function getSsrTemplate() {
           </BreakpointContextProvider>
         </CardStoreContextProvider>
       </AnkiFieldContextProvider>
-    </PluginContextProvider>
+    </GeneralContextProvider>
   ));
   const backSsrTemplate = renderToString(() => (
-    <PluginContextProvider>
+    <GeneralContextProvider>
       <AnkiFieldContextProvider>
         <CardStoreContextProvider side="back">
           <BreakpointContextProvider>
@@ -51,7 +51,7 @@ export function getSsrTemplate() {
           </BreakpointContextProvider>
         </CardStoreContextProvider>
       </AnkiFieldContextProvider>
-    </PluginContextProvider>
+    </GeneralContextProvider>
   ));
 
   const hydrationScript = generateHydrationScript();

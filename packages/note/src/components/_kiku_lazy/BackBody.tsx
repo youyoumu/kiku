@@ -7,7 +7,7 @@ import {
 } from "solid-js";
 import h from "solid-js/h";
 import { useAnkiField, useConfig } from "../shared/Context";
-import { usePlugin } from "../shared/PluginContextProvider";
+import { useGeneralContext } from "../shared/GeneralContextProvider";
 import Sentence from "./Sentence";
 
 export default function BackBody(props: {
@@ -126,11 +126,14 @@ export default function BackBody(props: {
 
 function ExternalLinks() {
   const { ankiFields } = useAnkiField<"back">();
-  const [plugin] = usePlugin();
+  const [generalStore] = useGeneralContext();
 
   return (
     <ErrorBoundary fallback={<DefaultExternalLinks />}>
-      <Show when={plugin()?.ExternalLinks} fallback={<DefaultExternalLinks />}>
+      <Show
+        when={generalStore.plugin?.ExternalLinks}
+        fallback={<DefaultExternalLinks />}
+      >
         {(get) => {
           const ExternalLinks = get();
           return (

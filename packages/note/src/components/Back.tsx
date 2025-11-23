@@ -21,7 +21,7 @@ import {
   FieldGroupContextProvider,
   useFieldGroup,
 } from "./shared/FieldGroupContext";
-import { usePlugin } from "./shared/PluginContextProvider";
+import { useGeneralContext } from "./shared/GeneralContextProvider";
 
 // biome-ignore format: this looks nicer
 const Lazy = {
@@ -42,7 +42,7 @@ export function Back(props: { onExitNested?: () => void }) {
   const [card, setCard] = useCardStore();
   const [config] = useConfig();
   const { ankiFields } = useAnkiField<"back">();
-  const [plugin, setPlugin] = usePlugin();
+  const [generalStore, setGeneralStore] = useGeneralContext();
 
   const tags = ankiFields.Tags.split(" ");
 
@@ -51,7 +51,7 @@ export function Back(props: { onExitNested?: () => void }) {
       setCard("ready", true);
       KIKU_STATE.relax = true;
       getPlugin().then((plugin) => {
-        setPlugin(plugin);
+        setGeneralStore("plugin", plugin);
       });
 
       async function setKanji() {

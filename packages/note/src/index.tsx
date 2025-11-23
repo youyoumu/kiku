@@ -18,7 +18,7 @@ import { env } from "./util/general.ts";
 import "./styles/tailwind.css";
 import { CardStoreContextProvider } from "./components/shared/CardContext.tsx";
 import { FieldGroupContextProvider } from "./components/shared/FieldGroupContext.tsx";
-import { PluginContextProvider } from "./components/shared/PluginContextProvider.tsx";
+import { GeneralContextProvider } from "./components/shared/GeneralContextProvider.tsx";
 import { Logger } from "./util/logger.ts";
 
 const logger = new Logger();
@@ -103,7 +103,7 @@ export async function init({
 
     if (side === "front") {
       const App = () => (
-        <PluginContextProvider>
+        <GeneralContextProvider>
           <AnkiFieldContextProvider>
             <CardStoreContextProvider side="front">
               <BreakpointContextProvider>
@@ -115,13 +115,13 @@ export async function init({
               </BreakpointContextProvider>
             </CardStoreContextProvider>
           </AnkiFieldContextProvider>
-        </PluginContextProvider>
+        </GeneralContextProvider>
       );
       if (ssr) return hydrate(App, root);
       render(App, root);
     } else if (side === "back") {
       const App = () => (
-        <PluginContextProvider>
+        <GeneralContextProvider>
           <AnkiFieldContextProvider>
             <CardStoreContextProvider side="back">
               <BreakpointContextProvider>
@@ -133,7 +133,7 @@ export async function init({
               </BreakpointContextProvider>
             </CardStoreContextProvider>
           </AnkiFieldContextProvider>
-        </PluginContextProvider>
+        </GeneralContextProvider>
       );
       if (ssr) return hydrate(App, root);
       render(App, root);

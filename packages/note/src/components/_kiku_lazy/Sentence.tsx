@@ -3,12 +3,12 @@ import h from "solid-js/h";
 import { useCardStore } from "#/components/shared/CardContext";
 import { useAnkiField } from "../shared/Context";
 import { useFieldGroup } from "../shared/FieldGroupContext";
-import { usePlugin } from "../shared/PluginContextProvider";
+import { useGeneralContext } from "../shared/GeneralContextProvider";
 
 export default function Sentence() {
   const [card, setCard] = useCardStore();
   const { group } = useFieldGroup();
-  const [plugin] = usePlugin();
+  const [generalStore] = useGeneralContext();
   const { ankiFields } = useAnkiField();
 
   createEffect(() => {
@@ -32,7 +32,7 @@ export default function Sentence() {
 
   return (
     <ErrorBoundary fallback={<DefaultSentence />}>
-      <Show when={plugin()?.Sentence} fallback={<DefaultSentence />}>
+      <Show when={generalStore.plugin?.Sentence} fallback={<DefaultSentence />}>
         {(get) => {
           const Sentence = get();
           return (
