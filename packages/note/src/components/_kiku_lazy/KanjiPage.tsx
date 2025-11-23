@@ -295,7 +295,9 @@ function KanjiText(props: { kanji: string }) {
           }}
         >
           <span>Difficulty: </span>
-          <span class="text-base-content-soft">{kanji()?.level}</span>
+          <span class="text-base-content-soft">
+            {(kanji()?.level ?? 0) * 100}
+          </span>
         </div>
         <div
           classList={{
