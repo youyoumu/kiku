@@ -32,6 +32,7 @@ export function wrap<T>(worker: Worker) {
 export class WorkerClient {
   nex: Promise<NexApi>;
 
+  //TODO: log worker
   constructor(payload: {
     env: Env;
     assetsPath: string;

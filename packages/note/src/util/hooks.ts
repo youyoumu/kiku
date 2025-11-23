@@ -102,9 +102,8 @@ export function useKanji() {
         env: env,
         config: unwrap($config),
         assetsPath: import.meta.env.DEV ? "" : KIKU_STATE.assetsPath,
-        // preferAnkiConnect: !!KIKU_STATE.isAnkiDesktop,
-        //  TODO: configurable
-        preferAnkiConnect: false,
+        preferAnkiConnect:
+          $config.preferAnkiConnect && !!KIKU_STATE.isAnkiDesktop,
       });
       const nex = await worker.nex;
       const { kanjiResult, readingResult } = await nex.querySharedAndSimilar({

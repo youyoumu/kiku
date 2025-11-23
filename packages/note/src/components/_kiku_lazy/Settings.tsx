@@ -29,6 +29,7 @@ import { useGeneralContext } from "../shared/GeneralContext";
 import {
   ArrowLeftIcon,
   ClipboardCopyIcon,
+  InfoIcon,
   RefreshCwIcon,
   UndoIcon,
 } from "./Icons";
@@ -233,6 +234,27 @@ function GeneralSettings() {
                   "swapSentenceAndDefinitionOnMobile",
                   e.target.checked,
                 );
+              }}
+            />
+          </label>
+        </fieldset>
+        <fieldset class="fieldset py-0">
+          <legend class="fieldset-legend">
+            Prefer AnkiConnect
+            <div
+              class="tooltip"
+              data-tip="Query notes via AnkiConnect instead of the notes cache. Desktop only."
+            >
+              <InfoIcon class="size-4 text-base-content-calm" />
+            </div>
+          </legend>
+          <label class="label">
+            <input
+              type="checkbox"
+              checked={$config.preferAnkiConnect}
+              class="toggle"
+              on:change={(e) => {
+                $setConfig("preferAnkiConnect", e.target.checked);
               }}
             />
           </label>
