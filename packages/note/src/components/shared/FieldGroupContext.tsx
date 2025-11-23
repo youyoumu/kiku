@@ -1,6 +1,6 @@
 import { createContext, createEffect, useContext } from "solid-js";
 import type { JSX } from "solid-js/jsx-runtime";
-import { createStore } from "solid-js/store";
+import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
 import { useCardContext } from "./CardContext";
 import { useAnkiField } from "./Context";
 
@@ -9,14 +9,14 @@ export type GroupStore = {
   pictureField: string;
   sentenceAudioField: string;
   index: number;
+  ids: Set<string>;
 };
 
 const FieldGroupContext = createContext<{
-  $group: GroupStore;
-  $setGroup: (group: GroupStore) => void;
+  $group: Store<GroupStore>;
+  $setGroup: SetStoreFunction<GroupStore>;
   $next: () => void;
   $prev: () => void;
-  groupIds: Set<string>;
 }>();
 export function FieldGroupContextProvider(props: { children: JSX.Element }) {
   const { ankiFields } = useAnkiField();
@@ -38,9 +38,8 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
     pictureField,
     sentenceAudioField,
     index: 0,
+    ids: new Set<string>(),
   });
-
-  const groupIds = new Set<string>();
 
   createEffect(() => {
     const tempDivSentenceField = document.createElement("div");
@@ -49,7 +48,7 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       tempDivSentenceField.querySelectorAll("[data-group-id]");
     sentenceFieldWithGroup.forEach((el) => {
       const id = (el as HTMLSpanElement).dataset.groupId;
-      if (id) groupIds.add(id);
+      if (id) $setGroup("ids", $group.ids.add(id));
     });
     const sentenceFieldWithoutGroup = Array.from(
       tempDivSentenceField.childNodes,
@@ -71,14 +70,12 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
     tempDivPictureField.innerHTML = pictureField;
     const pictureFieldWithGroup = tempDivPictureField.querySelectorAll("img");
     pictureFieldWithGroup.forEach((el, i) => {
-      const id = (el as HTMLSpanElement).dataset.groupId;
-      if (id) {
-        groupIds.add(id);
-      } else {
-        const id = (i * -1).toString();
+      let id = (el as HTMLSpanElement).dataset.groupId;
+      if (!id) {
+        id = (i * -1).toString();
         el.dataset.groupId = id;
-        groupIds.add(id);
       }
+      $setGroup("ids", $group.ids.add(id));
     });
 
     const tempDivSentenceAudioField = document.createElement("div");
@@ -87,7 +84,7 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       tempDivSentenceAudioField.querySelectorAll("[data-group-id]");
     sentenceAudioFieldWithGroup.forEach((el) => {
       const id = (el as HTMLSpanElement).dataset.groupId;
-      if (id) groupIds.add(id);
+      if (id) $setGroup("ids", $group.ids.add(id));
     });
     const sentenceAudioFieldWithoutGroup = Array.from(
       tempDivSentenceAudioField.childNodes,
@@ -108,7 +105,7 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
 
     let dummyImg: HTMLImageElement | undefined;
     if (
-      !Array.from(groupIds)
+      !Array.from($group.ids)
         .map(Number)
         .some((id) => id <= 0) &&
       (sentenceFieldWithoutGroupHtml.trim() ||
@@ -117,18 +114,18 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       const img = document.createElement("img");
       img.dataset.groupId = "0";
       dummyImg = img;
-      groupIds.add("0");
+      $setGroup("ids", $group.ids.add("0"));
     }
 
     KIKU_STATE.logger.info("[Groups] DummyImg:", dummyImg);
 
     KIKU_STATE.logger.info(
       "[Groups] ids:",
-      Array.from(groupIds).map((id) => id.toString()),
+      Array.from($group.ids).map((id) => id.toString()),
     );
 
-    if (groupIds.size > 0) {
-      const sorted = Array.from(groupIds)
+    if ($group.ids.size > 0) {
+      const sorted = Array.from($group.ids)
         .map((id) => Number(id))
         .sort((a, b) => b - a);
       const id = sorted[$group.index];
@@ -170,14 +167,14 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
 
   function $next() {
     $setGroup("index", (prev) => {
-      const newIndex = (prev + 1 + groupIds.size) % groupIds.size;
+      const newIndex = (prev + 1 + $group.ids.size) % $group.ids.size;
       return newIndex;
     });
   }
 
   function $prev() {
     $setGroup("index", (prev) => {
-      const newIndex = (prev - 1 + groupIds.size) % groupIds.size;
+      const newIndex = (prev - 1 + $group.ids.size) % $group.ids.size;
       return newIndex;
     });
   }
@@ -189,7 +186,6 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
         $setGroup,
         $next,
         $prev,
-        groupIds,
       }}
     >
       {props.children}

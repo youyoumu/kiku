@@ -3,11 +3,11 @@ import { useFieldGroupContext } from "../shared/FieldGroupContext";
 import { ArrowLeftIcon } from "./Icons";
 
 export default function PicturePagination() {
-  const { $group, $next, $prev, groupIds } = useFieldGroupContext();
+  const { $group, $next, $prev } = useFieldGroupContext();
   const [$card, $setCard] = useCardContext();
 
   return (
-    groupIds.size > 1 && (
+    $group.ids.size > 1 && (
       <>
         <ArrowLeftIcon
           class="cursor-pointer size-5 sm:size-8 hover:scale-110 transition-transform"
@@ -20,7 +20,7 @@ export default function PicturePagination() {
             }
           }}
         ></ArrowLeftIcon>
-        {`${$group.index + 1} / ${groupIds.size}`}
+        {`${$group.index + 1} / ${$group.ids.size}`}
         <ArrowLeftIcon
           class="cursor-pointer size-5 sm:size-8 rotate-180 hover:scale-110 transition-transform"
           on:click={() => {
