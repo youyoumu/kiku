@@ -529,7 +529,8 @@ function FontSettings() {
 function FontSizeSettings() {
   return (
     <div class="flex flex-col gap-4 animate-fade-in">
-      <div tabindex="0" class="collapse gap-4 collapse-arrow">
+      <div class="collapse gap-4 collapse-arrow">
+        <input type="checkbox" />
         <div class="collapse-title p-0">
           <div class="text-2xl font-bold">Font Size</div>
         </div>
@@ -687,7 +688,6 @@ function DebugSettings() {
 
   const [logs, setLogs] = createSignal<string>();
   onMount(() => {
-    //TODO: docs jump
     const id = setInterval(() => {
       setLogs(KIKU_STATE.logger.get());
     }, 8000);
@@ -721,7 +721,8 @@ function DebugSettings() {
   const cssVar = () => getCssVar($config);
 
   return (
-    <div tabindex="0" class="collapse collapse-arrow">
+    <div class="collapse collapse-arrow">
+      <input type="checkbox" />
       <div class="collapse-title text-2xl font-bold p-0">Debug</div>
       <div class="collapse-content p-0">
         <div class="flex flex-col gap-4 animate-fade-in ">
