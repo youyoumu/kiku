@@ -329,3 +329,36 @@ export const exampleFields10: AnkiFields = {
   "furigana:SentenceFurigana": "",
   "kana:SentenceFurigana": ""
 }
+
+//biome-ignore format: this looks nicer
+export const exampleFields11: AnkiFields = {
+  "Expression": "減る",
+  "ExpressionFurigana": "減[へ]る",
+  "ExpressionReading": "へる",
+  "ExpressionAudio": "<a class=\"replay-button soundLink\" href=\"#\" onclick=\"pycmd('play:a:0'); return false;\">\n    <svg class=\"playImage\" viewBox=\"0 0 64 64\" version=\"1.1\">\n        <circle cx=\"32\" cy=\"32\" r=\"29\"></circle>\n        <path d=\"M56.502,32.301l-37.502,20.101l0.329,-40.804l37.173,20.703Z\"></path>\n    </svg>\n</a>",
+  "SelectionText": "<ol><li data-details=\"JMdict\"><span class=\"dict-group__tag-list\"><span class=\"dict-group__tag dict-group__tag--name\"><span class=\"dict-group__tag-inner\">v5r</span></span><span class=\"dict-group__tag dict-group__tag--name\"><span class=\"dict-group__tag-inner\">vi</span></span><span class=\"dict-group__tag dict-group__tag--dict\"><span class=\"dict-group__tag-inner\">JMdict</span></span></span><span class=\"dict-group__glossary\"><span><ul data-sc-content=\"glossary\" lang=\"en\" style=\"list-style-type: circle;\"><li>to decrease (in size or number)</li><li>to diminish</li><li>to abate</li></ul><ul data-sc-content=\"antonyms\" lang=\"en\" style=\"list-style-type: &quot;🔄 &quot;;\"><li>antonym: <a lang=\"ja\" href=\"#\"><span>増える</span></a><span data-sc-content=\"refGlosses\" style=\"font-size: 65%; vertical-align: middle;\"> to increase; to multiply</span></li></ul><ul data-sc-content=\"examples\" lang=\"ja\" style=\"list-style-type: square;\"><li>会員は５人に減った。</li><li lang=\"en\" style=\"font-size: 60%; list-style-type: none;\">The number of members decreased to five.</li></ul></span></span></li></ol>",
+  "MainDefinition": "",
+  "DefinitionPicture": "",
+  "Sentence": "（部員）なんか腹<b>減った</b>",
+  "SentenceFurigana": "（ 部員[ぶいん]）なんか 腹[はら]<b> 減[へ]った</b>",
+  "SentenceAudio": "",
+  "Picture": "",
+  "Glossary": "",
+  "Hint": "",
+  "IsWordAndSentenceCard": "",
+  "IsClickCard": "",
+  "IsSentenceCard": "",
+  "IsAudioCard": "",
+  "PitchPosition": "<div class=\"pa-positions__group\" data-details=\"アクセント辞典\"><div class=\"pa-positions__dictionary\"><div class=\"pa-positions__dictionary-inner\">アクセント辞典</div></div><ol><li><span style=\"display:inline;\"><span>[</span><span>0</span><span>]</span></span></li></ol></div>",
+  "PitchCategories": "",
+  "Frequency": "",
+  "FreqSort": "1223",
+  "MiscInfo": "",
+  "Tags": "yomichan",
+  "furigana:ExpressionFurigana": "<ruby><rb>減</rb><rt>へ</rt></ruby>る",
+  "kana:ExpressionFurigana": "へる",
+  "furigana:Sentence": "（部員）なんか腹<b>減った</b>",
+  "kanji:Sentence": "（部員）なんか腹<b>減った</b>",
+  "furigana:SentenceFurigana": "（<ruby><rb>部員</rb><rt>ぶいん</rt></ruby>）なんか<ruby><rb>腹</rb><rt>はら</rt></ruby><b><ruby><rb>減</rb><rt>へ</rt></ruby>った</b>",
+  "kana:SentenceFurigana": "（ぶいん）なんかはら<b>へった</b>"
+}

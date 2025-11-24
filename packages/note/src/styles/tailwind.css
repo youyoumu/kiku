@@ -130,6 +130,13 @@
     background-color: var(--color-secondary); /* match text/border color */
   }
 
+  .picture-field-container {
+    display: none;
+    &:not([data-has-picture=""]) {
+      display: flex;
+    }
+  }
+
   .picture-field-background {
     @apply [&_*:not(img)]:contents;
     @apply [&_:not(:first-child)]:hidden;

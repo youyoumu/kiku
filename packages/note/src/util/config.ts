@@ -168,6 +168,7 @@ export type Dataset = {
   "data-is-even": "true" | "false";
   "data-has-pitch": string
   "data-has-hint": string
+  "data-has-picture": string
 };
 
 export type DatasetProp = Partial<Dataset>;

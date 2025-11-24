@@ -10,6 +10,7 @@ import {
   exampleFields7,
   exampleFields8,
   exampleFields10,
+  exampleFields11,
 } from "./examples";
 
 // biome-ignore format: this looks nicer

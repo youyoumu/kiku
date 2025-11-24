@@ -238,6 +238,7 @@ export function Back(props: { onExitNested?: () => void }) {
 function PictureSection() {
   const [$card, $setCard] = useCardContext();
   const { $group } = useFieldGroupContext();
+  const { ankiFields } = useAnkiFieldContext<"back">();
 
   const pictureFieldDataset: () => DatasetProp = () => ({
     "data-transition": $card.ready ? "true" : undefined,
@@ -245,8 +246,19 @@ function PictureSection() {
     "data-nsfw": $card.isNsfw ? "true" : "false",
   });
 
+  const dataSet1: () => DatasetProp = () => ({
+    "data-has-picture": isServer
+      ? "{{#Picture}}true{{/Picture}}"
+      : ankiFields.Picture
+        ? "true"
+        : "",
+  });
+
   return (
-    <div class="sm:max-w-1/2 bg-base-200 flex sm:items-center rounded-lg relative overflow-hidden justify-center">
+    <div
+      class="sm:max-w-1/2 bg-base-200 flex sm:items-center rounded-lg relative overflow-hidden justify-center picture-field-container"
+      {...dataSet1()}
+    >
       <div
         class="picture-field-background"
         innerHTML={isServer ? undefined : $group.pictureField}

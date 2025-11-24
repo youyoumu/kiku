@@ -687,6 +687,7 @@ function DebugSettings() {
 
   const [logs, setLogs] = createSignal<string>();
   onMount(() => {
+    //TODO: docs jump
     const id = setInterval(() => {
       setLogs(KIKU_STATE.logger.get());
     }, 8000);
