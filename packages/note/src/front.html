@@ -162,11 +162,5 @@ data-theme="__DATA_THEME__"
 <script type="module">
 import { init } from "./_kiku.js";
 
-async function initAnki() {
-  const now = performance.now();
-  await init({ side: "front", ssr: true });
-  window.KIKU_STATE ??= {};
-  window.KIKU_STATE.startupTime = performance.now() - now;
-}
-initAnki();
+init({ side: "front", ssr: true });
 </script>

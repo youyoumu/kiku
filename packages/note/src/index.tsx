@@ -19,13 +19,10 @@ import { FieldGroupContextProvider } from "./components/shared/FieldGroupContext
 import { GeneralContextProvider } from "./components/shared/GeneralContext.tsx";
 import { Logger } from "./util/logger.ts";
 
-const logger = new Logger();
-logger.attachToGlobalErrors();
-
 globalThis.KIKU_STATE = {
   isAnkiWeb: window.location.origin.includes("ankiuser.net"),
   assetsPath: window.location.origin,
-  logger,
+  logger: new Logger(),
   isAnkiDesktop: typeof pycmd !== "undefined",
   worker: globalThis.KIKU_STATE?.worker,
 };
@@ -37,13 +34,24 @@ export async function init({
   side: "front" | "back";
   ssr?: boolean;
 }) {
+  const now = performance.now();
+  KIKU_STATE.side = side;
+  KIKU_STATE.ssr = ssr;
+  await setup();
+  KIKU_STATE.startupTime = performance.now() - now;
+}
+
+async function setup() {
+  const { side, ssr } = KIKU_STATE;
   try {
+    if (!side) throw new Error("Side not set");
+
     window.addEventListener("unload", () => {
       if (KIKU_STATE.isAnkiDesktop) sessionStorage.clear();
     });
 
     if (KIKU_STATE.isAnkiWeb) {
-      logger.info("AnkiWeb detected");
+      KIKU_STATE.logger.info("AnkiWeb detected");
       document.documentElement.setAttribute("data-theme", "none");
       KIKU_STATE.assetsPath = `${window.location.origin}/study/media`;
       const kikuCss = document.getElementById("kiku-css");
@@ -58,7 +66,7 @@ export async function init({
     }
     root.part.add("root-part");
     KIKU_STATE.root = root;
-    logger.debug("rootDataset", root.dataset);
+    KIKU_STATE.logger.debug("rootDataset", root.dataset);
 
     const qa = document.querySelector("#qa");
     const shadowParent = document.createElement("div");
@@ -84,10 +92,10 @@ export async function init({
     try {
       const cache = sessionStorage.getItem(env.KIKU_CONFIG_SESSION_STORAGE_KEY);
       if (cache) {
-        logger.info("config cache hit:", cache);
+        KIKU_STATE.logger.info("config cache hit:", cache);
         config$ = validateConfig(JSON.parse(cache));
       } else {
-        logger.info("config cache miss");
+        KIKU_STATE.logger.info("config cache miss");
         config$ = validateConfig(
           await (
             await fetch(env.KIKU_CONFIG_FILE, { cache: "no-store" })
@@ -99,7 +107,7 @@ export async function init({
         );
       }
     } catch {
-      logger.warn("Failed to load config, using default config");
+      KIKU_STATE.logger.warn("Failed to load config, using default config");
       config$ = defaultConfig;
     }
 

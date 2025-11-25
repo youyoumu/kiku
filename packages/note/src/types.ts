@@ -247,6 +247,8 @@ declare global {
     ankiDroidAPI?: AnkiDroidAPI;
     isAnkiDesktop?: boolean;
     worker?: WorkerClient;
+    side?: "front" | "back";
+    ssr?: boolean;
   };
   var pycmd: () => void;
   var AnkiDroidJS: {

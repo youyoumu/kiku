@@ -1,3 +1,5 @@
+import { isServer } from "solid-js/web";
+
 export type LogLevel = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
 
 export interface LoggerOptions {
@@ -24,6 +26,7 @@ export class Logger {
       ? Logger.levels.indexOf(options.level)
       : 0; // default = trace
     this.onUpdate = options.onUpdate;
+    if (!isServer) this.attachToGlobalErrors();
   }
 
   attachToGlobalErrors() {
