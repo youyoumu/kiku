@@ -32,3 +32,4 @@ packages/addon/meta.json
 .env
 .release
 todo.txt
+.dicts
