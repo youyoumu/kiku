@@ -41,9 +41,9 @@ export const AnkiConnect = {
     });
 
     const [frontRes, backRes, styleRes] = await Promise.all([
-      fetch(env.KIKU_FRONT_FILE),
-      fetch(env.KIKU_BACK_FILE),
-      fetch(env.KIKU_STYLE_FILE),
+      fetch(env.KIKU_FRONT_FILE, { cache: "no-store" }),
+      fetch(env.KIKU_BACK_FILE, { cache: "no-store" }),
+      fetch(env.KIKU_STYLE_FILE, { cache: "no-store" }),
     ]);
 
     if (!frontRes.ok || !backRes.ok || !styleRes.ok) {
