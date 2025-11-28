@@ -78,6 +78,8 @@ export default function Settings() {
     <div>
       <GeneralSettings />
       <div class="divider"></div>
+      <ModSettings />
+      <div class="divider"></div>
       <ThemeSettings />
       <div class="divider"></div>
       <FontSettings />
@@ -127,7 +129,7 @@ function GeneralSettings() {
       <div class="flex gap-2 items-center justify-between">
         <div class="text-2xl font-bold">General</div>
       </div>
-      <div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] rounded-box gap-4 p-2">
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] rounded-box gap-4">
         <fieldset class="fieldset">
           <legend class="fieldset-legend">
             Volume
@@ -148,7 +150,7 @@ function GeneralSettings() {
             min="0"
             max={"100"}
             value={$config.volume.toString()}
-            class="range w-full "
+            class="range w-full range-sm"
             step="1"
           />
         </fieldset>
@@ -231,6 +233,69 @@ function GeneralSettings() {
             />
           </label>
         </fieldset>
+      </div>
+    </div>
+  );
+}
+
+function ModSettings() {
+  const [$config, $setConfig] = useConfigContext();
+
+  return (
+    <div class="flex flex-col gap-4 animate-fade-in relative">
+      <div class="flex gap-2 items-center justify-between">
+        <div class="text-2xl font-bold">Mod</div>
+      </div>
+
+      <div>
+        <div class="text-lg font-bold flex gap-2 items-center">
+          Hidden
+          <div class="tooltip" data-tip="Expression fade out after timeout">
+            <InfoIcon class="size-4 text-base-content-calm" />
+          </div>
+        </div>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] rounded-box gap-4">
+          <fieldset class="fieldset py-0">
+            <legend class="fieldset-legend">Enable</legend>
+            <label class="label">
+              <input
+                type="checkbox"
+                checked={$config.modHidden}
+                class="toggle"
+                on:change={(e) => {
+                  $setConfig("modHidden", e.target.checked);
+                }}
+              />
+            </label>
+          </fieldset>
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">Timeout</legend>
+            <input
+              on:change={(e) => {
+                const value = e.target.value;
+                $setConfig("modHiddenDuration", Number(value));
+              }}
+              type="range"
+              min="1000"
+              max={"4000"}
+              value={$config.modHiddenDuration.toString()}
+              class="range w-full range-sm"
+              step="1000"
+            />
+            <div class="flex justify-between px-2.5 text-xs">
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+              <span>|</span>
+            </div>
+            <div class="flex justify-between px-2.5 text-xs">
+              <span>faster</span>
+              <span>fast</span>
+              <span>slow</span>
+              <span>slower</span>
+            </div>
+          </fieldset>
+        </div>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useCardContext } from "#/components/shared/CardContext";
 import type { DatasetProp } from "#/util/config";
 import { Layout } from "./Layout";
 import { useAnkiFieldContext } from "./shared/AnkiFieldsContext";
+import { useConfigContext } from "./shared/ConfigContext";
 import { useFieldGroupContext } from "./shared/FieldGroupContext";
 
 // biome-ignore format: this looks nicer
@@ -19,12 +20,20 @@ export function Front() {
   const [$card, $setCard] = useCardContext();
   const { ankiFields } = useAnkiFieldContext<"front">();
   const [clicked, setClicked] = createSignal(false);
+  const [hideExpression, setHideExpression] = createSignal(false);
   const { $group } = useFieldGroupContext();
+  const [$config] = useConfigContext();
 
   onMount(() => {
     setTimeout(() => {
       $setCard("ready", true);
     }, 100);
+
+    if ($config.modHidden) {
+      setTimeout(() => {
+        setHideExpression(true);
+      }, $config.modHiddenDuration);
+    }
   });
 
   createEffect(() => {
@@ -77,6 +86,7 @@ export function Front() {
           class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row"
           on:click={() => {
             setClicked((prev) => !prev);
+            setHideExpression(false);
           }}
           on:touchend={(e) => e.stopPropagation()}
         >
@@ -86,6 +96,8 @@ export function Front() {
               classList={{
                 "border-b-2 border-dotted border-base-content-soft":
                   !!ankiFields.IsClickCard,
+                "transition-opacity duration-[1000ms] opacity-0":
+                  hideExpression(),
               }}
               innerHTML={
                 isServer
@@ -114,6 +126,7 @@ export function Front() {
         class="flex flex-col gap-4 items-center text-center justify-center"
         classList={{
           hidden: hidden(),
+          "transition-opacity duration-[1000ms] opacity-0": hideExpression(),
         }}
       >
         {$card.ready && <Lazy.Sentence />}

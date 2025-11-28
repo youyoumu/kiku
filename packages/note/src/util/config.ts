@@ -18,6 +18,8 @@ export type KikuConfig = {
   volume: number;
   swapSentenceAndDefinitionOnMobile: boolean;
   preferAnkiConnect: boolean;
+  modHidden: boolean;
+  modHiddenDuration: number;
   fontSizeBaseExpression: TailwindSize;
   fontSizeBasePitch: TailwindSize;
   fontSizeBaseSentence: TailwindSize;
@@ -48,6 +50,8 @@ export const defaultConfig: KikuConfig = {
   volume: 100,
   swapSentenceAndDefinitionOnMobile: true,
   preferAnkiConnect: false,
+  modHidden: false,
+  modHiddenDuration: 2000,
   fontSizeBaseExpression: "5xl",
   fontSizeBasePitch: "xl",
   fontSizeBaseSentence: "2xl",
@@ -106,6 +110,7 @@ export function validateConfig(config: KikuConfig): KikuConfig {
       webFontSecondary: webFonts.includes(config.webFontSecondary) ? config.webFontSecondary : defaultConfig.webFontSecondary,
       systemFontSecondary: typeof config.systemFontSecondary === "string" ? config.systemFontSecondary : defaultConfig.systemFontSecondary,
       useSystemFontSecondary: typeof config.useSystemFontSecondary === "boolean" ? config.useSystemFontSecondary : defaultConfig.useSystemFontSecondary,
+
       blurNsfw: typeof config.blurNsfw === "boolean" ? config.blurNsfw : defaultConfig.blurNsfw,
       showTheme: typeof config.showTheme === "boolean" ? config.showTheme : defaultConfig.showTheme,
       showStartupTime: typeof config.showStartupTime === "boolean" ? config.showStartupTime : defaultConfig.showStartupTime,
@@ -115,6 +120,10 @@ export function validateConfig(config: KikuConfig): KikuConfig {
       volume: typeof config.volume === "number" && config.volume >= 0 && config.volume <= 100 ? config.volume : defaultConfig.volume,
       swapSentenceAndDefinitionOnMobile: typeof config.swapSentenceAndDefinitionOnMobile === "boolean" ? config.swapSentenceAndDefinitionOnMobile : defaultConfig.swapSentenceAndDefinitionOnMobile,
       preferAnkiConnect: typeof config.preferAnkiConnect === "boolean" ? config.preferAnkiConnect : defaultConfig.preferAnkiConnect,
+
+      modHidden: typeof config.modHidden === "boolean" ? config.modHidden : defaultConfig.modHidden,
+      modHiddenDuration: typeof config.modHiddenDuration === "number" && config.modHiddenDuration > 0 ? config.modHiddenDuration : defaultConfig.modHiddenDuration,
+
       fontSizeBaseExpression: tailwindSize.includes(config.fontSizeBaseExpression) ? config.fontSizeBaseExpression : defaultConfig.fontSizeBaseExpression,
       fontSizeBasePitch: tailwindSize.includes(config.fontSizeBasePitch) ? config.fontSizeBasePitch : defaultConfig.fontSizeBasePitch,
       fontSizeBaseSentence: tailwindSize.includes(config.fontSizeBaseSentence) ? config.fontSizeBaseSentence : defaultConfig.fontSizeBaseSentence,
