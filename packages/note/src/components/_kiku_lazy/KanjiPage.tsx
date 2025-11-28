@@ -43,11 +43,11 @@ export default function KanjiPage(props: {
         <div class="flex flex-row gap-2 items-center"></div>
       </div>
 
-      <Show when={$card.selectedSimilarKanji}>
+      <Show when={$card.query.selectedSimilarKanji}>
         <div class="flex flex-col items-center gap-2">
           <div class="text-lg text-base-content-calm">Similar Kanji</div>
           <div class="flex justify-center text-7xl font-secondary ">
-            {$card.selectedSimilarKanji}
+            {$card.query.selectedSimilarKanji}
           </div>
         </div>
       </Show>
@@ -55,9 +55,11 @@ export default function KanjiPage(props: {
       <div class="flex flex-col gap-2 sm:gap-4 ">
         <For
           each={(() => {
-            return $card.selectedSimilarKanji
-              ? Object.entries($card.kanji[$card.selectedSimilarKanji].similar)
-              : Object.entries($card.kanji);
+            return $card.query.selectedSimilarKanji
+              ? Object.entries(
+                  $card.query.kanji[$card.query.selectedSimilarKanji].similar,
+                )
+              : Object.entries($card.query.kanji);
           })()}
         >
           {([kanji, data]) => {
@@ -72,9 +74,9 @@ export default function KanjiPage(props: {
         </For>
         <Show
           when={
-            !$card.selectedSimilarKanji &&
-            $card.sameReadingNote &&
-            $card.sameReadingNote.length > 0
+            !$card.query.selectedSimilarKanji &&
+            $card.query.sameReading &&
+            $card.query.sameReading.length > 0
           }
         >
           <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
@@ -90,7 +92,7 @@ export default function KanjiPage(props: {
             </div>
             <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4">
               <ul class="list bg-base-100 rounded-box shadow-md">
-                <For each={$card.sameReadingNote ?? []}>
+                <For each={$card.query.sameReading ?? []}>
                   {(data) => {
                     return (
                       <AnkiNoteItem
@@ -136,20 +138,20 @@ function KanjiCollapsible(props: {
 
   return (
     <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
-      <input type="checkbox" checked={!$card.selectedSimilarKanji} />
+      <input type="checkbox" checked={!$card.query.selectedSimilarKanji} />
       <div class="collapse-title justify-between flex items-center ps-2 sm:ps-4 pe-2 sm:pe-4 py-2 sm:py-4">
         <KanjiText kanji={kanji()} />
         <Show
           when={
-            !$card.selectedSimilarKanji &&
-            Object.keys($card.kanji[kanji()].similar).length > 0
+            !$card.query.selectedSimilarKanji &&
+            Object.keys($card.query.kanji[kanji()].similar).length > 0
           }
         >
           <div
             class="flex gap-2 items-center btn btn-sm sm:btn-md z-10"
             on:click={() => {
               navigate(
-                () => $setCard("selectedSimilarKanji", kanji()),
+                () => $setCard("query", { selectedSimilarKanji: kanji() }),
                 "forward",
               );
             }}

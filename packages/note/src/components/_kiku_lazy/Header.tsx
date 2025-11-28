@@ -80,7 +80,7 @@ export default function Header(props: {
           <Match
             when={
               !$card.nested &&
-              $card.kanjiStatus === "loading" &&
+              $card.query.status === "loading" &&
               props.side === "back"
             }
           >
@@ -89,7 +89,7 @@ export default function Header(props: {
           <Match
             when={
               !$card.nested &&
-              $card.kanjiStatus === "error" &&
+              $card.query.status === "error" &&
               props.side === "back"
             }
           >
@@ -114,11 +114,11 @@ function KanjiPageIndicator() {
   const [$card] = useCardContext();
 
   const length = () =>
-    Object.entries($card.kanji).length +
-    ($card.sameReadingNote?.length ? 1 : 0);
+    Object.entries($card.query.kanji).length +
+    ($card.query.sameReading?.length ? 1 : 0);
 
   function KanjiIndicator() {
-    return Object.entries($card.kanji).map(([kanji, data]) => {
+    return Object.entries($card.query.kanji).map(([kanji, data]) => {
       return (
         <div class="flex gap-px sm:gap-0.5 items-start">
           <span>{kanji}</span>
@@ -147,7 +147,7 @@ function KanjiPageIndicator() {
             "p-0": length() > 4,
           }}
         >
-          {$card.sameReadingNote?.length ?? 0}
+          {$card.query.sameReading?.length ?? 0}
         </span>
       </div>
     );
@@ -162,7 +162,7 @@ function KanjiPageIndicator() {
       }}
     >
       <KanjiIndicator />
-      <Show when={$card.sameReadingNote?.length}>
+      <Show when={$card.query.sameReading?.length}>
         <span>•</span>
         <SameReadingIndicator />
       </Show>

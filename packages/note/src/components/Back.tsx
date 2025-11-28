@@ -95,9 +95,9 @@ export function Back(props: { onExitNested?: () => void }) {
         <Match when={$card.page === "kanji" && !$card.nested && $card.ready}>
           <Lazy.KanjiPage
             onBackClick={() => {
-              if ($card.selectedSimilarKanji) {
+              if ($card.query.selectedSimilarKanji) {
                 navigate(
-                  () => $setCard("selectedSimilarKanji", undefined),
+                  () => $setCard("query", { selectedSimilarKanji: undefined }),
                   "back",
                 );
               } else {
@@ -105,13 +105,13 @@ export function Back(props: { onExitNested?: () => void }) {
               }
             }}
             onNextClick={(noteId) => {
-              const shared = Object.values($card.kanji).flatMap(
+              const shared = Object.values($card.query.kanji).flatMap(
                 (data) => data.shared,
               );
-              const similar = Object.values($card.kanji).flatMap((data) =>
+              const similar = Object.values($card.query.kanji).flatMap((data) =>
                 Object.values(data.similar).flat(),
               );
-              const sameReading = $card.sameReadingNote ?? [];
+              const sameReading = $card.query.sameReading ?? [];
               const notes = [...shared, ...similar, ...sameReading];
               const note = notes.find((note) => note.noteId === noteId);
               if (!note) throw new Error("Note not found");
@@ -153,8 +153,8 @@ export function Back(props: { onExitNested?: () => void }) {
                 }}
                 onBackClick={props.onExitNested}
                 onKanjiClick={
-                  Object.keys($card.kanji).length > 0 &&
-                  Object.values($card.kanji).flatMap((data) => [
+                  Object.keys($card.query.kanji).length > 0 &&
+                  Object.values($card.query.kanji).flatMap((data) => [
                     ...data.shared,
                     ...Object.values(data.similar),
                   ]).length > 0

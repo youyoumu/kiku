@@ -67,7 +67,7 @@ export function useThemeTransition() {
   const [$card, $setCard] = useCardContext();
 
   function changeTheme(theme: DaisyUITheme) {
-    if ($card.kanjiStatus === "loading") {
+    if ($card.query.status === "loading") {
       $setConfig("theme", theme);
     } else {
       startViewTransition(() => $setConfig("theme", theme), {
@@ -115,9 +115,11 @@ export function useKanji() {
       });
       if ($general.aborter.signal.aborted) return;
 
-      $setCard("kanji", kanjiResult);
-      $setCard("sameReadingNote", readingResult[ankiFields.ExpressionReading]);
-      $setCard("kanjiStatus", "success");
+      $setCard("query", {
+        status: "success",
+        kanji: kanjiResult,
+        sameReading: readingResult[ankiFields.ExpressionReading],
+      });
       if (KIKU_STATE.worker) KIKU_STATE.worker.worker.terminate();
       KIKU_STATE.worker = worker;
 
@@ -128,7 +130,7 @@ export function useKanji() {
           KIKU_STATE.logger.warn("Failed to load manifest");
         });
     } catch (e) {
-      $setCard("kanjiStatus", "error");
+      $setCard("query", { status: "error" });
       KIKU_STATE.logger.error(
         "Failed to load kanji information:",
         e instanceof Error ? e.message : "",

@@ -15,6 +15,13 @@ type Toast = {
   type: "success" | "error";
 };
 
+type Query = {
+  status: "loading" | "success" | "error";
+  kanji: Record<string, KanjiData>;
+  sameReading: AnkiNote[] | undefined;
+  selectedSimilarKanji: string | undefined;
+};
+
 type CardStore = {
   side: "front" | "back";
   page: "main" | "settings" | "kanji" | "nested";
@@ -28,10 +35,7 @@ type CardStore = {
   sentenceAudios?: HTMLAnchorElement[] | HTMLAudioElement[];
   pictureModal?: string;
   toast: Toast;
-  kanji: Record<string, KanjiData>;
-  kanjiStatus: "success" | "error" | "loading";
-  selectedSimilarKanji: string | undefined;
-  sameReadingNote: AnkiNote[] | undefined;
+  query: Query;
   nestedAnkiFields: AnkiFields;
   nested: boolean;
 };
@@ -74,10 +78,12 @@ export function CardStoreContextProvider(props: {
     sentenceAudios: undefined,
     pictureModal: undefined,
     toast: { success, error, message: undefined, type: "success" },
-    kanji: {},
-    kanjiStatus: "loading",
-    selectedSimilarKanji: undefined,
-    sameReadingNote: undefined,
+    query: {
+      status: "loading",
+      kanji: {},
+      sameReading: undefined,
+      selectedSimilarKanji: undefined,
+    },
     nestedAnkiFields: ankiFieldsSkeleton,
     nested: props.nested ?? false,
   });
