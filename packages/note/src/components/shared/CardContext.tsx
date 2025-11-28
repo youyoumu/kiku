@@ -36,6 +36,11 @@ type CardStore = {
   pictureModal?: string;
   toast: Toast;
   query: Query;
+  focus: {
+    SAME_READING: symbol;
+    kanjiPage: string | symbol | undefined;
+    similarKanjiPage: string | symbol | undefined;
+  };
   nestedAnkiFields: AnkiFields;
   nested: boolean;
 };
@@ -83,6 +88,11 @@ export function CardStoreContextProvider(props: {
       kanji: {},
       sameReading: undefined,
       selectedSimilarKanji: undefined,
+    },
+    focus: {
+      SAME_READING: Symbol.for("SAME_READING"),
+      kanjiPage: undefined,
+      similarKanjiPage: undefined,
     },
     nestedAnkiFields: ankiFieldsSkeleton,
     nested: props.nested ?? false,

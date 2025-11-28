@@ -1,6 +1,6 @@
 import { createSignal, Match, onMount, Show, Switch } from "solid-js";
 import { useCardContext } from "#/components/shared/CardContext";
-import { useThemeTransition } from "#/util/hooks";
+import { useNavigationTransition, useThemeTransition } from "#/util/hooks";
 import { nextTheme } from "#/util/theme";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useConfigContext } from "../shared/ConfigContext";
@@ -15,7 +15,6 @@ import { capitalize } from "./util/general";
 
 export default function Header(props: {
   onSettingsClick?: () => void;
-  onKanjiClick?: () => void;
   onBackClick?: () => void;
   side: "back" | "front";
 }) {
@@ -95,11 +94,8 @@ export default function Header(props: {
           >
             <div class="status status-error animate-ping"></div>
           </Match>
-          <Match when={!$card.nested && props.onKanjiClick}>
-            <div
-              class="text-base-content-soft cursor-pointer animate-fade-in-sm"
-              on:click={props.onKanjiClick}
-            >
+          <Match when={!$card.nested}>
+            <div class="text-base-content-soft cursor-pointer animate-fade-in-sm">
               <KanjiPageIndicator />
             </div>
           </Match>
@@ -111,19 +107,38 @@ export default function Header(props: {
 }
 
 function KanjiPageIndicator() {
-  const [$card] = useCardContext();
+  const [$card, $setCard] = useCardContext();
+  const navigate = useNavigationTransition();
 
   const length = () =>
     Object.entries($card.query.kanji).length +
     ($card.query.sameReading?.length ? 1 : 0);
 
+  const onClick = (key: string | symbol) => {
+    if (
+      Object.keys($card.query.kanji).length > 0 &&
+      Object.values($card.query.kanji).flatMap((data) => [
+        ...data.shared,
+        ...Object.values(data.similar),
+      ]).length > 0
+    ) {
+      $setCard("focus", { kanjiPage: key });
+      navigate("kanji", "forward");
+    }
+  };
+
   function KanjiIndicator() {
     return Object.entries($card.query.kanji).map(([kanji, data]) => {
       return (
-        <div class="flex gap-px sm:gap-0.5 items-start">
+        <div
+          class="flex gap-px sm:gap-0.5 items-start hover:text-base-content transition-colors"
+          on:click={() => {
+            onClick(kanji);
+          }}
+        >
           <span>{kanji}</span>
           <span
-            class="bg-base-200 leading-none text-xs sm:text-sm rounded-xs"
+            class="bg-base-300 leading-none text-xs sm:text-sm rounded-xs"
             classList={{
               "p-px": length() <= 4,
               "p-0": length() > 4,
@@ -138,10 +153,15 @@ function KanjiPageIndicator() {
 
   function SameReadingIndicator() {
     return (
-      <div class="flex gap-px sm:gap-0.5 items-start">
+      <div
+        class="flex gap-px sm:gap-0.5 items-start hover:text-base-content transition-colors"
+        on:click={() => {
+          onClick($card.focus.SAME_READING);
+        }}
+      >
         <span>読</span>
         <span
-          class="bg-base-200 leading-none text-xs sm:text-sm rounded-xs"
+          class="bg-base-300 leading-none text-xs sm:text-sm rounded-xs"
           classList={{
             "p-px": length() <= 4,
             "p-0": length() > 4,

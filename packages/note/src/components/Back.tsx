@@ -104,30 +104,6 @@ export function Back(props: { onExitNested?: () => void }) {
                 navigate("main", "back");
               }
             }}
-            onNextClick={(noteId) => {
-              const shared = Object.values($card.query.kanji).flatMap(
-                (data) => data.shared,
-              );
-              const similar = Object.values($card.query.kanji).flatMap((data) =>
-                Object.values(data.similar).flat(),
-              );
-              const sameReading = $card.query.sameReading ?? [];
-              const notes = [...shared, ...similar, ...sameReading];
-              const note = notes.find((note) => note.noteId === noteId);
-              if (!note) throw new Error("Note not found");
-              const ankiFields: AnkiFields = {
-                ...ankiFieldsSkeleton,
-                ...Object.fromEntries(
-                  Object.entries(note.fields).map(([key, value]) => {
-                    return [key, value.value];
-                  }),
-                ),
-                Tags: note.tags.join(" "),
-              };
-
-              $setCard("nestedAnkiFields", ankiFields);
-              navigate("nested", "forward");
-            }}
           />
         </Match>
         <Match when={$card.page === "nested" && !$card.nested && $card.ready}>
@@ -152,17 +128,6 @@ export function Back(props: { onExitNested?: () => void }) {
                   navigate("settings", "forward");
                 }}
                 onBackClick={props.onExitNested}
-                onKanjiClick={
-                  Object.keys($card.query.kanji).length > 0 &&
-                  Object.values($card.query.kanji).flatMap((data) => [
-                    ...data.shared,
-                    ...Object.values(data.similar),
-                  ]).length > 0
-                    ? () => {
-                        navigate("kanji", "forward");
-                      }
-                    : undefined
-                }
               />
             )}
           </div>
