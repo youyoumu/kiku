@@ -84,20 +84,8 @@ function KanjiCollapsible(props: {
     return $card.focus.kanjiPage;
   };
 
-  let ref: HTMLDivElement | undefined;
-  onMount(() => {
-    if (ref) {
-      if (focus() === kanji()) {
-        ref.scrollIntoView({ block: "nearest" });
-      }
-    }
-  });
-
   return (
-    <div
-      class="collapse bg-base-200 border border-base-300 animate-fade-in"
-      ref={ref}
-    >
+    <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
       <input type="checkbox" checked={focus() === kanji()} />
       <div class="collapse-title justify-between flex items-center ps-2 sm:ps-4 pe-2 sm:pe-4 py-2 sm:py-4">
         <KanjiText kanji={kanji()} />
@@ -110,7 +98,7 @@ function KanjiCollapsible(props: {
           <div
             class="flex gap-2 items-center btn btn-sm sm:btn-md z-10"
             on:click={() => {
-              $setCard("focus", { kanjiPage: kanji() });
+              $setCard("focus", { kanjiPage: kanji(), noteId: undefined });
               navigate(
                 () => $setCard("query", { selectedSimilarKanji: kanji() }),
                 "forward",
@@ -154,27 +142,28 @@ function SameReadingCollapsible() {
   };
 
   let ref: HTMLDivElement | undefined;
-
   onMount(() => {
     if (ref) {
-      if ($card.focus.kanjiPage === $card.focus.SAME_READING) {
-        ref.scrollIntoView({ block: "nearest" });
+      if (
+        $card.focus.kanjiPage === $card.focus.SAME_READING &&
+        !$card.focus.noteId
+      ) {
+        ref.scrollIntoView({ block: "center" });
       }
     }
   });
 
   return (
-    <div
-      class="collapse bg-base-200 border border-base-300 animate-fade-in"
-      ref={ref}
-    >
+    <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
       <input
         type="checkbox"
         checked={$card.focus.kanjiPage === $card.focus.SAME_READING}
       />
       <div class="collapse-title justify-between flex items-center ps-2 sm:ps-4 pe-2 sm:pe-4 py-2 sm:py-4">
         <span class="text-lg sm:text-2xl">
-          <span class="text-base-content-calm">Same Reading</span>{" "}
+          <span class="text-base-content-calm" ref={ref}>
+            Same Reading
+          </span>{" "}
           <span class="font-secondary">
             (
             <ExpressionFurigana />)
@@ -281,10 +270,17 @@ function AnkiNoteItem(props: {
     } else {
       $setCard("focus", { kanjiPage: kanji() });
     }
-
+    $setCard("focus", { noteId: note.noteId });
     $setCard("nestedAnkiFields", ankiFields);
     navigate("nested", "forward");
   };
+
+  let ref: HTMLDivElement | undefined;
+  onMount(() => {
+    if (ref && $card.focus.noteId === props.data.noteId) {
+      ref.scrollIntoView({ block: "center" });
+    }
+  });
 
   return (
     <>
@@ -293,6 +289,7 @@ function AnkiNoteItem(props: {
           <div
             class=" font-secondary sentence"
             innerHTML={expressionInnerHtmlColorized()}
+            ref={ref}
           ></div>
           <div class="text-base-content-calm">
             {new Date(data().noteId).toLocaleDateString()}
@@ -322,6 +319,7 @@ function AnkiNoteItem(props: {
 
 function KanjiText(props: { kanji: string }) {
   const [kanji, setKanji] = createSignal<Kanji>();
+  const [$card, $setCard] = useCardContext();
 
   onMount(async () => {
     const nex = await KIKU_STATE.worker?.nex;
@@ -331,9 +329,22 @@ function KanjiText(props: { kanji: string }) {
     }
   });
 
+  const focus = () => {
+    if ($card.query.selectedSimilarKanji) return $card.focus.similarKanjiPage;
+    return $card.focus.kanjiPage;
+  };
+  let ref: HTMLDivElement | undefined;
+  onMount(() => {
+    if (ref && focus() === props.kanji && !$card.focus.noteId) {
+      ref.scrollIntoView({ block: "center" });
+    }
+  });
+
   return (
     <div class="flex gap-2 sm:gap-4 ">
-      <div class="font-secondary expression">{props.kanji}</div>
+      <div class="font-secondary expression" ref={ref}>
+        {props.kanji}
+      </div>
       <div class="flex flex-col text-xs sm:text-sm text-base-content-calm leading-tight">
         <div
           classList={{

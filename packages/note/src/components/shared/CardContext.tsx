@@ -40,6 +40,7 @@ type CardStore = {
     SAME_READING: symbol;
     kanjiPage: string | symbol | undefined;
     similarKanjiPage: string | symbol | undefined;
+    noteId: number | undefined;
   };
   nestedAnkiFields: AnkiFields;
   nested: boolean;
@@ -93,6 +94,7 @@ export function CardStoreContextProvider(props: {
       SAME_READING: Symbol.for("SAME_READING"),
       kanjiPage: undefined,
       similarKanjiPage: undefined,
+      noteId: undefined,
     },
     nestedAnkiFields: ankiFieldsSkeleton,
     nested: props.nested ?? false,

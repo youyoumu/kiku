@@ -159,7 +159,7 @@ function KanjiPageIndicator() {
         ...Object.values(data.similar),
       ]).length > 0
     ) {
-      $setCard("focus", { kanjiPage: key });
+      $setCard("focus", { kanjiPage: key, noteId: undefined });
       navigate("kanji", "forward");
     }
   };
