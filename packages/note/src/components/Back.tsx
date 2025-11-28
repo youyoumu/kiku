@@ -1,5 +1,5 @@
 import { lazy, Match, onMount, Suspense, Switch } from "solid-js";
-import { isServer } from "solid-js/web";
+import { isServer, Portal } from "solid-js/web";
 import {
   CardStoreContextProvider,
   useCardContext,
@@ -80,14 +80,9 @@ export function Back(props: { onExitNested?: () => void }) {
   return (
     <Layout>
       {$card.ready && !$card.nested && <Lazy.UseAnkiDroid />}
-      <div
-        class="flex justify-between flex-row h-5 min-h-5"
-        classList={{
-          hidden: $card.page === "nested",
-        }}
-      >
+      <Portal mount={KIKU_STATE.root}>
         {$card.ready && <Lazy.Header onExitNested={props.onExitNested} />}
-      </div>
+      </Portal>
       <Switch>
         <Match when={$card.page === "settings" && !$card.nested && $card.ready}>
           <Lazy.Settings />

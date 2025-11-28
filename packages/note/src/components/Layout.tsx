@@ -14,7 +14,7 @@ export function Layout(props: { children: JSX.Element }) {
       <UseAnkiWeb />
 
       <div
-        class="flex flex-col gap-6 p-2 sm:p-4 bg-base-100 min-h-full max-w-4xl mx-auto"
+        class="flex flex-col gap-6 p-2 sm:p-4 bg-base-100 min-h-full max-w-4xl mx-auto pt-10 sm:pt-14"
         ref={(ref) => $setCard("contentRef", ref)}
       >
         {props.children}

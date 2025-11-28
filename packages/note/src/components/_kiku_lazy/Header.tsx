@@ -20,18 +20,29 @@ export default function Header(props: { onExitNested?: () => void }) {
   const [$card] = useCardContext();
 
   return (
-    <Switch>
-      <Match when={$card.page === "main"}>
-        <HeaderMain onExitNested={props.onExitNested} />
-      </Match>
-      <Match when={$card.page === "nested"}>{null}</Match>
-      <Match when={$card.page === "settings"}>
-        <HeaderSettings />
-      </Match>
-      <Match when={$card.page === "kanji"}>
-        <HeaderKanjiPage />
-      </Match>
-    </Switch>
+    <div class="absolute top-0 left-0 w-full py-2 sm:py-4 px-1 sm:px-2 bg-base-100/90 backdrop-blur-xs">
+      <div class="w-full max-w-4xl mx-auto px-1 sm:px-2 gutter-stable overflow-auto invisible-scrollbar">
+        <div
+          class="flex justify-between flex-row h-6 items-center min-h-6"
+          classList={{
+            hidden: $card.page === "nested",
+          }}
+        >
+          <Switch>
+            <Match when={$card.page === "main"}>
+              <HeaderMain onExitNested={props.onExitNested} />
+            </Match>
+            <Match when={$card.page === "nested"}>{null}</Match>
+            <Match when={$card.page === "settings"}>
+              <HeaderSettings />
+            </Match>
+            <Match when={$card.page === "kanji"}>
+              <HeaderKanjiPage />
+            </Match>
+          </Switch>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -164,7 +175,7 @@ function KanjiPageIndicator() {
         >
           <span>{kanji}</span>
           <span
-            class="bg-base-300 leading-none text-xs sm:text-sm rounded-xs"
+            class="bg-base-content/5 leading-none text-xs sm:text-sm rounded-xs"
             classList={{
               "p-px": length() <= 4,
               "p-0": length() > 4,
@@ -187,7 +198,7 @@ function KanjiPageIndicator() {
       >
         <span>読</span>
         <span
-          class="bg-base-300 leading-none text-xs sm:text-sm rounded-xs"
+          class="bg-base-content/5 leading-none text-xs sm:text-sm rounded-xs"
           classList={{
             "p-px": length() <= 4,
             "p-0": length() > 4,
@@ -309,7 +320,7 @@ function HeaderKanjiPage() {
   const navigate = useNavigationTransition();
 
   return (
-    <div class="flex flex-row justify-between items-center animate-fade-in">
+    <div class="flex flex-row justify-between items-center">
       <div class="h-5">
         <ArrowLeftIcon
           class="h-full w-full cursor-pointer text-base-content-soft"
