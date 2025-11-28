@@ -68,7 +68,7 @@ export function Front() {
     <Layout>
       {$card.ready && !$card.nested && <Lazy.UseAnkiDroid />}
       <div class="flex justify-between flex-row h-5 min-h-5">
-        {$card.ready && <Lazy.Header side="front" />}
+        {$card.ready && <Lazy.Header />}
       </div>
       <div class="flex flex-col gap-4">
         <div

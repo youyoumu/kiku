@@ -4,7 +4,6 @@ import {
   CardStoreContextProvider,
   useCardContext,
 } from "#/components/shared/CardContext";
-import { type AnkiFields, ankiFieldsSkeleton } from "#/types";
 import type { DatasetProp } from "#/util/config";
 import { useKanji, useNavigationTransition } from "#/util/hooks";
 import { getPlugin } from "#/util/plugin";
@@ -81,30 +80,20 @@ export function Back(props: { onExitNested?: () => void }) {
   return (
     <Layout>
       {$card.ready && !$card.nested && <Lazy.UseAnkiDroid />}
+      <div
+        class="flex justify-between flex-row h-5 min-h-5"
+        classList={{
+          hidden: $card.page === "nested",
+        }}
+      >
+        {$card.ready && <Lazy.Header onExitNested={props.onExitNested} />}
+      </div>
       <Switch>
         <Match when={$card.page === "settings" && !$card.nested && $card.ready}>
-          <Lazy.Settings
-            onBackClick={() => {
-              navigate("main", "back");
-            }}
-            onCancelClick={() => {
-              navigate("main", "back");
-            }}
-          />
+          <Lazy.Settings />
         </Match>
         <Match when={$card.page === "kanji" && !$card.nested && $card.ready}>
-          <Lazy.KanjiPage
-            onBackClick={() => {
-              if ($card.query.selectedSimilarKanji) {
-                navigate(
-                  () => $setCard("query", { selectedSimilarKanji: undefined }),
-                  "back",
-                );
-              } else {
-                navigate("main", "back");
-              }
-            }}
-          />
+          <Lazy.KanjiPage />
         </Match>
         <Match when={$card.page === "nested" && !$card.nested && $card.ready}>
           <AnkiFieldContextProvider ankiFields={$card.nestedAnkiFields}>
@@ -120,17 +109,6 @@ export function Back(props: { onExitNested?: () => void }) {
           </AnkiFieldContextProvider>
         </Match>
         <Match when={$card.page === "main"}>
-          <div class="flex justify-between flex-row h-5 min-h-5">
-            {$card.ready && (
-              <Lazy.Header
-                side="back"
-                onSettingsClick={() => {
-                  navigate("settings", "forward");
-                }}
-                onBackClick={props.onExitNested}
-              />
-            )}
-          </div>
           <div class="flex flex-col gap-4">
             <div
               class="flex rounded-lg gap-4 flex-col sm:flex-row"

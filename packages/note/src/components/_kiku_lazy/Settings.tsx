@@ -20,19 +20,12 @@ import {
 } from "#/util/config";
 import { type WebFont, webFonts } from "#/util/fonts";
 import { env } from "#/util/general";
-import { useThemeTransition } from "#/util/hooks";
+import { useNavigationTransition, useThemeTransition } from "#/util/hooks";
 import { daisyUIThemes } from "#/util/theme";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
-import { useBreakpointContext } from "../shared/BreakpointContext";
 import { useConfigContext } from "../shared/ConfigContext";
 import { useGeneralContext } from "../shared/GeneralContext";
-import {
-  ArrowLeftIcon,
-  ClipboardCopyIcon,
-  InfoIcon,
-  RefreshCwIcon,
-  UndoIcon,
-} from "./Icons";
+import { ClipboardCopyIcon, InfoIcon, RefreshCwIcon, UndoIcon } from "./Icons";
 import { AnkiConnect } from "./util/ankiConnect";
 import { capitalize } from "./util/general";
 
@@ -63,30 +56,11 @@ function toCssVarString(obj: Record<string, string>) {
   return txt;
 }
 
-export default function Settings(props: {
-  onBackClick?: () => void;
-  onCancelClick?: () => void;
-}) {
-  const bp = useBreakpointContext();
+export default function Settings() {
   const [$config] = useConfigContext();
   const [$card, _$setCard] = useCardContext();
   const [$general, $setGeneral] = useGeneralContext();
-
-  onMount(async () => {
-    //NOTE: move this to somewhere higher
-    AnkiConnect.changePort(Number($config.ankiConnectPort));
-
-    if (!bp.isAtLeast("sm")) return;
-    await checkAnkiConnect();
-  });
-
-  async function checkAnkiConnect() {
-    const version = await AnkiConnect.getVersion();
-    if (version) {
-      KIKU_STATE.logger.info("AnkiConnect version:", version);
-      $setGeneral("isAnkiConnectAvailable", true);
-    }
-  }
+  const navigate = useNavigationTransition();
 
   const saveConfig = async () => {
     try {
@@ -101,80 +75,42 @@ export default function Settings(props: {
   };
 
   return (
-    <>
-      <div class="flex flex-row justify-between items-center animate-fade-in">
-        <div class="h-5">
-          <ArrowLeftIcon
-            class="h-full w-full cursor-pointer text-base-content-soft"
-            on:click={props.onBackClick}
-          ></ArrowLeftIcon>
-        </div>
-        <div class="flex flex-row gap-2 items-center">
-          {$general.isAnkiConnectAvailable && (
-            <>
-              <div class="text-sm text-base-content-calm">
-                AnkiConnect is available
-              </div>
-              <div class="status status-success"></div>
-            </>
-          )}
-          {!$general.isAnkiConnectAvailable && (
-            <>
-              <RefreshCwIcon
-                class="size-4 cursor-pointer text-base-content-soft"
-                on:click={async () => {
-                  try {
-                    await checkAnkiConnect();
-                  } catch {
-                    $card.toast.error("AnkiConnect is not available");
-                  }
-                }}
-              />
-              <div class="text-sm text-base-content-calm">
-                AnkiConnect is not available
-              </div>
-              <div class="status status-error animate-ping"></div>
-            </>
-          )}
-        </div>
-      </div>
-      <div>
-        <GeneralSettings />
-        <div class="divider"></div>
-        <ThemeSettings />
-        <div class="divider"></div>
-        <FontSettings />
-        <div class="divider"></div>
-        <FontSizeSettings />
-        <div class="divider"></div>
-        <AnkiDroidSettings />
-        <div class="divider"></div>
-        <DebugSettings />
-        <div class="divider"></div>
-        <div class="pb-16"></div>
-        <Portal mount={KIKU_STATE.root}>
-          <div class="max-w-4xl mx-auto w-full relative">
-            <div class="flex flex-row gap-2 justify-end animate-fade-in absolute bottom-0 right-0 mx-4 mb-4">
-              <button class="btn" on:click={props.onCancelClick}>
-                Back
-              </button>
-              <button
-                class="btn"
-                classList={{
-                  "btn-primary": $general.isAnkiConnectAvailable,
-                  "btn-disabled bg-base-300 text-base-content-faint":
-                    !$general.isAnkiConnectAvailable,
-                }}
-                disabled={!$general.isAnkiConnectAvailable}
-                on:click={saveConfig}
-              >
-                Save
-              </button>
-            </div>
+    <div>
+      <GeneralSettings />
+      <div class="divider"></div>
+      <ThemeSettings />
+      <div class="divider"></div>
+      <FontSettings />
+      <div class="divider"></div>
+      <FontSizeSettings />
+      <div class="divider"></div>
+      <AnkiDroidSettings />
+      <div class="divider"></div>
+      <DebugSettings />
+      <div class="divider"></div>
+      <div class="pb-16"></div>
+      <Portal mount={KIKU_STATE.root}>
+        <div class="max-w-4xl mx-auto w-full relative">
+          <div class="flex flex-row gap-2 justify-end animate-fade-in absolute bottom-0 right-0 mx-4 mb-4">
+            <button class="btn" on:click={() => navigate("main", "back")}>
+              Back
+            </button>
+            <button
+              class="btn"
+              classList={{
+                "btn-primary": $general.isAnkiConnectAvailable,
+                "btn-disabled bg-base-300 text-base-content-faint":
+                  !$general.isAnkiConnectAvailable,
+              }}
+              disabled={!$general.isAnkiConnectAvailable}
+              on:click={saveConfig}
+            >
+              Save
+            </button>
           </div>
-        </Portal>
-      </div>
-    </>
+        </div>
+      </Portal>
+    </div>
   );
 }
 

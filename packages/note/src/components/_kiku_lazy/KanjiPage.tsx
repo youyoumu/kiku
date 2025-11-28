@@ -14,23 +14,12 @@ import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 import { ArrowLeftIcon } from "./Icons";
 
-export default function KanjiPage(props: { onBackClick: () => void }) {
+export default function KanjiPage() {
   const [$card, $setCard] = useCardContext();
-  const { ankiFields } = useAnkiFieldContext<"back">();
   const [$general, $setGeneral] = useGeneralContext();
 
   return (
     <>
-      <div class="flex flex-row justify-between items-center animate-fade-in">
-        <div class="h-5">
-          <ArrowLeftIcon
-            class="h-full w-full cursor-pointer text-base-content-soft"
-            on:click={props.onBackClick}
-          ></ArrowLeftIcon>
-        </div>
-        <div class="flex flex-row gap-2 items-center"></div>
-      </div>
-
       <Show when={$card.query.selectedSimilarKanji}>
         <div class="flex flex-col items-center gap-2">
           <div class="text-lg text-base-content-calm">Similar Kanji</div>

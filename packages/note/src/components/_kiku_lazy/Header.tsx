@@ -3,6 +3,7 @@ import { useCardContext } from "#/components/shared/CardContext";
 import { useNavigationTransition, useThemeTransition } from "#/util/hooks";
 import { nextTheme } from "#/util/theme";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
+import { useBreakpointContext } from "../shared/BreakpointContext";
 import { useConfigContext } from "../shared/ConfigContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 import {
@@ -10,17 +11,35 @@ import {
   BoltIcon,
   CircleChevronDownIcon,
   PaintbrushIcon,
+  RefreshCwIcon,
 } from "./Icons";
+import { AnkiConnect } from "./util/ankiConnect";
 import { capitalize } from "./util/general";
 
-export default function Header(props: {
-  onSettingsClick?: () => void;
-  onBackClick?: () => void;
-  side: "back" | "front";
-}) {
+export default function Header(props: { onExitNested?: () => void }) {
+  const [$card] = useCardContext();
+
+  return (
+    <Switch>
+      <Match when={$card.page === "main"}>
+        <HeaderMain onExitNested={props.onExitNested} />
+      </Match>
+      <Match when={$card.page === "nested"}>{null}</Match>
+      <Match when={$card.page === "settings"}>
+        <HeaderSettings />
+      </Match>
+      <Match when={$card.page === "kanji"}>
+        <HeaderKanjiPage />
+      </Match>
+    </Switch>
+  );
+}
+
+function HeaderMain(props: { onExitNested?: () => void }) {
   const [$card] = useCardContext();
   const [$config, $setConfig] = useConfigContext();
   const [$general] = useGeneralContext();
+  const navigate = useNavigationTransition();
   const [startupTime, setStartupTime] = createSignal<number | null>(null);
   const changeTheme = useThemeTransition();
 
@@ -32,47 +51,52 @@ export default function Header(props: {
   return (
     <>
       <div class="flex gap-1 sm:gap-2 items-center animate-fade-in-sm">
-        <Show when={props.onBackClick}>
-          <ArrowLeftIcon
-            class="size-5 cursor-pointer text-base-content-soft"
-            on:click={props.onBackClick}
-          ></ArrowLeftIcon>
-        </Show>
-        <Show when={!$card.nested}>
-          <div class="relative">
-            <BoltIcon
-              class="size-5"
-              classList={{
-                "text-base-content-soft cursor-pointer": props.side === "back",
-                "text-base-content-subtle-100": props.side === "front",
-              }}
-              on:click={props.onSettingsClick}
-            ></BoltIcon>
-            <Show when={$general.isThemeChanged}>
-              <div class="status status-warning absolute top-0 right-0 translate-x-0.5 -translate-y-0.5"></div>
-            </Show>
-          </div>
-          <Show when={$config.showTheme}>
-            <div
-              class="flex gap-1 sm:gap-2 items-center cursor-pointer"
-              on:click={() => {
-                changeTheme(nextTheme());
-              }}
-              on:touchend={(e) => e.stopPropagation()}
-            >
-              <PaintbrushIcon class="size-5 cursor-pointer text-base-content-soft"></PaintbrushIcon>
-              <div class="text-base-content-soft text-xs sm:text-sm">
-                {capitalize($config.theme)}
+        <Switch>
+          <Match when={$card.nested}>
+            <ArrowLeftIcon
+              class="size-5 cursor-pointer text-base-content-soft"
+              on:click={props.onExitNested}
+            ></ArrowLeftIcon>
+          </Match>
+          <Match when={!$card.nested}>
+            <div class="relative">
+              <BoltIcon
+                class="size-5"
+                classList={{
+                  "text-base-content-soft cursor-pointer":
+                    $card.side === "back",
+                  "text-base-content-subtle-100": $card.side === "front",
+                }}
+                on:click={() => {
+                  navigate("settings", "forward");
+                }}
+              ></BoltIcon>
+              <Show when={$general.isThemeChanged}>
+                <div class="status status-warning absolute top-0 right-0 translate-x-0.5 -translate-y-0.5"></div>
+              </Show>
+            </div>
+            <Show when={$config.showTheme}>
+              <div
+                class="flex gap-1 sm:gap-2 items-center cursor-pointer"
+                on:click={() => {
+                  changeTheme(nextTheme());
+                }}
+                on:touchend={(e) => e.stopPropagation()}
+              >
+                <PaintbrushIcon class="size-5 cursor-pointer text-base-content-soft"></PaintbrushIcon>
+                <div class="text-base-content-soft text-xs sm:text-sm">
+                  {capitalize($config.theme)}
+                </div>
               </div>
-            </div>
-          </Show>
-          <Show when={$config.showStartupTime}>
-            <div class="text-base-content-soft bg-warning/10 rounded-sm px-px sm:px-1 text-xs sm:text-sm">
-              {startupTime()}
-              {startupTime() && "ms"}
-            </div>
-          </Show>
-        </Show>
+            </Show>
+            <Show when={$config.showStartupTime}>
+              <div class="text-base-content-soft bg-warning/10 rounded-sm px-px sm:px-1 text-xs sm:text-sm">
+                {startupTime()}
+                {startupTime() && "ms"}
+              </div>
+            </Show>
+          </Match>
+        </Switch>
       </div>
       <div class="flex gap-1 sm:gap-2 items-center">
         <Switch>
@@ -80,7 +104,7 @@ export default function Header(props: {
             when={
               !$card.nested &&
               $card.query.status === "loading" &&
-              props.side === "back"
+              $card.side === "back"
             }
           >
             <span class="loading loading-spinner loading-xs text-base-content-faint animate-fade-in-sm"></span>
@@ -89,7 +113,7 @@ export default function Header(props: {
             when={
               !$card.nested &&
               $card.query.status === "error" &&
-              props.side === "back"
+              $card.side === "back"
             }
           >
             <div class="status status-error animate-ping"></div>
@@ -100,7 +124,9 @@ export default function Header(props: {
             </div>
           </Match>
         </Switch>
-        {props.side === "back" && <Frequency />}
+        <Show when={$card.side === "back"}>
+          <Frequency />
+        </Show>
       </div>
     </>
   );
@@ -211,6 +237,95 @@ function Frequency() {
           ></div>
         </>
       )}
+    </div>
+  );
+}
+
+function HeaderSettings() {
+  const [$general, $setGeneral] = useGeneralContext();
+  const [$card] = useCardContext();
+  const [$config, $setConfig] = useConfigContext();
+  const bp = useBreakpointContext();
+  const navigate = useNavigationTransition();
+
+  async function checkAnkiConnect() {
+    const version = await AnkiConnect.getVersion();
+    if (version) {
+      KIKU_STATE.logger.info("AnkiConnect version:", version);
+      $setGeneral("isAnkiConnectAvailable", true);
+    }
+  }
+
+  onMount(async () => {
+    //NOTE: move this to somewhere higher
+    AnkiConnect.changePort(Number($config.ankiConnectPort));
+
+    if (!bp.isAtLeast("sm")) return;
+    await checkAnkiConnect();
+  });
+
+  return (
+    <>
+      <div class="h-5">
+        <ArrowLeftIcon
+          class="h-full w-full cursor-pointer text-base-content-soft"
+          on:click={() => navigate("main", "back")}
+        ></ArrowLeftIcon>
+      </div>
+      <div class="flex flex-row gap-2 items-center">
+        {$general.isAnkiConnectAvailable && (
+          <>
+            <div class="text-sm text-base-content-calm">
+              AnkiConnect is available
+            </div>
+            <div class="status status-success"></div>
+          </>
+        )}
+        {!$general.isAnkiConnectAvailable && (
+          <>
+            <RefreshCwIcon
+              class="size-4 cursor-pointer text-base-content-soft"
+              on:click={async () => {
+                try {
+                  await checkAnkiConnect();
+                } catch {
+                  $card.toast.error("AnkiConnect is not available");
+                }
+              }}
+            />
+            <div class="text-sm text-base-content-calm">
+              AnkiConnect is not available
+            </div>
+            <div class="status status-error animate-ping"></div>
+          </>
+        )}
+      </div>
+    </>
+  );
+}
+
+function HeaderKanjiPage() {
+  const [$card, $setCard] = useCardContext();
+  const navigate = useNavigationTransition();
+
+  return (
+    <div class="flex flex-row justify-between items-center animate-fade-in">
+      <div class="h-5">
+        <ArrowLeftIcon
+          class="h-full w-full cursor-pointer text-base-content-soft"
+          on:click={() => {
+            if ($card.query.selectedSimilarKanji) {
+              navigate(
+                () => $setCard("query", { selectedSimilarKanji: undefined }),
+                "back",
+              );
+            } else {
+              navigate("main", "back");
+            }
+          }}
+        ></ArrowLeftIcon>
+      </div>
+      <div class="flex flex-row gap-2 items-center"></div>
     </div>
   );
 }
