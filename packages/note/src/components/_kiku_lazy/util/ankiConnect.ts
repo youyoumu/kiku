@@ -64,8 +64,12 @@ export const AnkiConnect = {
       styleRes.text(),
     ]);
 
-    const frontTemplate = frontSrc.replace("__DATA_THEME__", config.theme);
-    const backTemplate = backSrc.replace("__DATA_THEME__", config.theme);
+    const frontTemplate = frontSrc
+      .replace("__DATA_THEME__", config.theme)
+      .replace("__DATA_BLUR_NSFW__", config.blurNsfw ? "true" : "false");
+    const backTemplate = backSrc
+      .replace("__DATA_THEME__", config.theme)
+      .replace("__DATA_BLUR_NSFW__", config.blurNsfw ? "true" : "false");
     const cssVar = getCssVar(config);
     const cssVarTemplate = generateCssVars(cssVar);
     const styleTemplate = styleSrc.replace(

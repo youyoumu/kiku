@@ -21,8 +21,12 @@ async function main() {
     readFile(stylePath, "utf8"),
   ]);
 
-  const frontTemplate = frontSrc.replace("__DATA_THEME__", "light");
-  const backTemplate = backSrc.replace("__DATA_THEME__", "light");
+  const frontTemplate = frontSrc
+    .replace("__DATA_THEME__", "light")
+    .replace("__DATA_BLUR_NSFW__", "true");
+  const backTemplate = backSrc
+    .replace("__DATA_THEME__", "light")
+    .replace("__DATA_BLUR_NSFW__", "true");
 
   // Send them to AnkiConnect
   const result = await AnkiConnect.call("updateModelTemplates", {

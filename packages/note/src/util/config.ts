@@ -9,6 +9,7 @@ export type KikuConfig = {
   webFontSecondary: WebFont;
   systemFontSecondary: string;
   useSystemFontSecondary: boolean;
+  blurNsfw: boolean;
   showTheme: boolean;
   showStartupTime: boolean;
   ankiConnectPort: number;
@@ -38,6 +39,7 @@ export const defaultConfig: KikuConfig = {
   webFontSecondary: "IBM Plex Sans JP",
   systemFontSecondary: "'Hiragino Mincho ProN', 'Noto Serif CJK JP', 'Noto Serif JP', 'Yu Mincho', HanaMinA, HanaMinB, serif",
   useSystemFontSecondary: true,
+  blurNsfw: true,
   showTheme: true,
   showStartupTime: true,
   ankiConnectPort: 8765,
@@ -104,6 +106,7 @@ export function validateConfig(config: KikuConfig): KikuConfig {
       webFontSecondary: webFonts.includes(config.webFontSecondary) ? config.webFontSecondary : defaultConfig.webFontSecondary,
       systemFontSecondary: typeof config.systemFontSecondary === "string" ? config.systemFontSecondary : defaultConfig.systemFontSecondary,
       useSystemFontSecondary: typeof config.useSystemFontSecondary === "boolean" ? config.useSystemFontSecondary : defaultConfig.useSystemFontSecondary,
+      blurNsfw: typeof config.blurNsfw === "boolean" ? config.blurNsfw : defaultConfig.blurNsfw,
       showTheme: typeof config.showTheme === "boolean" ? config.showTheme : defaultConfig.showTheme,
       showStartupTime: typeof config.showStartupTime === "boolean" ? config.showStartupTime : defaultConfig.showStartupTime,
       ankiConnectPort: typeof config.ankiConnectPort === "number" && config.ankiConnectPort > 0 && config.ankiConnectPort < 65535 ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
@@ -165,6 +168,7 @@ export type Dataset = {
   "data-transition": "true" | "false";
   "data-tags": string;
   "data-nsfw": "true" | "false";
+  "data-blur-nsfw": "true" | "false";
   "data-is-even": "true" | "false";
   "data-has-pitch": string
   "data-has-hint": string
@@ -210,6 +214,7 @@ export function updateConfigState(el: HTMLElement, config: KikuConfig) {
     document.documentElement.setAttribute("data-theme", config.theme);
   }
   el.dataset.theme = config.theme;
+  el.dataset.blurNsfw = config.blurNsfw ? "true" : "false";
 
   const cssVar = getCssVar(config);
   Object.entries(cssVar).forEach(([key, value]) => {

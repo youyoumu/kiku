@@ -153,6 +153,19 @@ function GeneralSettings() {
           />
         </fieldset>
         <fieldset class="fieldset py-0">
+          <legend class="fieldset-legend">Blur NSFW</legend>
+          <label class="label">
+            <input
+              type="checkbox"
+              checked={$config.blurNsfw}
+              class="toggle"
+              on:change={(e) => {
+                $setConfig("blurNsfw", e.target.checked);
+              }}
+            />
+          </label>
+        </fieldset>
+        <fieldset class="fieldset py-0">
           <legend class="fieldset-legend">Show Theme</legend>
           <label class="label">
             <input

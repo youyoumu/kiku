@@ -158,6 +158,10 @@
     }
   }
 
+  [data-blur-nsfw="false"] .picture-field {
+    @apply [&_img]:filter-none;
+  }
+
   .picture-field:hover {
     @apply [&_img]:filter-none;
   }
