@@ -3,12 +3,15 @@ import type { JSX } from "solid-js/jsx-runtime";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
 import { isServer } from "solid-js/web";
 import type { KikuPlugin } from "#/plugins/pluginTypes";
+import type { KikuNotesManifest } from "#/types";
 import { env } from "#/util/general";
 
 type GeneralStore = {
   plugin: KikuPlugin | undefined;
   isThemeChanged: boolean;
   aborter: AbortController;
+  isAnkiConnectAvailable: boolean;
+  manifest: KikuNotesManifest | undefined;
 };
 
 const GeneralContext =
@@ -28,6 +31,8 @@ export function GeneralContextProvider(props: {
           ) ?? "false",
         ),
     aborter: props.aborter,
+    isAnkiConnectAvailable: false,
+    manifest: undefined,
   });
 
   return (

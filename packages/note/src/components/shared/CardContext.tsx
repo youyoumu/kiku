@@ -1,13 +1,7 @@
 import { createContext, useContext } from "solid-js";
 import type { JSX } from "solid-js/jsx-runtime";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
-import {
-  type AnkiFields,
-  type AnkiNote,
-  ankiFieldsSkeleton,
-  type KikuNotesManifest,
-} from "#/types";
-import type { WorkerClient } from "#/worker/client";
+import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 
 export type KanjiData = {
   shared: AnkiNote[];
@@ -38,8 +32,6 @@ type CardStore = {
   sameReadingNote: AnkiNote[] | undefined;
   nestedAnkiFields: AnkiFields;
   nested: boolean;
-  manifest: KikuNotesManifest | undefined;
-  ankiConnectAvailable: boolean;
 };
 
 const CardStoreContext =
@@ -89,8 +81,6 @@ export function CardStoreContextProvider(props: {
     sameReadingNote: undefined,
     nestedAnkiFields: ankiFieldsSkeleton,
     nested: props.nested ?? false,
-    manifest: undefined,
-    ankiConnectAvailable: false,
   });
 
   return (

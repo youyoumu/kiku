@@ -6,6 +6,7 @@ import {
 import type { AnkiNote, Kanji } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
+import { useGeneralContext } from "../shared/GeneralContext";
 import { ArrowLeftIcon } from "./Icons";
 
 export default function KanjiPage(props: {
@@ -14,6 +15,7 @@ export default function KanjiPage(props: {
 }) {
   const [$card, $setCard] = useCardContext();
   const { ankiFields } = useAnkiFieldContext<"back">();
+  const [$general, $setGeneral] = useGeneralContext();
 
   const ExpressionFurigana = () => {
     if (ankiFields.Expression && ankiFields.ExpressionReading) {
@@ -106,10 +108,10 @@ export default function KanjiPage(props: {
       </div>
 
       <div class="flex justify-center items-center">
-        <Show when={$card.manifest}>
+        <Show when={$general.manifest}>
           <div class="text-base-content-faint text-sm">
             Updated at{" "}
-            {new Date($card.manifest?.generatedAt ?? 0).toLocaleDateString()}
+            {new Date($general.manifest?.generatedAt ?? 0).toLocaleDateString()}
           </div>
         </Show>
       </div>

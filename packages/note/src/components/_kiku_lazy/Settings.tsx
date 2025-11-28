@@ -69,7 +69,8 @@ export default function Settings(props: {
 }) {
   const bp = useBreakpointContext();
   const [$config] = useConfigContext();
-  const [$card, $setCard] = useCardContext();
+  const [$card, _$setCard] = useCardContext();
+  const [$general, $setGeneral] = useGeneralContext();
 
   onMount(async () => {
     //NOTE: move this to somewhere higher
@@ -83,7 +84,7 @@ export default function Settings(props: {
     const version = await AnkiConnect.getVersion();
     if (version) {
       KIKU_STATE.logger.info("AnkiConnect version:", version);
-      $setCard("ankiConnectAvailable", true);
+      $setGeneral("isAnkiConnectAvailable", true);
     }
   }
 
@@ -109,7 +110,7 @@ export default function Settings(props: {
           ></ArrowLeftIcon>
         </div>
         <div class="flex flex-row gap-2 items-center">
-          {$card.ankiConnectAvailable && (
+          {$general.isAnkiConnectAvailable && (
             <>
               <div class="text-sm text-base-content-calm">
                 AnkiConnect is available
@@ -117,7 +118,7 @@ export default function Settings(props: {
               <div class="status status-success"></div>
             </>
           )}
-          {!$card.ankiConnectAvailable && (
+          {!$general.isAnkiConnectAvailable && (
             <>
               <RefreshCwIcon
                 class="size-4 cursor-pointer text-base-content-soft"
@@ -160,11 +161,11 @@ export default function Settings(props: {
               <button
                 class="btn"
                 classList={{
-                  "btn-primary": $card.ankiConnectAvailable,
+                  "btn-primary": $general.isAnkiConnectAvailable,
                   "btn-disabled bg-base-300 text-base-content-faint":
-                    !$card.ankiConnectAvailable,
+                    !$general.isAnkiConnectAvailable,
                 }}
-                disabled={!$card.ankiConnectAvailable}
+                disabled={!$general.isAnkiConnectAvailable}
                 on:click={saveConfig}
               >
                 Save
@@ -280,7 +281,7 @@ function GeneralSettings() {
 
 function ThemeSettings() {
   const [$general] = useGeneralContext();
-  const [$config, $setConfig] = useConfigContext();
+  const [$config, _$setConfig] = useConfigContext();
   const changeTheme = useThemeTransition();
 
   return (
@@ -680,9 +681,10 @@ function DebugSettings() {
   const { ankiFields } = useAnkiFieldContext<"back">();
   const [kikuFiles, setKikuFiles] = createSignal<string>();
   const [missingFiles, setMissingFiles] = createSignal<string>();
+  const [$general, _$setGeneral] = useGeneralContext();
 
   createEffect(async () => {
-    if ($card.ankiConnectAvailable) {
+    if ($general.isAnkiConnectAvailable) {
       const files = await AnkiConnect.getKikuFiles();
       setKikuFiles(JSON.stringify(files, null, 2));
       const missing = env.KIKU_IMPORTANT_FILES.filter((file) => {

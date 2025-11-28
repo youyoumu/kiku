@@ -86,7 +86,7 @@ export function useKanji() {
   const [$config] = useConfigContext();
   const [$card, $setCard] = useCardContext();
   const { ankiFields } = useAnkiFieldContext<"back">();
-  const [$general] = useGeneralContext();
+  const [$general, $setGeneral] = useGeneralContext();
 
   let set = false;
   async function setKanji() {
@@ -123,7 +123,7 @@ export function useKanji() {
 
       nex
         .manifest()
-        .then((manifest) => $setCard("manifest", manifest))
+        .then((manifest) => $setGeneral("manifest", manifest))
         .catch(() => {
           KIKU_STATE.logger.warn("Failed to load manifest");
         });
