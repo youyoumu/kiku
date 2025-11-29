@@ -1,7 +1,20 @@
 import fs from "node:fs";
-import { mkdir, readdir } from "node:fs/promises";
+import { mkdir, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import archiver from "archiver";
+
+const rootDir = path.join(import.meta.dirname, "../");
+const srcDir = path.join(rootDir, "src");
+const outputDir = path.join(rootDir, "dist");
+await mkdir(outputDir, { recursive: true });
+
+async function getVersion() {
+  const manifestPath = path.join(rootDir, "manifest.json");
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  const version = manifest.version;
+  if (!version) throw new Error("Manifest version not found.");
+  return version;
+}
 
 async function zipFiles(
   files: { abs: string; rel: string }[],
@@ -50,26 +63,18 @@ async function getFilesRecursively(
   return out;
 }
 
-const rootDir = path.join(import.meta.dirname, "../");
-
-// Root files
 const rootFiles = ["__init__.py", "config.json", "manifest.json"].map(
   (file) => ({
     abs: path.join(rootDir, file),
     rel: file,
   }),
 );
-
-// Add src/ recursively
-const srcDir = path.join(rootDir, "src");
 const srcFiles = await getFilesRecursively(srcDir, rootDir);
-
-// Combine
 const allFiles = [...rootFiles, ...srcFiles];
-
-const outputDir = path.join(rootDir, "dist");
-await mkdir(outputDir, { recursive: true });
-
-const outputZip = path.join(outputDir, "kiku_note_manager.ankiaddon");
+const version = await getVersion();
+const outputZip = path.join(
+  outputDir,
+  `kiku_note_manager_v${version}.ankiaddon`,
+);
 
 await zipFiles(allFiles, outputZip);
