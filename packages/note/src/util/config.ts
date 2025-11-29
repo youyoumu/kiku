@@ -1,3 +1,4 @@
+import { defaultConfig } from "./defaulConfig";
 import { type WebFont, webFonts } from "./fonts";
 import { type DaisyUITheme, daisyUIThemes } from "./theme";
 
@@ -31,39 +32,6 @@ export type KikuConfig = {
   fontSizeSmSentence: TailwindSize;
   fontSizeSmMiscInfo: TailwindSize;
   fontSizeSmHint: TailwindSize;
-};
-
-// biome-ignore format: this looks nicer
-export const defaultConfig: KikuConfig = {
-  theme: "light",
-  webFontPrimary: "Klee One",
-  systemFontPrimary: "'Inter', 'SF Pro Display', 'Liberation Sans', 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', 'Noto Sans JP', 'Meiryo', HanaMinA, HanaMinB, sans-serif",
-  useSystemFontPrimary: true,
-  webFontSecondary: "IBM Plex Sans JP",
-  systemFontSecondary: "'Hiragino Mincho ProN', 'Noto Serif CJK JP', 'Noto Serif JP', 'Yu Mincho', HanaMinA, HanaMinB, serif",
-  useSystemFontSecondary: true,
-  blurNsfw: true,
-  showTheme: true,
-  showStartupTime: true,
-  ankiConnectPort: 8765,
-  ankiDroidEnableIntegration: true,
-  ankiDroidReverseSwipeDirection: false,
-  volume: 100,
-  swapSentenceAndDefinitionOnMobile: true,
-  preferAnkiConnect: false,
-  modHidden: false,
-  modHiddenDuration: 2000,
-  modVertical: false,
-  fontSizeBaseExpression: "5xl",
-  fontSizeBasePitch: "xl",
-  fontSizeBaseSentence: "2xl",
-  fontSizeBaseMiscInfo: "sm",
-  fontSizeBaseHint: "lg",
-  fontSizeSmExpression: "6xl",
-  fontSizeSmPitch: "2xl",
-  fontSizeSmSentence: "4xl",
-  fontSizeSmMiscInfo: "sm",
-  fontSizeSmHint: "2xl",
 };
 
 //biome-ignore format: this looks nicer

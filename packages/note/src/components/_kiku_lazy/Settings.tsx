@@ -9,7 +9,6 @@ import {
 import { Portal } from "solid-js/web";
 import { useCardContext } from "#/components/shared/CardContext";
 import {
-  defaultConfig,
   getCssVar,
   type KikuConfig,
   type RootDatasetKey,
@@ -18,6 +17,7 @@ import {
   tailwindFontSizeVar,
   tailwindSize,
 } from "#/util/config";
+import { defaultConfig } from "#/util/defaulConfig";
 import { type WebFont, webFonts } from "#/util/fonts";
 import { env } from "#/util/general";
 import { useNavigationTransition, useThemeTransition } from "#/util/hooks";
@@ -155,15 +155,7 @@ function GeneralSettings() {
           />
         </fieldset>
         <fieldset class="fieldset py-0">
-          <legend class="fieldset-legend">
-            Blur NSFW
-            <div
-              class="tooltip"
-              data-tip="If you change this settings, a quick flash of blurred/unblurred picture may occur until you click Save and restart Anki."
-            >
-              <InfoIcon class="size-4 text-base-content-calm" />
-            </div>
-          </legend>
+          <legend class="fieldset-legend">Blur NSFW</legend>
           <label class="label">
             <input
               type="checkbox"

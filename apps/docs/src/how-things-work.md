@@ -70,10 +70,34 @@ To make the settings persistent, AnkiConnect is required.
 When AnkiConnect is running, you can click the **"Save"** button on the Settings page. This will:
 
 - Save the settings to `_kiku_config.json`.
-- Update the Front Template, Back Template, and Styling of the **"Kiku"** note using `_kiku_front.html`, `_kiku_back.html`, and `_kiku_style.css`.
+- Update some settings stored in the Front Template, Back Template, and Styling of the **"Kiku"** note using `_kiku_front.html`, `_kiku_back.html`, and `_kiku_style.css`.
 
-::: details Why are some settings stored in the Front/Back/Styling templates?
+### Default Config
+
+<<< ../../../packages/note/src/util/defaulConfig.ts
+
+### Settings Stored in the Front/Back/Styling Templates
+
+::: details Why are some settings stored in the Front/Back/Styling templates? {open}
 CSS loads instantly, but JavaScript runs only after the initial render.
 If we relied only on the JSON settings, the card would briefly show the wrong theme or font before JavaScript applies the correct ones (a [FOUC](https://en.wikipedia.org/wiki/Flash_of_unstyled_content)).
 Storing key settings in the templates avoids this flicker.
 :::
+
+```js
+[
+  "theme",
+  "blurNsfw",
+  "modVertical",
+  "fontSizeBaseExpression",
+  "fontSizeBasePitch",
+  "fontSizeBaseSentence",
+  "fontSizeBaseMiscInfo",
+  "fontSizeBaseHint",
+  "fontSizeSmExpression",
+  "fontSizeSmPitch",
+  "fontSizeSmSentence",
+  "fontSizeSmMiscInfo",
+  "fontSizeSmHint",
+];
+```

@@ -1,10 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import {
-  defaultConfig,
-  generateCssVars,
-  getCssVar,
-} from "../src/util/config.js";
+import { generateCssVars, getCssVar } from "../src/util/config.js";
+import { defaultConfig } from "../src/util/defaulConfig.js";
 import { AnkiConnect } from "./util.js";
 
 async function main() {

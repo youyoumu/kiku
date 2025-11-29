@@ -5,11 +5,11 @@ import { Back } from "./components/Back.tsx";
 import { Front } from "./components/Front.tsx";
 import { BreakpointContextProvider } from "./components/shared/BreakpointContext.tsx";
 import {
-  defaultConfig,
   type KikuConfig,
   updateConfigState,
   validateConfig,
 } from "./util/config.ts";
+import { defaultConfig } from "./util/defaulConfig";
 import { env } from "./util/general.ts";
 import "./styles/tailwind.css";
 import { AnkiFieldContextProvider } from "./components/shared/AnkiFieldsContext.tsx";
