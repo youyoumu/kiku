@@ -322,7 +322,7 @@ function KanjiText(props: { kanji: string }) {
   const [$card, $setCard] = useCardContext();
 
   onMount(async () => {
-    const nex = await KIKU_STATE.worker?.nex;
+    const nex = await KIKU_STATE.nexClient?.nex;
     if (nex) {
       const lookup = await nex.lookup(props.kanji);
       setKanji(lookup);

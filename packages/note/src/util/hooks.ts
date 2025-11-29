@@ -5,7 +5,7 @@ import { useBreakpointContext } from "#/components/shared/BreakpointContext";
 import { useCardContext } from "#/components/shared/CardContext";
 import { useConfigContext } from "#/components/shared/ConfigContext";
 import { useGeneralContext } from "#/components/shared/GeneralContext";
-import { WorkerClient } from "#/worker/client";
+import { NexClient } from "#/worker/client";
 import { env, extractKanji } from "./general";
 import type { DaisyUITheme } from "./theme";
 
@@ -100,7 +100,7 @@ export function useKanji() {
       const readingList = ankiFields.ExpressionReading
         ? [ankiFields.ExpressionReading]
         : [];
-      const worker = new WorkerClient({
+      const worker = new NexClient({
         env: env,
         config: unwrap($config),
         assetsPath: import.meta.env.DEV ? "" : KIKU_STATE.assetsPath,
@@ -120,8 +120,7 @@ export function useKanji() {
         kanji: kanjiResult,
         sameReading: readingResult[ankiFields.ExpressionReading],
       });
-      if (KIKU_STATE.worker) KIKU_STATE.worker.worker.terminate();
-      KIKU_STATE.worker = worker;
+      KIKU_STATE.nexClient = worker;
 
       nex
         .manifest()

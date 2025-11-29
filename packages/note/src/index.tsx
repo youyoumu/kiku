@@ -24,7 +24,7 @@ globalThis.KIKU_STATE = {
   assetsPath: window.location.origin,
   logger: new Logger(),
   isAnkiDesktop: typeof pycmd !== "undefined",
-  worker: globalThis.KIKU_STATE?.worker,
+  nexClient: globalThis.KIKU_STATE?.nexClient,
   aborter: globalThis.KIKU_STATE?.aborter ?? new AbortController(),
 };
 

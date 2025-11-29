@@ -34,7 +34,7 @@ export function wrap<T>(worker: Worker) {
   ) as T;
 }
 
-export class WorkerClient {
+export class NexClient {
   nex: Promise<NexApi>;
   worker: Worker;
 
@@ -45,7 +45,9 @@ export class WorkerClient {
     preferAnkiConnect: boolean;
   }) {
     let worker: Worker;
-    if (KIKU_STATE.assetsPath !== window.location.origin) {
+    if (KIKU_STATE.nexClient) {
+      worker = KIKU_STATE.nexClient.worker;
+    } else if (KIKU_STATE.assetsPath !== window.location.origin) {
       worker = new Worker(`${KIKU_STATE.assetsPath}/_kiku_worker.js`, {
         type: "module",
       });

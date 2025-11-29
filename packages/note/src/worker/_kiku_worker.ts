@@ -77,10 +77,10 @@ const AnkiConnect = {
 };
 
 export class Nex {
-  assetsPath: string;
-  env: Env;
-  config: KikuConfig;
-  preferAnkiConnect: boolean;
+  assetsPath!: string;
+  env!: Env;
+  config!: KikuConfig;
+  preferAnkiConnect!: boolean;
 
   similar_kanji_min_score = 0.5;
   //biome-ignore format: this looks nicer
@@ -104,6 +104,15 @@ export class Nex {
     config: KikuConfig;
     preferAnkiConnect: boolean;
   }) {
+    this.init(payload);
+  }
+
+  init(payload: {
+    assetsPath: string;
+    env: Env;
+    config: KikuConfig;
+    preferAnkiConnect: boolean;
+  }) {
     logger.debug("init Worker", payload);
 
     this.assetsPath = payload.assetsPath;
@@ -112,6 +121,7 @@ export class Nex {
     this.preferAnkiConnect = payload.preferAnkiConnect;
     ankiConnectPort = Number(this.config.ankiConnectPort);
   }
+
   async getSimilarKanji(kanji: string) {
     const store: Record<string, { kanji: string; score: number }> = {};
     const sources = this.similar_kanji_sources();
@@ -386,7 +396,7 @@ type NexApi$ = Partial<Record<NexKey, unknown>>;
 
 //biome-ignore format: this looks nicer
 const nexApi = {
-  async init(payload: ConstructorParameters<typeof Nex>[0]) { nex = new Nex(payload); },
+  async init(payload: ConstructorParameters<typeof Nex>[0]) { if (nex) { nex.init(payload); } else { nex = new Nex(payload); }},
   manifest: () => nex.manifest(),
   query: (...args: Parameters<typeof nex.query>) => nex.query(...args),
   getSimilarKanji: (...args: Parameters<typeof nex.getSimilarKanji>) => nex.getSimilarKanji(...args),
