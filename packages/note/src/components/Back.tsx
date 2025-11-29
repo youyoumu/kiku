@@ -113,7 +113,7 @@ export function Back(props: { onExitNested?: () => void }) {
             >
               <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center sm:min-h-56">
                 <div
-                  class="expression font-secondary text-center"
+                  class="expression font-secondary text-center vertical-rl"
                   innerHTML={expressionInnerHtml()}
                 >
                   {isServer

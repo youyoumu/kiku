@@ -20,6 +20,7 @@ export type KikuConfig = {
   preferAnkiConnect: boolean;
   modHidden: boolean;
   modHiddenDuration: number;
+  modVertical: boolean;
   fontSizeBaseExpression: TailwindSize;
   fontSizeBasePitch: TailwindSize;
   fontSizeBaseSentence: TailwindSize;
@@ -52,6 +53,7 @@ export const defaultConfig: KikuConfig = {
   preferAnkiConnect: false,
   modHidden: false,
   modHiddenDuration: 2000,
+  modVertical: false,
   fontSizeBaseExpression: "5xl",
   fontSizeBasePitch: "xl",
   fontSizeBaseSentence: "2xl",
@@ -123,6 +125,7 @@ export function validateConfig(config: KikuConfig): KikuConfig {
 
       modHidden: typeof config.modHidden === "boolean" ? config.modHidden : defaultConfig.modHidden,
       modHiddenDuration: typeof config.modHiddenDuration === "number" && config.modHiddenDuration > 0 ? config.modHiddenDuration : defaultConfig.modHiddenDuration,
+      modVertical: typeof config.modVertical === "boolean" ? config.modVertical : defaultConfig.modVertical,
 
       fontSizeBaseExpression: tailwindSize.includes(config.fontSizeBaseExpression) ? config.fontSizeBaseExpression : defaultConfig.fontSizeBaseExpression,
       fontSizeBasePitch: tailwindSize.includes(config.fontSizeBasePitch) ? config.fontSizeBasePitch : defaultConfig.fontSizeBasePitch,
@@ -224,6 +227,7 @@ export function updateConfigState(el: HTMLElement, config: KikuConfig) {
   }
   el.dataset.theme = config.theme;
   el.dataset.blurNsfw = config.blurNsfw ? "true" : "false";
+  el.dataset.modVertical = config.modVertical ? "true" : "false";
 
   const cssVar = getCssVar(config);
   Object.entries(cssVar).forEach(([key, value]) => {

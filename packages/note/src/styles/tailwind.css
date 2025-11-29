@@ -179,6 +179,10 @@
       @apply flex;
     }
   }
+
+  [data-mod-vertical="true"] .vertical-rl {
+    writing-mode: vertical-rl;
+  }
 }
 
 @font-face {

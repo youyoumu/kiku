@@ -66,10 +66,13 @@ export const AnkiConnect = {
 
     const frontTemplate = frontSrc
       .replace("__DATA_THEME__", config.theme)
-      .replace("__DATA_BLUR_NSFW__", config.blurNsfw ? "true" : "false");
+      .replace("__DATA_BLUR_NSFW__", config.blurNsfw ? "true" : "false")
+      .replace("__DATA_MOD_VERTICAL__", config.modVertical ? "true" : "false");
+
     const backTemplate = backSrc
       .replace("__DATA_THEME__", config.theme)
-      .replace("__DATA_BLUR_NSFW__", config.blurNsfw ? "true" : "false");
+      .replace("__DATA_BLUR_NSFW__", config.blurNsfw ? "true" : "false")
+      .replace("__DATA_MOD_VERTICAL__", config.modVertical ? "true" : "false");
     const cssVar = getCssVar(config);
     const cssVarTemplate = generateCssVars(cssVar);
     const styleTemplate = styleSrc.replace(

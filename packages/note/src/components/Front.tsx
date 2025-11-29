@@ -84,7 +84,7 @@ export function Front() {
       )}
       <div class="flex flex-col gap-4">
         <div
-          class="flex rounded-lg gap-4 sm:h-56 flex-col sm:flex-row"
+          class="flex rounded-lg gap-4 sm:min-h-56 flex-col sm:flex-row"
           on:click={() => {
             setClicked((prev) => !prev);
             setHideExpression(false);
@@ -93,7 +93,7 @@ export function Front() {
         >
           <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
             <div
-              class="expression font-secondary"
+              class="expression font-secondary vertical-rl"
               classList={{
                 "border-b-2 border-dotted border-base-content-soft":
                   !!ankiFields.IsClickCard,

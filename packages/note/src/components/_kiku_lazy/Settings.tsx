@@ -299,6 +299,32 @@ function ModSettings() {
           </fieldset>
         </div>
       </div>
+      <div>
+        <div class="text-lg font-bold flex gap-2 items-center">
+          Vertical
+          <div
+            class="tooltip"
+            data-tip="Expression appears in the vertical direction"
+          >
+            <InfoIcon class="size-4 text-base-content-calm" />
+          </div>
+        </div>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] rounded-box gap-4">
+          <fieldset class="fieldset py-0">
+            <legend class="fieldset-legend">Enable</legend>
+            <label class="label">
+              <input
+                type="checkbox"
+                checked={$config.modVertical}
+                class="toggle"
+                on:change={(e) => {
+                  $setConfig("modVertical", e.target.checked);
+                }}
+              />
+            </label>
+          </fieldset>
+        </div>
+      </div>
     </div>
   );
 }
