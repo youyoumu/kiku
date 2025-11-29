@@ -73,6 +73,10 @@ export class Logger {
     const line = this.format(level, args);
     this.logs.push(line);
 
+    if (this.logs.length > 1000) {
+      this.logs.shift(); // remove oldest
+    }
+
     if (this.onUpdate) {
       this.onUpdate(this.logs.join("\n"));
     }
