@@ -277,7 +277,7 @@ function ModSettings() {
               }}
               type="range"
               min="1000"
-              max={"4000"}
+              max={"5000"}
               value={$config.modHiddenDuration.toString()}
               class="range w-full range-sm"
               step="1000"
@@ -287,12 +287,14 @@ function ModSettings() {
               <span>|</span>
               <span>|</span>
               <span>|</span>
+              <span>|</span>
             </div>
             <div class="flex justify-between px-2.5 text-xs">
-              <span>faster</span>
-              <span>fast</span>
-              <span>slow</span>
-              <span>slower</span>
+              <span>1s</span>
+              <span>2s</span>
+              <span>3s</span>
+              <span>4s</span>
+              <span>5s</span>
             </div>
           </fieldset>
         </div>
