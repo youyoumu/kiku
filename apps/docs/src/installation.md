@@ -47,8 +47,7 @@ Open your Yomitan settings, go to `Anki` > `Configure Anki flashcard`, select `K
 
 Credit to [Lapis](https://github.com/donkuri/lapis) for the table
 
-## [Kiku Note Manager](https://ankiweb.net/shared/info/408592650?cb=1763445474367) addon
+## [Kiku Note Manager](https://ankiweb.net/shared/info/408592650?cb=1763445474367) addon (Optional)
 
-This addon is optional.
-Currently this addon is only used to generate notes cache, so the Kanji View feature works across all platforms.
+This addon is used to generate notes cache, so the Kanji View feature works across all platforms.
 Install this addon, then go to `Tools` > `Kiku Note Manager` > `Generate notes cache`.
