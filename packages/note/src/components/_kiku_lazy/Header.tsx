@@ -152,13 +152,14 @@ function KanjiPageIndicator() {
     ($card.query.sameReading?.length ? 1 : 0);
 
   const onClick = (key: string | symbol) => {
-    if (
+    const isKanjiResult =
       Object.keys($card.query.kanji).length > 0 &&
       Object.values($card.query.kanji).flatMap((data) => [
         ...data.shared,
         ...Object.values(data.similar),
-      ]).length > 0
-    ) {
+      ]).length > 0;
+    const isSameReadingResult = ($card.query.sameReading?.length ?? 0) > 0;
+    if (isKanjiResult || isSameReadingResult) {
       $setCard("focus", { kanjiPage: key, noteId: undefined });
       navigate("kanji", "forward");
     }
