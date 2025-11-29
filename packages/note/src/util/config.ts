@@ -86,7 +86,7 @@ export const tailwindFontSizeVar = {
   "9xl": { fontSize: "var(--text-9xl)", lineHeight: "var(--text-9xl--line-height)", },
 } as const;
 
-const rootDatasetArray = ["theme"] as const;
+const rootDatasetArray = ["theme", "blurNsfw", "modVertical"] as const;
 export type RootDatasetKey = (typeof rootDatasetArray)[number];
 export type RootDataset = Partial<Record<RootDatasetKey, string>>;
 export const rootDatasetConfigWhitelist = new Set<RootDatasetKey>(
