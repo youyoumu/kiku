@@ -17,3 +17,8 @@ After that, import the `.apkg` into Anki as usual.
 If you choose to keep `_kiku_config.json`, make sure to open the settings page and click **Save** after updating it.
 This ensures that the settings in the Front/Back/Styling templates are synced with your configuration.
 :::
+
+::: tip
+You can delete all Kiku files except `_kiku_config.json` and `_kiku_plugin.js` by using Kiku Note Manager.
+Go to `Tools` > `Kiku Note Manager` > `Delete Kiku files`
+:::
