@@ -112,3 +112,5 @@ export function useCardContext() {
   if (!cardStore) throw new Error("Missing CardStoreContext");
   return cardStore;
 }
+
+export type UseCardContext = typeof useCardContext;

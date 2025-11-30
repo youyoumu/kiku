@@ -78,3 +78,5 @@ export function useBreakpointContext() {
   if (!breakpointSignal) throw new Error("Missing BreakpointContext");
   return breakpointSignal;
 }
+
+export type UseBreakpointContext = typeof useBreakpointContext;

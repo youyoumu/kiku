@@ -4,6 +4,7 @@ import { Front } from "#/components/Front";
 import { AnkiFieldContextProvider } from "#/components/shared/AnkiFieldsContext";
 import { CardStoreContextProvider } from "#/components/shared/CardContext";
 import { ConfigContextProvider } from "#/components/shared/ConfigContext";
+import { CtxContextProvider } from "#/components/shared/CtxContext";
 import { FieldGroupContextProvider } from "#/components/shared/FieldGroupContext";
 import { GeneralContextProvider } from "#/components/shared/GeneralContext";
 import { debug } from "#/util/debug";
@@ -31,7 +32,9 @@ export function getSsrTemplate() {
           <BreakpointContextProvider>
             <ConfigContextProvider value={[config, setConfig]}>
               <FieldGroupContextProvider>
-                <Front />
+                <CtxContextProvider>
+                  <Front />
+                </CtxContextProvider>
               </FieldGroupContextProvider>
             </ConfigContextProvider>
           </BreakpointContextProvider>
@@ -46,7 +49,9 @@ export function getSsrTemplate() {
           <BreakpointContextProvider>
             <ConfigContextProvider value={[config, setConfig]}>
               <FieldGroupContextProvider>
-                <Back />
+                <CtxContextProvider>
+                  <Back />
+                </CtxContextProvider>
               </FieldGroupContextProvider>
             </ConfigContextProvider>
           </BreakpointContextProvider>

@@ -47,3 +47,5 @@ export function useGeneralContext() {
   if (!generalContext) throw new Error("Missing GeneralContext");
   return generalContext;
 }
+
+export type UseGeneralContext = typeof useGeneralContext;

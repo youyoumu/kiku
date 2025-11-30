@@ -34,3 +34,5 @@ export function useAnkiFieldContext<T extends "front" | "back">() {
   if (!ankiField) throw new Error("Missing AnkiFieldContext");
   return ankiField as useAnkiFieldType[T];
 }
+
+export type UseAnkiFieldContext = typeof useAnkiFieldContext;

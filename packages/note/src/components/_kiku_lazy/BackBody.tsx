@@ -8,6 +8,7 @@ import {
 import h from "solid-js/h";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useConfigContext } from "../shared/ConfigContext";
+import { useCtxContext } from "../shared/CtxContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 import Sentence from "./Sentence";
 
@@ -128,8 +129,8 @@ export default function BackBody(props: {
 }
 
 function ExternalLinks() {
-  const { ankiFields } = useAnkiFieldContext<"back">();
   const [$general] = useGeneralContext();
+  const ctx = useCtxContext();
 
   return (
     <ErrorBoundary fallback={<DefaultExternalLinks />}>
@@ -141,11 +142,7 @@ function ExternalLinks() {
           const ExternalLinks = get();
           return (
             <ExternalLinks
-              ctx={{
-                h,
-                ankiFields,
-                ankiDroidAPI: () => KIKU_STATE.ankiDroidAPI,
-              }}
+              ctx={ctx}
               DefaultExternalLinks={DefaultExternalLinks}
             />
           );

@@ -49,3 +49,5 @@ export function useConfigContext() {
   if (!config) throw new Error("Missing ConfigContext");
   return config;
 }
+
+export type UseConfigContext = typeof useConfigContext;

@@ -15,6 +15,7 @@ import "./styles/tailwind.css";
 import { AnkiFieldContextProvider } from "./components/shared/AnkiFieldsContext.tsx";
 import { CardStoreContextProvider } from "./components/shared/CardContext.tsx";
 import { ConfigContextProvider } from "./components/shared/ConfigContext.tsx";
+import { CtxContextProvider } from "./components/shared/CtxContext.tsx";
 import { FieldGroupContextProvider } from "./components/shared/FieldGroupContext.tsx";
 import { GeneralContextProvider } from "./components/shared/GeneralContext.tsx";
 import { debug } from "./util/debug.ts";
@@ -130,7 +131,9 @@ async function setup({ aborter }: { aborter: AbortController }) {
               <BreakpointContextProvider>
                 <ConfigContextProvider value={[config, setConfig]}>
                   <FieldGroupContextProvider>
-                    <Front />
+                    <CtxContextProvider>
+                      <Front />
+                    </CtxContextProvider>
                   </FieldGroupContextProvider>
                 </ConfigContextProvider>
               </BreakpointContextProvider>
@@ -148,7 +151,9 @@ async function setup({ aborter }: { aborter: AbortController }) {
               <BreakpointContextProvider>
                 <ConfigContextProvider value={[config, setConfig]}>
                   <FieldGroupContextProvider>
-                    <Back />
+                    <CtxContextProvider>
+                      <Back />
+                    </CtxContextProvider>
                   </FieldGroupContextProvider>
                 </ConfigContextProvider>
               </BreakpointContextProvider>

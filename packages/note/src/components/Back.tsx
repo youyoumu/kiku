@@ -12,6 +12,7 @@ import {
   AnkiFieldContextProvider,
   useAnkiFieldContext,
 } from "./shared/AnkiFieldsContext";
+import { CtxContextProvider } from "./shared/CtxContext";
 import {
   FieldGroupContextProvider,
   useFieldGroupContext,
@@ -94,11 +95,13 @@ export function Back(props: { onExitNested?: () => void }) {
           <AnkiFieldContextProvider ankiFields={$card.nestedAnkiFields}>
             <CardStoreContextProvider nested side="back">
               <FieldGroupContextProvider>
-                <Back
-                  onExitNested={() => {
-                    navigate("kanji", "back");
-                  }}
-                />
+                <CtxContextProvider>
+                  <Back
+                    onExitNested={() => {
+                      navigate("kanji", "back");
+                    }}
+                  />
+                </CtxContextProvider>
               </FieldGroupContextProvider>
             </CardStoreContextProvider>
           </AnkiFieldContextProvider>

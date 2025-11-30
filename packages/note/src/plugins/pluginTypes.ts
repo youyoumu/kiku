@@ -1,12 +1,5 @@
-import type { HyperScript } from "solid-js/h/types/hyperscript.js";
 import type { JSX } from "solid-js/jsx-runtime";
-import type { AnkiBackFields, AnkiDroidAPI, AnkiFrontFields } from "#/types";
-
-type Ctx = {
-  ankiFields: AnkiFrontFields | AnkiBackFields;
-  h: HyperScript;
-  ankiDroidAPI: () => AnkiDroidAPI | undefined;
-};
+import type { Ctx } from "#/components/shared/CtxContext";
 
 export type KikuPlugin = {
   ExternalLinks?: (props: {

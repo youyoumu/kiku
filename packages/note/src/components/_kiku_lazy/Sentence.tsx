@@ -1,7 +1,6 @@
 import { createEffect, ErrorBoundary, Show } from "solid-js";
-import h from "solid-js/h";
 import { useCardContext } from "#/components/shared/CardContext";
-import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
+import { useCtxContext } from "../shared/CtxContext";
 import { useFieldGroupContext } from "../shared/FieldGroupContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 
@@ -9,7 +8,7 @@ export default function Sentence() {
   const [$card, $setCard] = useCardContext();
   const { $group } = useFieldGroupContext();
   const [$general] = useGeneralContext();
-  const { ankiFields } = useAnkiFieldContext();
+  const ctx = useCtxContext();
 
   createEffect(() => {
     if ($card.sentenceFieldRef && $group.sentenceField) {
@@ -35,16 +34,7 @@ export default function Sentence() {
       <Show when={$general.plugin?.Sentence} fallback={<DefaultSentence />}>
         {(get) => {
           const Sentence = get();
-          return (
-            <Sentence
-              ctx={{
-                h,
-                ankiFields,
-                ankiDroidAPI: () => KIKU_STATE.ankiDroidAPI,
-              }}
-              DefaultSentence={DefaultSentence}
-            />
-          );
+          return <Sentence ctx={ctx} DefaultSentence={DefaultSentence} />;
         }}
       </Show>
     </ErrorBoundary>
