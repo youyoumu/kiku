@@ -1,11 +1,16 @@
-/**
- * @import { KikuPlugin } from "#/plugins/pluginTypes";
- */
+---
+outline: deep
+---
 
-/**
- * @type { KikuPlugin }
- */
+# Unblur Picture Automatically
+
+Using `_kiku_plugin.js`
+
+```js
 export const plugin = {
+  onSettingsMount: ({ ctx }) => {
+    sessionStorage.setItem("settings-mounted", "true");
+  },
   onPluginLoad: ({ ctx }) => {
     const [$config, $setConfig] = ctx.useConfigContext();
     const settingsMounted = sessionStorage.getItem("settings-mounted");
@@ -34,3 +39,4 @@ function isWorkTime(workdays = [1, 2, 3, 4, 5], startHour = 9, endHour = 17) {
 
   return isWeekday && isWorkHours;
 }
+```

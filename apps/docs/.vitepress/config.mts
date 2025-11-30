@@ -54,6 +54,10 @@ export default defineConfig({
             link: "/display-extra-fields",
           },
           {
+            text: "Unblur Picture Automatically",
+            link: "/unblur-picture-automatically",
+          },
+          {
             text: "Custom Theme",
             link: "/custom-theme",
           },

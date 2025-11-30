@@ -27,3 +27,19 @@ If defined, this component will replace the default `Sentence` component.
 ### Example
 
 <<< ../../../packages/note/src/plugins/Sentence.js
+
+## onPluginLoad
+
+This function is called when the plugin is loaded.
+
+### Example
+
+<<< ../../../packages/note/src/plugins/onPluginLoad.js
+
+## onSettingsMount
+
+This function is called when the settings page is mounted.
+
+### Example
+
+<<< ../../../packages/note/src/plugins/onSettingsMount.js
