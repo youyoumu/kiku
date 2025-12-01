@@ -204,5 +204,7 @@ if (import.meta.env.DEV) {
   });
   // @ts-expect-error
   const side = params.side;
-  init({ side: side ?? "back" });
+  init({ side: side ?? "back" }).then(() => {
+    if (KIKU_STATE.root) KIKU_STATE.root.dataset.side = side;
+  });
 }

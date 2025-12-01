@@ -162,6 +162,11 @@
     @apply [&_img]:filter-none;
   }
 
+  [data-side="front"] .picture-field,
+  [data-side="front"] .picture-field-background {
+    @apply opacity-0;
+  }
+
   .picture-field:hover {
     @apply [&_img]:filter-none;
   }

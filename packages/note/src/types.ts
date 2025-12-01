@@ -87,6 +87,7 @@ const frontKeys = [
   "ExpressionAudio",
   "Hint",
   "Picture",
+  "Tags",
 ] satisfies readonly (keyof AnkiFields)[];
 
 type ExtractUsedFields<T, U extends readonly (keyof T)[]> = Pick<T, U[number]>;

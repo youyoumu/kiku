@@ -16,6 +16,7 @@ import type { DatasetProp } from "#/util/config";
 import { useKanji, useNavigationTransition } from "#/util/hooks";
 import { getPlugin } from "#/util/plugin";
 import { Layout } from "./Layout";
+import { PictureSection } from "./PictureSection";
 import {
   AnkiFieldContextProvider,
   useAnkiFieldContext,
@@ -201,50 +202,6 @@ function PicturePaginationSection() {
       }}
     >
       <Lazy.PicturePagination />
-    </div>
-  );
-}
-
-function PictureSection() {
-  const [$card, $setCard] = useCardContext();
-  const { $group } = useFieldGroupContext();
-  const { ankiFields } = useAnkiFieldContext<"back">();
-
-  const pictureFieldDataset: () => DatasetProp = () => ({
-    "data-transition": $card.ready ? "true" : undefined,
-    "data-tags": "{{Tags}}",
-    "data-nsfw": $card.isNsfw ? "true" : "false",
-  });
-
-  const dataSet1: () => DatasetProp = () => ({
-    "data-has-picture": isServer
-      ? "{{#Picture}}true{{/Picture}}"
-      : ankiFields.Picture
-        ? "true"
-        : "",
-  });
-
-  return (
-    <div
-      class="sm:max-w-1/2 bg-base-200 flex sm:items-center rounded-lg relative overflow-hidden justify-center picture-field-container"
-      {...dataSet1()}
-    >
-      <div
-        class="picture-field-background"
-        innerHTML={isServer ? undefined : $group.pictureField}
-      >
-        {isServer ? "{{Picture}}" : undefined}
-      </div>
-      <div
-        class="picture-field"
-        on:click={() => {
-          $setCard("pictureModal", $group.pictureField);
-        }}
-        {...pictureFieldDataset()}
-        innerHTML={isServer ? undefined : $group.pictureField}
-      >
-        {isServer ? "{{Picture}}" : undefined}
-      </div>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { isServer, Portal } from "solid-js/web";
 import { useCardContext } from "#/components/shared/CardContext";
 import type { DatasetProp } from "#/util/config";
 import { Layout } from "./Layout";
+import { PictureSection } from "./PictureSection";
 import { useAnkiFieldContext } from "./shared/AnkiFieldsContext";
 import { useConfigContext } from "./shared/ConfigContext";
 import { useFieldGroupContext } from "./shared/FieldGroupContext";
@@ -28,6 +29,9 @@ export function Front() {
     setTimeout(() => {
       $setCard("ready", true);
     }, 100);
+
+    const tags = ankiFields.Tags.split(" ");
+    $setCard("isNsfw", tags.map((tag) => tag.toLowerCase()).includes("nsfw"));
 
     if ($config.modHidden) {
       setTimeout(() => {
@@ -84,16 +88,16 @@ export function Front() {
       )}
       <div class="flex flex-col gap-4">
         <div
-          class="flex rounded-lg gap-4 sm:min-h-56 flex-col sm:flex-row"
+          class="flex rounded-lg gap-4 flex-col sm:flex-row"
           on:click={() => {
             setClicked((prev) => !prev);
             setHideExpression(false);
           }}
           on:touchend={(e) => e.stopPropagation()}
         >
-          <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center">
+          <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center  sm:min-h-56">
             <div
-              class="expression font-secondary vertical-rl"
+              class="expression font-secondary text-center vertical-rl"
               classList={{
                 "border-b-2 border-dotted border-base-content-soft":
                   !!ankiFields.IsClickCard,
@@ -113,6 +117,8 @@ export function Front() {
                 : undefined}
             </div>
           </div>
+
+          <PictureSection />
         </div>
         <div class="justify-between text-base-content-soft items-center gap-2 animate-fade-in h-5 sm:h-8 flex">
           {$card.ready && !hidden() && <Lazy.PicturePagination />}
