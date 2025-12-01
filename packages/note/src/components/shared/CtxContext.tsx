@@ -19,49 +19,11 @@ import {
 import h from "solid-js/h";
 import { createStore } from "solid-js/store";
 import { Match, Portal, Show, Suspense, Switch } from "solid-js/web";
-import type { AnkiBackFields, AnkiDroidAPI, AnkiFrontFields } from "#/types";
-import {
-  type UseAnkiFieldContext,
-  useAnkiFieldContext,
-} from "./AnkiFieldsContext";
-import {
-  type UseBreakpointContext,
-  useBreakpointContext,
-} from "./BreakpointContext";
-import { type UseCardContext, useCardContext } from "./CardContext";
-import { type UseConfigContext, useConfigContext } from "./ConfigContext";
-
-export type Ctx = {
-  h: typeof h;
-  createSignal: typeof createSignal;
-  createEffect: typeof createEffect;
-  createMemo: typeof createMemo;
-  createResource: typeof createResource;
-  createComputed: typeof createComputed;
-  onMount: typeof onMount;
-  onCleanup: typeof onCleanup;
-  createContext: typeof createContext;
-  useContext: typeof useContext;
-  lazy: typeof lazy;
-  ErrorBoundary: typeof ErrorBoundary;
-  For: typeof For;
-  Portal: typeof Portal;
-  Show: typeof Show;
-  Suspense: typeof Suspense;
-  Switch: typeof Switch;
-  Match: typeof Match;
-  untrack: typeof untrack;
-  runWithOwner: typeof runWithOwner;
-  getOwner: typeof getOwner;
-  createStore: typeof createStore;
-  //
-  ankiFields: AnkiFrontFields | AnkiBackFields;
-  ankiDroidAPI: () => AnkiDroidAPI | undefined;
-  useAnkiFieldContext: UseAnkiFieldContext;
-  useBreakpointContext: UseBreakpointContext;
-  useCardContext: UseCardContext;
-  useConfigContext: UseConfigContext;
-};
+import type { Ctx } from "#/plugins/pluginTypes";
+import { useAnkiFieldContext } from "./AnkiFieldsContext";
+import { useBreakpointContext } from "./BreakpointContext";
+import { useCardContext } from "./CardContext";
+import { useConfigContext } from "./ConfigContext";
 
 const CtxContext = createContext<Ctx>();
 
