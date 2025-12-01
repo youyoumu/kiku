@@ -46,3 +46,8 @@ Please [open an issue here](https://github.com/youyoumu/kiku/issues).
 
 - [Lapis](https://github.com/donkuri/lapis), [JPMN](https://github.com/Aquafina-water-bottle/jp-mining-note), and [Senren](https://github.com/BrenoAqua/Senren) for inspiration.
 - [Wanikani Userscript](https://github.com/mwil/wanikani-userscripts) for the excellent database.
+
+## Support Me
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/U6U81PEJF0)
+
+You can also support me on [GitHub Sponsors](https://github.com/sponsors/youyoumu) 😄
