@@ -28,6 +28,14 @@ If defined, this component will replace the default `Sentence` component.
 
 <<< ../../../packages/note/src/plugins/Sentence.js
 
+## Pitch
+
+If defined, this component will replace the default `Pitch` component.
+
+### Example
+
+<<< ../../../packages/note/src/plugins/Pitch.js
+
 ## onPluginLoad
 
 This function is called when the plugin is loaded.

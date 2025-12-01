@@ -14,7 +14,7 @@ export const plugin = {
     const pitchInfo = props.pitchInfo;
 
     const color = () => {
-      // you customize the color here
+      // you can customize the color here
       switch (pitchInfo.pitchNum) {
         case 0:
           return { color: "#d46a6a", colorContent: "#8b3f3f" };

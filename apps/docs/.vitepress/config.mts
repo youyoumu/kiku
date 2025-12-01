@@ -62,6 +62,10 @@ export default defineConfig({
             link: "/random-font",
           },
           {
+            text: "Custom Pitch Color",
+            link: "/custom-pitch-color",
+          },
+          {
             text: "Custom Theme",
             link: "/custom-theme",
           },
