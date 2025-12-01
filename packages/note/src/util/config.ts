@@ -11,6 +11,7 @@ export type KikuConfig = {
   systemFontSecondary: string;
   useSystemFontSecondary: boolean;
   blurNsfw: boolean;
+  pictureOnFront: boolean;
   showTheme: boolean;
   showStartupTime: boolean;
   ankiConnectPort: number;
@@ -82,6 +83,7 @@ export function validateConfig(config: KikuConfig): KikuConfig {
       useSystemFontSecondary: typeof config.useSystemFontSecondary === "boolean" ? config.useSystemFontSecondary : defaultConfig.useSystemFontSecondary,
 
       blurNsfw: typeof config.blurNsfw === "boolean" ? config.blurNsfw : defaultConfig.blurNsfw,
+      pictureOnFront: typeof config.pictureOnFront === "boolean" ? config.pictureOnFront : defaultConfig.pictureOnFront,
       showTheme: typeof config.showTheme === "boolean" ? config.showTheme : defaultConfig.showTheme,
       showStartupTime: typeof config.showStartupTime === "boolean" ? config.showStartupTime : defaultConfig.showStartupTime,
       ankiConnectPort: typeof config.ankiConnectPort === "number" && config.ankiConnectPort > 0 && config.ankiConnectPort < 65535 ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
@@ -195,6 +197,7 @@ export function updateConfigState(el: HTMLElement, config: KikuConfig) {
   }
   el.dataset.theme = config.theme;
   el.dataset.blurNsfw = config.blurNsfw ? "true" : "false";
+  el.dataset.pictureOnFront = config.pictureOnFront ? "true" : "false";
   el.dataset.modVertical = config.modVertical ? "true" : "false";
 
   const cssVar = getCssVar(config);

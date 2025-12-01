@@ -21,10 +21,12 @@ async function main() {
   const frontTemplate = frontSrc
     .replace("__DATA_THEME__", "light")
     .replace("__DATA_BLUR_NSFW__", "true")
+    .replace("__DATA_PICTURE_ON_FRONT__", "false")
     .replace("__DATA_MOD_VERTICAL__", "false");
   const backTemplate = backSrc
     .replace("__DATA_THEME__", "light")
     .replace("__DATA_BLUR_NSFW__", "true")
+    .replace("__DATA_PICTURE_ON_FRONT__", "false")
     .replace("__DATA_MOD_VERTICAL__", "false");
 
   // Send them to AnkiConnect

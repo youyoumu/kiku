@@ -176,6 +176,19 @@ function GeneralSettings() {
           </label>
         </fieldset>
         <fieldset class="fieldset py-0">
+          <legend class="fieldset-legend">Picture on Front</legend>
+          <label class="label">
+            <input
+              type="checkbox"
+              checked={$config.pictureOnFront}
+              class="toggle"
+              on:change={(e) => {
+                $setConfig("pictureOnFront", e.target.checked);
+              }}
+            />
+          </label>
+        </fieldset>
+        <fieldset class="fieldset py-0">
           <legend class="fieldset-legend">Show Theme</legend>
           <label class="label">
             <input

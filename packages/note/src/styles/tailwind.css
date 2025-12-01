@@ -130,13 +130,6 @@
     background-color: var(--color-secondary); /* match text/border color */
   }
 
-  .picture-field-container {
-    display: none;
-    &:not([data-has-picture=""]) {
-      display: flex;
-    }
-  }
-
   .picture-field-background {
     @apply [&_*:not(img)]:contents;
     @apply [&_:not(:first-child)]:hidden;
@@ -160,6 +153,17 @@
 
   [data-blur-nsfw="false"] .picture-field {
     @apply [&_img]:filter-none;
+  }
+
+  .picture-field-container {
+    display: none;
+    &:not([data-has-picture=""]) {
+      display: flex;
+    }
+  }
+
+  [data-side="front"][data-picture-on-front="false"] .picture-field-container {
+    display: none;
   }
 
   [data-side="front"] .picture-field,

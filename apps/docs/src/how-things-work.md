@@ -88,6 +88,7 @@ Storing key settings in the templates avoids this flicker.
 [
   "theme",
   "blurNsfw",
+  "pictureOnFront",
   "modVertical",
   "fontSizeBaseExpression",
   "fontSizeBasePitch",

@@ -131,7 +131,7 @@ export function Back(props: { onExitNested?: () => void }) {
                 "animate-fade-in": KIKU_STATE.relax,
               }}
             >
-              <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center sm:min-h-56">
+              <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center min-h-40 sm:min-h-56">
                 <div
                   class="expression font-secondary text-center vertical-rl"
                   innerHTML={expressionInnerHtml()}
