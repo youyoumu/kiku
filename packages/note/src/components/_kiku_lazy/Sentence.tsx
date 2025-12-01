@@ -34,7 +34,6 @@ export default function Sentence() {
     }
     return true;
   };
-  console.log(animateFadeIn());
 
   function DefaultSentence() {
     return (
