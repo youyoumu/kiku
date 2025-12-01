@@ -29,7 +29,7 @@ export function Front() {
   onMount(() => {
     setTimeout(() => {
       $setCard("ready", true);
-    }, 50);
+    }, 0);
 
     const tags = ankiFields.Tags.split(" ");
     $setCard("isNsfw", tags.map((tag) => tag.toLowerCase()).includes("nsfw"));

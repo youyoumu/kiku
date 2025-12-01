@@ -63,7 +63,7 @@ export function Back(props: { onExitNested?: () => void }) {
         } catch {}
         $setGeneral("plugin", plugin);
       });
-    }, 50);
+    }, 0);
 
     const tags = ankiFields.Tags.split(" ");
     $setCard("isNsfw", tags.map((tag) => tag.toLowerCase()).includes("nsfw"));
