@@ -58,6 +58,10 @@ export default defineConfig({
             link: "/unblur-picture-automatically",
           },
           {
+            text: "Random Font",
+            link: "/random-font",
+          },
+          {
             text: "Custom Theme",
             link: "/custom-theme",
           },
