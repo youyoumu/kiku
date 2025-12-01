@@ -50,4 +50,4 @@ Please [open an issue here](https://github.com/youyoumu/kiku/issues).
 ## Support Me
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/U6U81PEJF0)
 
-If you'd like to support my work, you can visit my [Ko-fi](https://ko-fi.com/youyoumu2025) 😄
+You can also support me on [GitHub Sponsors](https://github.com/sponsors/youyoumu) 😄
