@@ -1,7 +1,10 @@
-import { hatsuon } from "#/components/_kiku_lazy/util/hatsuon";
+import { ErrorBoundary, Show } from "solid-js";
+import { hatsuon, type PitchInfo } from "#/components/_kiku_lazy/util/hatsuon";
 import { useCardContext } from "#/components/shared/CardContext";
 import type { DatasetProp } from "#/util/config";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
+import { useCtxContext } from "../shared/CtxContext";
+import { useGeneralContext } from "../shared/GeneralContext";
 
 export default function Pitches() {
   const [$card] = useCardContext();
@@ -26,12 +29,43 @@ export default function Pitches() {
   };
 
   return pitchNumber.map((pitchNum, index) => {
-    return <Pitch kana={kana()} pitchNum={pitchNum} index={index} />;
+    const pitchInfo = hatsuon({ reading: kana(), pitchNum: pitchNum });
+    return <Pitch pitchInfo={pitchInfo} index={index} />;
   });
 }
 
-function Pitch(props: { kana: string; pitchNum: number; index: number }) {
-  const pitchInfo = hatsuon({ reading: props.kana, pitchNum: props.pitchNum });
+function Pitch(props: { pitchInfo: PitchInfo; index: number }) {
+  const [$general] = useGeneralContext();
+  const ctx = useCtxContext();
+
+  return (
+    <ErrorBoundary fallback={<DefaultPitch {...props} />}>
+      <Show
+        when={$general.plugin?.Pitch}
+        fallback={<DefaultPitch {...props} />}
+      >
+        {(get) => {
+          const Pitch = get();
+          return (
+            <Pitch
+              ctx={ctx}
+              index={props.index}
+              pitchInfo={props.pitchInfo}
+              DefaultPitch={() => <DefaultPitch {...props} />}
+            />
+          );
+        }}
+      </Show>
+    </ErrorBoundary>
+  );
+}
+
+export function DefaultPitch(props: {
+  pitchInfo: PitchInfo;
+  index: number;
+  ref?: HTMLDivElement;
+}) {
+  const pitchInfo = props.pitchInfo;
   const isEven = props.index % 2 === 0;
 
   const pitchDataset: DatasetProp = {
@@ -39,7 +73,7 @@ function Pitch(props: { kana: string; pitchNum: number; index: number }) {
   };
 
   return (
-    <div class="tooltip" data-tip={pitchInfo.patternName}>
+    <div class="tooltip" data-tip={pitchInfo.patternName} ref={props.ref}>
       <div class="flex items-start gap-1 animate-fade-in-sm">
         <div {...pitchDataset}>
           {pitchInfo.morae.map((mora, i) => {

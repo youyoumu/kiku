@@ -240,3 +240,5 @@ export function hatsuon({
     patternName: getPitchPatternName(morae.length, pitchNum, locale),
   };
 }
+
+export type PitchInfo = ReturnType<typeof hatsuon>;
