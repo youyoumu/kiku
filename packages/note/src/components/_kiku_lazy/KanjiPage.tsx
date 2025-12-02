@@ -103,25 +103,45 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
         </Show>
       </div>
       <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col gap-2">
-        <div>
-          <div class="sm:text-lg font-bold text-base-content-calm">
-            Composed of
-          </div>
-          <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm text-xs sm:text-sm">
-            <For each={$kanji.jpdbKanji?.composedOf}>
-              {(data) => {
-                return (
-                  <div class="inline-flex border border-base-300">
-                    <div class=" px-0.5">{data.kanji}</div>
-                    <div class="bg-base-300 border-s border-base-300 px-0.5 text-base-content-soft">
-                      {capitalizeSentence(data.keyword)}
+        <Show when={$kanji.jpdbKanji?.readings.length}>
+          <div class="flex flex-col gap-1">
+            <div class="font-bold text-base-content-calm">Composed of</div>
+            <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
+              <For each={$kanji.jpdbKanji?.composedOf}>
+                {(data) => {
+                  return (
+                    <div class="inline-flex border border-base-300">
+                      <div class=" px-1 text-lg sm:text-xl">{data.kanji}</div>
+                      <div class="bg-base-300 border-s border-base-300 px-1 text-base-content-soft flex items-center">
+                        {capitalizeSentence(data.keyword)}
+                      </div>
                     </div>
-                  </div>
-                );
-              }}
-            </For>
+                  );
+                }}
+              </For>
+            </div>
           </div>
-        </div>
+        </Show>
+
+        <Show when={$kanji.jpdbKanji?.usedInKanji.length}>
+          <div class="flex flex-col gap-1">
+            <div class="font-bold text-base-content-calm">Used in</div>
+            <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
+              <For each={$kanji.jpdbKanji?.usedInKanji}>
+                {(data) => {
+                  return (
+                    <div class="inline-flex border border-base-300">
+                      <div class=" px-1  text-lg sm:text-xl">{data.kanji}</div>
+                      <div class="bg-base-300 border-s border-base-300 px-1 text-base-content-soft flex items-center">
+                        {capitalizeSentence(data.keyword)}
+                      </div>
+                    </div>
+                  );
+                }}
+              </For>
+            </div>
+          </div>
+        </Show>
         <ul class="list bg-base-100 rounded-box shadow-md">
           <For each={data()}>
             {(data) => {
