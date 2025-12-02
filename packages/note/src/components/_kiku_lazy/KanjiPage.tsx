@@ -1,8 +1,5 @@
 import { For, onMount, Show } from "solid-js";
-import {
-  type KanjiData,
-  useCardContext,
-} from "#/components/shared/CardContext";
+import { useCardContext } from "#/components/shared/CardContext";
 import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
@@ -14,6 +11,15 @@ import { capitalizeSmart } from "./util/general";
 export default function KanjiPage() {
   const [$card, $setCard] = useCardContext();
   const [$general, $setGeneral] = useGeneralContext();
+  const list = () => {
+    return $card.query.selectedSimilarKanji
+      ? Object.entries(
+          $card.query.kanji[$card.query.selectedSimilarKanji].similar,
+        )
+      : Object.entries($card.query.kanji).map(
+          ([kanji, data]) => [kanji, data.shared] as const,
+        );
+  };
 
   return (
     <>
@@ -27,15 +33,7 @@ export default function KanjiPage() {
       </Show>
 
       <div class="flex flex-col gap-2 sm:gap-4 ">
-        <For
-          each={(() => {
-            return $card.query.selectedSimilarKanji
-              ? Object.entries(
-                  $card.query.kanji[$card.query.selectedSimilarKanji].similar,
-                )
-              : Object.entries($card.query.kanji);
-          })()}
-        >
+        <For each={list()}>
           {([kanji, data]) => {
             return (
               <KanjiContextProvider kanji={kanji}>
@@ -67,16 +65,12 @@ export default function KanjiPage() {
   );
 }
 
-function KanjiCollapsible(props: { data: KanjiData | AnkiNote[] }) {
+function KanjiCollapsible(props: { data: AnkiNote[] }) {
   const [$card, $setCard] = useCardContext();
   const [$kanji, $setKanji] = useKanjiContext();
   const data = () => props.data;
   const navigate = useNavigationTransition();
 
-  const theData = () => {
-    const data$ = data();
-    return Array.isArray(data$) ? data$ : data$.shared;
-  };
   const focus = () => {
     if ($card.query.selectedSimilarKanji) return $card.focus.similarKanjiPage;
     return $card.focus.kanjiPage;
@@ -110,7 +104,7 @@ function KanjiCollapsible(props: { data: KanjiData | AnkiNote[] }) {
       </div>
       <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4">
         <ul class="list bg-base-100 rounded-box shadow-md">
-          <For each={theData()}>
+          <For each={data()}>
             {(data) => {
               return <AnkiNoteItem data={data} />;
             }}
