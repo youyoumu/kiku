@@ -75,12 +75,20 @@ class Script {
     await this.copyFiles(DBS, srcDir);
   }
 
+  async copyJpdb() {
+    const DBS = ["_kiku_db_jpdb_kanji.json.gz"];
+    const srcDir = join(import.meta.dirname, "../.jpdb");
+    console.log("\n📁 Copying JPDB...");
+    await this.copyFiles(DBS, srcDir);
+  }
+
   async run() {
     console.log(`🔍 Checking Anki collection at: ${this.ANKI_MEDIA_DIR}`);
     await this.ensureAnkiDir();
     await this.copyDist();
     await this.copyFonts();
     await this.copyDatabases();
+    await this.copyJpdb();
     console.log("\n🎉 Done!");
   }
 }

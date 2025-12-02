@@ -322,7 +322,7 @@ class JpdbScraper {
   }
 
   async gzipKanjiJson() {
-    const dest = join(this.jpdbDir, "_kiku_jpdb_kanji.json.gz");
+    const dest = join(this.jpdbDir, "_kiku_db_jpdb_kanji.json.gz");
     await gzipFile(this.kanjiJson, dest, false);
   }
 }
