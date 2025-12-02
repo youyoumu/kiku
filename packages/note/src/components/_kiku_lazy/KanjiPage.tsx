@@ -1,20 +1,15 @@
-import { createSignal, For, onMount, Show } from "solid-js";
+import { For, onMount, Show } from "solid-js";
 import {
   type KanjiData,
   useCardContext,
 } from "#/components/shared/CardContext";
-import {
-  type AnkiFields,
-  type AnkiNote,
-  ankiFieldsSkeleton,
-  type JpdbKanji,
-  type Kanji,
-} from "#/types";
+import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 import { ArrowLeftIcon } from "./Icons";
-import { capitalize, capitalizeSmart } from "./util/general";
+import { KanjiContextProvider, useKanjiContext } from "./KanjiContext";
+import { capitalizeSmart } from "./util/general";
 
 export default function KanjiPage() {
   const [$card, $setCard] = useCardContext();
@@ -42,7 +37,11 @@ export default function KanjiPage() {
           })()}
         >
           {([kanji, data]) => {
-            return <KanjiCollapsible kanji={kanji} data={data} />;
+            return (
+              <KanjiContextProvider kanji={kanji}>
+                <KanjiCollapsible data={data} />
+              </KanjiContextProvider>
+            );
           }}
         </For>
         <Show
@@ -68,12 +67,9 @@ export default function KanjiPage() {
   );
 }
 
-function KanjiCollapsible(props: {
-  kanji: string;
-  data: KanjiData | AnkiNote[];
-}) {
+function KanjiCollapsible(props: { data: KanjiData | AnkiNote[] }) {
   const [$card, $setCard] = useCardContext();
-  const kanji = () => props.kanji;
+  const [$kanji, $setKanji] = useKanjiContext();
   const data = () => props.data;
   const navigate = useNavigationTransition();
 
@@ -88,21 +84,21 @@ function KanjiCollapsible(props: {
 
   return (
     <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
-      <input type="checkbox" checked={focus() === kanji()} />
+      <input type="checkbox" checked={focus() === $kanji.kanji} />
       <div class="collapse-title justify-between flex items-center ps-2 sm:ps-4 pe-2 sm:pe-4 py-2 sm:py-4">
-        <KanjiText kanji={kanji()} />
+        <KanjiText />
         <Show
           when={
             !$card.query.selectedSimilarKanji &&
-            Object.keys($card.query.kanji[kanji()].similar).length > 0
+            Object.keys($card.query.kanji[$kanji.kanji].similar).length > 0
           }
         >
           <div
             class="flex gap-2 items-center btn btn-sm sm:btn-md z-10"
             on:click={() => {
-              $setCard("focus", { kanjiPage: kanji(), noteId: undefined });
+              $setCard("focus", { kanjiPage: $kanji.kanji, noteId: undefined });
               navigate(
-                () => $setCard("query", { selectedSimilarKanji: kanji() }),
+                () => $setCard("query", { selectedSimilarKanji: $kanji.kanji }),
                 "forward",
               );
             }}
@@ -116,7 +112,7 @@ function KanjiCollapsible(props: {
         <ul class="list bg-base-100 rounded-box shadow-md">
           <For each={theData()}>
             {(data) => {
-              return <AnkiNoteItem data={data} kanji={kanji()} />;
+              return <AnkiNoteItem data={data} />;
             }}
           </For>
         </ul>
@@ -193,15 +189,14 @@ function SameReadingCollapsible() {
 
 function AnkiNoteItem(props: {
   data: AnkiNote;
-  kanji?: string;
   reading?: string;
   sameReadingSection?: boolean;
 }) {
   const data = () => props.data;
-  const kanji = () => props.kanji;
   const reading = () => props.reading;
   const navigate = useNavigationTransition();
   const [$card, $setCard] = useCardContext();
+  const [$kanji, $setKanji] = useKanjiContext();
 
   const leech = data().tags.includes("leech");
   const expressionInnerHtml = () => {
@@ -216,7 +211,7 @@ function AnkiNoteItem(props: {
   };
 
   const expressionInnerHtmlColorized = () => {
-    const kanji$ = kanji();
+    const kanji$ = $kanji.kanji;
     const reading$ = reading();
     if (!kanji$ && !reading$) return expressionInnerHtml();
 
@@ -235,7 +230,7 @@ function AnkiNoteItem(props: {
   };
 
   const sentenceInnerHtmlColorized = () => {
-    const kanji$ = kanji();
+    const kanji$ = $kanji.kanji;
     if (!kanji$) return data().fields.Sentence.value;
 
     return data().fields.Sentence.value.replaceAll(
@@ -268,9 +263,9 @@ function AnkiNoteItem(props: {
     if (props.sameReadingSection) {
       $setCard("focus", { kanjiPage: $card.focus.SAME_READING });
     } else if ($card.query.selectedSimilarKanji) {
-      $setCard("focus", { similarKanjiPage: kanji() });
+      $setCard("focus", { similarKanjiPage: $kanji.kanji });
     } else {
-      $setCard("focus", { kanjiPage: kanji() });
+      $setCard("focus", { kanjiPage: $kanji.kanji });
     }
     $setCard("focus", { noteId: note.noteId });
     $setCard("nestedAnkiFields", ankiFields);
@@ -319,17 +314,9 @@ function AnkiNoteItem(props: {
   );
 }
 
-function KanjiText(props: { kanji: string }) {
-  const [jpdbKanji, setJpdbKanji] = createSignal<JpdbKanji>();
+function KanjiText() {
   const [$card, $setCard] = useCardContext();
-
-  onMount(async () => {
-    const nex = await KIKU_STATE.nexClient?.nex;
-    if (nex) {
-      const jpdbKanji = await nex.lookupJpdb(props.kanji);
-      setJpdbKanji(jpdbKanji);
-    }
-  });
+  const [$kanji, $setKanji] = useKanjiContext();
 
   const focus = () => {
     if ($card.query.selectedSimilarKanji) return $card.focus.similarKanjiPage;
@@ -337,7 +324,7 @@ function KanjiText(props: { kanji: string }) {
   };
   let ref: HTMLDivElement | undefined;
   onMount(() => {
-    if (ref && focus() === props.kanji && !$card.focus.noteId) {
+    if (ref && focus() === $kanji.kanji && !$card.focus.noteId) {
       ref.scrollIntoView({ block: "center" });
     }
   });
@@ -345,19 +332,19 @@ function KanjiText(props: { kanji: string }) {
   return (
     <div class="flex gap-2 sm:gap-4 me-2">
       <div class="font-secondary expression" ref={ref}>
-        {props.kanji}
+        {$kanji.kanji}
       </div>
       <div class="flex flex-col text-xs sm:text-sm text-base-content-calm">
         <div
           classList={{
-            hidden: !jpdbKanji()?.keyword,
+            hidden: !$kanji.jpdbKanji?.keyword,
           }}
         >
           <span class="inline-flex flex-wrap gap-x-1 sm:gap-x-2">
             <span>Keyword: </span>
             <span>
-              {jpdbKanji()
-                ?.keyword.split(" ")
+              {$kanji.jpdbKanji?.keyword
+                .split(" ")
                 .map((k) => capitalizeSmart(k))
                 .join(" ")}
             </span>
@@ -365,22 +352,22 @@ function KanjiText(props: { kanji: string }) {
         </div>
         <div
           classList={{
-            hidden: !jpdbKanji()?.frequency,
+            hidden: !$kanji.jpdbKanji?.frequency,
           }}
         >
           <span class="inline-flex flex-wrap gap-x-1 sm:gap-x-2">
             <span>Frequency: </span>
-            <span>{jpdbKanji()?.frequency}</span>
+            <span>{$kanji.jpdbKanji?.frequency}</span>
           </span>
         </div>
         <div
           classList={{
-            hidden: !jpdbKanji()?.readings.length,
+            hidden: !$kanji.jpdbKanji?.readings.length,
           }}
         >
           <span class="inline-flex flex-wrap gap-x-1 sm:gap-x-2 gap-y-0.5">
             <span>Reading: </span>
-            <For each={jpdbKanji()?.readings}>
+            <For each={$kanji.jpdbKanji?.readings}>
               {(reading) => {
                 return (
                   <Show when={reading.percentage}>
