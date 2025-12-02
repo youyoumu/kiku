@@ -1,6 +1,7 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as cheerio from "cheerio";
+import { gzipFile } from "./util";
 
 type Kanji = {
   position: string;
@@ -43,13 +44,13 @@ type KanjiFreqKind = {
   kind: string;
 };
 
-class KanjiByFrequency {
+class JpdbScraper {
   KYOIKU_URL = "https://jpdb.io/kanji-by-frequency?show_only=kyouiku";
   JOYO_URL = "https://jpdb.io/kanji-by-frequency?show_only=jouyou";
   JINMEIYO_URL = "https://jpdb.io/kanji-by-frequency?show_only=jinmeiyou";
   HYOGAI_URL = "https://jpdb.io/kanji-by-frequency?show_only=hyougai";
 
-  root = join(import.meta.dirname, "../../");
+  root = join(import.meta.dirname, "../");
   jpdbDir = join(this.root, ".jpdb");
   kanjiByFrequencyDir = join(this.jpdbDir, "kanji-by-frequency");
   kanjiDir = join(this.jpdbDir, "kanji");
@@ -319,9 +320,14 @@ class KanjiByFrequency {
 
     await writeFile(this.kanjiJson, JSON.stringify(kanjiJson));
   }
+
+  async gzipKanjiJson() {
+    const dest = join(this.jpdbDir, "_kiku_jpdb_kanji.json.gz");
+    await gzipFile(this.kanjiJson, dest, false);
+  }
 }
 
-const kanjiByFrequency = new KanjiByFrequency();
+const kanjiByFrequency = new JpdbScraper();
 await kanjiByFrequency.mkdir();
 
 // fist step
@@ -333,5 +339,8 @@ await kanjiByFrequency.mkdir();
 // third step
 // await kanjiByFrequency.writeKanjiHtml();
 
-//fourth step
-await kanjiByFrequency.writeKanjiJson();
+// fourth step
+// await kanjiByFrequency.writeKanjiJson();
+
+// fifth step
+await kanjiByFrequency.gzipKanjiJson();
