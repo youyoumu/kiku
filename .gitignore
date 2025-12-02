@@ -33,3 +33,4 @@ packages/addon/meta.json
 .release
 todo.txt
 .dicts
+.jpdb
