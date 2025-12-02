@@ -2,6 +2,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { env } from "../src/util/general";
 import { getSsrTemplate } from "./ssr.js";
+import { log } from "./util.js";
 
 export async function validateVersion() {
   const projectRoot = join(import.meta.dirname, "..");
@@ -19,8 +20,8 @@ export async function validateVersion() {
   if (declared !== actual) {
     console.error(
       `❌ Version mismatch:
-  env.KIKU_VERSION = ${declared}
-  package.json version = ${actual}`,
+      env.KIKU_VERSION = ${declared}
+      package.json version = ${actual}`,
     );
     process.exit(1);
   }
@@ -51,6 +52,13 @@ async function main() {
 
   const { frontSsrTemplate, backSsrTemplate, hydrationScript } =
     getSsrTemplate();
+
+  log.yellow("Front SSR Template:");
+  log.gray(frontSsrTemplate);
+  log.yellow("Back SSR Template:");
+  log.gray(backSsrTemplate);
+  log.yellow("Hydration Script:");
+  log.gray(hydrationScript);
 
   const frontTemplate = frontSrc
     .replace("__VERSION__", version)

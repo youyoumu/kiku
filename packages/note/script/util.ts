@@ -40,3 +40,41 @@ export async function gzipFile(
     output.on("error", reject);
   });
 }
+
+export const log = {
+  red(message: string) {
+    console.log(`\x1b[31m${message}\x1b[0m`);
+  },
+  green(message: string) {
+    console.log(`\x1b[32m${message}\x1b[0m`);
+  },
+  yellow(message: string) {
+    console.log(`\x1b[33m${message}\x1b[0m`);
+  },
+  blue(message: string) {
+    console.log(`\x1b[34m${message}\x1b[0m`);
+  },
+  magenta(message: string) {
+    console.log(`\x1b[35m${message}\x1b[0m`);
+  },
+  cyan(message: string) {
+    console.log(`\x1b[36m${message}\x1b[0m`);
+  },
+  white(message: string) {
+    console.log(`\x1b[37m${message}\x1b[0m`);
+  },
+  gray(message: string) {
+    console.log(`\x1b[90m${message}\x1b[0m`);
+  },
+
+  // background colors (optional)
+  bgRed(message: string) {
+    console.log(`\x1b[41m${message}\x1b[0m`);
+  },
+  bgGreen(message: string) {
+    console.log(`\x1b[42m${message}\x1b[0m`);
+  },
+  bgBlue(message: string) {
+    console.log(`\x1b[44m${message}\x1b[0m`);
+  },
+};

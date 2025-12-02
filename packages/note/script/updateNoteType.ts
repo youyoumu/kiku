@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 import { generateCssVars, getCssVar } from "../src/util/config.js";
 import { defaultConfig } from "../src/util/defaulConfig.js";
-import { AnkiConnect } from "./util.js";
+import { AnkiConnect, log } from "./util.js";
 
 async function main() {
   const noteType = "Kiku";
@@ -42,9 +42,9 @@ async function main() {
     },
   });
 
-  console.log(result);
+  log.gray(`updateModelTemplates: ${JSON.stringify(result)}`);
   console.log(
-    `✅ Updated Anki note type "${noteType}" Front/Back from ${frontPath} and ${backPath}`,
+    `✅ Updated Anki note type "${noteType}" Front/Back from ${basename(frontPath)} and ${basename(backPath)}`,
   );
 
   const cssVarTemplate = generateCssVars(getCssVar(defaultConfig));
@@ -60,9 +60,9 @@ async function main() {
     },
   });
 
-  console.log(result2);
+  log.gray(`updateModelTemplates: ${JSON.stringify(result2)}`);
   console.log(
-    `✅ Updated Anki note type "${noteType}" style from ${stylePath}`,
+    `✅ Updated Anki note type "${noteType}" style from ${basename(stylePath)}`,
   );
 }
 

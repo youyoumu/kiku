@@ -67,6 +67,5 @@ export function getSsrTemplate() {
     backSsrTemplate,
     hydrationScript,
   };
-  console.log(result);
   return result;
 }

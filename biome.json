@@ -30,6 +30,9 @@
       },
       "complexity": {
         "noImportantStyles": "info"
+      },
+      "style": {
+        "useTemplate": "off"
       }
     }
   },
