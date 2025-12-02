@@ -1,13 +1,15 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as cheerio from "cheerio";
 
 type Kanji = {
-  svg: string;
+  position: string;
+  kind: string;
+  // svg: string;
   keyword: string;
   frequency: string;
   type: string;
-  kanji: string;
+  kanken: string;
   heisig: string;
   readings: {
     reading: string;
@@ -39,6 +41,7 @@ class KanjiByFrequency {
   jpdbDir = join(this.root, ".jpdb");
   kanjiByFrequencyDir = join(this.jpdbDir, "kanji-by-frequency");
   kanjiDir = join(this.jpdbDir, "kanji");
+  kanjiJson = join(this.jpdbDir, "kanji.json");
   kanjiErrorJson = join(this.jpdbDir, "kanji-error.json");
 
   kyoikuHtml = join(this.kanjiByFrequencyDir, "kyoiku.html");
@@ -113,7 +116,7 @@ class KanjiByFrequency {
     }
   }
 
-  async writeKanjiHtml(someKanjis?: string[]) {
+  async getKanjiByType() {
     const kyoiku = JSON.parse(
       await readFile(this.kyoikuJson, "utf8"),
     ) as KanjiFreqKind[];
@@ -126,6 +129,11 @@ class KanjiByFrequency {
     const hyogai = JSON.parse(
       await readFile(this.hyogaiJson, "utf8"),
     ) as KanjiFreqKind[];
+    return { kyoiku, joyo, jinmeiyo, hyogai };
+  }
+
+  async writeKanjiHtml(someKanjis?: string[]) {
+    const { kyoiku, joyo, jinmeiyo, hyogai } = await this.getKanjiByType();
 
     const merged = [...kyoiku, ...joyo, ...jinmeiyo, ...hyogai];
     const kanjis = someKanjis ?? [...new Set(merged.map((k) => k.kanji))];
@@ -166,6 +174,118 @@ class KanjiByFrequency {
     }
     await writeFile(this.kanjiErrorJson, JSON.stringify(kanjiError, null, 2));
   }
+
+  async writeKanjiJson() {
+    const { kyoiku, joyo, jinmeiyo, hyogai } = await this.getKanjiByType();
+    const allKanjiByType = [...kyoiku, ...joyo, ...jinmeiyo, ...hyogai];
+    const kanjiJson: Record<string, Kanji> = {};
+    const kanjis = (await readdir(this.kanjiDir))
+      .map((file) => file.replace(".html", ""))
+      .filter((kanji) => kanji);
+
+    for (const kanji of kanjis) {
+      const kanjiHtml = await readFile(
+        join(this.kanjiDir, `${kanji}.html`),
+        "utf8",
+      );
+      const $ = cheerio.load(kanjiHtml);
+      const svg = $("svg.kanji").prop("outerHTML") ?? "";
+      const keyword = $('h6.subsection-label:contains("Keyword")')
+        .next(".subsection")
+        .text()
+        .trim();
+
+      const infoTable = $('h6.subsection-label:contains("Info")')
+        .next(".subsection")
+        .find("table.cross-table");
+
+      const frequency = infoTable
+        .find('tr:has(td:contains("Frequency")) td:nth-child(2)')
+        .text()
+        .trim();
+
+      const type = infoTable
+        .find('tr:has(td:contains("Type")) td:nth-child(2)')
+        .text()
+        .replace(/\s+/g, " ")
+        .trim()
+        .replace("?", "")
+        .trim();
+      const info = allKanjiByType.find((k) => k.kanji === kanji);
+      const position = info?.position ?? "";
+      const kind = info?.kind ?? "";
+
+      const kanken = infoTable
+        .find('tr:has(td:contains("Kanken")) td:nth-child(2)')
+        .text()
+        .trim();
+
+      const heisig = infoTable
+        .find('tr:has(td:contains("Heisig")) td:nth-child(2)')
+        .text()
+        .trim();
+
+      const commonReadings: { reading: string; percentage: string }[] = [];
+      infoTable.find(".kanji-reading-list-common > div").each((_, el) => {
+        const reading = $(el).find("a").text().trim();
+        const percentage = $(el).find("div").text().replace(/[()]/g, "").trim();
+        commonReadings.push({ reading, percentage });
+      });
+
+      const rareReadings: { reading: string; percentage: string }[] = [];
+      infoTable.find(".kanji-reading-list > div").each((_, el) => {
+        const reading = $(el).find("a").text().trim();
+        rareReadings.push({ reading, percentage: "" });
+      });
+
+      const composedOf: { kanji: string; keyword: string }[] = [];
+      $(".subsection-composed-of-kanji").each((_, el) => {
+        const header = $(el).find("h6.subsection-label").text().trim();
+        if (header === "Composed of") {
+          $(el)
+            .find(".subsection > div")
+            .each((_, d) => {
+              const kanji = $(d).find(".spelling a").text().trim();
+              const keyword = $(d).find(".description").text().trim();
+              if (kanji) composedOf.push({ kanji, keyword });
+            });
+        }
+      });
+
+      const usedInKanji: { kanji: string; keyword: string }[] = [];
+      $(".subsection-composed-of-kanji").each((_, el) => {
+        const headerId = $(el).find("h6.subsection-label").attr("id") || "";
+        if (headerId.startsWith("used_in_")) {
+          $(el)
+            .find(".subsection .used-in")
+            .each((_, d) => {
+              const kanji = $(d).find(".spelling a").text().trim();
+              const keyword = $(d).find(".description").text().trim();
+              usedInKanji.push({ kanji, keyword });
+            });
+        }
+      });
+
+      const kanjiInfo: Kanji = {
+        position,
+        // svg,
+        keyword,
+        frequency,
+        kind,
+        type,
+        kanken,
+        heisig,
+        readings: [...commonReadings, ...rareReadings],
+        composedOf,
+        usedInKanji,
+      };
+
+      console.log("Kanji:", kanji);
+      kanjiJson[kanji] = kanjiInfo;
+    }
+
+    await writeFile(this.kanjiJson, JSON.stringify(kanjiJson, null, 2));
+  }
 }
 
 const kanjiByFrequency = new KanjiByFrequency();
@@ -178,4 +298,7 @@ await kanjiByFrequency.mkdir();
 // await kanjiByFrequency.writeKanjiByFrequencyJson();
 
 // third step
-await kanjiByFrequency.writeKanjiHtml();
+// await kanjiByFrequency.writeKanjiHtml();
+
+//fourth step
+await kanjiByFrequency.writeKanjiJson();
