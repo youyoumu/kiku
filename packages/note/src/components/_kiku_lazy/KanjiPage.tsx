@@ -7,12 +7,14 @@ import {
   type AnkiFields,
   type AnkiNote,
   ankiFieldsSkeleton,
+  type JpdbKanji,
   type Kanji,
 } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 import { ArrowLeftIcon } from "./Icons";
+import { capitalize, capitalizeSmart } from "./util/general";
 
 export default function KanjiPage() {
   const [$card, $setCard] = useCardContext();
@@ -318,16 +320,14 @@ function AnkiNoteItem(props: {
 }
 
 function KanjiText(props: { kanji: string }) {
-  const [kanji, setKanji] = createSignal<Kanji>();
+  const [jpdbKanji, setJpdbKanji] = createSignal<JpdbKanji>();
   const [$card, $setCard] = useCardContext();
 
   onMount(async () => {
     const nex = await KIKU_STATE.nexClient?.nex;
     if (nex) {
-      const lookup = await nex.lookup(props.kanji);
       const jpdbKanji = await nex.lookupJpdb(props.kanji);
-      console.log("DEBUG[1220]: jpdbKanji=", jpdbKanji);
-      setKanji(lookup);
+      setJpdbKanji(jpdbKanji);
     }
   });
 
@@ -343,49 +343,57 @@ function KanjiText(props: { kanji: string }) {
   });
 
   return (
-    <div class="flex gap-2 sm:gap-4 ">
+    <div class="flex gap-2 sm:gap-4 me-2">
       <div class="font-secondary expression" ref={ref}>
         {props.kanji}
       </div>
-      <div class="flex flex-col text-xs sm:text-sm text-base-content-calm leading-tight">
+      <div class="flex flex-col text-xs sm:text-sm text-base-content-calm">
         <div
           classList={{
-            hidden: !kanji()?.meanings.length,
+            hidden: !jpdbKanji()?.keyword,
           }}
         >
-          <span>Meaning: </span>
-          <span class="text-base-content-soft">
-            {kanji()?.meanings.join(", ")}
+          <span class="inline-flex flex-wrap gap-x-1 sm:gap-x-2">
+            <span>Keyword: </span>
+            <span>
+              {jpdbKanji()
+                ?.keyword.split(" ")
+                .map((k) => capitalizeSmart(k))
+                .join(" ")}
+            </span>
           </span>
         </div>
         <div
           classList={{
-            hidden: typeof kanji()?.level !== "number",
+            hidden: !jpdbKanji()?.frequency,
           }}
         >
-          <span>Difficulty: </span>
-          <span class="text-base-content-soft">
-            {(kanji()?.level ?? 0) * 100}
+          <span class="inline-flex flex-wrap gap-x-1 sm:gap-x-2">
+            <span>Frequency: </span>
+            <span>{jpdbKanji()?.frequency}</span>
           </span>
         </div>
         <div
           classList={{
-            hidden: !kanji()?.onyomi.length,
+            hidden: !jpdbKanji()?.readings.length,
           }}
         >
-          <span>Onyomi: </span>
-          <span class="text-base-content-soft">
-            {kanji()?.onyomi.join(", ")}
-          </span>
-        </div>
-        <div
-          classList={{
-            hidden: !kanji()?.kunyomi.length,
-          }}
-        >
-          <span>Kunyomi: </span>
-          <span class="text-base-content-soft">
-            {kanji()?.kunyomi.join(", ")}
+          <span class="inline-flex flex-wrap gap-x-1 sm:gap-x-2 gap-y-0.5">
+            <span>Reading: </span>
+            <For each={jpdbKanji()?.readings}>
+              {(reading) => {
+                return (
+                  <Show when={reading.percentage}>
+                    <span class="border-[1px] border-base-300 inline-flex">
+                      <span class="px-0.5">{reading.reading}</span>
+                      <span class="border-s-[1px] border-base-300 px-0.5 bg-base-300 text-base-content-soft">
+                        {reading.percentage}
+                      </span>
+                    </span>
+                  </Show>
+                );
+              }}
+            </For>
           </span>
         </div>
       </div>
