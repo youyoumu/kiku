@@ -325,6 +325,8 @@ function KanjiText(props: { kanji: string }) {
     const nex = await KIKU_STATE.nexClient?.nex;
     if (nex) {
       const lookup = await nex.lookup(props.kanji);
+      const jpdbKanji = await nex.lookupJpdb(props.kanji);
+      console.log("DEBUG[1220]: jpdbKanji=", jpdbKanji);
       setKanji(lookup);
     }
   });

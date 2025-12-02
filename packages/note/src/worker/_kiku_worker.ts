@@ -1,4 +1,10 @@
-import type { AnkiFields, AnkiNote, Kanji, KikuNotesManifest } from "#/types";
+import type {
+  AnkiFields,
+  AnkiNote,
+  JpdbKanji,
+  Kanji,
+  KikuNotesManifest,
+} from "#/types";
 import type { KikuConfig } from "#/util/config";
 import type { Env } from "#/util/general";
 
@@ -329,6 +335,27 @@ export class Nex {
     return this.cache.get(key)[kanji];
   }
 
+  async lookupJpdb(kanji: string): Promise<JpdbKanji> {
+    const key = this.lookupJpdb.name;
+    const cache = this.cache.get(key);
+    if (!cache) {
+      const res = await fetch(
+        `${this.assetsPath}/${this.env.KIKU_DB_JPDB_KANJI}`,
+      );
+      if (!res.body) {
+        logger.error("Failed to lookup jpdb", kanji);
+        throw new Error(`Failed to lookup jpdb ${kanji}`);
+      }
+      const ds = new DecompressionStream("gzip");
+      const decompressed = res.body.pipeThrough(ds);
+      const text = await new Response(decompressed).text();
+      const lookupJpdbDb = JSON.parse(text);
+
+      this.cache.set(key, lookupJpdbDb);
+    }
+    return this.cache.get(key)[kanji];
+  }
+
   async manifest(): Promise<KikuNotesManifest> {
     const key = this.manifest.name;
     if (this.cache.has(key)) return this.cache.get(key);
@@ -402,6 +429,7 @@ const nexApi = {
   getSimilarKanji: (...args: Parameters<typeof nex.getSimilarKanji>) => nex.getSimilarKanji(...args),
   querySharedAndSimilar: ( ...args: Parameters<typeof nex.querySharedAndSimilar>) => nex.querySharedAndSimilar(...args),
   lookup: (...args: Parameters<typeof nex.lookup>) => nex.lookup(...args),
+  lookupJpdb: (...args: Parameters<typeof nex.lookupJpdb>) => nex.lookupJpdb(...args),
 } satisfies NexApi$;
 
 export type NexApi = typeof nexApi;
