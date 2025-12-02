@@ -21,6 +21,7 @@
     "@tailwindcss/vite": "^4.1.16",
     "@types/express": "^5.0.5",
     "@types/node": "^24.6.0",
+    "cheerio": "^1.1.2",
     "daisyui": "^5.3.10",
     "express": "^5.1.0",
     "extract-zip": "^2.0.1",
@@ -30,10 +31,5 @@
     "vite-node": "^3.2.4",
     "vite-plugin-circular-dependency": "^0.5.0",
     "vite-plugin-solid": "^2.11.8"
-  },
-  "pnpm": {
-    "overrides": {
-      "vite": "npm:rolldown-vite@7.1.14"
-    }
   }
 }
