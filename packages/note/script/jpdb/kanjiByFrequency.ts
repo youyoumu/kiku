@@ -5,7 +5,7 @@ import * as cheerio from "cheerio";
 type Kanji = {
   position: string;
   kind: string;
-  // svg: string;
+  svg: string;
   keyword: string;
   frequency: string;
   type: string;
@@ -24,6 +24,18 @@ type Kanji = {
     keyword: string;
   }[];
 };
+
+// Compact Kanji data structure using indexes instead of keys
+type KanjiCompact = [
+  string, // 0: kind
+  string, // 1: keyword
+  string, // 2: frequency
+  string, // 3: kanken
+  string, // 4: heisig
+  [string, string][], // 5: readings (reading, percentage)
+  [string, string][], // 6: composedOf (kanji, keyword)
+  [string, string][], // 7: usedInKanji (kanji, keyword)
+];
 
 type KanjiFreqKind = {
   position: string;
@@ -178,7 +190,7 @@ class KanjiByFrequency {
   async writeKanjiJson() {
     const { kyoiku, joyo, jinmeiyo, hyogai } = await this.getKanjiByType();
     const allKanjiByType = [...kyoiku, ...joyo, ...jinmeiyo, ...hyogai];
-    const kanjiJson: Record<string, Kanji> = {};
+    const kanjiJson: Record<string, KanjiCompact> = {};
     const kanjis = (await readdir(this.kanjiDir))
       .map((file) => file.replace(".html", ""))
       .filter((kanji) => kanji);
@@ -268,7 +280,7 @@ class KanjiByFrequency {
 
       const kanjiInfo: Kanji = {
         position,
-        // svg,
+        svg,
         keyword,
         frequency,
         kind,
@@ -280,11 +292,32 @@ class KanjiByFrequency {
         usedInKanji,
       };
 
+      const commonReadingsCompact = commonReadings.map(
+        (c) => [c.reading, c.percentage] as const,
+      );
+      const rareReadingsCompact = rareReadings.map(
+        (r) => [r.reading, r.percentage] as const,
+      );
+      const readingsCompact = [
+        ...commonReadingsCompact,
+        ...rareReadingsCompact,
+      ] as [string, string][];
+      const kanjiInfoCompact: KanjiCompact = [
+        kind,
+        keyword,
+        frequency,
+        kanken,
+        heisig,
+        readingsCompact,
+        composedOf.map((c) => [c.kanji, c.keyword]),
+        usedInKanji.map((u) => [u.kanji, u.keyword]),
+      ];
+
       console.log("Kanji:", kanji);
-      kanjiJson[kanji] = kanjiInfo;
+      kanjiJson[kanji] = kanjiInfoCompact;
     }
 
-    await writeFile(this.kanjiJson, JSON.stringify(kanjiJson, null, 2));
+    await writeFile(this.kanjiJson, JSON.stringify(kanjiJson));
   }
 }
 
