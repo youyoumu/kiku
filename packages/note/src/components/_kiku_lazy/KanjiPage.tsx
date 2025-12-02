@@ -6,7 +6,7 @@ import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 import { ArrowLeftIcon } from "./Icons";
 import { KanjiContextProvider, useKanjiContext } from "./KanjiContext";
-import { capitalizeSmart } from "./util/general";
+import { capitalizeSentence, capitalizeSmart } from "./util/general";
 
 export default function KanjiPage() {
   const [$card, $setCard] = useCardContext();
@@ -102,7 +102,26 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
           </div>
         </Show>
       </div>
-      <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4">
+      <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col gap-2">
+        <div>
+          <div class="sm:text-lg font-bold text-base-content-calm">
+            Composed of
+          </div>
+          <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm text-xs sm:text-sm">
+            <For each={$kanji.jpdbKanji?.composedOf}>
+              {(data) => {
+                return (
+                  <div class="inline-flex border border-base-300">
+                    <div class=" px-0.5">{data.kanji}</div>
+                    <div class="bg-base-300 border-s border-base-300 px-0.5 text-base-content-soft">
+                      {capitalizeSentence(data.keyword)}
+                    </div>
+                  </div>
+                );
+              }}
+            </For>
+          </div>
+        </div>
         <ul class="list bg-base-100 rounded-box shadow-md">
           <For each={data()}>
             {(data) => {
@@ -336,12 +355,7 @@ function KanjiText() {
         >
           <span class="inline-flex flex-wrap gap-x-1 sm:gap-x-2">
             <span>Keyword: </span>
-            <span>
-              {$kanji.jpdbKanji?.keyword
-                .split(" ")
-                .map((k) => capitalizeSmart(k))
-                .join(" ")}
-            </span>
+            <span>{capitalizeSentence($kanji.jpdbKanji?.keyword)}</span>
           </span>
         </div>
         <div
@@ -365,9 +379,9 @@ function KanjiText() {
               {(reading) => {
                 return (
                   <Show when={reading.percentage}>
-                    <span class="border-[1px] border-base-300 inline-flex">
+                    <span class="border border-base-300 inline-flex">
                       <span class="px-0.5">{reading.reading}</span>
-                      <span class="border-s-[1px] border-base-300 px-0.5 bg-base-300 text-base-content-soft">
+                      <span class="border border-base-300 px-0.5 bg-base-300 text-base-content-soft">
                         {reading.percentage}
                       </span>
                     </span>

@@ -23,3 +23,10 @@ export function capitalizeSmart(
   if (exceptions.has(lower)) return lower;
   return lower.charAt(0).toUpperCase() + lower.slice(1);
 }
+
+export function capitalizeSentence(sentence?: string) {
+  return sentence
+    ?.split(" ")
+    .map((k) => capitalizeSmart(k))
+    .join(" ");
+}
