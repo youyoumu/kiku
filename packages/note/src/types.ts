@@ -132,7 +132,7 @@ export type Kanji = {
   nanori: string[];
 };
 
-export type JpdbKanji = [
+export type JpdbKanjiCompact = [
   string, // 0: kind
   string, // 1: keyword
   string, // 2: frequency
@@ -142,6 +142,26 @@ export type JpdbKanji = [
   [string, string][], // 6: composedOf (kanji, keyword)
   [string, string][], // 7: usedInKanji (kanji, keyword)
 ];
+
+export interface JpdbKanji {
+  kind: string;
+  keyword: string;
+  frequency: string;
+  kanken: string;
+  heisig: string;
+  readings: {
+    reading: string;
+    percentage: string;
+  }[];
+  composedOf: {
+    kanji: string;
+    keyword: string;
+  }[];
+  usedInKanji: {
+    kanji: string;
+    keyword: string;
+  }[];
+}
 
 // biome-ignore format: this looks nicer
 export const ankiFieldsSkeleton: AnkiFields = {

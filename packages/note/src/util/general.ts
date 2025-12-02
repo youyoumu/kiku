@@ -1,5 +1,10 @@
 import { isServer } from "solid-js/web";
-import { type AnkiFields, ankiFieldsSkeleton } from "#/types";
+import {
+  type AnkiFields,
+  ankiFieldsSkeleton,
+  type JpdbKanji,
+  type JpdbKanjiCompact,
+} from "#/types";
 import {
   exampleFields,
   exampleFields2,

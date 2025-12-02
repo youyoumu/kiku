@@ -2,6 +2,7 @@ import type {
   AnkiFields,
   AnkiNote,
   JpdbKanji,
+  JpdbKanjiCompact,
   Kanji,
   KikuNotesManifest,
 } from "#/types";
@@ -353,7 +354,7 @@ export class Nex {
 
       this.cache.set(key, lookupJpdbDb);
     }
-    return this.cache.get(key)[kanji];
+    return Nex.toNonCompactKanji(this.cache.get(key)[kanji]);
   }
 
   async manifest(): Promise<KikuNotesManifest> {
@@ -396,6 +397,31 @@ export class Nex {
     }
     this.cache.set(key, similarKanjiDbs);
     return this.cache.get(key);
+  }
+
+  static toNonCompactKanji(data: JpdbKanjiCompact): JpdbKanji {
+    return {
+      kind: data[0],
+      keyword: data[1],
+      frequency: data[2],
+      kanken: data[3],
+      heisig: data[4],
+
+      readings: data[5].map(([reading, percentage]) => ({
+        reading,
+        percentage,
+      })),
+
+      composedOf: data[6].map(([kanji, keyword]) => ({
+        kanji,
+        keyword,
+      })),
+
+      usedInKanji: data[7].map(([kanji, keyword]) => ({
+        kanji,
+        keyword,
+      })),
+    };
   }
 }
 
