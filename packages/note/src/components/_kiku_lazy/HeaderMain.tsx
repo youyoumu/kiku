@@ -115,6 +115,7 @@ export default function HeaderMain(props: { onExitNested?: () => void }) {
 }
 
 function KanjiPageIndicator() {
+  const [$general] = useGeneralContext();
   const [$card, $setCard] = useCardContext();
   const { navigate } = useNavigationTransition();
 
@@ -126,7 +127,7 @@ function KanjiPageIndicator() {
     const isKanjiResult = Object.keys($card.query.kanji).length > 0;
     const isSameReadingResult = ($card.query.sameReading?.length ?? 0) > 0;
     if (isKanjiResult || isSameReadingResult) {
-      $setCard("focus", { kanjiPage: key, noteId: undefined });
+      $setCard("focus", "kanji", key);
       const list = Object.entries($card.query.kanji).map(
         ([kanji, data]) => [kanji, data.shared] as [string, AnkiNote[]],
       );
@@ -164,7 +165,7 @@ function KanjiPageIndicator() {
       <div
         class="flex gap-px sm:gap-0.5 items-start hover:text-base-content transition-colors"
         on:click={() => {
-          onClick($card.focus.SAME_READING);
+          onClick($general.SAME_READING);
         }}
       >
         <span>読</span>

@@ -15,6 +15,7 @@ type GeneralStore = {
   layoutRef: HTMLDivElement | undefined;
   contentRef: HTMLDivElement | undefined;
   toast: Toast;
+  SAME_READING: symbol;
 };
 
 type Toast = {
@@ -62,6 +63,7 @@ export function GeneralContextProvider(props: {
     layoutRef: undefined,
     contentRef: undefined,
     toast: { success, error, message: undefined, type: "success" },
+    SAME_READING: Symbol.for("SAME_READING"),
   });
 
   return (

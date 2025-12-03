@@ -265,17 +265,14 @@ export class Nex {
       ),
     );
 
-    const allKanji = [
-      ...new Set(kanjiList.flatMap((k) => [k, ...(similarKanji[k] ?? [])])),
-    ];
     const { kanjiListResult, readingListResult } = await this.query({
-      kanjiList: allKanji,
+      kanjiList,
       readingList,
     });
 
     const kanjiResult: Record<
       string,
-      { shared: AnkiNote[]; similar: Record<string, AnkiNote[]> }
+      { shared: AnkiNote[]; similar: string[] }
     > = {};
 
     const filterSameNote = (note: AnkiNote) => {
@@ -293,15 +290,9 @@ export class Nex {
     };
 
     for (const kanji of kanjiList) {
-      const similars = similarKanji[kanji] ?? [];
-
       kanjiResult[kanji] = {
         shared: kanjiListResult[kanji]?.filter(filterSameNote) ?? [],
-        similar: Object.fromEntries(
-          similars
-            .filter((k) => kanjiListResult[k])
-            .map((k) => [k, kanjiListResult[k]?.filter(filterSameNote)]),
-        ),
+        similar: similarKanji[kanji] ?? [],
       };
     }
 

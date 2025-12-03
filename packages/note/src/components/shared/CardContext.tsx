@@ -5,14 +5,13 @@ import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 
 export type KanjiData = {
   shared: AnkiNote[];
-  similar: Record<string, AnkiNote[]>;
+  similar: string[];
 };
 
 type Query = {
   status: "loading" | "success" | "error";
   kanji: Record<string, KanjiData>;
   sameReading: AnkiNote[] | undefined;
-  selectedSimilarKanji: string | undefined;
   noteList: [string, AnkiNote[]][];
 };
 
@@ -28,10 +27,7 @@ type CardStore = {
   pictureModal?: string;
   query: Query;
   focus: {
-    SAME_READING: symbol;
-    kanjiPage: string | symbol | undefined;
-    similarKanjiPage: string | symbol | undefined;
-    noteId: number | undefined;
+    kanji: string | symbol | undefined;
   };
   navigateBack: (() => void)[];
   nestedAnkiFields: AnkiFields;
@@ -60,16 +56,12 @@ export function CardStoreContextProvider(props: {
       status: "loading",
       kanji: {},
       sameReading: undefined,
-      selectedSimilarKanji: undefined,
       noteList: [],
     },
-    navigateBack: [],
     focus: {
-      SAME_READING: Symbol.for("SAME_READING"),
-      kanjiPage: undefined,
-      similarKanjiPage: undefined,
-      noteId: undefined,
+      kanji: undefined,
     },
+    navigateBack: [],
     nestedAnkiFields: ankiFieldsSkeleton,
     nested: props.nested ?? false,
   });
