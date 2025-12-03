@@ -115,7 +115,7 @@ export function useKanji() {
           $config.preferAnkiConnect && !!KIKU_STATE.isAnkiDesktop,
       });
       const nex = await worker.nex;
-      const { kanjiResult, readingResult } = await nex.querySharedAndSimilar({
+      const { kanjiResult, readingResult } = await nex.queryShared({
         kanjiList,
         readingList,
         ankiFields,

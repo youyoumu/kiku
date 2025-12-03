@@ -245,7 +245,9 @@ export class Nex {
     }
   }
 
-  async querySharedAndSimilar({
+  debounceTimer: number | null = null;
+  debounceMs = 200;
+  async queryShared({
     kanjiList,
     readingList,
     ankiFields,
@@ -254,56 +256,77 @@ export class Nex {
     readingList: string[];
     ankiFields: AnkiFields;
   }) {
-    logger.debug("querySharedAndSimilar:", {
-      kanjiList,
-      readingList,
-      ankiFields,
+    return new Promise<{
+      kanjiResult: Record<string, { shared: AnkiNote[] }>;
+      readingResult: Record<string, AnkiNote[]>;
+    }>((resolve) => {
+      this.pendingQueryShared.push({
+        kanjiList,
+        readingList,
+        ankiFields,
+        resolve,
+      });
+      if (this.debounceTimer) clearTimeout(this.debounceTimer);
+
+      this.debounceTimer = setTimeout(() => {
+        this.actualQueryShared();
+      }, this.debounceMs);
     });
-    const similarKanji: Record<string, string[]> = Object.fromEntries(
-      await Promise.all(
-        kanjiList.map(async (k) => [k, await this.getSimilarKanji(k)]),
-      ),
-    );
+  }
+
+  pendingQueryShared: {
+    kanjiList: string[];
+    readingList: string[];
+    ankiFields: AnkiFields;
+    resolve: (v: any) => void;
+  }[] = [];
+
+  async actualQueryShared() {
+    const requests = this.pendingQueryShared;
+    this.pendingQueryShared = [];
+
+    const batchedKanjiList = [...new Set(requests.flatMap((r) => r.kanjiList))];
+    const batchedReadingList = [
+      ...new Set(requests.flatMap((r) => r.readingList)),
+    ];
 
     const { kanjiListResult, readingListResult } = await this.query({
-      kanjiList,
-      readingList,
+      kanjiList: batchedKanjiList,
+      readingList: batchedReadingList,
     });
 
-    const kanjiResult: Record<
-      string,
-      { shared: AnkiNote[]; similar: string[] }
-    > = {};
-
-    const filterSameNote = (note: AnkiNote) => {
-      // TODO: use CardID to filter same note
-      //https://github.com/ankitects/anki/pull/4046
-      //only available in Anki >25.9
-      if (
-        note.fields.Expression.value === ankiFields.Expression &&
-        note.fields.Sentence.value === ankiFields.Sentence &&
-        note.fields.Hint.value === ankiFields.Hint &&
-        note.fields.MiscInfo.value === ankiFields.MiscInfo
-      )
-        return false;
-      return true;
-    };
-
-    for (const kanji of kanjiList) {
-      kanjiResult[kanji] = {
-        shared: kanjiListResult[kanji]?.filter(filterSameNote) ?? [],
-        similar: similarKanji[kanji] ?? [],
+    for (const req of requests) {
+      const { kanjiList, readingList, ankiFields } = req;
+      const filterSameNote = (note: AnkiNote) => {
+        if (
+          note.fields.Expression.value === ankiFields.Expression &&
+          note.fields.Sentence.value === ankiFields.Sentence &&
+          note.fields.Hint.value === ankiFields.Hint &&
+          note.fields.MiscInfo.value === ankiFields.MiscInfo
+        )
+          return false;
+        return true;
       };
+
+      const kanjiResult: Record<string, { shared: AnkiNote[] }> = {};
+      for (const kanji of kanjiList) {
+        kanjiResult[kanji] = {
+          shared: kanjiListResult[kanji]?.filter(filterSameNote) ?? [],
+        };
+      }
+
+      const readingResult: Record<string, AnkiNote[]> = {};
+      for (const reading of readingList) {
+        readingResult[reading] =
+          readingListResult[reading]
+            ?.filter(filterSameNote)
+            .filter(
+              (n) => n.fields.Expression.value !== ankiFields.Expression,
+            ) ?? [];
+      }
+
+      req.resolve({ kanjiResult, readingResult });
     }
-
-    readingList.forEach((reading) => {
-      readingListResult[reading] =
-        readingListResult[reading]?.filter(filterSameNote).filter((note) => {
-          return note.fields.Expression.value !== ankiFields.Expression;
-        }) ?? [];
-    });
-
-    return { kanjiResult, readingResult: readingListResult };
   }
 
   async lookup(kanji: string): Promise<Kanji> {
@@ -444,7 +467,7 @@ const nexApi = {
   manifest: () => nex.manifest(),
   query: (...args: Parameters<typeof nex.query>) => nex.query(...args),
   getSimilarKanji: (...args: Parameters<typeof nex.getSimilarKanji>) => nex.getSimilarKanji(...args),
-  querySharedAndSimilar: ( ...args: Parameters<typeof nex.querySharedAndSimilar>) => nex.querySharedAndSimilar(...args),
+  queryShared: ( ...args: Parameters<typeof nex.queryShared>) => nex.queryShared(...args),
   lookup: (...args: Parameters<typeof nex.lookup>) => nex.lookup(...args),
   lookupJpdb: (...args: Parameters<typeof nex.lookupJpdb>) => nex.lookupJpdb(...args),
 } satisfies NexApi$;

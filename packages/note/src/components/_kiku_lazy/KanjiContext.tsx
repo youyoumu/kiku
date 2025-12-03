@@ -49,7 +49,7 @@ export function KanjiContextProvider(props: {
       const composedOf = $kanji.jpdbKanji.composedOf.map((data) => data.kanji);
       const usedIn = $kanji.jpdbKanji.usedInKanji.map((data) => data.kanji);
       const kanjiList = [...similarKanji, ...composedOf, ...usedIn];
-      const { kanjiResult, readingResult } = await nex.querySharedAndSimilar({
+      const { kanjiResult } = await nex.queryShared({
         kanjiList,
         readingList: [],
         ankiFields,

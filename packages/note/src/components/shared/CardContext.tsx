@@ -5,7 +5,6 @@ import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 
 export type KanjiData = {
   shared: AnkiNote[];
-  similar: string[];
 };
 
 type Query = {
