@@ -78,3 +78,5 @@ export const log = {
     console.log(`\x1b[44m${message}\x1b[0m`);
   },
 };
+
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
