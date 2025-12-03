@@ -46,9 +46,46 @@ class WkScraper {
   WK_KANJI_DIR = join(this.WK_DIR, "kanji");
   FAILED_KANJI_JSON = join(this.WK_DIR, "failed_kanji.json");
 
+  WK_VOCAB_DIR = join(this.WK_DIR, "vocab");
+  WK_VOCAB_LIST_URLS = [
+    {
+      difficulty: "pleasant",
+      url: "https://www.wanikani.com/vocabulary?difficulty=pleasant",
+      dest: join(this.WK_VOCAB_DIR, "vocab_pleasant.html"),
+    },
+    {
+      difficulty: "painful",
+      url: "https://www.wanikani.com/vocabulary?difficulty=painful",
+      dest: join(this.WK_VOCAB_DIR, "vocab_painful.html"),
+    },
+    {
+      difficulty: "death",
+      url: "https://www.wanikani.com/vocabulary?difficulty=death",
+      dest: join(this.WK_DIR, "vocab_death.html"),
+    },
+    {
+      difficulty: "hell",
+      url: "https://www.wanikani.com/vocabulary?difficulty=hell",
+      dest: join(this.WK_DIR, "vocab_hell.html"),
+    },
+    {
+      difficulty: "paradise",
+      url: "https://www.wanikani.com/vocabulary?difficulty=paradise",
+      dest: join(this.WK_DIR, "vocab_paradise.html"),
+    },
+    {
+      difficulty: "reality",
+      url: "https://www.wanikani.com/vocabulary?difficulty=reality",
+      dest: join(this.WK_DIR, "vocab_reality.html"),
+    },
+  ];
+  WK_ALL_VOCAB_JSON = join(this.WK_VOCAB_DIR, "all_vocab.json");
+  FAILED_VOCAB_JSON = join(this.WK_VOCAB_DIR, "failed_vocab.json");
+
   async ensureWkDir() {
     await mkdir(this.WK_DIR, { recursive: true });
     await mkdir(this.WK_KANJI_DIR, { recursive: true });
+    await mkdir(this.WK_VOCAB_DIR, { recursive: true });
   }
 
   async writeWkKanjiHtml() {
@@ -160,6 +197,14 @@ class WkScraper {
       JSON.stringify(result, null, 2),
     );
   }
+
+  async writeWkVocabHtml() {
+    for (const { url, dest } of this.WK_VOCAB_LIST_URLS) {
+      const res = await fetch(url);
+      const html = await res.text();
+      await writeFile(dest, html);
+    }
+  }
 }
 
 const wkScraper = new WkScraper();
@@ -175,4 +220,7 @@ await wkScraper.ensureWkDir();
 // await wkScraper.writeWkKanjiInfoHtml();
 
 //step 4
-await wkScraper.writeParsedKanjiJson();
+// await wkScraper.writeParsedKanjiJson();
+
+//step 5
+await wkScraper.writeWkVocabHtml();
