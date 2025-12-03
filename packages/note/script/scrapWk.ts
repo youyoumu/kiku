@@ -3,6 +3,10 @@ import { join } from "node:path";
 import * as cheerio from "cheerio";
 import { sleep } from "./util";
 
+type WkKanji = {
+  visuallySimilar: string[];
+};
+
 class WkScraper {
   ROOT_DIR = join(import.meta.dirname, "../");
   WK_DIR = join(this.ROOT_DIR, ".wk");
@@ -113,6 +117,49 @@ class WkScraper {
       JSON.stringify(Array.from(new Set(failedKanji)), null, 2),
     );
   }
+
+  parseWkKanjiInfo(html: string): WkKanji {
+    const $ = cheerio.load(html);
+    const visuallySimilar: string[] = [];
+    const section = $(".subject-section--similar-subjects");
+    if (section.length === 0) {
+      return { visuallySimilar: [] };
+    }
+    // select all kanji <span class="subject-character__characters-text" lang="ja">
+    section
+      .find(
+        ".subject-character-grid__item .subject-character__characters-text[lang='ja']",
+      )
+      .each((_, el) => {
+        const text = $(el).text().trim();
+        if (text) visuallySimilar.push(text);
+      });
+
+    return {
+      visuallySimilar,
+    };
+  }
+
+  async writeParsedKanjiJson() {
+    const allKanji = JSON.parse(
+      await readFile(this.WK_ALL_KANJI_JSON, "utf8"),
+    ) as string[];
+
+    const result: Record<string, WkKanji> = {};
+
+    for (const kanji of allKanji) {
+      const htmlPath = join(this.WK_KANJI_DIR, `${kanji}.html`);
+      const html = await readFile(htmlPath, "utf8");
+
+      const data = this.parseWkKanjiInfo(html);
+      result[kanji] = data;
+    }
+
+    await writeFile(
+      join(this.WK_DIR, "parsed_kanji.json"),
+      JSON.stringify(result, null, 2),
+    );
+  }
 }
 
 const wkScraper = new WkScraper();
@@ -125,4 +172,7 @@ await wkScraper.ensureWkDir();
 // await wkScraper.writeAllKanji();
 
 //step 3
-await wkScraper.writeWkKanjiInfoHtml();
+// await wkScraper.writeWkKanjiInfoHtml();
+
+//step 4
+await wkScraper.writeParsedKanjiJson();
