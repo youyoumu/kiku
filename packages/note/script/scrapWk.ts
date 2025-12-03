@@ -229,6 +229,45 @@ class WkScraper {
       JSON.stringify(Array.from(new Set(vocabItems)), null, 2),
     );
   }
+
+  async writeWkVocabInfoHtml() {
+    const allVocab = JSON.parse(
+      await readFile(this.WK_ALL_VOCAB_JSON, "utf8"),
+    ) as string[];
+
+    let failedVocab: string[] = [];
+    try {
+      const text = await readFile(this.FAILED_VOCAB_JSON, "utf8");
+      const json = JSON.parse(text);
+      failedVocab = json;
+    } catch {
+      console.error("Failed to read failed_vocab");
+    }
+    for (let i = 0; i < allVocab.length; i++) {
+      const vocab = allVocab[i];
+      try {
+        process.stdout.clearLine(0);
+        process.stdout.cursorTo(0);
+        process.stdout.write(
+          `Fetching ${vocab} -- ${i + 1}/${allVocab.length} -- Error: ${failedVocab.length}`,
+        );
+        const res = await fetch(
+          `https://www.wanikani.com/vocabulary/${encodeURIComponent(vocab)}`,
+        );
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const html = await res.text();
+        await writeFile(join(this.WK_VOCAB_DIR, `${vocab}.html`), html);
+      } catch (e) {
+        console.error(`Failed to write vocab info for ${vocab}:`, e);
+        failedVocab.push(vocab);
+      }
+      sleep(50);
+    }
+    await writeFile(
+      this.FAILED_VOCAB_JSON,
+      JSON.stringify(Array.from(new Set(failedVocab)), null, 2),
+    );
+  }
 }
 
 const wkScraper = new WkScraper();
@@ -250,4 +289,7 @@ await wkScraper.ensureWkDir();
 // await wkScraper.writeWkVocabHtml();
 
 //step 6
-await wkScraper.writeAllVocab();
+// await wkScraper.writeAllVocab();
+
+//step 7
+await wkScraper.writeWkVocabInfoHtml();
