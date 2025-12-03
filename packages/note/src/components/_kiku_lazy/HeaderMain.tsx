@@ -1,52 +1,20 @@
 import { createSignal, Match, onMount, Show, Switch } from "solid-js";
-import { useCardContext } from "#/components/shared/CardContext";
 import { useNavigationTransition, useThemeTransition } from "#/util/hooks";
 import { nextTheme } from "#/util/theme";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
-import { useBreakpointContext } from "../shared/BreakpointContext";
+import { useCardContext } from "../shared/CardContext";
 import { useConfigContext } from "../shared/ConfigContext";
 import { useGeneralContext } from "../shared/GeneralContext";
+import HeaderLayout from "./HeaderLayout";
 import {
   ArrowLeftIcon,
   BoltIcon,
   CircleChevronDownIcon,
   PaintbrushIcon,
-  RefreshCwIcon,
 } from "./Icons";
-import { AnkiConnect } from "./util/ankiConnect";
 import { capitalize } from "./util/general";
 
-export default function Header(props: { onExitNested?: () => void }) {
-  const [$card] = useCardContext();
-
-  return (
-    <div class="absolute top-0 left-0 w-full py-2 sm:py-4 px-1 sm:px-2 bg-base-100/90 backdrop-blur-xs">
-      <div class="w-full max-w-4xl mx-auto px-1 sm:px-2 gutter-stable overflow-auto invisible-scrollbar">
-        <div
-          class="flex justify-between flex-row h-6 items-center min-h-6"
-          classList={{
-            hidden: $card.page === "nested",
-          }}
-        >
-          <Switch>
-            <Match when={$card.page === "main"}>
-              <HeaderMain onExitNested={props.onExitNested} />
-            </Match>
-            <Match when={$card.page === "nested"}>{null}</Match>
-            <Match when={$card.page === "settings"}>
-              <HeaderSettings />
-            </Match>
-            <Match when={$card.page === "kanji"}>
-              <HeaderKanjiPage />
-            </Match>
-          </Switch>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function HeaderMain(props: { onExitNested?: () => void }) {
+export default function HeaderMain(props: { onExitNested?: () => void }) {
   const [$card] = useCardContext();
   const [$config, $setConfig] = useConfigContext();
   const [$general] = useGeneralContext();
@@ -60,7 +28,7 @@ function HeaderMain(props: { onExitNested?: () => void }) {
   });
 
   return (
-    <>
+    <HeaderLayout>
       <div class="flex gap-1 sm:gap-2 items-center animate-fade-in-sm">
         <Switch>
           <Match when={$card.nested}>
@@ -139,7 +107,7 @@ function HeaderMain(props: { onExitNested?: () => void }) {
           <Frequency />
         </Show>
       </div>
-    </>
+    </HeaderLayout>
   );
 }
 
@@ -244,95 +212,6 @@ function Frequency() {
           ></div>
         </>
       )}
-    </div>
-  );
-}
-
-function HeaderSettings() {
-  const [$general, $setGeneral] = useGeneralContext();
-  const [$card] = useCardContext();
-  const [$config, $setConfig] = useConfigContext();
-  const bp = useBreakpointContext();
-  const navigate = useNavigationTransition();
-
-  async function checkAnkiConnect() {
-    const version = await AnkiConnect.getVersion();
-    if (version) {
-      KIKU_STATE.logger.info("AnkiConnect version:", version);
-      $setGeneral("isAnkiConnectAvailable", true);
-    }
-  }
-
-  onMount(async () => {
-    //NOTE: move this to somewhere higher
-    AnkiConnect.changePort(Number($config.ankiConnectPort));
-
-    if (!bp.isAtLeast("sm")) return;
-    await checkAnkiConnect();
-  });
-
-  return (
-    <>
-      <div class="h-5">
-        <ArrowLeftIcon
-          class="h-full w-full cursor-pointer text-base-content-soft"
-          on:click={() => navigate("main", "back")}
-        ></ArrowLeftIcon>
-      </div>
-      <div class="flex flex-row gap-2 items-center">
-        {$general.isAnkiConnectAvailable && (
-          <>
-            <div class="text-sm text-base-content-calm">
-              AnkiConnect is available
-            </div>
-            <div class="status status-success"></div>
-          </>
-        )}
-        {!$general.isAnkiConnectAvailable && (
-          <>
-            <RefreshCwIcon
-              class="size-4 cursor-pointer text-base-content-soft"
-              on:click={async () => {
-                try {
-                  await checkAnkiConnect();
-                } catch {
-                  $general.toast.error("AnkiConnect is not available");
-                }
-              }}
-            />
-            <div class="text-sm text-base-content-calm">
-              AnkiConnect is not available
-            </div>
-            <div class="status status-error animate-ping"></div>
-          </>
-        )}
-      </div>
-    </>
-  );
-}
-
-function HeaderKanjiPage() {
-  const [$card, $setCard] = useCardContext();
-  const navigate = useNavigationTransition();
-
-  return (
-    <div class="flex flex-row justify-between items-center">
-      <div class="h-5">
-        <ArrowLeftIcon
-          class="h-full w-full cursor-pointer text-base-content-soft"
-          on:click={() => {
-            if ($card.query.selectedSimilarKanji) {
-              navigate(
-                () => $setCard("query", { selectedSimilarKanji: undefined }),
-                "back",
-              );
-            } else {
-              navigate("main", "back");
-            }
-          }}
-        ></ArrowLeftIcon>
-      </div>
-      <div class="flex flex-row gap-2 items-center"></div>
     </div>
   );
 }

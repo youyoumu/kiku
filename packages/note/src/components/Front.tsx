@@ -6,11 +6,10 @@ import {
   onMount,
   runWithOwner,
 } from "solid-js";
-import { isServer, Portal } from "solid-js/web";
+import { isServer } from "solid-js/web";
 import { useCardContext } from "#/components/shared/CardContext";
 import type { DatasetProp } from "#/util/config";
 import { getPlugin } from "#/util/plugin";
-import { Layout } from "./Layout";
 import { PicturePaginationSection } from "./PicturePaginationSection";
 import { PictureSection } from "./PictureSection";
 import { useAnkiFieldContext } from "./shared/AnkiFieldsContext";
@@ -22,7 +21,7 @@ import { useGeneralContext } from "./shared/GeneralContext";
 // biome-ignore format: this looks nicer
 const Lazy = {
   AudioButtons: lazy(async () => ({ default: (await import("./_kiku_lazy")).AudioButtons, })),
-  Header: lazy(async () => ({ default: (await import("./_kiku_lazy")).Header, })),
+  HeaderMain: lazy(async () => ({ default: (await import("./_kiku_lazy")).HeaderMain, })),
   PicturePagination: lazy(async () => ({ default: (await import("./_kiku_lazy")).PicturePagination, })),
   UseAnkiDroid: lazy(async () => ({ default: (await import("./_kiku_lazy")).UseAnkiDroid, })),
   Sentence: lazy(async () => ({ default: (await import("./_kiku_lazy")).Sentence, })),
@@ -104,11 +103,7 @@ export function Front() {
   return (
     <>
       {$card.ready && !$card.nested && <Lazy.UseAnkiDroid />}
-      {$card.ready && (
-        <Portal mount={KIKU_STATE.root}>
-          <Lazy.Header />
-        </Portal>
-      )}
+      {$card.ready && <Lazy.HeaderMain />}
       <div class="flex flex-col gap-4">
         <div
           class="flex rounded-lg gap-4 flex-col sm:flex-row"

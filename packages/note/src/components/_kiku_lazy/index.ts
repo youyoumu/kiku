@@ -1,7 +1,7 @@
 import AudioButtons from "./AudioButtons";
 import BackBody from "./BackBody";
 import BackFooter from "./BackFooter";
-import Header from "./Header";
+import HeaderMain from "./HeaderMain";
 import KanjiPage from "./KanjiPage";
 import PictureModal from "./PictureModal";
 import PicturePagination from "./PicturePagination";
@@ -11,7 +11,7 @@ import Settings from "./Settings";
 import UseAnkiDroid from "./UseAnkiDroid";
 
 export {
-  Header,
+  HeaderMain,
   BackFooter,
   AudioButtons,
   Settings,

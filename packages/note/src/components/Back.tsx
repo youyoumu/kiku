@@ -7,7 +7,7 @@ import {
   Suspense,
   Switch,
 } from "solid-js";
-import { isServer, Portal } from "solid-js/web";
+import { isServer } from "solid-js/web";
 import {
   CardStoreContextProvider,
   useCardContext,
@@ -15,7 +15,6 @@ import {
 import type { DatasetProp } from "#/util/config";
 import { useKanji, useNavigationTransition } from "#/util/hooks";
 import { getPlugin } from "#/util/plugin";
-import { Layout } from "./Layout";
 import { PicturePaginationSection } from "./PicturePaginationSection";
 import { PictureSection } from "./PictureSection";
 import {
@@ -29,7 +28,7 @@ import { useGeneralContext } from "./shared/GeneralContext";
 // biome-ignore format: this looks nicer
 const Lazy = {
   Settings: lazy(async () => ({ default: (await import("./_kiku_lazy")).Settings, })),
-  Header: lazy(async () => ({ default: (await import("./_kiku_lazy")).Header, })),
+  HeaderMain: lazy(async () => ({ default: (await import("./_kiku_lazy")).HeaderMain, })),
   BackFooter: lazy(async () => ({ default: (await import("./_kiku_lazy")).BackFooter, })),
   AudioButtons: lazy(async () => ({ default: (await import("./_kiku_lazy")).AudioButtons, })),
   PictureModal: lazy(async () => ({ default: (await import("./_kiku_lazy")).PictureModal, })),
@@ -95,9 +94,6 @@ export function Back(props: { onExitNested?: () => void }) {
   return (
     <>
       {$card.ready && !$card.nested && <Lazy.UseAnkiDroid />}
-      <Portal mount={KIKU_STATE.root}>
-        {$card.ready && <Lazy.Header onExitNested={props.onExitNested} />}
-      </Portal>
       <Switch>
         <Match when={$card.page === "settings" && !$card.nested && $card.ready}>
           <Lazy.Settings />
@@ -121,6 +117,7 @@ export function Back(props: { onExitNested?: () => void }) {
           </AnkiFieldContextProvider>
         </Match>
         <Match when={$card.page === "main"}>
+          {$card.ready && <Lazy.HeaderMain onExitNested={props.onExitNested} />}
           <div class="flex flex-col gap-4">
             <div
               class="flex rounded-lg gap-4 flex-col sm:flex-row"

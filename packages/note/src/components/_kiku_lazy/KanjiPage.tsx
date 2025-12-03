@@ -4,9 +4,10 @@ import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useGeneralContext } from "../shared/GeneralContext";
+import HeaderKanjiPage from "./HeaderKanjiPage";
 import { ArrowLeftIcon } from "./Icons";
 import { KanjiContextProvider, useKanjiContext } from "./KanjiContext";
-import { capitalizeSentence, capitalizeSmart } from "./util/general";
+import { capitalizeSentence } from "./util/general";
 
 export default function KanjiPage() {
   const [$card, $setCard] = useCardContext();
@@ -23,6 +24,7 @@ export default function KanjiPage() {
 
   return (
     <>
+      <HeaderKanjiPage />
       <Show when={$card.query.selectedSimilarKanji}>
         <div class="flex flex-col items-center gap-2">
           <div class="text-lg text-base-content-calm">Similar Kanji</div>

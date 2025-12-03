@@ -26,6 +26,7 @@ import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useConfigContext } from "../shared/ConfigContext";
 import { useCtxContext } from "../shared/CtxContext";
 import { useGeneralContext } from "../shared/GeneralContext";
+import HeaderSettings from "./HeaderSettings";
 import { ClipboardCopyIcon, InfoIcon, RefreshCwIcon, UndoIcon } from "./Icons";
 import { AnkiConnect } from "./util/ankiConnect";
 import { capitalize } from "./util/general";
@@ -83,44 +84,47 @@ export default function Settings() {
   });
 
   return (
-    <div>
-      <GeneralSettings />
-      <div class="divider"></div>
-      <ModSettings />
-      <div class="divider"></div>
-      <ThemeSettings />
-      <div class="divider"></div>
-      <FontSettings />
-      <div class="divider"></div>
-      <FontSizeSettings />
-      <div class="divider"></div>
-      <AnkiDroidSettings />
-      <div class="divider"></div>
-      <DebugSettings />
-      <div class="divider"></div>
-      <div class="pb-16"></div>
-      <Portal mount={KIKU_STATE.root}>
-        <div class="max-w-4xl mx-auto w-full relative">
-          <div class="flex flex-row gap-2 justify-end animate-fade-in absolute bottom-0 right-0 mx-4 mb-4">
-            <button class="btn" on:click={() => navigate("main", "back")}>
-              Back
-            </button>
-            <button
-              class="btn"
-              classList={{
-                "btn-primary": $general.isAnkiConnectAvailable,
-                "btn-disabled bg-base-300 text-base-content-faint":
-                  !$general.isAnkiConnectAvailable,
-              }}
-              disabled={!$general.isAnkiConnectAvailable}
-              on:click={saveConfig}
-            >
-              Save
-            </button>
+    <>
+      <HeaderSettings />
+      <div>
+        <GeneralSettings />
+        <div class="divider"></div>
+        <ModSettings />
+        <div class="divider"></div>
+        <ThemeSettings />
+        <div class="divider"></div>
+        <FontSettings />
+        <div class="divider"></div>
+        <FontSizeSettings />
+        <div class="divider"></div>
+        <AnkiDroidSettings />
+        <div class="divider"></div>
+        <DebugSettings />
+        <div class="divider"></div>
+        <div class="pb-16"></div>
+        <Portal mount={KIKU_STATE.root}>
+          <div class="max-w-4xl mx-auto w-full relative">
+            <div class="flex flex-row gap-2 justify-end animate-fade-in absolute bottom-0 right-0 mx-4 mb-4">
+              <button class="btn" on:click={() => navigate("main", "back")}>
+                Back
+              </button>
+              <button
+                class="btn"
+                classList={{
+                  "btn-primary": $general.isAnkiConnectAvailable,
+                  "btn-disabled bg-base-300 text-base-content-faint":
+                    !$general.isAnkiConnectAvailable,
+                }}
+                disabled={!$general.isAnkiConnectAvailable}
+                on:click={saveConfig}
+              >
+                Save
+              </button>
+            </div>
           </div>
-        </div>
-      </Portal>
-    </div>
+        </Portal>
+      </div>
+    </>
   );
 }
 
