@@ -13,6 +13,7 @@ type Query = {
   kanji: Record<string, KanjiData>;
   sameReading: AnkiNote[] | undefined;
   selectedSimilarKanji: string | undefined;
+  noteList: [string, AnkiNote[]][];
 };
 
 type CardStore = {
@@ -32,6 +33,7 @@ type CardStore = {
     similarKanjiPage: string | symbol | undefined;
     noteId: number | undefined;
   };
+  navigateBack: (() => void)[];
   nestedAnkiFields: AnkiFields;
   nested: boolean;
 };
@@ -59,7 +61,9 @@ export function CardStoreContextProvider(props: {
       kanji: {},
       sameReading: undefined,
       selectedSimilarKanji: undefined,
+      noteList: [],
     },
+    navigateBack: [],
     focus: {
       SAME_READING: Symbol.for("SAME_READING"),
       kanjiPage: undefined,

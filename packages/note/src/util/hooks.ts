@@ -36,7 +36,9 @@ export function useNavigationTransition() {
   function navigate(
     destination: "main" | "settings" | "nested" | "kanji" | (() => void),
     direction: "back" | "forward",
+    navigateBack?: () => void,
   ) {
+    if (navigateBack) $setCard("navigateBack", (old) => [...old, navigateBack]);
     const start = () => {
       if (typeof destination === "function") {
         destination();
@@ -57,8 +59,13 @@ export function useNavigationTransition() {
       start();
     }
   }
+  function navigateBack() {
+    const last = $card.navigateBack[$card.navigateBack.length - 1];
+    $setCard("navigateBack", (list) => list.slice(0, -1));
+    last?.();
+  }
 
-  return navigate;
+  return { navigate, navigateBack };
 }
 
 export function useThemeTransition() {

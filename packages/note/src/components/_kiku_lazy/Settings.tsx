@@ -62,7 +62,7 @@ export default function Settings() {
   const [$config] = useConfigContext();
   const [$card, _$setCard] = useCardContext();
   const [$general, $setGeneral] = useGeneralContext();
-  const navigate = useNavigationTransition();
+  const { navigateBack } = useNavigationTransition();
 
   const saveConfig = async () => {
     try {
@@ -105,7 +105,7 @@ export default function Settings() {
         <Portal mount={KIKU_STATE.root}>
           <div class="max-w-4xl mx-auto w-full relative">
             <div class="flex flex-row gap-2 justify-end animate-fade-in absolute bottom-0 right-0 mx-4 mb-4">
-              <button class="btn" on:click={() => navigate("main", "back")}>
+              <button class="btn" on:click={() => navigateBack()}>
                 Back
               </button>
               <button

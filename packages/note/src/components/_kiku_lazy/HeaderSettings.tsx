@@ -11,7 +11,7 @@ export default function HeaderSettings() {
   const [$general, $setGeneral] = useGeneralContext();
   const [$config, $setConfig] = useConfigContext();
   const bp = useBreakpointContext();
-  const navigate = useNavigationTransition();
+  const { navigateBack } = useNavigationTransition();
 
   async function checkAnkiConnect() {
     const version = await AnkiConnect.getVersion();
@@ -34,7 +34,9 @@ export default function HeaderSettings() {
       <div class="h-5">
         <ArrowLeftIcon
           class="h-full w-full cursor-pointer text-base-content-soft"
-          on:click={() => navigate("main", "back")}
+          on:click={() => {
+            navigateBack();
+          }}
         ></ArrowLeftIcon>
       </div>
       <div class="flex flex-row gap-2 items-center">

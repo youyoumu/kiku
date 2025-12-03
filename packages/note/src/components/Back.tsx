@@ -39,7 +39,7 @@ const Lazy = {
 };
 
 export function Back(props: { onExitNested?: () => void }) {
-  const navigate = useNavigationTransition();
+  const { navigate, navigateBack } = useNavigationTransition();
   const [$card, $setCard] = useCardContext();
   const { ankiFields } = useAnkiFieldContext<"back">();
   const [$general, $setGeneral] = useGeneralContext();
@@ -106,11 +106,7 @@ export function Back(props: { onExitNested?: () => void }) {
             <CardStoreContextProvider nested side="back">
               <FieldGroupContextProvider>
                 <CtxContextProvider>
-                  <Back
-                    onExitNested={() => {
-                      navigate("kanji", "back");
-                    }}
-                  />
+                  <Back onExitNested={navigateBack} />
                 </CtxContextProvider>
               </FieldGroupContextProvider>
             </CardStoreContextProvider>

@@ -1,4 +1,5 @@
 import { createSignal, Match, onMount, Show, Switch } from "solid-js";
+import type { AnkiNote } from "#/types";
 import { useNavigationTransition, useThemeTransition } from "#/util/hooks";
 import { nextTheme } from "#/util/theme";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
@@ -15,10 +16,10 @@ import {
 import { capitalize } from "./util/general";
 
 export default function HeaderMain(props: { onExitNested?: () => void }) {
-  const [$card] = useCardContext();
+  const [$card, $setCard] = useCardContext();
   const [$config, $setConfig] = useConfigContext();
   const [$general] = useGeneralContext();
-  const navigate = useNavigationTransition();
+  const { navigate, navigateBack } = useNavigationTransition();
   const [startupTime, setStartupTime] = createSignal<number | null>(null);
   const changeTheme = useThemeTransition();
 
@@ -47,7 +48,9 @@ export default function HeaderMain(props: { onExitNested?: () => void }) {
                   "text-base-content-subtle-100": $card.side === "front",
                 }}
                 on:click={() => {
-                  navigate("settings", "forward");
+                  navigate("settings", "forward", () =>
+                    navigate("main", "back"),
+                  );
                 }}
               ></BoltIcon>
               <Show when={$general.isThemeChanged}>
@@ -113,7 +116,7 @@ export default function HeaderMain(props: { onExitNested?: () => void }) {
 
 function KanjiPageIndicator() {
   const [$card, $setCard] = useCardContext();
-  const navigate = useNavigationTransition();
+  const { navigate } = useNavigationTransition();
 
   const length = () =>
     Object.entries($card.query.kanji).length +
@@ -124,7 +127,11 @@ function KanjiPageIndicator() {
     const isSameReadingResult = ($card.query.sameReading?.length ?? 0) > 0;
     if (isKanjiResult || isSameReadingResult) {
       $setCard("focus", { kanjiPage: key, noteId: undefined });
-      navigate("kanji", "forward");
+      const list = Object.entries($card.query.kanji).map(
+        ([kanji, data]) => [kanji, data.shared] as [string, AnkiNote[]],
+      );
+      $setCard("query", "noteList", list);
+      navigate("kanji", "forward", () => navigate("main", "back"));
     }
   };
 

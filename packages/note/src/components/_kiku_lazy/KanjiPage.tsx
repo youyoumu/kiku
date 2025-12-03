@@ -1,4 +1,5 @@
 import { For, onMount, Show } from "solid-js";
+import { unwrap } from "solid-js/store";
 import { useCardContext } from "#/components/shared/CardContext";
 import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
@@ -12,15 +13,6 @@ import { capitalizeSentence } from "./util/general";
 export default function KanjiPage() {
   const [$card, $setCard] = useCardContext();
   const [$general, $setGeneral] = useGeneralContext();
-  const list = () => {
-    return $card.query.selectedSimilarKanji
-      ? Object.entries(
-          $card.query.kanji[$card.query.selectedSimilarKanji].similar,
-        )
-      : Object.entries($card.query.kanji).map(
-          ([kanji, data]) => [kanji, data.shared] as const,
-        );
-  };
 
   return (
     <>
@@ -35,7 +27,7 @@ export default function KanjiPage() {
       </Show>
 
       <div class="flex flex-col gap-2 sm:gap-4 ">
-        <For each={list()}>
+        <For each={$card.query.noteList}>
           {([kanji, data]) => {
             return (
               <KanjiContextProvider kanji={kanji}>
@@ -71,7 +63,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
   const [$card, $setCard] = useCardContext();
   const [$kanji, $setKanji] = useKanjiContext();
   const data = () => props.data;
-  const navigate = useNavigationTransition();
+  const { navigate, navigateBack } = useNavigationTransition();
 
   const focus = () => {
     if ($card.query.selectedSimilarKanji) return $card.focus.similarKanjiPage;
@@ -92,10 +84,30 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
           <div
             class="flex gap-2 items-center btn btn-sm sm:btn-md z-10"
             on:click={() => {
+              const prevSelectedSimilarKanji = unwrap(
+                $card.query.selectedSimilarKanji,
+              );
+              const prevNoteList = unwrap($card.query.noteList);
               $setCard("focus", { kanjiPage: $kanji.kanji, noteId: undefined });
+              const list = Object.entries(
+                unwrap($card.query.kanji[$kanji.kanji].similar),
+              );
               navigate(
-                () => $setCard("query", { selectedSimilarKanji: $kanji.kanji }),
+                () =>
+                  $setCard("query", {
+                    noteList: list,
+                    selectedSimilarKanji: $kanji.kanji,
+                  }),
                 "forward",
+                () =>
+                  navigate(
+                    () =>
+                      $setCard("query", {
+                        selectedSimilarKanji: prevSelectedSimilarKanji,
+                        noteList: prevNoteList,
+                      }),
+                    "back",
+                  ),
               );
             }}
           >
@@ -229,7 +241,7 @@ function AnkiNoteItem(props: {
 }) {
   const data = () => props.data;
   const reading = () => props.reading;
-  const navigate = useNavigationTransition();
+  const { navigate } = useNavigationTransition();
   const [$card, $setCard] = useCardContext();
   const [$kanji, $setKanji] = useKanjiContext();
 
@@ -304,7 +316,7 @@ function AnkiNoteItem(props: {
     }
     $setCard("focus", { noteId: note.noteId });
     $setCard("nestedAnkiFields", ankiFields);
-    navigate("nested", "forward");
+    navigate("nested", "forward", () => navigate("kanji", "back"));
   };
 
   let ref: HTMLDivElement | undefined;
