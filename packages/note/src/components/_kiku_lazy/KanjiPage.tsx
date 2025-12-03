@@ -1,4 +1,5 @@
-import { For, onMount, Show } from "solid-js";
+import { For, Match, onMount, Show, Switch } from "solid-js";
+import { unwrap } from "solid-js/store";
 import { useCardContext } from "#/components/shared/CardContext";
 import type { AnkiNote } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
@@ -34,43 +35,61 @@ function Page() {
   const [$kanjiPage, $setKanjiPage] = useKanjiPageContext();
 
   return (
-    <>
-      <HeaderKanjiPage />
-      <Show when={$kanjiPage.selectedKanji}>
-        <div class="flex flex-col items-center gap-2">
-          {/* TODO: change text  */}
-          <div class="text-lg text-base-content-calm">Similar Kanji</div>
-          <div class="flex justify-center text-7xl font-secondary ">
-            {$kanjiPage.selectedKanji?.kanji}
-          </div>
-        </div>
-      </Show>
-
-      <div class="flex flex-col gap-2 sm:gap-4 ">
-        <For each={$kanjiPage.noteList}>
-          {([kanji, data]) => {
-            return (
-              <KanjiContextProvider kanji={kanji}>
-                <KanjiCollapsible data={data} />
-              </KanjiContextProvider>
-            );
+    <Switch>
+      <Match when={$kanjiPage.nested}>
+        <KanjiPageContextProvider
+          noteList={$kanjiPage.nestedNoteList}
+          sameReading={[]}
+          focus={{
+            //TODO: set ?
+            kanji: undefined,
+            noteId: undefined,
           }}
-        </For>
-        <Show
-          when={$kanjiPage.sameReading && $kanjiPage.sameReading.length > 0}
+          selectedKanji={$kanjiPage.selectedKanji}
         >
-          <SameReadingCollapsible />
-        </Show>
-      </div>
-      <div class="flex justify-center items-center">
-        <Show when={$general.manifest}>
-          <div class="text-base-content-faint text-sm">
-            Updated at{" "}
-            {new Date($general.manifest?.generatedAt ?? 0).toLocaleDateString()}
+          <Page />
+        </KanjiPageContextProvider>
+      </Match>
+      <Match when={!$kanjiPage.nested}>
+        <HeaderKanjiPage />
+        <Show when={$kanjiPage.selectedKanji}>
+          <div class="flex flex-col items-center gap-2">
+            {/* TODO: change text  */}
+            <div class="text-lg text-base-content-calm">Similar Kanji</div>
+            <div class="flex justify-center text-7xl font-secondary ">
+              {$kanjiPage.selectedKanji?.kanji}
+            </div>
           </div>
         </Show>
-      </div>
-    </>
+
+        <div class="flex flex-col gap-2 sm:gap-4 ">
+          <For each={$kanjiPage.noteList}>
+            {([kanji, data]) => {
+              return (
+                <KanjiContextProvider kanji={kanji}>
+                  <KanjiCollapsible data={data} />
+                </KanjiContextProvider>
+              );
+            }}
+          </For>
+          <Show
+            when={$kanjiPage.sameReading && $kanjiPage.sameReading.length > 0}
+          >
+            <SameReadingCollapsible />
+          </Show>
+        </div>
+        <div class="flex justify-center items-center">
+          <Show when={$general.manifest}>
+            <div class="text-base-content-faint text-sm">
+              Updated at{" "}
+              {new Date(
+                $general.manifest?.generatedAt ?? 0,
+              ).toLocaleDateString()}
+            </div>
+          </Show>
+        </div>
+      </Match>
+    </Switch>
   );
 }
 
@@ -88,46 +107,31 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
       />
       <div class="collapse-title justify-between flex items-center ps-2 sm:ps-4 pe-2 sm:pe-4 py-2 sm:py-4">
         <KanjiText />
-        {/* <Show */}
-        {/*   when={ */}
-        {/*     !$card.query.selectedSimilarKanji && */}
-        {/*     Object.keys($card.query.kanji[$kanji.kanji].similar).length > 0 */}
-        {/*   } */}
-        {/* > */}
-        {/*   <div */}
-        {/*     class="flex gap-2 items-center btn btn-sm sm:btn-md z-10" */}
-        {/*     on:click={() => { */}
-        {/*       const prevSelectedSimilarKanji = unwrap( */}
-        {/*         $card.query.selectedSimilarKanji, */}
-        {/*       ); */}
-        {/*       const prevNoteList = unwrap($card.query.noteList); */}
-        {/*       $setCard("focus", { kanjiPage: $kanji.kanji, noteId: undefined }); */}
-        {/*       const list = Object.entries( */}
-        {/*         unwrap($card.query.kanji[$kanji.kanji].similar), */}
-        {/*       ); */}
-        {/*       navigate( */}
-        {/*         () => */}
-        {/*           $setCard("query", { */}
-        {/*             noteList: list, */}
-        {/*             selectedSimilarKanji: $kanji.kanji, */}
-        {/*           }), */}
-        {/*         "forward", */}
-        {/*         () => */}
-        {/*           navigate( */}
-        {/*             () => */}
-        {/*               $setCard("query", { */}
-        {/*                 selectedSimilarKanji: prevSelectedSimilarKanji, */}
-        {/*                 noteList: prevNoteList, */}
-        {/*               }), */}
-        {/*             "back", */}
-        {/*           ), */}
-        {/*       ); */}
-        {/*     }} */}
-        {/*   > */}
-        {/*     <div class="text-base-content-calm">Similar</div> */}
-        {/*     <ArrowLeftIcon class="size-5 sm:size-8 text-base-content-soft rotate-180 cursor-pointer"></ArrowLeftIcon> */}
-        {/*   </div> */}
-        {/* </Show> */}
+        <Show when={$kanji.similarKanji.length}>
+          <div
+            class="flex gap-2 items-center btn btn-sm sm:btn-md z-10"
+            on:click={() => {
+              $setKanjiPage("focus", {
+                kanji: $kanji.kanji,
+                noteId: undefined,
+              });
+              const list = unwrap($kanji.similarKanji);
+              navigate(
+                () => {
+                  // TODO: need 2 state?
+                  // $setKanjiPage("selectedKanji", {});
+                  $setKanjiPage("nestedNoteList", list);
+                  $setKanjiPage("nested", true);
+                },
+                "forward",
+                () => navigate(() => $setKanjiPage("nested", false), "back"),
+              );
+            }}
+          >
+            <div class="text-base-content-calm">Similar</div>
+            <ArrowLeftIcon class="size-5 sm:size-8 text-base-content-soft rotate-180 cursor-pointer"></ArrowLeftIcon>
+          </div>
+        </Show>
       </div>
       <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col gap-2">
         <Show when={$kanji.jpdbKanji?.readings.length}>
