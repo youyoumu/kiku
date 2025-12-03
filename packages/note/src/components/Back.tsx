@@ -93,7 +93,7 @@ export function Back(props: { onExitNested?: () => void }) {
   };
 
   return (
-    <Layout>
+    <>
       {$card.ready && !$card.nested && <Lazy.UseAnkiDroid />}
       <Portal mount={KIKU_STATE.root}>
         {$card.ready && <Lazy.Header onExitNested={props.onExitNested} />}
@@ -184,6 +184,6 @@ export function Back(props: { onExitNested?: () => void }) {
           on:click={() => $setCard("pictureModal", undefined)}
         />
       )}
-    </Layout>
+    </>
   );
 }

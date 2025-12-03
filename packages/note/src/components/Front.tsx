@@ -102,7 +102,7 @@ export function Front() {
   });
 
   return (
-    <Layout>
+    <>
       {$card.ready && !$card.nested && <Lazy.UseAnkiDroid />}
       {$card.ready && (
         <Portal mount={KIKU_STATE.root}>
@@ -166,6 +166,6 @@ export function Front() {
           {isServer ? "{{Hint}}" : undefined}
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

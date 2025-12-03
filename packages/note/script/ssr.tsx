@@ -1,6 +1,7 @@
 import { createStore } from "solid-js/store";
 import { generateHydrationScript, renderToString } from "solid-js/web";
 import { Front } from "#/components/Front";
+import { Layout } from "#/components/Layout";
 import { AnkiFieldContextProvider } from "#/components/shared/AnkiFieldsContext";
 import { CardStoreContextProvider } from "#/components/shared/CardContext";
 import { ConfigContextProvider } from "#/components/shared/ConfigContext";
@@ -33,7 +34,9 @@ export function getSsrTemplate() {
             <ConfigContextProvider value={[config, setConfig]}>
               <FieldGroupContextProvider>
                 <CtxContextProvider>
-                  <Front />
+                  <Layout>
+                    <Front />
+                  </Layout>
                 </CtxContextProvider>
               </FieldGroupContextProvider>
             </ConfigContextProvider>
@@ -50,7 +53,9 @@ export function getSsrTemplate() {
             <ConfigContextProvider value={[config, setConfig]}>
               <FieldGroupContextProvider>
                 <CtxContextProvider>
-                  <Back />
+                  <Layout>
+                    <Back />
+                  </Layout>
                 </CtxContextProvider>
               </FieldGroupContextProvider>
             </ConfigContextProvider>
