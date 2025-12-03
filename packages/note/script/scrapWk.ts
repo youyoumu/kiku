@@ -51,12 +51,12 @@ class WkScraper {
     {
       difficulty: "pleasant",
       url: "https://www.wanikani.com/vocabulary?difficulty=pleasant",
-      dest: join(this.WK_VOCAB_DIR, "vocab_pleasant.html"),
+      dest: join(this.WK_DIR, "vocab_pleasant.html"),
     },
     {
       difficulty: "painful",
       url: "https://www.wanikani.com/vocabulary?difficulty=painful",
-      dest: join(this.WK_VOCAB_DIR, "vocab_painful.html"),
+      dest: join(this.WK_DIR, "vocab_painful.html"),
     },
     {
       difficulty: "death",
@@ -79,8 +79,8 @@ class WkScraper {
       dest: join(this.WK_DIR, "vocab_reality.html"),
     },
   ];
-  WK_ALL_VOCAB_JSON = join(this.WK_VOCAB_DIR, "all_vocab.json");
-  FAILED_VOCAB_JSON = join(this.WK_VOCAB_DIR, "failed_vocab.json");
+  WK_ALL_VOCAB_JSON = join(this.WK_DIR, "all_vocab.json");
+  FAILED_VOCAB_JSON = join(this.WK_DIR, "failed_vocab.json");
 
   async ensureWkDir() {
     await mkdir(this.WK_DIR, { recursive: true });
@@ -205,6 +205,30 @@ class WkScraper {
       await writeFile(dest, html);
     }
   }
+
+  async writeAllVocab() {
+    const vocabItems: string[] = [];
+
+    for (const entry of this.WK_VOCAB_LIST_URLS) {
+      const html = await readFile(entry.dest, "utf8");
+      const $ = cheerio.load(html);
+      $("a.subject-character--vocabulary").each((_, el) => {
+        const $el = $(el);
+        const vocab = $el
+          .find(".subject-character__characters-text[lang='ja']")
+          .text()
+          .trim();
+        if (!vocab) throw new Error(`Failed to parse vocab`);
+        vocabItems.push(vocab);
+      });
+    }
+
+    console.log("DEBUG[1227]: vocabItems=", vocabItems, vocabItems.length);
+    await writeFile(
+      this.WK_ALL_VOCAB_JSON,
+      JSON.stringify(Array.from(new Set(vocabItems)), null, 2),
+    );
+  }
 }
 
 const wkScraper = new WkScraper();
@@ -223,4 +247,7 @@ await wkScraper.ensureWkDir();
 // await wkScraper.writeParsedKanjiJson();
 
 //step 5
-await wkScraper.writeWkVocabHtml();
+// await wkScraper.writeWkVocabHtml();
+
+//step 6
+await wkScraper.writeAllVocab();
