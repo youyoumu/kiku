@@ -1,14 +1,15 @@
 import { createEffect, createSignal, onMount } from "solid-js";
-import { useCardContext } from "#/components/shared/CardContext";
+import { useGeneralContext } from "./shared/GeneralContext";
 
 export default function UseAnkiWeb() {
-  const [$card] = useCardContext();
+  const [$general] = useGeneralContext();
+
   const [offset, setOffset] = createSignal(0);
   let counter = 0;
 
   if (KIKU_STATE.isAnkiWeb) {
     onMount(() => {
-      const el = $card.layoutRef;
+      const el = $general.layoutRef;
       if (!el) return;
       function autoResize() {
         if (!el) return;
@@ -26,7 +27,7 @@ export default function UseAnkiWeb() {
   }
 
   createEffect(() => {
-    const el = $card.layoutRef;
+    const el = $general.layoutRef;
     if (!el || !KIKU_STATE.isAnkiWeb) return;
     el.style.height = `calc(100svh - ${offset()}px)`;
   });

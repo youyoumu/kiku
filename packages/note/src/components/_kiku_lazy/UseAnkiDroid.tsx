@@ -2,6 +2,7 @@ import { createEffect, createSignal, Match, onCleanup, Switch } from "solid-js";
 import { isServer, Portal } from "solid-js/web";
 import { useCardContext } from "#/components/shared/CardContext";
 import { useConfigContext } from "../shared/ConfigContext";
+import { useGeneralContext } from "../shared/GeneralContext";
 import { CheckIcon, XIcon } from "./Icons";
 
 function reverseEase(ease: "ease1" | "ease3") {
@@ -33,7 +34,8 @@ export default function UseAnkiDroid() {
   let leftIconRef: SVGSVGElement | undefined;
 
   const [$card] = useCardContext();
-  const el$ = () => $card.contentRef;
+  const [$general] = useGeneralContext();
+  const el$ = () => $general.contentRef;
   const reverse = $config.ankiDroidReverseSwipeDirection;
 
   const THRESHOLD = 60;

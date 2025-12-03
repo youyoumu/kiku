@@ -296,7 +296,7 @@ function HeaderSettings() {
                 try {
                   await checkAnkiConnect();
                 } catch {
-                  $card.toast.error("AnkiConnect is not available");
+                  $general.toast.error("AnkiConnect is not available");
                 }
               }}
             />

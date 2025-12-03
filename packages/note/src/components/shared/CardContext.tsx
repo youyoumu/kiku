@@ -8,13 +8,6 @@ export type KanjiData = {
   similar: Record<string, AnkiNote[]>;
 };
 
-type Toast = {
-  success: (message: string) => void;
-  error: (message: string) => void;
-  message: string | undefined;
-  type: "success" | "error";
-};
-
 type Query = {
   status: "loading" | "success" | "error";
   kanji: Record<string, KanjiData>;
@@ -27,14 +20,11 @@ type CardStore = {
   page: "main" | "settings" | "kanji" | "nested";
   ready: boolean;
   isNsfw: boolean;
-  layoutRef?: HTMLDivElement;
-  contentRef?: HTMLDivElement;
   expressionAudioRef?: HTMLDivElement;
   sentenceFieldRef?: HTMLDivElement;
   sentenceAudioRef?: HTMLDivElement;
   sentenceAudios?: HTMLAnchorElement[] | HTMLAudioElement[];
   pictureModal?: string;
-  toast: Toast;
   query: Query;
   focus: {
     SAME_READING: symbol;
@@ -54,36 +44,16 @@ export function CardStoreContextProvider(props: {
   nested?: boolean;
   side: "front" | "back";
 }) {
-  let timeout: number;
-
-  const success = (message: string) => {
-    if (timeout) clearTimeout(timeout);
-    $setCard("toast", { message, type: "success" });
-    timeout = setTimeout(() => {
-      $setCard("toast", { message: undefined, type: "success" });
-    }, 3000);
-  };
-  const error = (message: string) => {
-    if (timeout) clearTimeout(timeout);
-    $setCard("toast", { message, type: "error" });
-    timeout = setTimeout(() => {
-      $setCard("toast", { message: undefined, type: "error" });
-    }, 3000);
-  };
-
   const [$card, $setCard] = createStore<CardStore>({
     side: props.side,
     page: "main",
     ready: false,
     isNsfw: false,
-    layoutRef: undefined,
-    contentRef: undefined,
     expressionAudioRef: undefined,
     sentenceFieldRef: undefined,
     sentenceAudioRef: undefined,
     sentenceAudios: undefined,
     pictureModal: undefined,
-    toast: { success, error, message: undefined, type: "success" },
     query: {
       status: "loading",
       kanji: {},

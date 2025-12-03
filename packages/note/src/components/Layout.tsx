@@ -1,36 +1,35 @@
 import type { JSX } from "solid-js";
 import { Portal } from "solid-js/web";
-import { useCardContext } from "#/components/shared/CardContext";
+import { useGeneralContext } from "./shared/GeneralContext";
 import UseAnkiWeb from "./UseAnkiWeb";
 
 export function Layout(props: { children: JSX.Element }) {
-  const [$card, $setCard] = useCardContext();
-  if ($card.nested) return props.children;
+  const [$general, $setGeneral] = useGeneralContext();
 
   return (
     <div
-      ref={(ref) => $setCard("layoutRef", ref)}
+      ref={(ref) => $setGeneral("layoutRef", ref)}
       class="overflow-y-auto overflow-x-hidden gutter-stable h-svh font-primary transition-colors relative"
     >
       <UseAnkiWeb />
 
       <div
         class="flex flex-col gap-6 p-2 sm:p-4 bg-base-100 min-h-full max-w-4xl mx-auto pt-10 sm:pt-14"
-        ref={(ref) => $setCard("contentRef", ref)}
+        ref={(ref) => $setGeneral("contentRef", ref)}
       >
         {props.children}
       </div>
       <Portal mount={KIKU_STATE.root}>
-        {$card.toast.message && (
+        {$general.toast.message && (
           <div class="toast toast-top toast-center">
             <div
               class="alert"
               classList={{
-                "alert-error": $card.toast.type === "error",
-                "alert-success": $card.toast.type === "success",
+                "alert-error": $general.toast.type === "error",
+                "alert-success": $general.toast.type === "success",
               }}
             >
-              <span>{$card.toast.message}</span>
+              <span>{$general.toast.message}</span>
             </div>
           </div>
         )}

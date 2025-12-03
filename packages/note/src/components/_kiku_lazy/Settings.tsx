@@ -67,9 +67,9 @@ export default function Settings() {
     try {
       KIKU_STATE.logger.debug("Saving config:", $config);
       await AnkiConnect.saveConfig($config);
-      $card.toast.success("Saved! Restart Anki to apply changes.");
+      $general.toast.success("Saved! Restart Anki to apply changes.");
     } catch (e) {
-      $card.toast.error(
+      $general.toast.error(
         `Failed to save config: ${e instanceof Error ? e.message : ""}`,
       );
     }
@@ -772,10 +772,10 @@ function DebugSettings() {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        $card.toast.success("Copied to clipboard!");
+        $general.toast.success("Copied to clipboard!");
       })
       .catch(() => {
-        $card.toast.error(
+        $general.toast.error(
           "Copy to clipboard is not supported, you can select and CTRL+C manually.",
         );
       });

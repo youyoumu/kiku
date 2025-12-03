@@ -12,6 +12,16 @@ type GeneralStore = {
   aborter: AbortController;
   isAnkiConnectAvailable: boolean;
   manifest: KikuNotesManifest | undefined;
+  layoutRef: HTMLDivElement | undefined;
+  contentRef: HTMLDivElement | undefined;
+  toast: Toast;
+};
+
+type Toast = {
+  success: (message: string) => void;
+  error: (message: string) => void;
+  message: string | undefined;
+  type: "success" | "error";
 };
 
 const GeneralContext =
@@ -21,6 +31,22 @@ export function GeneralContextProvider(props: {
   children: JSX.Element;
   aborter: AbortController;
 }) {
+  let timeout: number;
+  const success = (message: string) => {
+    if (timeout) clearTimeout(timeout);
+    $setGeneral("toast", { message, type: "success" });
+    timeout = setTimeout(() => {
+      $setGeneral("toast", { message: undefined, type: "success" });
+    }, 3000);
+  };
+  const error = (message: string) => {
+    if (timeout) clearTimeout(timeout);
+    $setGeneral("toast", { message, type: "error" });
+    timeout = setTimeout(() => {
+      $setGeneral("toast", { message: undefined, type: "error" });
+    }, 3000);
+  };
+
   const [$general, $setGeneral] = createStore<GeneralStore>({
     plugin: undefined,
     isThemeChanged: isServer
@@ -33,6 +59,9 @@ export function GeneralContextProvider(props: {
     aborter: props.aborter,
     isAnkiConnectAvailable: false,
     manifest: undefined,
+    layoutRef: undefined,
+    contentRef: undefined,
+    toast: { success, error, message: undefined, type: "success" },
   });
 
   return (
