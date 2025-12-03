@@ -27,6 +27,7 @@ type CardStore = {
   query: Query;
   focus: {
     kanji: string | symbol | undefined;
+    noteId: number | undefined;
   };
   navigateBack: (() => void)[];
   nestedAnkiFields: AnkiFields;
@@ -59,6 +60,7 @@ export function CardStoreContextProvider(props: {
     },
     focus: {
       kanji: undefined,
+      noteId: undefined,
     },
     navigateBack: [],
     nestedAnkiFields: ankiFieldsSkeleton,

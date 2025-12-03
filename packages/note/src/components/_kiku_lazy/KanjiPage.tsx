@@ -1,7 +1,7 @@
 import { For, Match, onMount, Show, Switch } from "solid-js";
 import { unwrap } from "solid-js/store";
 import { useCardContext } from "#/components/shared/CardContext";
-import type { AnkiNote } from "#/types";
+import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useGeneralContext } from "../shared/GeneralContext";
@@ -22,7 +22,7 @@ export default function KanjiPage() {
       sameReading={$card.query.sameReading}
       focus={{
         kanji: $card.focus.kanji,
-        noteId: undefined,
+        noteId: $card.focus.noteId,
       }}
     >
       <Page />
@@ -257,7 +257,9 @@ function AnkiNoteItem(props: {
   const data = () => props.data;
   const reading = () => props.reading;
   const { navigate } = useNavigationTransition();
-  // const [$card, $setCard] = useCardContext();
+  const [$card, $setCard] = useCardContext();
+  const [$general, $setGeneral] = useGeneralContext();
+  //TODO: this will crash?
   const [$kanji, $setKanji] = useKanjiContext();
   const [$kanjiPage, $setKanjiPage] = useKanjiPageContext();
 
@@ -302,37 +304,25 @@ function AnkiNoteItem(props: {
     );
   };
 
-  const onNextClick = (noteId: number) => {
-    // const shared = Object.values($card.query.kanji).flatMap(
-    //   (data) => data.shared,
-    // );
-    // const similar = Object.values($card.query.kanji).flatMap((data) =>
-    //   Object.values(data.similar).flat(),
-    // );
-    // const sameReading = $card.query.sameReading ?? [];
-    // const notes = [...shared, ...similar, ...sameReading];
-    // const note = notes.find((note) => note.noteId === noteId);
-    // if (!note) throw new Error("Note not found");
-    // const ankiFields: AnkiFields = {
-    //   ...ankiFieldsSkeleton,
-    //   ...Object.fromEntries(
-    //     Object.entries(note.fields).map(([key, value]) => {
-    //       return [key, value.value];
-    //     }),
-    //   ),
-    //   Tags: note.tags.join(" "),
-    // };
-    //
-    // if (props.sameReadingSection) {
-    //   $setCard("focus", { kanjiPage: $card.focus.SAME_READING });
-    // } else if ($card.query.selectedSimilarKanji) {
-    //   $setCard("focus", { similarKanjiPage: $kanji.kanji });
-    // } else {
-    //   $setCard("focus", { kanjiPage: $kanji.kanji });
-    // }
-    // $setCard("focus", { noteId: note.noteId });
-    // $setCard("nestedAnkiFields", ankiFields);
-    // navigate("nested", "forward", () => navigate("kanji", "back"));
+  const onNextClick = () => {
+    const ankiFields: AnkiFields = {
+      ...ankiFieldsSkeleton,
+      ...Object.fromEntries(
+        Object.entries(data().fields).map(([key, value]) => {
+          return [key, value.value];
+        }),
+      ),
+      Tags: data().tags.join(" "),
+    };
+
+    if (props.sameReadingSection) {
+      $setCard("focus", { kanji: $general.SAME_READING });
+    } else {
+      $setCard("focus", { kanji: $kanji.kanji });
+    }
+    $setCard("focus", { noteId: data().noteId });
+    $setCard("nestedAnkiFields", ankiFields);
+    navigate("nested", "forward", () => navigate("kanji", "back"));
   };
 
   let ref: HTMLDivElement | undefined;
@@ -368,7 +358,7 @@ function AnkiNoteItem(props: {
           <ArrowLeftIcon
             class="size-5 sm:size-8 text-base-content-soft rotate-180 cursor-pointer"
             on:click={() => {
-              onNextClick(data().noteId);
+              onNextClick();
             }}
           ></ArrowLeftIcon>
         </div>
