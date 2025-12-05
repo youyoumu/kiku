@@ -351,12 +351,22 @@ export class Nex {
     return this.cache.get(key)[kanji];
   }
 
+  private lookupKanjiPromise?: Promise<Record<string, KikuDbMainEntryCompact>>;
   async lookupKanji(kanji: string): Promise<KikuDbMainEntry | undefined> {
     const key = this.lookupKanji.name;
-    const cache = this.cache.get(key);
-    if (!cache) {
+    const cached = this.cache.get(key);
+    if (cached) {
+      return Nex.fromCompact(cached[kanji]);
+    }
+    if (this.lookupKanjiPromise) {
+      const data = await this.lookupKanjiPromise;
+      return Nex.fromCompact(data[kanji]);
+    }
+
+    this.lookupKanjiPromise = (async () => {
       const manifest = await this.dbMainManifest();
       const file = manifest.files[this.env.KIKU_DB_KANJI_COMPACT];
+
       const res = await fetch(
         `${this.assetsPath}/${this.env.KIKU_DB_MAIN_TAR}`,
         {
@@ -365,22 +375,23 @@ export class Nex {
           },
         },
       );
+
       if (!res.body) {
         logger.error("Failed to lookup kanji", kanji);
         throw new Error(`Failed to lookup kanji ${kanji}`);
       }
+
       const ds = new DecompressionStream("gzip");
       const decompressed = res.body.pipeThrough(ds);
       const text = await new Response(decompressed).text();
       const lookupKanji = JSON.parse(text);
-      console.log("DEBUG[1234]: lookupKiku=", lookupKanji);
-
+      console.log("DEBUG[1235]: lookupKanji=", lookupKanji);
       this.cache.set(key, lookupKanji);
-    }
-    const entry = this.cache.get(key)[kanji] as
-      | KikuDbMainEntryCompact
-      | undefined;
-    return Nex.fromCompact(entry);
+      return lookupKanji;
+    })();
+
+    const data = await this.lookupKanjiPromise;
+    return Nex.fromCompact(data[kanji]);
   }
 
   async dbMainManifest(): Promise<KikuDbMainManifest> {
