@@ -105,19 +105,30 @@ class Script {
     const jpdbJson = await jpdbScraper.readKanjiJson();
     const wkJson = await wkScraper.readWkKanjiInfoJson();
 
-    const temp: KikuDbKanji = {};
+    const extraKeywordMap = {};
+    for (const kanji of Object.keys(jpdbJson)) {
+      for (const keyword of jpdbJson[kanji].composedOf) {
+        extraKeywordMap[keyword.kanji] = keyword.keyword;
+      }
+      for (const keyword of jpdbJson[kanji].usedInKanji) {
+        extraKeywordMap[keyword.kanji] = keyword.keyword;
+      }
+    }
+
+    const tempKikuDbKanji: KikuDbKanji = {};
     const meaningIndex: Record<string, Set<string>> = {};
 
     for (const kanji of Object.keys(kanjiVgJson)) {
       const { composedOf, usedIn } = kanjiVgJson[kanji];
       const wkMeaning = wkJson[kanji]?.primaryMeaning ?? "";
       const visuallySimilar = wkJson[kanji]?.visuallySimilar ?? [];
-      const keyword = jpdbJson[kanji]?.keyword ?? "???";
+      const keyword =
+        jpdbJson[kanji]?.keyword ?? extraKeywordMap[kanji] ?? "???";
       const readings = jpdbJson[kanji]?.readings ?? [];
       const frequency = jpdbJson[kanji]?.frequency ?? "Unknown";
       const kind = jpdbJson[kanji]?.kind ?? "Unknown";
 
-      temp[kanji] = {
+      tempKikuDbKanji[kanji] = {
         composedOf,
         usedIn,
         wkMeaning,
@@ -137,7 +148,7 @@ class Script {
       }
 
       const meanings = entry.meanings ?? [];
-      temp[kanji].meanings = meanings;
+      tempKikuDbKanji[kanji].meanings = meanings;
 
       for (const m of meanings) {
         if (!meaningIndex[m]) meaningIndex[m] = new Set();
@@ -146,13 +157,13 @@ class Script {
     }
 
     const kikuDbKanji: KikuDbKanji = {};
-    for (const kanji of Object.keys(temp)) {
-      const entry = temp[kanji];
+    for (const kanji of Object.keys(tempKikuDbKanji)) {
+      const entry = tempKikuDbKanji[kanji];
       const meaningSet = new Set<string>();
 
       for (const meaning of entry.meanings) {
-        for (const other of meaningIndex[meaning] ?? []) {
-          if (other !== kanji) meaningSet.add(other);
+        for (const otherKanji of meaningIndex[meaning] ?? []) {
+          if (otherKanji !== kanji) meaningSet.add(otherKanji);
         }
       }
 
