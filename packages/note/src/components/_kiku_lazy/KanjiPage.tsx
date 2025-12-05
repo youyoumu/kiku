@@ -40,9 +40,8 @@ function Page() {
           noteList={$kanjiPage.nestedNoteList}
           sameReading={[]}
           focus={{
-            //TODO: set ?
-            kanji: undefined,
-            noteId: undefined,
+            kanji: $kanjiPage.nestedFocus.kanji,
+            noteId: $kanjiPage.nestedFocus.noteId,
           }}
           selectedKanji={$kanjiPage.selectedKanji}
         >
@@ -125,7 +124,13 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                   {(kanji) => {
                     return (
                       <KanjiContextProvider kanji={kanji}>
-                        <KanjiKeyword noteList={$kanji.visuallySimilar} />
+                        <KanjiKeyword
+                          noteList={$kanji.visuallySimilar}
+                          nestedFocus={{
+                            kanji: kanji,
+                            noteId: undefined,
+                          }}
+                        />
                       </KanjiContextProvider>
                     );
                   }}
@@ -147,7 +152,13 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                   {(kanji) => {
                     return (
                       <KanjiContextProvider kanji={kanji}>
-                        <KanjiKeyword noteList={$kanji.composedOf} />
+                        <KanjiKeyword
+                          noteList={$kanji.composedOf}
+                          nestedFocus={{
+                            kanji: kanji,
+                            noteId: undefined,
+                          }}
+                        />
                       </KanjiContextProvider>
                     );
                   }}
@@ -169,7 +180,13 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                   {(kanji) => {
                     return (
                       <KanjiContextProvider kanji={kanji}>
-                        <KanjiKeyword noteList={$kanji.usedIn} />
+                        <KanjiKeyword
+                          noteList={$kanji.usedIn}
+                          nestedFocus={{
+                            kanji: kanji,
+                            noteId: undefined,
+                          }}
+                        />
                       </KanjiContextProvider>
                     );
                   }}
@@ -213,7 +230,13 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                   {(kanji) => {
                     return (
                       <KanjiContextProvider kanji={kanji}>
-                        <KanjiKeyword noteList={$kanji.related} />
+                        <KanjiKeyword
+                          noteList={$kanji.related}
+                          nestedFocus={{
+                            kanji: kanji,
+                            noteId: undefined,
+                          }}
+                        />
                       </KanjiContextProvider>
                     );
                   }}
@@ -235,7 +258,13 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
   );
 }
 
-function KanjiKeyword(props: { noteList?: [string, AnkiNote[]][] }) {
+function KanjiKeyword(props: {
+  noteList?: [string, AnkiNote[]][];
+  nestedFocus: {
+    kanji: string | symbol | undefined;
+    noteId: number | undefined;
+  };
+}) {
   const [$kanji, $setKanji] = useKanjiContext();
   const [$kanjiPage, $setKanjiPage] = useKanjiPageContext();
   const { navigate } = useNavigationTransition();
@@ -252,15 +281,13 @@ function KanjiKeyword(props: { noteList?: [string, AnkiNote[]][] }) {
         "cursor-pointer": $kanji.status === "success",
       }}
       on:click={() => {
-        $setKanjiPage("focus", {
-          kanji: $kanji.kanji,
-          noteId: undefined,
-        });
         navigate(
           () => {
             if (!props.noteList) return;
-            // TODO: need 2 state?
-            // $setKanjiPage("selectedKanji", {});
+            $setKanjiPage("nestedFocus", {
+              kanji: props.nestedFocus.kanji,
+              noteId: props.nestedFocus.noteId,
+            });
             $setKanjiPage("nestedNoteList", props.noteList);
             $setKanjiPage("nested", true);
           },

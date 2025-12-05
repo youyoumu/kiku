@@ -387,7 +387,6 @@ export class Nex {
       const decompressed = res.body.pipeThrough(ds);
       const text = await new Response(decompressed).text();
       const lookupKanji = JSON.parse(text);
-      console.log("DEBUG[1235]: lookupKanji=", lookupKanji);
       this.cache.set(key, lookupKanji);
       return lookupKanji;
     })();

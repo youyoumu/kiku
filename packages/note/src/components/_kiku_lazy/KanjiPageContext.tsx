@@ -15,6 +15,10 @@ type KanjiPageContextStore = {
   };
   nested: boolean;
   nestedNoteList: [string, AnkiNote[]][];
+  nestedFocus: {
+    kanji: string | symbol | undefined;
+    noteId: number | undefined;
+  };
 };
 
 const KanjiPageContext =
@@ -46,6 +50,10 @@ export function KanjiPageContextProvider(props: {
     },
     nested: props.nested ?? false,
     nestedNoteList: [],
+    nestedFocus: {
+      kanji: undefined,
+      noteId: undefined,
+    },
   });
 
   return (
