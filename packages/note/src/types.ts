@@ -116,12 +116,16 @@ export type KikuNotesChunk = {
   range: [number, number];
 };
 
-export interface KikuNotesManifest {
+export type KikuNotesManifest = {
   profile: string;
   totalNotes: number;
   chunks: KikuNotesChunk[];
   generatedAt: number;
-}
+};
+
+export type KikuDbMainManifest = {
+  files: Record<string, { start: number; end: number; size: number }>;
+};
 
 export type Kanji = {
   level: number;

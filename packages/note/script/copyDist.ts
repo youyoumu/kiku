@@ -68,7 +68,8 @@ class Script {
       "_kiku_db_similar_kanji_stroke_edit_dist.json.gz",
       "_kiku_db_similar_kanji_wk_niai_noto.json.gz",
       "_kiku_db_similar_kanji_yl_radical.json.gz",
-      "_kiku_db_main_compact.json.gz",
+      "_kiku_db_main.tar",
+      "_kiku_db_main_manifest.json",
     ];
 
     const srcDir = join(import.meta.dirname, "../.db");

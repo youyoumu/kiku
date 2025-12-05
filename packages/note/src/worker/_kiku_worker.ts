@@ -4,6 +4,7 @@ import type {
   Kanji,
   KikuDbMainEntry,
   KikuDbMainEntryCompact,
+  KikuDbMainManifest,
   KikuNotesManifest,
 } from "#/types";
 import type { KikuConfig } from "#/util/config";
@@ -350,12 +351,19 @@ export class Nex {
     return this.cache.get(key)[kanji];
   }
 
-  async lookupKiku(kanji: string): Promise<KikuDbMainEntry | undefined> {
-    const key = this.lookupKiku.name;
+  async lookupKanji(kanji: string): Promise<KikuDbMainEntry | undefined> {
+    const key = this.lookupKanji.name;
     const cache = this.cache.get(key);
     if (!cache) {
+      const manifest = await this.dbMainManifest();
+      const file = manifest.files[this.env.KIKU_DB_KANJI_COMPACT];
       const res = await fetch(
-        `${this.assetsPath}/${this.env.KIKU_DB_MAIN_COMPACT}`,
+        `${this.assetsPath}/${this.env.KIKU_DB_MAIN_TAR}`,
+        {
+          headers: {
+            Range: `bytes=${file.start}-${file.end}`,
+          },
+        },
       );
       if (!res.body) {
         logger.error("Failed to lookup kanji", kanji);
@@ -364,14 +372,30 @@ export class Nex {
       const ds = new DecompressionStream("gzip");
       const decompressed = res.body.pipeThrough(ds);
       const text = await new Response(decompressed).text();
-      const lookupKiku = JSON.parse(text);
+      const lookupKanji = JSON.parse(text);
+      console.log("DEBUG[1234]: lookupKiku=", lookupKanji);
 
-      this.cache.set(key, lookupKiku);
+      this.cache.set(key, lookupKanji);
     }
     const entry = this.cache.get(key)[kanji] as
       | KikuDbMainEntryCompact
       | undefined;
     return Nex.fromCompact(entry);
+  }
+
+  async dbMainManifest(): Promise<KikuDbMainManifest> {
+    const key = this.dbMainManifest.name;
+    if (this.cache.has(key)) return this.cache.get(key);
+    const res = await fetch(
+      `${this.assetsPath}/${this.env.KIKU_DB_MAIN_MANIFEST_JSON}`,
+    );
+    if (!res.ok) {
+      logger.error("Failed to load db main manifest");
+      throw new Error(`Failed to load db main manifest`);
+    }
+    const manifest = await res.json();
+    this.cache.set(key, manifest);
+    return manifest;
   }
 
   async manifest(): Promise<KikuNotesManifest> {
@@ -465,7 +489,7 @@ const nexApi = {
   getSimilarKanji: (...args: Parameters<typeof nex.getSimilarKanji>) => nex.getSimilarKanji(...args),
   queryShared: ( ...args: Parameters<typeof nex.queryShared>) => nex.queryShared(...args),
   lookup: (...args: Parameters<typeof nex.lookup>) => nex.lookup(...args),
-  lookupKiku: (...args: Parameters<typeof nex.lookupKiku>) => nex.lookupKiku(...args),
+  lookupKanji: (...args: Parameters<typeof nex.lookupKanji>) => nex.lookupKanji(...args),
 } satisfies NexApi$;
 
 export type NexApi = typeof nexApi;

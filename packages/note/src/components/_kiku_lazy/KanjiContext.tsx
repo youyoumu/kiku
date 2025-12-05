@@ -22,7 +22,7 @@ export function KanjiContextProvider(props: {
   onMount(async () => {
     const nex = await KIKU_STATE.nexClient?.nex;
     if (nex) {
-      const kanjiInfo = await nex.lookupKiku(props.kanji);
+      const kanjiInfo = await nex.lookupKanji(props.kanji);
       $setKanji("kanjiInfo", kanjiInfo);
     }
   });
