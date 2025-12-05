@@ -1,10 +1,10 @@
 import { createContext, type JSX, onMount, useContext } from "solid-js";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
-import type { KikuDbMainEntry } from "#/types";
+import type { KanjiInfo } from "#/types";
 
 type KanjiStore = {
   kanji: string;
-  kanjiInfo: KikuDbMainEntry | undefined;
+  kanjiInfo: KanjiInfo | undefined;
 };
 
 const KanjiContext =

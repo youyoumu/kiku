@@ -136,7 +136,7 @@ export type Kanji = {
   nanori: string[];
 };
 
-export type KikuDbMainEntry = {
+export type KanjiInfo = {
   composedOf: string[];
   usedIn: string[];
   wkMeaning: string;
@@ -149,7 +149,7 @@ export type KikuDbMainEntry = {
   related: string[];
 };
 
-export type KikuDbMainEntryCompact = [
+export type KanjiInfoCompact = [
   string[], // composedOf
   string[], // usedIn
   string, // wkMeaning

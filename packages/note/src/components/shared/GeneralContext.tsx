@@ -11,7 +11,7 @@ type GeneralStore = {
   isThemeChanged: boolean;
   aborter: AbortController;
   isAnkiConnectAvailable: boolean;
-  manifest: KikuNotesManifest | undefined;
+  notesManifest: KikuNotesManifest | undefined;
   layoutRef: HTMLDivElement | undefined;
   contentRef: HTMLDivElement | undefined;
   toast: Toast;
@@ -59,7 +59,7 @@ export function GeneralContextProvider(props: {
         ),
     aborter: props.aborter,
     isAnkiConnectAvailable: false,
-    manifest: undefined,
+    notesManifest: undefined,
     layoutRef: undefined,
     contentRef: undefined,
     toast: { success, error, message: undefined, type: "success" },

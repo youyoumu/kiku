@@ -79,11 +79,11 @@ function Page() {
           </Show>
         </div>
         <div class="flex justify-center items-center">
-          <Show when={$general.manifest}>
+          <Show when={$general.notesManifest}>
             <div class="text-base-content-faint text-sm">
               Updated at{" "}
               {new Date(
-                $general.manifest?.generatedAt ?? 0,
+                $general.notesManifest?.generatedAt ?? 0,
               ).toLocaleDateString()}
             </div>
           </Show>

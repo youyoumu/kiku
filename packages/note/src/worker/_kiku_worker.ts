@@ -1,9 +1,9 @@
 import type {
   AnkiFields,
   AnkiNote,
-  Kanji,
-  KikuDbMainEntry,
-  KikuDbMainEntryCompact,
+  Kanji_Legazy,
+  KanjiInfo,
+  KanjiInfoCompact,
   KikuDbMainManifest,
   KikuNotesManifest,
 } from "#/types";
@@ -172,7 +172,7 @@ export class Nex {
       const kanjiListResult: Record<string, AnkiNote[]> = {};
       const readingListResult: Record<string, AnkiNote[]> = {};
 
-      const manifest = await this.manifest();
+      const manifest = await this.notesManifest();
 
       const kanjiSet = new Set(kanjiList);
       const readingSet = new Set(readingList);
@@ -330,7 +330,7 @@ export class Nex {
     }
   }
 
-  async lookup(kanji: string): Promise<Kanji> {
+  async lookup(kanji: string): Promise<Kanji_Legazy> {
     const key = this.lookup.name;
     const cache = this.cache.get(key);
     if (!cache) {
@@ -351,8 +351,8 @@ export class Nex {
     return this.cache.get(key)[kanji];
   }
 
-  private lookupKanjiPromise?: Promise<Record<string, KikuDbMainEntryCompact>>;
-  async lookupKanji(kanji: string): Promise<KikuDbMainEntry | undefined> {
+  private lookupKanjiPromise?: Promise<Record<string, KanjiInfoCompact>>;
+  async lookupKanji(kanji: string): Promise<KanjiInfo | undefined> {
     const key = this.lookupKanji.name;
     const cached = this.cache.get(key);
     if (cached) {
@@ -409,8 +409,8 @@ export class Nex {
     return manifest;
   }
 
-  async manifest(): Promise<KikuNotesManifest> {
-    const key = this.manifest.name;
+  async notesManifest(): Promise<KikuNotesManifest> {
+    const key = this.notesManifest.name;
     if (this.cache.has(key)) return this.cache.get(key);
     const res = await fetch(
       `${this.assetsPath}/${this.env.KIKU_NOTES_MANIFEST}`,
@@ -451,9 +451,7 @@ export class Nex {
     return this.cache.get(key);
   }
 
-  static fromCompact(
-    c: KikuDbMainEntryCompact | undefined,
-  ): KikuDbMainEntry | undefined {
+  static fromCompact(c: KanjiInfoCompact | undefined): KanjiInfo | undefined {
     if (!c) return undefined;
     return {
       composedOf: c[0],
@@ -495,7 +493,7 @@ type NexApi$ = Partial<Record<NexKey, unknown>>;
 //biome-ignore format: this looks nicer
 const nexApi = {
   async init(payload: ConstructorParameters<typeof Nex>[0]) { if (nex) { nex.init(payload); } else { nex = new Nex(payload); }},
-  manifest: () => nex.manifest(),
+  notesManifest: () => nex.notesManifest(),
   query: (...args: Parameters<typeof nex.query>) => nex.query(...args),
   getSimilarKanji: (...args: Parameters<typeof nex.getSimilarKanji>) => nex.getSimilarKanji(...args),
   queryShared: ( ...args: Parameters<typeof nex.queryShared>) => nex.queryShared(...args),

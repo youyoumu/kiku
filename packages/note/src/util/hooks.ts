@@ -130,8 +130,8 @@ export function useKanji() {
       KIKU_STATE.nexClient = worker;
 
       nex
-        .manifest()
-        .then((manifest) => $setGeneral("manifest", manifest))
+        .notesManifest()
+        .then((manifest) => $setGeneral("notesManifest", manifest))
         .catch(() => {
           KIKU_STATE.logger.warn("Failed to load manifest");
         });
