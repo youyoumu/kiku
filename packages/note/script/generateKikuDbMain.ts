@@ -1,5 +1,6 @@
 import { writeFile } from "fs/promises";
 import { join } from "path";
+import * as tar from "tar";
 import { jmdictParser } from "./parseJmdict.js";
 import { jpdbScraper } from "./scrapJpdb.js";
 import { kanjiVgScraper } from "./scrapKanjiVg.js";
@@ -34,6 +35,10 @@ type KikuKanjiCompact = [
 
 type KikuDbKanji = Record<string, KikuKanji>;
 type KikuDbKanjiCompact = Record<string, KikuKanjiCompact>;
+
+type KikuDbMainManifest = {
+  files: Record<string, { start: number; end: number; size: number }>;
+};
 
 function toCompact(entry: KikuKanji): KikuKanjiCompact {
   return [
@@ -178,11 +183,33 @@ class Script {
       false,
     );
   }
+
+  KIKU_DB_MAIN_TAR = join(this.DB_DIR, "_kiku_db_main.tar");
+  KIKU_DB_MAIN_MANIFEST_JSON = join(this.DB_DIR, "_kiku_db_main_manifest.json");
+  async generateDbMainTar() {
+    const filesToInclude = [
+      {
+        absPath: this.KIKU_DB_KANJI_COMPACT_JSON_GZ,
+        tarName: "kiku_db_kanji_compact.json.gz",
+      },
+      // Add more files later here
+    ];
+
+    tar.create(
+      {
+        portable: true,
+        file: this.KIKU_DB_MAIN_TAR,
+      },
+      filesToInclude.map((f) => f.absPath),
+    );
+  }
 }
 
 const kikuDbMainScript = new Script();
 // await kikuDbMainScript.compareKanjiVgAndJpdb();
 
-await kikuDbMainScript.writeKikuDbKanji();
+// await kikuDbMainScript.writeKikuDbKanji();
 
-await kikuDbMainScript.gzipKikuDbKanjiCompactJson();
+// await kikuDbMainScript.gzipKikuDbKanjiCompactJson();
+
+await kikuDbMainScript.generateDbMainTar();
