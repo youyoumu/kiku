@@ -1,10 +1,16 @@
 import { createContext, type JSX, onMount, useContext } from "solid-js";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
-import type { KanjiInfo } from "#/types";
+import type { AnkiNote, KanjiInfo } from "#/types";
+import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 
 type KanjiStore = {
   kanji: string;
   kanjiInfo: KanjiInfo | undefined;
+  composedOf?: [string, AnkiNote[]][];
+  usedIn?: [string, AnkiNote[]][];
+  visuallySimilar?: [string, AnkiNote[]][];
+  related?: [string, AnkiNote[]][];
+  status: "loading" | "success" | "error";
 };
 
 const KanjiContext =
@@ -13,10 +19,13 @@ const KanjiContext =
 export function KanjiContextProvider(props: {
   kanji: string;
   children: JSX.Element;
+  fetchNotes?: boolean;
 }) {
+  const { ankiFields } = useAnkiFieldContext<"back">();
   const [$kanji, $setKanji] = createStore<KanjiStore>({
     kanji: props.kanji,
     kanjiInfo: undefined,
+    status: props.fetchNotes ? "loading" : "success",
   });
 
   onMount(async () => {
@@ -24,6 +33,37 @@ export function KanjiContextProvider(props: {
     if (nex) {
       const kanjiInfo = await nex.lookupKanji(props.kanji);
       $setKanji("kanjiInfo", kanjiInfo);
+
+      if (props.fetchNotes) {
+        const [composedOf, usedIn, visuallySimilar, related] =
+          await Promise.all([
+            nex.queryShared({
+              ankiFields,
+              kanjiList: kanjiInfo?.composedOf ?? [],
+            }),
+            nex.queryShared({
+              ankiFields,
+              kanjiList: kanjiInfo?.usedIn ?? [],
+            }),
+            nex.queryShared({
+              ankiFields,
+              kanjiList: kanjiInfo?.visuallySimilar ?? [],
+            }),
+            nex.queryShared({
+              ankiFields,
+              kanjiList: kanjiInfo?.related ?? [],
+            }),
+          ]);
+
+        $setKanji("composedOf", Object.entries(composedOf.kanjiResult));
+        $setKanji("usedIn", Object.entries(usedIn.kanjiResult));
+        $setKanji(
+          "visuallySimilar",
+          Object.entries(visuallySimilar.kanjiResult),
+        );
+        $setKanji("related", Object.entries(related.kanjiResult));
+        $setKanji("status", "success");
+      }
     }
   });
 

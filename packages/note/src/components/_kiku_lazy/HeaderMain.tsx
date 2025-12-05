@@ -1,5 +1,4 @@
 import { createSignal, Match, onMount, Show, Switch } from "solid-js";
-import type { AnkiNote } from "#/types";
 import { useNavigationTransition, useThemeTransition } from "#/util/hooks";
 import { nextTheme } from "#/util/theme";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
@@ -128,9 +127,7 @@ function KanjiPageIndicator() {
     const isSameReadingResult = ($card.query.sameReading?.length ?? 0) > 0;
     if (isKanjiResult || isSameReadingResult) {
       $setCard("focus", "kanji", key);
-      const list = Object.entries($card.query.kanji).map(
-        ([kanji, data]) => [kanji, data.shared] as [string, AnkiNote[]],
-      );
+      const list = Object.entries($card.query.kanji);
       $setCard("query", "noteList", list);
       navigate("kanji", "forward", () => navigate("main", "back"));
     }
@@ -153,7 +150,7 @@ function KanjiPageIndicator() {
               "p-0": length() > 4,
             }}
           >
-            {data.shared.length}
+            {data.length}
           </span>
         </div>
       );

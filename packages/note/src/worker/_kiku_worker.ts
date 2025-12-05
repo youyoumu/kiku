@@ -1,7 +1,7 @@
 import type {
   AnkiFields,
   AnkiNote,
-  Kanji_Legazy,
+  Kanji,
   KanjiInfo,
   KanjiInfoCompact,
   KikuDbMainManifest,
@@ -254,16 +254,16 @@ export class Nex {
     ankiFields,
   }: {
     kanjiList: string[];
-    readingList: string[];
+    readingList?: string[];
     ankiFields: AnkiFields;
   }) {
     return new Promise<{
-      kanjiResult: Record<string, { shared: AnkiNote[] }>;
+      kanjiResult: Record<string, AnkiNote[]>;
       readingResult: Record<string, AnkiNote[]>;
     }>((resolve) => {
       this.pendingQueryShared.push({
         kanjiList,
-        readingList,
+        readingList: readingList ?? [],
         ankiFields,
         resolve,
       });
@@ -279,7 +279,10 @@ export class Nex {
     kanjiList: string[];
     readingList: string[];
     ankiFields: AnkiFields;
-    resolve: (v: any) => void;
+    resolve: (v: {
+      kanjiResult: Record<string, AnkiNote[]>;
+      readingResult: Record<string, AnkiNote[]>;
+    }) => void;
   }[] = [];
 
   async actualQueryShared() {
@@ -309,11 +312,10 @@ export class Nex {
         return true;
       };
 
-      const kanjiResult: Record<string, { shared: AnkiNote[] }> = {};
+      const kanjiResult: Record<string, AnkiNote[]> = {};
       for (const kanji of kanjiList) {
-        kanjiResult[kanji] = {
-          shared: kanjiListResult[kanji]?.filter(filterSameNote) ?? [],
-        };
+        kanjiResult[kanji] =
+          kanjiListResult[kanji]?.filter(filterSameNote) ?? [];
       }
 
       const readingResult: Record<string, AnkiNote[]> = {};
@@ -330,7 +332,7 @@ export class Nex {
     }
   }
 
-  async lookup(kanji: string): Promise<Kanji_Legazy> {
+  async lookup(kanji: string): Promise<Kanji> {
     const key = this.lookup.name;
     const cache = this.cache.get(key);
     if (!cache) {

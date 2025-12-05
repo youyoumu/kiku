@@ -65,7 +65,7 @@ function Page() {
           <For each={$kanjiPage.noteList}>
             {([kanji, data]) => {
               return (
-                <KanjiContextProvider kanji={kanji}>
+                <KanjiContextProvider kanji={kanji} fetchNotes>
                   <KanjiCollapsible data={data} />
                 </KanjiContextProvider>
               );
@@ -106,9 +106,14 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
       />
       <div class="collapse-title justify-between flex items-center ps-2 sm:ps-4 pe-2 sm:pe-4 py-2 sm:py-4">
         <KanjiText />
+        <Show when={$kanji.status === "loading"}>
+          <div class="absolute top-0 right-2 sm:top-2 sm:right-4 loading loading-sm text-base-content-soft">
+            test
+          </div>
+        </Show>
         <Show when={$kanji.kanjiInfo?.visuallySimilar.length}>
           <div
-            class="flex gap-2 items-center btn btn-sm sm:btn-md z-10"
+            class="flex gap-2 items-center btn btn-sm sm:btn-md z-10 hidden"
             on:click={() => {
               // TODO: visuallySimilar notes
               // $setKanjiPage("focus", {

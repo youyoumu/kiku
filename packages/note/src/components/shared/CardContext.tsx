@@ -3,13 +3,9 @@ import type { JSX } from "solid-js/jsx-runtime";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
 import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 
-export type KanjiData = {
-  shared: AnkiNote[];
-};
-
 type Query = {
   status: "loading" | "success" | "error";
-  kanji: Record<string, KanjiData>;
+  kanji: Record<string, AnkiNote[]>;
   sameReading: AnkiNote[] | undefined;
   noteList: [string, AnkiNote[]][];
 };
