@@ -3,7 +3,7 @@ import { join } from "node:path";
 import * as cheerio from "cheerio";
 import extract from "extract-zip";
 
-type KanjiComposition = Record<
+export type KanjiComposition = Record<
   string,
   {
     composedOf: string[];
@@ -18,6 +18,7 @@ class KanjiVgScraper {
     "https://github.com/KanjiVG/kanjivg/releases/download/r20250816/kanjivg-20250816-main.zip";
   DOWNLOAD_DEST = join(this.KANJI_VG_DIR, "kanjivg.zip");
   KANJI_VG_KANJI_DIR = join(this.KANJI_VG_DIR, "kanji");
+  KANJI_VG_KANJI_JSON = join(this.KANJI_VG_DIR, "kanji.json");
 
   async fetchAndExtractKanjiVG(): Promise<void> {
     await mkdir(this.KANJI_VG_DIR, { recursive: true });
@@ -42,14 +43,22 @@ class KanjiVgScraper {
     const $ = cheerio.load(svgContent, { xmlMode: true });
     const rootGroup = $("g[kvg\\:element]").first();
     const kanji = rootGroup.attr("kvg:element");
-    const composedOf = new Set<string>();
-    rootGroup.children("g[kvg\\:element]").each((_, g) => {
-      const el = $(g).attr("kvg:element");
-      if (el && el !== kanji) {
-        composedOf.add(el);
-      }
-    });
 
+    const composedOf = new Set<string>();
+    const children = rootGroup.children();
+    type El = (typeof children)[number];
+
+    const getTopLevel = (_, child: El) => {
+      const $child = $(child);
+      const direct = $child.attr("kvg:element");
+      if (direct && direct !== kanji) {
+        composedOf.add(direct);
+        return;
+      }
+      $child.children().each(getTopLevel);
+    };
+
+    children.each(getTopLevel);
     return {
       kanji,
       composedOf: Array.from(composedOf),
@@ -82,13 +91,22 @@ class KanjiVgScraper {
       }
     }
 
-    console.log(kanjiComposition);
+    await writeFile(
+      this.KANJI_VG_KANJI_JSON,
+      JSON.stringify(kanjiComposition, null, 2),
+    );
+  }
+
+  async readKanjiVgJson() {
+    return JSON.parse(
+      await readFile(kanjiVgScraper.KANJI_VG_KANJI_JSON, "utf8"),
+    ) as KanjiComposition;
   }
 }
 
-const kanjiVgScraper = new KanjiVgScraper();
+export const kanjiVgScraper = new KanjiVgScraper();
 // step 1
 // await kanjiVgScraper.fetchAndExtractKanjiVG();
 
 // step 2
-await kanjiVgScraper.writeKanjiVgJson();
+// await kanjiVgScraper.writeKanjiVgJson();

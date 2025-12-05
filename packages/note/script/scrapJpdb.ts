@@ -292,10 +292,17 @@ class JpdbScraper {
     const dest = join(this.jpdbDir, "_kiku_db_jpdb_kanji.json.gz");
     await gzipFile(this.kanjiJson, dest, false);
   }
+
+  async readKanjiJson() {
+    return JSON.parse(await readFile(this.kanjiJson, "utf8")) as Record<
+      string,
+      Kanji
+    >;
+  }
 }
 
-const kanjiByFrequency = new JpdbScraper();
-await kanjiByFrequency.mkdir();
+export const jpdbScraper = new JpdbScraper();
+await jpdbScraper.mkdir();
 
 // fist step
 // kanjiByFrequency.writeKanjiByFrequencyHtml();
@@ -307,7 +314,7 @@ await kanjiByFrequency.mkdir();
 // await kanjiByFrequency.writeKanjiHtml();
 
 // fourth step
-await kanjiByFrequency.writeKanjiJson();
+// await kanjiByFrequency.writeKanjiJson();
 
 // fifth step
 // await kanjiByFrequency.gzipKanjiJson();
