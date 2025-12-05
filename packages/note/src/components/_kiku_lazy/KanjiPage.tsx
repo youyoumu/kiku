@@ -142,13 +142,9 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
               <For each={$kanji.kanjiInfo?.composedOf}>
                 {(kanji) => {
                   return (
-                    <div class="inline-flex border border-base-300">
-                      <div class=" px-1 text-lg sm:text-xl">{kanji}</div>
-                      <div class="bg-base-300 border-s border-base-300 px-1 text-base-content-soft flex items-center">
-                        {/* TODO: keyword */}
-                        {/* {capitalizeSentence(kanji.keyword)} */}
-                      </div>
-                    </div>
+                    <KanjiContextProvider kanji={kanji}>
+                      <KanjiKeyword />
+                    </KanjiContextProvider>
                   );
                 }}
               </For>
@@ -163,13 +159,9 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
               <For each={$kanji.kanjiInfo?.usedIn}>
                 {(kanji) => {
                   return (
-                    <div class="inline-flex border border-base-300">
-                      <div class=" px-1  text-lg sm:text-xl">{kanji}</div>
-                      <div class="bg-base-300 border-s border-base-300 px-1 text-base-content-soft flex items-center">
-                        {/* TODO: keyword */}
-                        {/* {capitalizeSentence(kanji.keyword)} */}
-                      </div>
-                    </div>
+                    <KanjiContextProvider kanji={kanji}>
+                      <KanjiKeyword />
+                    </KanjiContextProvider>
                   );
                 }}
               </For>
@@ -184,6 +176,26 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
           </For>
         </ul>
       </div>
+    </div>
+  );
+}
+
+function KanjiKeyword() {
+  const [$kanji, $setKanji] = useKanjiContext();
+
+  const keyword = () =>
+    $kanji.kanjiInfo?.wkMeaning
+      ? $kanji.kanjiInfo?.wkMeaning
+      : $kanji.kanjiInfo?.keyword;
+
+  return (
+    <div class="inline-flex border border-base-300">
+      <div class=" px-1 text-lg sm:text-xl">{$kanji.kanji}</div>
+      <Show when={keyword()}>
+        <div class="bg-base-300 border-s border-base-300 px-1 text-base-content-soft flex items-center">
+          {capitalizeSentence(keyword())}
+        </div>
+      </Show>
     </div>
   );
 }
