@@ -96,7 +96,6 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
   const [$kanjiPage, $setKanjiPage] = useKanjiPageContext();
   const [$kanji, $setKanji] = useKanjiContext();
   const data = () => props.data;
-  const { navigate, navigateBack } = useNavigationTransition();
 
   return (
     <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
@@ -109,32 +108,6 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
         <Show when={$kanji.status === "loading"}>
           <div class="absolute top-0 right-2 sm:top-2 sm:right-4 loading loading-sm text-base-content-soft">
             test
-          </div>
-        </Show>
-        <Show when={$kanji.kanjiInfo?.visuallySimilar.length}>
-          <div
-            class="flex gap-2 items-center btn btn-sm sm:btn-md z-10 hidden"
-            on:click={() => {
-              // TODO: visuallySimilar notes
-              // $setKanjiPage("focus", {
-              //   kanji: $kanji.kanji,
-              //   noteId: undefined,
-              // });
-              // const list = unwrap($kanji.kanjiInfo?.visuallySimilar) ?? []
-              // navigate(
-              //   () => {
-              //     // TODO: need 2 state?
-              //     // $setKanjiPage("selectedKanji", {});
-              //     $setKanjiPage("nestedNoteList", list);
-              //     $setKanjiPage("nested", true);
-              //   },
-              //   "forward",
-              //   () => navigate(() => $setKanjiPage("nested", false), "back"),
-              // );
-            }}
-          >
-            <div class="text-base-content-calm">Similar</div>
-            <ArrowLeftIcon class="size-5 sm:size-8 text-base-content-soft rotate-180 cursor-pointer"></ArrowLeftIcon>
           </div>
         </Show>
       </div>
@@ -151,7 +124,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                   {(kanji) => {
                     return (
                       <KanjiContextProvider kanji={kanji}>
-                        <KanjiKeyword />
+                        <KanjiKeyword noteList={$kanji.composedOf} />
                       </KanjiContextProvider>
                     );
                   }}
@@ -173,7 +146,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                   {(kanji) => {
                     return (
                       <KanjiContextProvider kanji={kanji}>
-                        <KanjiKeyword />
+                        <KanjiKeyword noteList={$kanji.usedIn} />
                       </KanjiContextProvider>
                     );
                   }}
@@ -195,7 +168,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                   {(kanji) => {
                     return (
                       <KanjiContextProvider kanji={kanji}>
-                        <KanjiKeyword />
+                        <KanjiKeyword noteList={$kanji.visuallySimilar} />
                       </KanjiContextProvider>
                     );
                   }}
@@ -239,7 +212,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                   {(kanji) => {
                     return (
                       <KanjiContextProvider kanji={kanji}>
-                        <KanjiKeyword />
+                        <KanjiKeyword noteList={$kanji.related} />
                       </KanjiContextProvider>
                     );
                   }}
@@ -261,8 +234,10 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
   );
 }
 
-function KanjiKeyword() {
+function KanjiKeyword(props: { noteList?: [string, AnkiNote[]][] }) {
   const [$kanji, $setKanji] = useKanjiContext();
+  const [$kanjiPage, $setKanjiPage] = useKanjiPageContext();
+  const { navigate } = useNavigationTransition();
 
   const keyword = () =>
     $kanji.kanjiInfo?.wkMeaning
@@ -270,7 +245,29 @@ function KanjiKeyword() {
       : $kanji.kanjiInfo?.keyword;
 
   return (
-    <div class="inline-flex border border-base-300">
+    <div
+      class="inline-flex border border-base-300"
+      classList={{
+        "cursor-pointer": $kanji.status === "success",
+      }}
+      on:click={() => {
+        $setKanjiPage("focus", {
+          kanji: $kanji.kanji,
+          noteId: undefined,
+        });
+        navigate(
+          () => {
+            if (!props.noteList) return;
+            // TODO: need 2 state?
+            // $setKanjiPage("selectedKanji", {});
+            $setKanjiPage("nestedNoteList", props.noteList);
+            $setKanjiPage("nested", true);
+          },
+          "forward",
+          () => navigate(() => $setKanjiPage("nested", false), "back"),
+        );
+      }}
+    >
       <div class=" px-1 text-lg sm:text-xl">{$kanji.kanji}</div>
       <Show when={keyword()}>
         <div class="bg-base-300 border-s border-base-300 px-1 text-base-content-soft flex items-center">
