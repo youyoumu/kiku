@@ -5,6 +5,7 @@ import { sleep } from "./util";
 
 type WkKanji = {
   visuallySimilar: string[];
+  primaryMeaning: string;
 };
 
 class WkScraper {
@@ -45,6 +46,7 @@ class WkScraper {
   WK_ALL_KANJI_JSON = join(this.WK_DIR, "all_kanji.json");
   WK_KANJI_DIR = join(this.WK_DIR, "kanji");
   FAILED_KANJI_JSON = join(this.WK_DIR, "failed_kanji.json");
+  WK_KANJI_INFO_JSON = join(this.WK_DIR, "wk_kanji_info.json");
 
   WK_VOCAB_DIR = join(this.WK_DIR, "vocab");
   WK_VOCAB_LIST_URLS = [
@@ -157,23 +159,38 @@ class WkScraper {
 
   parseWkKanjiInfo(html: string): WkKanji {
     const $ = cheerio.load(html);
+
     const visuallySimilar: string[] = [];
+    let primaryMeaning: string = "";
+
+    // --- 1. Extract visually similar kanji ---
     const section = $(".subject-section--similar-subjects");
-    if (section.length === 0) {
-      return { visuallySimilar: [] };
+    if (section.length !== 0) {
+      section
+        .find(
+          ".subject-character-grid__item .subject-character__characters-text[lang='ja']",
+        )
+        .each((_, el) => {
+          const text = $(el).text().trim();
+          if (text) visuallySimilar.push(text);
+        });
     }
-    // select all kanji <span class="subject-character__characters-text" lang="ja">
-    section
-      .find(
-        ".subject-character-grid__item .subject-character__characters-text[lang='ja']",
-      )
-      .each((_, el) => {
-        const text = $(el).text().trim();
-        if (text) visuallySimilar.push(text);
-      });
+
+    // --- 2. Extract primary meaning ---
+    const primary = $(
+      ".subject-section__meanings--primary .subject-section__meanings-items",
+    )
+      .first()
+      .text()
+      .trim();
+
+    if (primary) {
+      primaryMeaning = primary;
+    }
 
     return {
       visuallySimilar,
+      primaryMeaning,
     };
   }
 
@@ -192,10 +209,7 @@ class WkScraper {
       result[kanji] = data;
     }
 
-    await writeFile(
-      join(this.WK_DIR, "parsed_kanji.json"),
-      JSON.stringify(result, null, 2),
-    );
+    await writeFile(this.WK_KANJI_INFO_JSON, JSON.stringify(result, null, 2));
   }
 
   async writeWkVocabHtml() {
@@ -268,9 +282,15 @@ class WkScraper {
       JSON.stringify(Array.from(new Set(failedVocab)), null, 2),
     );
   }
+
+  async readWkKanjiInfoJson() {
+    return JSON.parse(
+      await readFile(this.WK_KANJI_INFO_JSON, "utf8"),
+    ) as Record<string, WkKanji>;
+  }
 }
 
-const wkScraper = new WkScraper();
+export const wkScraper = new WkScraper();
 await wkScraper.ensureWkDir();
 
 //step 1
@@ -292,4 +312,4 @@ await wkScraper.ensureWkDir();
 // await wkScraper.writeAllVocab();
 
 //step 7
-await wkScraper.writeWkVocabInfoHtml();
+// await wkScraper.writeWkVocabInfoHtml();

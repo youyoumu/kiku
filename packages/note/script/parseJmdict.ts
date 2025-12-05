@@ -68,11 +68,20 @@ export class JmdictParser {
       await readFile(this.JMDICT_TERM_PATH, "utf8"),
     ) as JmdictTerm[];
     const termMap: Record<string, JmdictTerm> = {};
-    const duplicatedTerms: JmdictTerm[] = [];
     terms.forEach((term) => {
       term.kanji.forEach((kanji) => {
         if (termMap[kanji]) {
-          duplicatedTerms.push(term);
+          termMap[kanji] = {
+            kanji: Array.from(
+              new Set([...term.kanji, ...termMap[kanji].kanji]),
+            ),
+            meanings: Array.from(
+              new Set([...term.meanings, ...termMap[kanji].meanings]),
+            ),
+            reading: Array.from(
+              new Set([...term.reading, ...termMap[kanji].reading]),
+            ),
+          };
         } else {
           termMap[kanji] = term;
         }
@@ -84,9 +93,18 @@ export class JmdictParser {
       JSON.stringify(termMap, null, 2),
     );
   }
+
+  termMap: Record<string, JmdictTerm> | undefined = undefined;
+  async lookup(term: string) {
+    this.termMap =
+      this.termMap ||
+      JSON.parse(await readFile(this.JMDICT_TERM_MAP_PATH, "utf8"));
+    if (!this.termMap) throw new Error("termMap not found");
+    return this.termMap[term];
+  }
 }
 
-const jmdictParser = new JmdictParser();
+export const jmdictParser = new JmdictParser();
 
 // await jmdictParser.writeTerm();
 
