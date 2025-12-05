@@ -1,10 +1,5 @@
 import { isServer } from "solid-js/web";
-import {
-  type AnkiFields,
-  ankiFieldsSkeleton,
-  type JpdbKanji,
-  type JpdbKanjiCompact,
-} from "#/types";
+import { type AnkiFields, ankiFieldsSkeleton } from "#/types";
 import {
   exampleFields,
   exampleFields2,
@@ -38,7 +33,7 @@ export const env = {
   KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST: "_kiku_db_similar_kanji_stroke_edit_dist.json.gz",
   KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO: "_kiku_db_similar_kanji_wk_niai_noto.json.gz",
   KIKU_DB_SIMILAR_KANJI_YL_RADICAL: "_kiku_db_similar_kanji_yl_radical.json.gz",
-  KIKU_DB_JPDB_KANJI: "_kiku_db_jpdb_kanji.json.gz",
+  KIKU_DB_MAIN_COMPACT: "_kiku_db_main_compact.json.gz",
   KIKU_PLUGIN_MODULE: "_kiku_plugin.js",
   KIKU_VERSION: "1.4.0",
   KIKU_IMPORTANT_FILES: [
@@ -66,7 +61,7 @@ export const env = {
     "_kiku_db_similar_kanji_wk_niai_noto.json.gz",
     "_kiku_db_similar_kanji_yl_radical.json.gz",
 
-    "_kiku_db_jpdb_kanji.json.gz",
+    "_kiku_db_main_compact.json.gz",
   ]
 };
 

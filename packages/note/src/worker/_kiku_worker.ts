@@ -1,9 +1,9 @@
 import type {
   AnkiFields,
   AnkiNote,
-  JpdbKanji,
-  JpdbKanjiCompact,
   Kanji,
+  KikuDbMainEntry,
+  KikuDbMainEntryCompact,
   KikuNotesManifest,
 } from "#/types";
 import type { KikuConfig } from "#/util/config";
@@ -350,25 +350,28 @@ export class Nex {
     return this.cache.get(key)[kanji];
   }
 
-  async lookupJpdb(kanji: string): Promise<JpdbKanji> {
-    const key = this.lookupJpdb.name;
+  async lookupKiku(kanji: string): Promise<KikuDbMainEntry | undefined> {
+    const key = this.lookupKiku.name;
     const cache = this.cache.get(key);
     if (!cache) {
       const res = await fetch(
-        `${this.assetsPath}/${this.env.KIKU_DB_JPDB_KANJI}`,
+        `${this.assetsPath}/${this.env.KIKU_DB_MAIN_COMPACT}`,
       );
       if (!res.body) {
-        logger.error("Failed to lookup jpdb", kanji);
-        throw new Error(`Failed to lookup jpdb ${kanji}`);
+        logger.error("Failed to lookup kanji", kanji);
+        throw new Error(`Failed to lookup kanji ${kanji}`);
       }
       const ds = new DecompressionStream("gzip");
       const decompressed = res.body.pipeThrough(ds);
       const text = await new Response(decompressed).text();
-      const lookupJpdbDb = JSON.parse(text);
+      const lookupKiku = JSON.parse(text);
 
-      this.cache.set(key, lookupJpdbDb);
+      this.cache.set(key, lookupKiku);
     }
-    return Nex.toNonCompactKanji(this.cache.get(key)[kanji]);
+    const entry = this.cache.get(key)[kanji] as
+      | KikuDbMainEntryCompact
+      | undefined;
+    return Nex.fromCompact(entry);
   }
 
   async manifest(): Promise<KikuNotesManifest> {
@@ -413,28 +416,21 @@ export class Nex {
     return this.cache.get(key);
   }
 
-  static toNonCompactKanji(data: JpdbKanjiCompact): JpdbKanji {
+  static fromCompact(
+    c: KikuDbMainEntryCompact | undefined,
+  ): KikuDbMainEntry | undefined {
+    if (!c) return undefined;
     return {
-      kind: data[0],
-      keyword: data[1],
-      frequency: data[2],
-      kanken: data[3],
-      heisig: data[4],
-
-      readings: data[5].map(([reading, percentage]) => ({
-        reading,
-        percentage,
-      })),
-
-      composedOf: data[6].map(([kanji, keyword]) => ({
-        kanji,
-        keyword,
-      })),
-
-      usedInKanji: data[7].map(([kanji, keyword]) => ({
-        kanji,
-        keyword,
-      })),
+      composedOf: c[0],
+      usedIn: c[1],
+      wkMeaning: c[2],
+      meanings: c[3],
+      keyword: c[4],
+      readings: c[5],
+      frequency: c[6],
+      kind: c[7],
+      visuallySimilar: c[8],
+      related: c[9],
     };
   }
 }
@@ -469,7 +465,7 @@ const nexApi = {
   getSimilarKanji: (...args: Parameters<typeof nex.getSimilarKanji>) => nex.getSimilarKanji(...args),
   queryShared: ( ...args: Parameters<typeof nex.queryShared>) => nex.queryShared(...args),
   lookup: (...args: Parameters<typeof nex.lookup>) => nex.lookup(...args),
-  lookupJpdb: (...args: Parameters<typeof nex.lookupJpdb>) => nex.lookupJpdb(...args),
+  lookupKiku: (...args: Parameters<typeof nex.lookupKiku>) => nex.lookupKiku(...args),
 } satisfies NexApi$;
 
 export type NexApi = typeof nexApi;

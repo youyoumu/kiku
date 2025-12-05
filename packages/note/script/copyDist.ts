@@ -68,17 +68,11 @@ class Script {
       "_kiku_db_similar_kanji_stroke_edit_dist.json.gz",
       "_kiku_db_similar_kanji_wk_niai_noto.json.gz",
       "_kiku_db_similar_kanji_yl_radical.json.gz",
+      "_kiku_db_main_compact.json.gz",
     ];
 
     const srcDir = join(import.meta.dirname, "../.db");
     console.log("\n📁 Copying DATABASES...");
-    await this.copyFiles(DBS, srcDir);
-  }
-
-  async copyJpdb() {
-    const DBS = ["_kiku_db_jpdb_kanji.json.gz"];
-    const srcDir = join(import.meta.dirname, "../.jpdb");
-    console.log("\n📁 Copying JPDB...");
     await this.copyFiles(DBS, srcDir);
   }
 
@@ -88,7 +82,6 @@ class Script {
     await this.copyDist();
     await this.copyFonts();
     await this.copyDatabases();
-    await this.copyJpdb();
     console.log("\n🎉 Done!");
   }
 }

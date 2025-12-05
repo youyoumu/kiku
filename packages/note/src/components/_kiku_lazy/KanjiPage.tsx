@@ -107,25 +107,26 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
       />
       <div class="collapse-title justify-between flex items-center ps-2 sm:ps-4 pe-2 sm:pe-4 py-2 sm:py-4">
         <KanjiText />
-        <Show when={$kanji.similarKanji.length}>
+        <Show when={$kanji.kanjiInfo?.visuallySimilar.length}>
           <div
             class="flex gap-2 items-center btn btn-sm sm:btn-md z-10"
             on:click={() => {
-              $setKanjiPage("focus", {
-                kanji: $kanji.kanji,
-                noteId: undefined,
-              });
-              const list = unwrap($kanji.similarKanji);
-              navigate(
-                () => {
-                  // TODO: need 2 state?
-                  // $setKanjiPage("selectedKanji", {});
-                  $setKanjiPage("nestedNoteList", list);
-                  $setKanjiPage("nested", true);
-                },
-                "forward",
-                () => navigate(() => $setKanjiPage("nested", false), "back"),
-              );
+              // TODO: visuallySimilar notes
+              // $setKanjiPage("focus", {
+              //   kanji: $kanji.kanji,
+              //   noteId: undefined,
+              // });
+              // const list = unwrap($kanji.kanjiInfo?.visuallySimilar) ?? []
+              // navigate(
+              //   () => {
+              //     // TODO: need 2 state?
+              //     // $setKanjiPage("selectedKanji", {});
+              //     $setKanjiPage("nestedNoteList", list);
+              //     $setKanjiPage("nested", true);
+              //   },
+              //   "forward",
+              //   () => navigate(() => $setKanjiPage("nested", false), "back"),
+              // );
             }}
           >
             <div class="text-base-content-calm">Similar</div>
@@ -134,17 +135,18 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
         </Show>
       </div>
       <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col gap-2">
-        <Show when={$kanji.jpdbKanji?.readings.length}>
+        <Show when={$kanji.kanjiInfo?.readings.length}>
           <div class="flex flex-col gap-1">
             <div class="font-bold text-base-content-calm">Composed of</div>
             <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
-              <For each={$kanji.jpdbKanji?.composedOf}>
-                {(data) => {
+              <For each={$kanji.kanjiInfo?.composedOf}>
+                {(kanji) => {
                   return (
                     <div class="inline-flex border border-base-300">
-                      <div class=" px-1 text-lg sm:text-xl">{data.kanji}</div>
+                      <div class=" px-1 text-lg sm:text-xl">{kanji}</div>
                       <div class="bg-base-300 border-s border-base-300 px-1 text-base-content-soft flex items-center">
-                        {capitalizeSentence(data.keyword)}
+                        {/* TODO: keyword */}
+                        {/* {capitalizeSentence(kanji.keyword)} */}
                       </div>
                     </div>
                   );
@@ -154,17 +156,18 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
           </div>
         </Show>
 
-        <Show when={$kanji.jpdbKanji?.usedInKanji.length}>
+        <Show when={$kanji.kanjiInfo?.usedIn.length}>
           <div class="flex flex-col gap-1">
             <div class="font-bold text-base-content-calm">Used in</div>
             <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
-              <For each={$kanji.jpdbKanji?.usedInKanji}>
-                {(data) => {
+              <For each={$kanji.kanjiInfo?.usedIn}>
+                {(kanji) => {
                   return (
                     <div class="inline-flex border border-base-300">
-                      <div class=" px-1  text-lg sm:text-xl">{data.kanji}</div>
+                      <div class=" px-1  text-lg sm:text-xl">{kanji}</div>
                       <div class="bg-base-300 border-s border-base-300 px-1 text-base-content-soft flex items-center">
-                        {capitalizeSentence(data.keyword)}
+                        {/* TODO: keyword */}
+                        {/* {capitalizeSentence(kanji.keyword)} */}
                       </div>
                     </div>
                   );
@@ -391,32 +394,32 @@ function KanjiText() {
       <div class="flex flex-col text-xs sm:text-sm text-base-content-calm">
         <div
           classList={{
-            hidden: !$kanji.jpdbKanji?.keyword,
+            hidden: !$kanji.kanjiInfo?.keyword,
           }}
         >
           <span class="inline-flex flex-wrap gap-x-1 sm:gap-x-2">
             <span>Keyword: </span>
-            <span>{capitalizeSentence($kanji.jpdbKanji?.keyword)}</span>
+            <span>{capitalizeSentence($kanji.kanjiInfo?.keyword)}</span>
           </span>
         </div>
         <div
           classList={{
-            hidden: !$kanji.jpdbKanji?.frequency,
+            hidden: !$kanji.kanjiInfo?.frequency,
           }}
         >
           <span class="inline-flex flex-wrap gap-x-1 sm:gap-x-2">
             <span>Frequency: </span>
-            <span>{$kanji.jpdbKanji?.frequency}</span>
+            <span>{$kanji.kanjiInfo?.frequency}</span>
           </span>
         </div>
         <div
           classList={{
-            hidden: !$kanji.jpdbKanji?.readings.length,
+            hidden: !$kanji.kanjiInfo?.readings.length,
           }}
         >
           <span class="inline-flex flex-wrap gap-x-1 sm:gap-x-2 gap-y-0.5">
             <span>Reading: </span>
-            <For each={$kanji.jpdbKanji?.readings}>
+            <For each={$kanji.kanjiInfo?.readings}>
               {(reading) => {
                 return (
                   <Show when={reading.percentage}>
