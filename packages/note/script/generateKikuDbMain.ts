@@ -6,7 +6,7 @@ import { kanjiVgScraper } from "./scrapKanjiVg.js";
 import { wkScraper } from "./scrapWk.js";
 import { gzipFile } from "./util.js";
 
-type KikuDbMainEntry = {
+type KikuKanji = {
   composedOf: string[];
   usedIn: string[];
   wkMeaning: string;
@@ -19,7 +19,7 @@ type KikuDbMainEntry = {
   related: string[];
 };
 
-type KikuDbMainEntryCompact = [
+type KikuKanjiCompact = [
   string[], // composedOf
   string[], // usedIn
   string, // wkMeaning
@@ -32,10 +32,10 @@ type KikuDbMainEntryCompact = [
   string[], // related
 ];
 
-type KikuDbMain = Record<string, KikuDbMainEntry>;
-type KikuDbMainCompact = Record<string, KikuDbMainEntryCompact>;
+type KikuDbKanji = Record<string, KikuKanji>;
+type KikuDbKanjiCompact = Record<string, KikuKanjiCompact>;
 
-function toCompact(entry: KikuDbMainEntry): KikuDbMainEntryCompact {
+function toCompact(entry: KikuKanji): KikuKanjiCompact {
   return [
     entry.composedOf,
     entry.usedIn,
@@ -53,11 +53,11 @@ function toCompact(entry: KikuDbMainEntry): KikuDbMainEntryCompact {
 class Script {
   ROOT_DIR = join(import.meta.dirname, "../");
   DB_DIR = join(this.ROOT_DIR, ".db");
-  KIKU_DB_MAIN_JSON = join(this.DB_DIR, "kiku_db_main.json");
-  KIKU_DB_MAIN_COMPACT_JSON = join(this.DB_DIR, "kiku_db_main_compact.json");
-  KIKU_DB_MAIN_COMPACT_JSON_GZ = join(
+  KIKU_DB_KANJI_JSON = join(this.DB_DIR, "kiku_db_kanji.json");
+  KIKU_DB_KANJI_COMPACT_JSON = join(this.DB_DIR, "kiku_db_kanji_compact.json");
+  KIKU_DB_KANJI_COMPACT_JSON_GZ = join(
     this.DB_DIR,
-    "_kiku_db_main_compact.json.gz",
+    "kiku_db_kanji_compact.json.gz",
   );
 
   async compareKanjiVgAndJpdb() {
@@ -95,12 +95,12 @@ class Script {
     return diff;
   }
 
-  async writeKikuDbMain() {
+  async writeKikuDbKanji() {
     const kanjiVgJson = await kanjiVgScraper.readKanjiVgJson();
     const jpdbJson = await jpdbScraper.readKanjiJson();
     const wkJson = await wkScraper.readWkKanjiInfoJson();
 
-    const temp: KikuDbMain = {};
+    const temp: KikuDbKanji = {};
     const meaningIndex: Record<string, Set<string>> = {};
 
     for (const kanji of Object.keys(kanjiVgJson)) {
@@ -140,7 +140,7 @@ class Script {
       }
     }
 
-    const kikuDbMain: KikuDbMain = {};
+    const kikuDbKanji: KikuDbKanji = {};
     for (const kanji of Object.keys(temp)) {
       const entry = temp[kanji];
       const meaningSet = new Set<string>();
@@ -152,29 +152,29 @@ class Script {
       }
 
       const related = [...meaningSet];
-      kikuDbMain[kanji] = {
+      kikuDbKanji[kanji] = {
         ...entry,
         related: related,
       };
     }
 
-    console.log(kikuDbMain);
+    console.log(kikuDbKanji);
 
-    const compactKikuDbMain: KikuDbMainCompact = {};
-    for (const kanji of Object.keys(kikuDbMain)) {
-      compactKikuDbMain[kanji] = toCompact(kikuDbMain[kanji]);
+    const kikuDbKanjiCompact: KikuDbKanjiCompact = {};
+    for (const kanji of Object.keys(kikuDbKanji)) {
+      kikuDbKanjiCompact[kanji] = toCompact(kikuDbKanji[kanji]);
     }
 
     await writeFile(
-      this.KIKU_DB_MAIN_COMPACT_JSON,
-      JSON.stringify(compactKikuDbMain),
+      this.KIKU_DB_KANJI_COMPACT_JSON,
+      JSON.stringify(kikuDbKanjiCompact),
     );
   }
 
-  async gzipKikuDbMainCompactJson() {
+  async gzipKikuDbKanjiCompactJson() {
     await gzipFile(
-      this.KIKU_DB_MAIN_COMPACT_JSON,
-      this.KIKU_DB_MAIN_COMPACT_JSON_GZ,
+      this.KIKU_DB_KANJI_COMPACT_JSON,
+      this.KIKU_DB_KANJI_COMPACT_JSON_GZ,
       false,
     );
   }
@@ -183,6 +183,6 @@ class Script {
 const kikuDbMainScript = new Script();
 // await kikuDbMainScript.compareKanjiVgAndJpdb();
 
-// await kikuDbMainScript.writeKikuDbMain();
+await kikuDbMainScript.writeKikuDbKanji();
 
-await kikuDbMainScript.gzipKikuDbMainCompactJson();
+await kikuDbMainScript.gzipKikuDbKanjiCompactJson();
