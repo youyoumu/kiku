@@ -135,7 +135,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
         </Show>
       </div>
       <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col gap-2">
-        <Show when={$kanji.kanjiInfo?.readings.length}>
+        <Show when={$kanji.kanjiInfo?.composedOf.length}>
           <div class="flex flex-col gap-1">
             <div class="font-bold text-base-content-calm">Composed of</div>
             <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
@@ -168,6 +168,41 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
             </div>
           </div>
         </Show>
+
+        <Show when={$kanji.kanjiInfo?.visuallySimilar.length}>
+          <div class="flex flex-col gap-1">
+            <div class="font-bold text-base-content-calm">Similar</div>
+            <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
+              <For each={$kanji.kanjiInfo?.visuallySimilar}>
+                {(kanji) => {
+                  return (
+                    <KanjiContextProvider kanji={kanji}>
+                      <KanjiKeyword />
+                    </KanjiContextProvider>
+                  );
+                }}
+              </For>
+            </div>
+          </div>
+        </Show>
+
+        <Show when={$kanji.kanjiInfo?.related.length}>
+          <div class="flex flex-col gap-1">
+            <div class="font-bold text-base-content-calm">Related</div>
+            <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
+              <For each={$kanji.kanjiInfo?.related}>
+                {(kanji) => {
+                  return (
+                    <KanjiContextProvider kanji={kanji}>
+                      <KanjiKeyword />
+                    </KanjiContextProvider>
+                  );
+                }}
+              </For>
+            </div>
+          </div>
+        </Show>
+
         <ul class="list bg-base-100 rounded-box shadow-md">
           <For each={data()}>
             {(data) => {
