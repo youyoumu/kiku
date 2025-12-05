@@ -1,4 +1,4 @@
-import { createContext, useContext } from "solid-js";
+import { createContext, createUniqueId, useContext } from "solid-js";
 import type { JSX } from "solid-js/jsx-runtime";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
 import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
@@ -15,6 +15,7 @@ type CardStore = {
   page: "main" | "settings" | "kanji" | "nested";
   ready: boolean;
   isNsfw: boolean;
+  uniqueId: string;
   expressionAudioRef?: HTMLDivElement;
   sentenceFieldRef?: HTMLDivElement;
   sentenceAudioRef?: HTMLDivElement;
@@ -43,6 +44,7 @@ export function CardStoreContextProvider(props: {
     page: "main",
     ready: false,
     isNsfw: false,
+    uniqueId: createUniqueId(),
     expressionAudioRef: undefined,
     sentenceFieldRef: undefined,
     sentenceAudioRef: undefined,

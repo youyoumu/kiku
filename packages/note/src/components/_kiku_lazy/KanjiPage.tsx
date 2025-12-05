@@ -1,4 +1,4 @@
-import { For, Match, onMount, Show, Switch } from "solid-js";
+import { createUniqueId, For, Match, onMount, Show, Switch } from "solid-js";
 import { useCardContext } from "#/components/shared/CardContext";
 import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
@@ -23,6 +23,7 @@ export default function KanjiPage() {
         kanji: $card.focus.kanji,
         noteId: $card.focus.noteId,
       }}
+      id={$card.uniqueId}
     >
       <Page />
     </KanjiPageContextProvider>
@@ -44,6 +45,7 @@ function Page() {
             noteId: $kanjiPage.nestedFocus.noteId,
           }}
           selectedKanji={$kanjiPage.selectedKanji}
+          id={$kanjiPage.nestedId}
         >
           <Page />
         </KanjiPageContextProvider>
@@ -284,6 +286,7 @@ function KanjiKeyword(props: {
         navigate(
           () => {
             if (!props.noteList) return;
+            $setKanjiPage("nestedId", createUniqueId());
             $setKanjiPage("nestedFocus", {
               kanji: props.nestedFocus.kanji,
               noteId: props.nestedFocus.noteId,
