@@ -1,5 +1,4 @@
 import { For, Match, onMount, Show, Switch } from "solid-js";
-import { unwrap } from "solid-js/store";
 import { useCardContext } from "#/components/shared/CardContext";
 import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
@@ -136,69 +135,111 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
       </div>
       <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col gap-2">
         <Show when={$kanji.kanjiInfo?.composedOf.length}>
-          <div class="flex flex-col gap-1">
-            <div class="font-bold text-base-content-calm">Composed of</div>
-            <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
-              <For each={$kanji.kanjiInfo?.composedOf}>
-                {(kanji) => {
-                  return (
-                    <KanjiContextProvider kanji={kanji}>
-                      <KanjiKeyword />
-                    </KanjiContextProvider>
-                  );
-                }}
-              </For>
+          <div class="collapse collapse-arrow">
+            <input type="checkbox" class="p-0" checked />
+            <div class="collapse-title p-0 mb-1 after:text-base-content-calm">
+              <div class="font-bold text-base-content-calm">Composed of</div>
+            </div>
+            <div class="collapse-content p-0">
+              <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
+                <For each={$kanji.kanjiInfo?.composedOf}>
+                  {(kanji) => {
+                    return (
+                      <KanjiContextProvider kanji={kanji}>
+                        <KanjiKeyword />
+                      </KanjiContextProvider>
+                    );
+                  }}
+                </For>
+              </div>
             </div>
           </div>
         </Show>
 
         <Show when={$kanji.kanjiInfo?.usedIn.length}>
-          <div class="flex flex-col gap-1">
-            <div class="font-bold text-base-content-calm">Used in</div>
-            <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
-              <For each={$kanji.kanjiInfo?.usedIn}>
-                {(kanji) => {
-                  return (
-                    <KanjiContextProvider kanji={kanji}>
-                      <KanjiKeyword />
-                    </KanjiContextProvider>
-                  );
-                }}
-              </For>
+          <div class="collapse collapse-arrow ">
+            <input type="checkbox" class="p-0" checked />
+            <div class="collapse-title p-0 mb-1 after:text-base-content-calm">
+              <div class="font-bold text-base-content-calm">Used in</div>
+            </div>
+            <div class="collapse-content p-0">
+              <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
+                <For each={$kanji.kanjiInfo?.usedIn}>
+                  {(kanji) => {
+                    return (
+                      <KanjiContextProvider kanji={kanji}>
+                        <KanjiKeyword />
+                      </KanjiContextProvider>
+                    );
+                  }}
+                </For>
+              </div>
             </div>
           </div>
         </Show>
 
         <Show when={$kanji.kanjiInfo?.visuallySimilar.length}>
-          <div class="flex flex-col gap-1">
-            <div class="font-bold text-base-content-calm">Similar</div>
-            <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
-              <For each={$kanji.kanjiInfo?.visuallySimilar}>
-                {(kanji) => {
-                  return (
-                    <KanjiContextProvider kanji={kanji}>
-                      <KanjiKeyword />
-                    </KanjiContextProvider>
-                  );
-                }}
-              </For>
+          <div class="collapse collapse-arrow">
+            <input type="checkbox" class="p-0" checked />
+            <div class="collapse-title p-0 mb-1 after:text-base-content-calm">
+              <div class="font-bold text-base-content-calm">Similar</div>
+            </div>
+            <div class="collapse-content p-0">
+              <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
+                <For each={$kanji.kanjiInfo?.visuallySimilar}>
+                  {(kanji) => {
+                    return (
+                      <KanjiContextProvider kanji={kanji}>
+                        <KanjiKeyword />
+                      </KanjiContextProvider>
+                    );
+                  }}
+                </For>
+              </div>
+            </div>
+          </div>
+        </Show>
+
+        <Show when={$kanji.kanjiInfo?.meanings.length}>
+          <div class="collapse collapse-arrow">
+            <input type="checkbox" class="p-0" />
+            <div class="collapse-title p-0 mb-1 after:text-base-content-calm">
+              <div class="font-bold text-base-content-calm">Meanings</div>
+            </div>
+            <div class="collapse-content p-0">
+              <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
+                <For each={$kanji.kanjiInfo?.meanings}>
+                  {(meaning) => {
+                    return (
+                      <div class="border border-base-300 inline-flex px-1 bg-base-300">
+                        {meaning}
+                      </div>
+                    );
+                  }}
+                </For>
+              </div>
             </div>
           </div>
         </Show>
 
         <Show when={$kanji.kanjiInfo?.related.length}>
-          <div class="flex flex-col gap-1">
-            <div class="font-bold text-base-content-calm">Related</div>
-            <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
-              <For each={$kanji.kanjiInfo?.related}>
-                {(kanji) => {
-                  return (
-                    <KanjiContextProvider kanji={kanji}>
-                      <KanjiKeyword />
-                    </KanjiContextProvider>
-                  );
-                }}
-              </For>
+          <div class="collapse collapse-arrow">
+            <input type="checkbox" class="p-0" />
+            <div class="collapse-title p-0 mb-1 after:text-base-content-calm">
+              <div class="font-bold text-base-content-calm">Related</div>
+            </div>
+            <div class="collapse-content p-0">
+              <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
+                <For each={$kanji.kanjiInfo?.related}>
+                  {(kanji) => {
+                    return (
+                      <KanjiContextProvider kanji={kanji}>
+                        <KanjiKeyword />
+                      </KanjiContextProvider>
+                    );
+                  }}
+                </For>
+              </div>
             </div>
           </div>
         </Show>
