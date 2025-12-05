@@ -1,5 +1,5 @@
 import { writeFile } from "fs/promises";
-import { join } from "path";
+import { basename, join } from "path";
 import * as tar from "tar";
 import { jmdictParser } from "./parseJmdict.js";
 import { jpdbScraper } from "./scrapJpdb.js";
@@ -188,19 +188,56 @@ class Script {
   KIKU_DB_MAIN_MANIFEST_JSON = join(this.DB_DIR, "_kiku_db_main_manifest.json");
   async generateDbMainTar() {
     const filesToInclude = [
-      {
-        absPath: this.KIKU_DB_KANJI_COMPACT_JSON_GZ,
-        tarName: "kiku_db_kanji_compact.json.gz",
-      },
-      // Add more files later here
-    ];
+      this.KIKU_DB_KANJI_COMPACT_JSON_GZ,
+      // this.KIKU_DB_KANJI_COMPACT_JSON,
+    ].map((file) => basename(file));
 
-    tar.create(
+    await tar.create(
       {
+        cwd: this.DB_DIR,
         portable: true,
         file: this.KIKU_DB_MAIN_TAR,
       },
-      filesToInclude.map((f) => f.absPath),
+      filesToInclude,
+    );
+  }
+
+  async writeDbMainManifest() {
+    let offset = 0; // current byte offset in the tar
+    const manifest: KikuDbMainManifest = {
+      files: {},
+    };
+
+    await tar.t({
+      file: this.KIKU_DB_MAIN_TAR,
+      onReadEntry(entry) {
+        const headerSize = 512;
+        const fileSize = entry.size;
+
+        // actual file content inside the tar
+        const contentStart = offset + headerSize;
+        const contentEnd = contentStart + fileSize - 1;
+
+        console.log({
+          path: entry.path,
+          contentStart,
+          contentEnd,
+          fileSize,
+        });
+
+        manifest.files[entry.path] = {
+          start: contentStart,
+          end: contentEnd,
+          size: fileSize,
+        };
+
+        offset += entry.startBlockSize; // skip header + padded data
+      },
+    });
+
+    await writeFile(
+      this.KIKU_DB_MAIN_MANIFEST_JSON,
+      JSON.stringify(manifest, null, 2),
     );
   }
 }
@@ -213,3 +250,5 @@ const kikuDbMainScript = new Script();
 // await kikuDbMainScript.gzipKikuDbKanjiCompactJson();
 
 await kikuDbMainScript.generateDbMainTar();
+
+await kikuDbMainScript.writeDbMainManifest();
