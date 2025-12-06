@@ -18,7 +18,11 @@ export function useViewTransition() {
       beforeCallback?: () => void;
     } = {},
   ) {
-    if (document.startViewTransition && typeof pycmd === "undefined") {
+    if (
+      document.startViewTransition &&
+      typeof pycmd === "undefined" &&
+      !KIKU_STATE.isAnkiWeb
+    ) {
       beforeCallback?.();
       return document.startViewTransition(callback);
     } else {
