@@ -1,7 +1,6 @@
 import type {
   AnkiFields,
   AnkiNote,
-  Kanji,
   KanjiInfo,
   KanjiInfoCompact,
   KikuDbMainManifest,
@@ -179,11 +178,7 @@ export class Nex {
 
       for (const chunk of manifest.chunks) {
         const res = await fetch(`${this.assetsPath}/${chunk.file}`);
-        if (!res.body) throw new Error(`No body for ${chunk.file}`);
-
-        const ds = new DecompressionStream("gzip");
-        const decompressed = res.body.pipeThrough(ds);
-        const text = await new Response(decompressed).text();
+        const text = await Nex.gunzip(res).text();
         const notes = JSON.parse(text) as AnkiNote[];
 
         for (const note of notes) {
@@ -332,26 +327,29 @@ export class Nex {
     }
   }
 
-  async lookup(kanji: string): Promise<Kanji> {
-    const key = this.lookup.name;
-    const cache = this.cache.get(key);
-    if (!cache) {
-      const res = await fetch(
-        `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
-      );
-      if (!res.body) {
-        logger.error("Failed to lookup", kanji);
-        throw new Error(`Failed to lookup ${kanji}`);
-      }
-      const ds = new DecompressionStream("gzip");
-      const decompressed = res.body.pipeThrough(ds);
-      const text = await new Response(decompressed).text();
-      const lookupDb = JSON.parse(text);
-
-      this.cache.set(key, lookupDb);
-    }
-    return this.cache.get(key)[kanji];
-  }
+  // TODO: remove lookup
+  //
+  // async lookup(kanji: string): Promise<Kanji> {
+  //   console.warn("lookup is deprecated, use lookupKanji instead");
+  //   const key = this.lookup.name;
+  //   const cache = this.cache.get(key);
+  //   if (!cache) {
+  //     const res = await fetch(
+  //       `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
+  //     );
+  //     if (!res.body) {
+  //       logger.error("Failed to lookup", kanji);
+  //       throw new Error(`Failed to lookup ${kanji}`);
+  //     }
+  //     const ds = new DecompressionStream("gzip");
+  //     const decompressed = res.body.pipeThrough(ds);
+  //     const text = await new Response(decompressed).text();
+  //     const lookupDb = JSON.parse(text);
+  //
+  //     this.cache.set(key, lookupDb);
+  //   }
+  //   return this.cache.get(key)[kanji];
+  // }
 
   lookupKanjiPromise:
     | PromiseWithResolvers<Record<string, KanjiInfo>>
@@ -374,13 +372,7 @@ export class Nex {
           headers: { Range: `bytes=${file.start}-${file.end}` },
         },
       );
-      if (!res.body) {
-        logger.error("Failed to lookup kanji", kanji);
-        throw new Error(`Failed to lookup kanji ${kanji}`);
-      }
-      const ds = new DecompressionStream("gzip");
-      const decompressed = res.body.pipeThrough(ds);
-      const text = await new Response(decompressed).text();
+      const text = await Nex.gunzip(res).text();
       const dbKanjiCompact = JSON.parse(text);
       const dbKanji: Record<string, KanjiInfo> = {};
       for (const kanji of Object.keys(dbKanjiCompact)) {
@@ -424,6 +416,7 @@ export class Nex {
     return manifest;
   }
 
+  // TODO: remove
   async similarKanjiDBs(): Promise<SimilarKanjiDBs> {
     const key = this.similarKanjiDBs.name;
     if (this.cache.has(key)) return this.cache.get(key);
@@ -435,13 +428,7 @@ export class Nex {
     for (const src of allSources) {
       if (!similarKanjiDbs[src.file]) {
         const res = await fetch(src.file);
-        if (!res.body) {
-          logger.error("Failed to load", src.file);
-          throw new Error(`Failed to load ${src.file}`);
-        }
-        const ds = new DecompressionStream("gzip");
-        const decompressed = res.body.pipeThrough(ds);
-        const text = await new Response(decompressed).text();
+        const text = await Nex.gunzip(res).text();
         const db = JSON.parse(text);
 
         similarKanjiDbs[src.file] = db;
@@ -465,6 +452,16 @@ export class Nex {
       visuallySimilar: c[8],
       related: c[9],
     };
+  }
+
+  static gunzip(res: Response) {
+    if (!res.body) {
+      logger.error("No body for", res.url);
+      throw new Error(`No body for ${res.url}`);
+    }
+    const ds = new DecompressionStream("gzip");
+    const decompressed = res.body.pipeThrough(ds);
+    return new Response(decompressed);
   }
 }
 
@@ -497,7 +494,6 @@ const nexApi = {
   query: (...args: Parameters<typeof nex.query>) => nex.query(...args),
   getSimilarKanji: (...args: Parameters<typeof nex.getSimilarKanji>) => nex.getSimilarKanji(...args),
   queryShared: ( ...args: Parameters<typeof nex.queryShared>) => nex.queryShared(...args),
-  lookup: (...args: Parameters<typeof nex.lookup>) => nex.lookup(...args),
   lookupKanji: (...args: Parameters<typeof nex.lookupKanji>) => nex.lookupKanji(...args),
 } satisfies NexApi$;
 
