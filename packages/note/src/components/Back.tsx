@@ -1,4 +1,5 @@
 import {
+  createSignal,
   getOwner,
   lazy,
   Match,
@@ -7,7 +8,7 @@ import {
   Suspense,
   Switch,
 } from "solid-js";
-import { isServer } from "solid-js/web";
+import { isServer, render } from "solid-js/web";
 import {
   CardStoreContextProvider,
   useCardContext,
@@ -36,6 +37,7 @@ const Lazy = {
   Pitches: lazy(async () => ({ default: (await import("./_kiku_lazy")).Pitches, })),
   KanjiPage: lazy(async () => ({ default: (await import("./_kiku_lazy")).KanjiPage, })),
   UseAnkiDroid: lazy(async () => ({ default: (await import("./_kiku_lazy")).UseAnkiDroid, })),
+  Expression: lazy(async () => ({ default: (await import("./_kiku_lazy")).Expression, })),
 };
 
 export function Back(props: { onExitNested?: () => void }) {
@@ -76,21 +78,6 @@ export function Back(props: { onExitNested?: () => void }) {
         : "",
   });
 
-  const expressionInnerHtml = () => {
-    if ($card.nested) {
-      if (ankiFields.Expression && ankiFields.ExpressionReading) {
-        return `<ruby>${ankiFields.Expression}<rt>${ankiFields.ExpressionReading}</rt></ruby>`;
-      }
-      if (ankiFields.Expression) return ankiFields.Expression;
-      return ankiFields.ExpressionReading;
-    }
-    return isServer
-      ? undefined
-      : ankiFields.ExpressionFurigana
-        ? ankiFields["furigana:ExpressionFurigana"]
-        : ankiFields.Expression;
-  };
-
   return (
     <>
       {$card.ready && !$card.nested && <Lazy.UseAnkiDroid />}
@@ -122,14 +109,7 @@ export function Back(props: { onExitNested?: () => void }) {
               }}
             >
               <div class="flex-1 bg-base-200 p-4 rounded-lg flex flex-col items-center justify-center min-h-40 sm:min-h-56">
-                <div
-                  class="expression font-secondary text-center vertical-rl"
-                  innerHTML={expressionInnerHtml()}
-                >
-                  {isServer
-                    ? "{{#ExpressionFurigana}}{{furigana:ExpressionFurigana}}{{/ExpressionFurigana}}{{^ExpressionFurigana}}{{Expression}}{{/ExpressionFurigana}}"
-                    : undefined}
-                </div>
+                <ExpressionSection />
                 <div
                   class={`mt-6 flex gap-4 pitch pitch-field`}
                   {...pitchFieldDataset()}
@@ -178,5 +158,46 @@ export function Back(props: { onExitNested?: () => void }) {
         />
       )}
     </>
+  );
+}
+
+function ExpressionSection() {
+  const [$card, $setCard] = useCardContext();
+  const { ankiFields } = useAnkiFieldContext<"back">();
+  const [ref, setRef] = createSignal<HTMLDivElement>();
+
+  const expressionInnerHtml = () => {
+    if ($card.nested) {
+      if (ankiFields.Expression && ankiFields.ExpressionReading) {
+        return `<ruby>${ankiFields.Expression}<rt>${ankiFields.ExpressionReading}</rt></ruby>`;
+      }
+      if (ankiFields.Expression) return ankiFields.Expression;
+      return ankiFields.ExpressionReading;
+    }
+    return isServer
+      ? undefined
+      : ankiFields.ExpressionFurigana
+        ? ankiFields["furigana:ExpressionFurigana"]
+        : ankiFields.Expression;
+  };
+
+  onMount(() => {
+    const el = ref();
+    if (el) {
+      el.innerHTML = "";
+      render(Lazy.Expression, el);
+    }
+  });
+
+  return (
+    <div
+      ref={(ref) => setRef(ref)}
+      class="expression font-secondary text-center vertical-rl"
+      innerHTML={expressionInnerHtml()}
+    >
+      {isServer
+        ? "{{#ExpressionFurigana}}{{furigana:ExpressionFurigana}}{{/ExpressionFurigana}}{{^ExpressionFurigana}}{{Expression}}{{/ExpressionFurigana}}"
+        : undefined}
+    </div>
   );
 }

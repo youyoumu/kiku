@@ -1,6 +1,7 @@
 import AudioButtons from "./AudioButtons";
 import BackBody from "./BackBody";
 import BackFooter from "./BackFooter";
+import Expression from "./Expression";
 import HeaderMain from "./HeaderMain";
 import KanjiPage from "./KanjiPage";
 import PictureModal from "./PictureModal";
@@ -22,4 +23,5 @@ export {
   KanjiPage,
   UseAnkiDroid,
   Sentence,
+  Expression,
 };
