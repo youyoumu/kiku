@@ -109,14 +109,16 @@ export function useKanji() {
       const readingList = ankiFields.ExpressionReading
         ? [ankiFields.ExpressionReading]
         : [];
-      const worker = new NexClient({
+      const nexClient = new NexClient({
         env: env,
         config: unwrap($config),
         assetsPath: import.meta.env.DEV ? "" : KIKU_STATE.assetsPath,
         preferAnkiConnect:
           $config.preferAnkiConnect && !!KIKU_STATE.isAnkiDesktop,
       });
-      const nex = await worker.nex;
+      KIKU_STATE.nexClient = nexClient;
+      $general.nexClientPromise.resolve(nexClient);
+      const nex = await nexClient.nex;
       const { kanjiResult, readingResult } = await nex.queryShared({
         kanjiList,
         readingList,
@@ -129,7 +131,6 @@ export function useKanji() {
         kanji: kanjiResult,
         sameReading: readingResult[ankiFields.ExpressionReading],
       });
-      KIKU_STATE.nexClient = worker;
 
       nex
         .notesManifest()

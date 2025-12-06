@@ -5,6 +5,7 @@ import { isServer } from "solid-js/web";
 import type { KikuPlugin } from "#/plugins/pluginTypes";
 import type { KanjiInfo, KikuNotesManifest } from "#/types";
 import { env } from "#/util/general";
+import type { NexClient } from "#/worker/client";
 
 type GeneralStore = {
   plugin: KikuPlugin | undefined;
@@ -17,6 +18,7 @@ type GeneralStore = {
   toast: Toast;
   SAME_READING: symbol;
   lookupKanjiCache: Map<string, KanjiInfo | undefined>;
+  nexClientPromise: PromiseWithResolvers<NexClient>;
 };
 
 type Toast = {
@@ -66,6 +68,7 @@ export function GeneralContextProvider(props: {
     toast: { success, error, message: undefined, type: "success" },
     SAME_READING: Symbol.for("SAME_READING"),
     lookupKanjiCache: new Map(),
+    nexClientPromise: Promise.withResolvers(),
   });
 
   return (
