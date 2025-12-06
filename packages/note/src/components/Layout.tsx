@@ -19,9 +19,9 @@ export function Layout(props: { children: JSX.Element }) {
       >
         {props.children}
       </div>
-      <Portal mount={KIKU_STATE.root}>
+      <Portal mount={$general.layoutRef}>
         {$general.toast.message && (
-          <div class="toast toast-top toast-center">
+          <div class="toast toast-top toast-center z-20">
             <div
               class="alert"
               classList={{
