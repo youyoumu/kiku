@@ -84,7 +84,7 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
                           noteId: undefined,
                         }}
                         contextLabel={{
-                          text: kanji,
+                          text: $kanji.kanji,
                           type: "similar",
                         }}
                       />
@@ -120,7 +120,7 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
                           noteId: undefined,
                         }}
                         contextLabel={{
-                          text: kanji,
+                          text: $kanji.kanji,
                           type: "composedOf",
                         }}
                       />
@@ -152,7 +152,7 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
                           noteId: undefined,
                         }}
                         contextLabel={{
-                          text: kanji,
+                          text: $kanji.kanji,
                           type: "usedIn",
                         }}
                       />
@@ -206,7 +206,7 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
                           noteId: undefined,
                         }}
                         contextLabel={{
-                          text: kanji,
+                          text: $kanji.kanji,
                           type: "related",
                         }}
                       />
