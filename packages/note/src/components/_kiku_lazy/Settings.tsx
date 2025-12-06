@@ -103,7 +103,13 @@ export default function Settings() {
         <div class="divider"></div>
         <div class="pb-16"></div>
         <Portal mount={$general.layoutRef}>
-          <div class="fixed bottom-0 w-full">
+          <div
+            class="bottom-0 w-full"
+            classList={{
+              fixed: !KIKU_STATE.isAnkiWeb,
+              absolute: KIKU_STATE.isAnkiWeb,
+            }}
+          >
             <div class="max-w-4xl mx-auto w-full relative">
               <div class="flex flex-row gap-2 justify-end animate-fade-in mb-4 px-2 sm:px-4">
                 <button class="btn" on:click={() => navigateBack()}>

@@ -157,7 +157,13 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
   if (props.position === 2)
     return (
       <Portal mount={$general.layoutRef}>
-        <div class="fixed bottom-4 left-4 flex sm:hidden flex-col gap-2 items-center animate-fade-in-sm">
+        <div
+          class="bottom-4 left-4 flex sm:hidden flex-col gap-2 items-center animate-fade-in-sm"
+          classList={{
+            fixed: !KIKU_STATE.isAnkiWeb,
+            absolute: KIKU_STATE.isAnkiWeb,
+          }}
+        >
           <NotePlayIcons />
         </div>
       </Portal>
