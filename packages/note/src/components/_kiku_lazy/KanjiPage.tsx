@@ -135,7 +135,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
 
       <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col gap-2">
         <Show when={$kanji.kanjiInfo?.visuallySimilar.length}>
-          <div class="collapse collapse-arrow">
+          <div class="collapse collapse-arrow rounded-none">
             <input type="checkbox" class="p-0" checked />
             <div class="collapse-title p-0 mb-1 after:text-base-content-calm">
               <div class="font-bold text-base-content-calm">Similar</div>
@@ -167,8 +167,12 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
         </Show>
 
         <Show when={$kanji.kanjiInfo?.composedOf.length}>
-          <div class="collapse collapse-arrow">
-            <input type="checkbox" class="p-0" />
+          <div class="collapse collapse-arrow rounded-none">
+            <input
+              type="checkbox"
+              class="p-0"
+              checked={!$kanji.kanjiInfo?.visuallySimilar.length}
+            />
             <div class="collapse-title p-0 mb-1 after:text-base-content-calm">
               <div class="font-bold text-base-content-calm">Composed of</div>
             </div>
@@ -199,7 +203,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
         </Show>
 
         <Show when={$kanji.kanjiInfo?.usedIn.length}>
-          <div class="collapse collapse-arrow ">
+          <div class="collapse collapse-arrow rounded-none">
             <input type="checkbox" class="p-0" />
             <div class="collapse-title p-0 mb-1 after:text-base-content-calm">
               <div class="font-bold text-base-content-calm">Used in</div>
@@ -231,7 +235,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
         </Show>
 
         <Show when={$kanji.kanjiInfo?.meanings.length}>
-          <div class="collapse collapse-arrow">
+          <div class="collapse collapse-arrow rounded-none">
             <input type="checkbox" class="p-0" />
             <div class="collapse-title p-0 mb-1 after:text-base-content-calm">
               <div class="font-bold text-base-content-calm">Meanings</div>
@@ -253,7 +257,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
         </Show>
 
         <Show when={$kanji.kanjiInfo?.related.length}>
-          <div class="collapse collapse-arrow">
+          <div class="collapse collapse-arrow rounded-none">
             <input type="checkbox" class="p-0" />
             <div class="collapse-title p-0 mb-1 after:text-base-content-calm">
               <div class="font-bold text-base-content-calm">Related</div>
@@ -315,7 +319,7 @@ function KanjiKeyword(props: {
 
   return (
     <div
-      class="inline-flex border border-base-300"
+      class="inline-flex border border-base-300 transition-colors hover:border-base-content-subtle-200"
       classList={{
         "cursor-pointer": $kanji.status === "success",
       }}
