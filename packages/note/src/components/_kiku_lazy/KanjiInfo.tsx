@@ -77,7 +77,7 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
                 {(kanji) => {
                   return (
                     <KanjiContextProvider kanji={kanji}>
-                      <KanjiKeyword
+                      <KanjiKeywordComponent
                         noteList={$kanji.visuallySimilar}
                         nestedFocus={{
                           kanji: kanji,
