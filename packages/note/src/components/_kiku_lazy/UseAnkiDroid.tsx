@@ -35,7 +35,7 @@ export default function UseAnkiDroid() {
 
   const [$card] = useCardContext();
   const [$general] = useGeneralContext();
-  const el$ = () => $general.contentRef;
+  const el$ = () => document.documentElement;
   const reverse = $config.ankiDroidReverseSwipeDirection;
 
   const THRESHOLD = 60;
@@ -160,7 +160,7 @@ export default function UseAnkiDroid() {
   if ($card.side === "front") return null;
 
   return (
-    <Portal mount={KIKU_STATE.root}>
+    <Portal mount={$general.layoutRef}>
       <Icon
         ref={leftIconRef}
         side="left"
@@ -191,7 +191,7 @@ function Icon(props: {
 
   return (
     <div
-      class="absolute top-1/2 -translate-y-1/2 flex justify-center items-center rounded-full transition-transform"
+      class="fixed top-1/2 -translate-y-1/2 flex justify-center items-center rounded-full transition-transform z-10"
       classList={{
         "bg-error/30": props.color === "error",
         "bg-success/30": props.color === "success",
