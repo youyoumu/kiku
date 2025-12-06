@@ -16,6 +16,8 @@ type KanjiStore = {
 const KanjiContext =
   createContext<[Store<KanjiStore>, SetStoreFunction<KanjiStore>]>();
 
+const lookupKanjiCache = new Map<string, KanjiInfo | undefined>();
+
 export function KanjiContextProvider(props: {
   kanji: string;
   children: JSX.Element;
@@ -31,7 +33,11 @@ export function KanjiContextProvider(props: {
   onMount(async () => {
     const nex = await KIKU_STATE.nexClient?.nex;
     if (nex) {
-      const kanjiInfo = await nex.lookupKanji(props.kanji);
+      let kanjiInfo = lookupKanjiCache.get(props.kanji);
+      if (!kanjiInfo) {
+        kanjiInfo = await nex.lookupKanji(props.kanji);
+        lookupKanjiCache.set(props.kanji, kanjiInfo);
+      }
       $setKanji("kanjiInfo", kanjiInfo);
 
       if (props.fetchNotes) {

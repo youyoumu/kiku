@@ -353,46 +353,45 @@ export class Nex {
     return this.cache.get(key)[kanji];
   }
 
-  private lookupKanjiPromise?: Promise<Record<string, KanjiInfoCompact>>;
+  lookupKanjiPromise:
+    | PromiseWithResolvers<Record<string, KanjiInfo>>
+    | undefined;
   async lookupKanji(kanji: string): Promise<KanjiInfo | undefined> {
     const key = this.lookupKanji.name;
     const cached = this.cache.get(key);
+    let result: KanjiInfo | undefined;
     if (cached) {
-      return Nex.fromCompact(cached[kanji]);
-    }
-    if (this.lookupKanjiPromise) {
-      const data = await this.lookupKanjiPromise;
-      return Nex.fromCompact(data[kanji]);
-    }
-
-    this.lookupKanjiPromise = (async () => {
+      result = cached[kanji];
+    } else if (this.lookupKanjiPromise) {
+      result = (await this.lookupKanjiPromise.promise)[kanji];
+    } else {
+      this.lookupKanjiPromise = Promise.withResolvers();
       const manifest = await this.dbMainManifest();
       const file = manifest.files[this.env.KIKU_DB_KANJI_COMPACT];
-
       const res = await fetch(
         `${this.assetsPath}/${this.env.KIKU_DB_MAIN_TAR}`,
         {
-          headers: {
-            Range: `bytes=${file.start}-${file.end}`,
-          },
+          headers: { Range: `bytes=${file.start}-${file.end}` },
         },
       );
-
       if (!res.body) {
         logger.error("Failed to lookup kanji", kanji);
         throw new Error(`Failed to lookup kanji ${kanji}`);
       }
-
       const ds = new DecompressionStream("gzip");
       const decompressed = res.body.pipeThrough(ds);
       const text = await new Response(decompressed).text();
-      const lookupKanji = JSON.parse(text);
-      this.cache.set(key, lookupKanji);
-      return lookupKanji;
-    })();
-
-    const data = await this.lookupKanjiPromise;
-    return Nex.fromCompact(data[kanji]);
+      const dbKanjiCompact = JSON.parse(text);
+      const dbKanji: Record<string, KanjiInfo> = {};
+      for (const kanji of Object.keys(dbKanjiCompact)) {
+        const data = Nex.fromCompact(dbKanjiCompact[kanji]);
+        if (data) dbKanji[kanji] = data;
+      }
+      this.cache.set(key, dbKanji);
+      this.lookupKanjiPromise.resolve(dbKanji);
+      result = dbKanji[kanji];
+    }
+    return result;
   }
 
   async dbMainManifest(): Promise<KikuDbMainManifest> {
