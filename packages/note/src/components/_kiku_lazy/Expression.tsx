@@ -4,12 +4,10 @@ import { createStore } from "solid-js/store";
 import { extractKanji } from "#/util/general";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useBreakpointContext } from "../shared/BreakpointContext";
-import { useCardContext } from "../shared/CardContext";
 import { KanjiContextProvider, useKanjiContext } from "./KanjiContext";
-import { KanjiInfo } from "./KanjiInfo";
+import { KanjiInfo, KanjiInfoExtra } from "./KanjiInfo";
 
 export default function Expression() {
-  const [$card, $setCard] = useCardContext();
   const { ankiFields } = useAnkiFieldContext<"back">();
   const bp = useBreakpointContext();
   const [$kanjiEl, $setKanjiEl] = createStore<{
@@ -35,7 +33,7 @@ export default function Expression() {
 
   function applyTooltip() {
     const charEls = Object.entries($kanjiEl.el.kanji);
-    charEls.forEach(([char, kanji], i) => {
+    charEls.forEach(([char, kanji]) => {
       const tooltip = $kanjiEl.el.tooltip[char];
       if (kanji && tooltip) {
         computePosition(kanji, tooltip, {
@@ -101,10 +99,13 @@ function KanjiTooltip(props: { ref: (ref: HTMLDivElement) => void }) {
 
   return (
     <div
-      class="absolute text-base bg-base-200/95 z-10 p-2 sm:p-4 border border-base-300 rounded-lg font-primary w-xs sm:w-md shadow-lg hidden"
+      class="absolute text-base bg-base-200/95 z-10 p-2 sm:p-4 border border-base-300 rounded-lg font-primary w-xs sm:w-md lg:w-lg shadow-lg hidden"
       ref={props.ref}
     >
       <KanjiInfo />
+      <div class="text-sm mt-2 sm:mt-4 flex flex-col gap-1 sm:gap-2">
+        <KanjiInfoExtra />
+      </div>
     </div>
   );
 }
