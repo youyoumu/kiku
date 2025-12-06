@@ -220,6 +220,7 @@
 
 :root {
   font-size: 16px;
+  scrollbar-gutter: stable;
 }
 
 *,
@@ -244,14 +245,6 @@ body {
 
 *::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-base-content-subtle-300) !important;
-}
-
-.invisible-scrollbar.invisible-scrollbar::-webkit-scrollbar {
-  background-color: transparent !important;
-}
-
-.invisible-scrollbar.invisible-scrollbar::-webkit-scrollbar-thumb {
-  background-color: transparent !important;
 }
 
 @media (min-width: 40rem) {

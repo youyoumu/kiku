@@ -1,7 +1,6 @@
 import type { JSX } from "solid-js";
 import { Portal } from "solid-js/web";
 import { useGeneralContext } from "./shared/GeneralContext";
-import UseAnkiWeb from "./UseAnkiWeb";
 
 export function Layout(props: { children: JSX.Element }) {
   const [$general, $setGeneral] = useGeneralContext();
@@ -9,9 +8,10 @@ export function Layout(props: { children: JSX.Element }) {
   return (
     <div
       ref={(ref) => $setGeneral("layoutRef", ref)}
-      class="overflow-y-auto overflow-x-hidden gutter-stable h-svh font-primary transition-colors relative"
+      class="font-primary transition-colors relative"
     >
-      <UseAnkiWeb />
+      {/* TODO: remove */}
+      {/* <UseAnkiWeb /> */}
 
       <div
         class="flex flex-col gap-6 p-2 sm:p-4 bg-base-100 min-h-full max-w-4xl mx-auto pt-10 sm:pt-14"
