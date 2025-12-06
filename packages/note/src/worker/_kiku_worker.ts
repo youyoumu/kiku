@@ -360,40 +360,42 @@ export class Nex {
     | PromiseWithResolvers<Record<string, KanjiInfo>>
     | undefined;
   async lookupKanji(kanji: string): Promise<KanjiInfo | undefined> {
-    try {
-      const key = this.lookupKanji.name;
-      const cached = this.cache.get(key);
-      let result: KanjiInfo | undefined;
-      if (cached) {
-        result = cached[kanji];
-      } else if (this.lookupKanjiPromise) {
-        result = (await this.lookupKanjiPromise.promise)[kanji];
+    const key = this.lookupKanji.name;
+    const cached = this.cache.get(key);
+    let result: KanjiInfo | undefined;
+    if (cached) {
+      result = cached[kanji];
+    } else if (this.lookupKanjiPromise) {
+      result = (await this.lookupKanjiPromise.promise)[kanji];
+    } else {
+      this.lookupKanjiPromise = Promise.withResolvers();
+      const manifest = await this.dbMainManifest();
+      const file = manifest.files[this.env.KIKU_DB_KANJI_COMPACT];
+      let res = await fetch(`${this.assetsPath}/${this.env.KIKU_DB_MAIN_TAR}`, {
+        headers: { Range: `bytes=${file.start}-${file.end}` },
+      });
+      if (res.status === 200) {
+        res = Nex.sliceBytes(await res.arrayBuffer(), file.start, file.end);
       } else {
-        this.lookupKanjiPromise = Promise.withResolvers();
-        const manifest = await this.dbMainManifest();
-        const file = manifest.files[this.env.KIKU_DB_KANJI_COMPACT];
-        let res = await fetch(
-          `${this.assetsPath}/${this.env.KIKU_DB_MAIN_TAR}`,
-          { headers: { Range: `bytes=${file.start}-${file.end}` } },
-        );
-        if (res.status === 200) {
-          res = Nex.sliceBytes(await res.arrayBuffer(), file.start, file.end);
+        let buf = await res.arrayBuffer();
+        if (buf.byteLength > file.size) {
+          buf = buf.slice(0, file.size);
         }
-        const text = await Nex.gunzip(res).text();
-        const dbKanjiCompact = JSON.parse(text);
-        const dbKanji: Record<string, KanjiInfo> = {};
-        for (const kanji of Object.keys(dbKanjiCompact)) {
-          const data = Nex.fromCompact(dbKanjiCompact[kanji]);
-          if (data) dbKanji[kanji] = data;
-        }
-        this.cache.set(key, dbKanji);
-        this.lookupKanjiPromise.resolve(dbKanji);
-        result = dbKanji[kanji];
+        res = new Response(buf);
       }
-      return result;
-    } catch (e) {
-      console.error(e);
+
+      const text = await Nex.gunzip(res).text();
+      const dbKanjiCompact = JSON.parse(text);
+      const dbKanji: Record<string, KanjiInfo> = {};
+      for (const kanji of Object.keys(dbKanjiCompact)) {
+        const data = Nex.fromCompact(dbKanjiCompact[kanji]);
+        if (data) dbKanji[kanji] = data;
+      }
+      this.cache.set(key, dbKanji);
+      this.lookupKanjiPromise.resolve(dbKanji);
+      result = dbKanji[kanji];
     }
+    return result;
   }
 
   async dbMainManifest(): Promise<KikuDbMainManifest> {
