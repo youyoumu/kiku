@@ -45,8 +45,10 @@ export class NexClient {
     preferAnkiConnect: boolean;
   }) {
     let worker: Worker;
+    let nex: Promise<NexApi> | undefined;
     if (KIKU_STATE.nexClient) {
       worker = KIKU_STATE.nexClient.worker;
+      nex = KIKU_STATE.nexClient.nex;
     } else if (KIKU_STATE.assetsPath !== window.location.origin) {
       worker = new Worker(`${KIKU_STATE.assetsPath}/_kiku_worker.js`, {
         type: "module",
@@ -56,12 +58,22 @@ export class NexClient {
         type: "module",
       });
     }
-    const Nex = wrap<NexApi>(worker);
-    this.nex = new Promise<NexApi>((resolve) => {
-      Nex.init(payload).then(() => {
-        resolve(Nex);
+    if (nex) {
+      this.nex = new Promise<NexApi>((resolve) => {
+        nex.then((Nex) => {
+          Nex.init(payload).then(() => {
+            resolve(Nex);
+          });
+        });
       });
-    });
+    } else {
+      const Nex = wrap<NexApi>(worker);
+      this.nex = new Promise<NexApi>((resolve) => {
+        Nex.init(payload).then(() => {
+          resolve(Nex);
+        });
+      });
+    }
     this.worker = worker;
   }
 }
