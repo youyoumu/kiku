@@ -360,35 +360,40 @@ export class Nex {
     | PromiseWithResolvers<Record<string, KanjiInfo>>
     | undefined;
   async lookupKanji(kanji: string): Promise<KanjiInfo | undefined> {
-    const key = this.lookupKanji.name;
-    const cached = this.cache.get(key);
-    let result: KanjiInfo | undefined;
-    if (cached) {
-      result = cached[kanji];
-    } else if (this.lookupKanjiPromise) {
-      result = (await this.lookupKanjiPromise.promise)[kanji];
-    } else {
-      this.lookupKanjiPromise = Promise.withResolvers();
-      const manifest = await this.dbMainManifest();
-      const file = manifest.files[this.env.KIKU_DB_KANJI_COMPACT];
-      const res = await fetch(
-        `${this.assetsPath}/${this.env.KIKU_DB_MAIN_TAR}`,
-        {
-          headers: { Range: `bytes=${file.start}-${file.end}` },
-        },
-      );
-      const text = await Nex.gunzip(res).text();
-      const dbKanjiCompact = JSON.parse(text);
-      const dbKanji: Record<string, KanjiInfo> = {};
-      for (const kanji of Object.keys(dbKanjiCompact)) {
-        const data = Nex.fromCompact(dbKanjiCompact[kanji]);
-        if (data) dbKanji[kanji] = data;
+    try {
+      const key = this.lookupKanji.name;
+      const cached = this.cache.get(key);
+      let result: KanjiInfo | undefined;
+      if (cached) {
+        result = cached[kanji];
+      } else if (this.lookupKanjiPromise) {
+        result = (await this.lookupKanjiPromise.promise)[kanji];
+      } else {
+        this.lookupKanjiPromise = Promise.withResolvers();
+        const manifest = await this.dbMainManifest();
+        const file = manifest.files[this.env.KIKU_DB_KANJI_COMPACT];
+        let res = await fetch(
+          `${this.assetsPath}/${this.env.KIKU_DB_MAIN_TAR}`,
+          { headers: { Range: `bytes=${file.start}-${file.end}` } },
+        );
+        if (res.status === 200) {
+          res = Nex.sliceBytes(await res.arrayBuffer(), file.start, file.end);
+        }
+        const text = await Nex.gunzip(res).text();
+        const dbKanjiCompact = JSON.parse(text);
+        const dbKanji: Record<string, KanjiInfo> = {};
+        for (const kanji of Object.keys(dbKanjiCompact)) {
+          const data = Nex.fromCompact(dbKanjiCompact[kanji]);
+          if (data) dbKanji[kanji] = data;
+        }
+        this.cache.set(key, dbKanji);
+        this.lookupKanjiPromise.resolve(dbKanji);
+        result = dbKanji[kanji];
       }
-      this.cache.set(key, dbKanji);
-      this.lookupKanjiPromise.resolve(dbKanji);
-      result = dbKanji[kanji];
+      return result;
+    } catch (e) {
+      console.error(e);
     }
-    return result;
   }
 
   async dbMainManifest(): Promise<KikuDbMainManifest> {
@@ -467,6 +472,11 @@ export class Nex {
     const ds = new DecompressionStream("gzip");
     const decompressed = res.body.pipeThrough(ds);
     return new Response(decompressed);
+  }
+
+  static sliceBytes(buf: ArrayBuffer, start: number, end: number): Response {
+    const slice = buf.slice(start, end + 1);
+    return new Response(slice);
   }
 }
 
