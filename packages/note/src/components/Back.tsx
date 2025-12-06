@@ -101,7 +101,7 @@ export function Back(props: { onExitNested?: () => void }) {
         </Match>
         <Match when={$card.page === "main"}>
           {$card.ready && <Lazy.HeaderMain onExitNested={props.onExitNested} />}
-          <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-4 relative z-10">
             <div
               class="flex rounded-lg gap-4 flex-col sm:flex-row"
               classList={{
