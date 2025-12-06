@@ -1,4 +1,11 @@
-import { createSignal, Match, onMount, Show, Switch } from "solid-js";
+import {
+  createSignal,
+  createUniqueId,
+  Match,
+  onMount,
+  Show,
+  Switch,
+} from "solid-js";
 import { useNavigationTransition, useThemeTransition } from "#/util/hooks";
 import { nextTheme } from "#/util/theme";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
@@ -121,6 +128,7 @@ function KanjiPageIndicator() {
       $setCard("focus", "kanji", key);
       const list = Object.entries($card.query.kanji);
       $setCard("query", "noteList", list);
+      $setCard("uniqueId", createUniqueId());
       navigate("kanji", "forward", () => navigate("main", "back"));
     }
   };
