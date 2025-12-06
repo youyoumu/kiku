@@ -95,13 +95,13 @@ export function Back(props: { onExitNested?: () => void }) {
     <>
       {$card.ready && !$card.nested && <Lazy.UseAnkiDroid />}
       <Switch>
-        <Match when={$card.page === "settings" && !$card.nested && $card.ready}>
+        <Match when={$card.page === "settings" && $card.ready}>
           <Lazy.Settings />
         </Match>
-        <Match when={$card.page === "kanji" && !$card.nested && $card.ready}>
+        <Match when={$card.page === "kanji" && $card.ready}>
           <Lazy.KanjiPage />
         </Match>
-        <Match when={$card.page === "nested" && !$card.nested && $card.ready}>
+        <Match when={$card.page === "nested" && $card.ready}>
           <AnkiFieldContextProvider ankiFields={$card.nestedAnkiFields}>
             <CardStoreContextProvider nested side="back">
               <FieldGroupContextProvider>

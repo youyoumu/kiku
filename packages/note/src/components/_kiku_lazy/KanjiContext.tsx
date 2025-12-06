@@ -1,5 +1,10 @@
 import { createContext, type JSX, onMount, useContext } from "solid-js";
-import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
+import {
+  createStore,
+  type SetStoreFunction,
+  type Store,
+  unwrap,
+} from "solid-js/store";
 import type { AnkiNote, KanjiInfo } from "#/types";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 
@@ -44,19 +49,19 @@ export function KanjiContextProvider(props: {
         const [composedOf, usedIn, visuallySimilar, related] =
           await Promise.all([
             nex.queryShared({
-              ankiFields,
+              ankiFields: unwrap(ankiFields),
               kanjiList: kanjiInfo?.composedOf ?? [],
             }),
             nex.queryShared({
-              ankiFields,
+              ankiFields: unwrap(ankiFields),
               kanjiList: kanjiInfo?.usedIn ?? [],
             }),
             nex.queryShared({
-              ankiFields,
+              ankiFields: unwrap(ankiFields),
               kanjiList: kanjiInfo?.visuallySimilar ?? [],
             }),
             nex.queryShared({
-              ankiFields,
+              ankiFields: unwrap(ankiFields),
               kanjiList: kanjiInfo?.related ?? [],
             }),
           ]);

@@ -101,7 +101,9 @@ export function useKanji() {
     try {
       const kanjiList = extractKanji(
         ankiFields.ExpressionFurigana
-          ? ankiFields["furigana:ExpressionFurigana"]
+          ? $card.nested
+            ? ankiFields.Expression
+            : ankiFields["furigana:ExpressionFurigana"]
           : ankiFields.Expression,
       );
       const readingList = ankiFields.ExpressionReading
@@ -118,7 +120,7 @@ export function useKanji() {
       const { kanjiResult, readingResult } = await nex.queryShared({
         kanjiList,
         readingList,
-        ankiFields,
+        ankiFields: unwrap(ankiFields),
       });
       if ($general.aborter.signal.aborted) return;
 
@@ -145,7 +147,7 @@ export function useKanji() {
   }
 
   createEffect(() => {
-    if (!set && !$card.nested && $card.ready) {
+    if (!set && $card.ready) {
       setKanji();
     }
   });

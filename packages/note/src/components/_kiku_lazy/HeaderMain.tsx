@@ -82,24 +82,16 @@ export default function HeaderMain(props: { onExitNested?: () => void }) {
       <div class="flex gap-1 sm:gap-2 items-center">
         <Switch>
           <Match
-            when={
-              !$card.nested &&
-              $card.query.status === "loading" &&
-              $card.side === "back"
-            }
+            when={$card.query.status === "loading" && $card.side === "back"}
           >
             <span class="loading loading-spinner loading-xs text-base-content-faint animate-fade-in-sm"></span>
           </Match>
-          <Match
-            when={
-              !$card.nested &&
-              $card.query.status === "error" &&
-              $card.side === "back"
-            }
-          >
+          <Match when={$card.query.status === "error" && $card.side === "back"}>
             <div class="status status-error animate-ping"></div>
           </Match>
-          <Match when={!$card.nested}>
+          <Match
+            when={$card.query.status === "success" && $card.side === "back"}
+          >
             <div class="text-base-content-soft cursor-pointer animate-fade-in-sm">
               <KanjiPageIndicator />
             </div>
