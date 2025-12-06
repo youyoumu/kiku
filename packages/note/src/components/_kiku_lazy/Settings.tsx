@@ -102,24 +102,26 @@ export default function Settings() {
         <DebugSettings />
         <div class="divider"></div>
         <div class="pb-16"></div>
-        <Portal mount={KIKU_STATE.root}>
-          <div class="max-w-4xl mx-auto w-full relative">
-            <div class="flex flex-row gap-2 justify-end animate-fade-in absolute bottom-0 right-0 mx-4 mb-4">
-              <button class="btn" on:click={() => navigateBack()}>
-                Back
-              </button>
-              <button
-                class="btn"
-                classList={{
-                  "btn-primary": $general.isAnkiConnectAvailable,
-                  "btn-disabled bg-base-300 text-base-content-faint":
-                    !$general.isAnkiConnectAvailable,
-                }}
-                disabled={!$general.isAnkiConnectAvailable}
-                on:click={saveConfig}
-              >
-                Save
-              </button>
+        <Portal mount={$general.layoutRef}>
+          <div class="fixed bottom-0 w-full">
+            <div class="max-w-4xl mx-auto w-full relative">
+              <div class="flex flex-row gap-2 justify-end animate-fade-in mb-4 px-2 sm:px-4">
+                <button class="btn" on:click={() => navigateBack()}>
+                  Back
+                </button>
+                <button
+                  class="btn"
+                  classList={{
+                    "btn-primary": $general.isAnkiConnectAvailable,
+                    "btn-disabled bg-base-300 text-base-content-faint":
+                      !$general.isAnkiConnectAvailable,
+                  }}
+                  disabled={!$general.isAnkiConnectAvailable}
+                  on:click={saveConfig}
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         </Portal>

@@ -5,6 +5,7 @@ import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useBreakpointContext } from "../shared/BreakpointContext";
 import { useConfigContext } from "../shared/ConfigContext";
 import { useFieldGroupContext } from "../shared/FieldGroupContext";
+import { useGeneralContext } from "../shared/GeneralContext";
 import { PlayIcon } from "./Icons";
 
 function AudioTag(props: { text: string }) {
@@ -44,6 +45,7 @@ export function NotePlayIcon(props: {
 }
 
 export default function AudioButtons(props: { position: 1 | 2 }) {
+  const [$general] = useGeneralContext();
   const { ankiFields } = useAnkiFieldContext<"back">();
   const [$card, $setCard] = useCardContext();
   const { $group } = useFieldGroupContext();
@@ -154,8 +156,8 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
 
   if (props.position === 2)
     return (
-      <Portal mount={KIKU_STATE.root}>
-        <div class="absolute bottom-4 left-4 flex sm:hidden flex-col gap-2 items-center animate-fade-in-sm">
+      <Portal mount={$general.layoutRef}>
+        <div class="fixed bottom-4 left-4 flex sm:hidden flex-col gap-2 items-center animate-fade-in-sm">
           <NotePlayIcons />
         </div>
       </Portal>
