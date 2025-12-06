@@ -160,6 +160,7 @@ export class Nex {
     return Object.keys(store);
   }
 
+  chunkCache = new Map<string, AnkiNote[]>();
   async query({
     kanjiList,
     readingList,
@@ -177,9 +178,13 @@ export class Nex {
       const readingSet = new Set(readingList);
 
       for (const chunk of manifest.chunks) {
-        const res = await fetch(`${this.assetsPath}/${chunk.file}`);
-        const text = await Nex.gunzip(res).text();
-        const notes = JSON.parse(text) as AnkiNote[];
+        let notes = this.chunkCache.get(chunk.file);
+        if (!notes) {
+          const res = await fetch(`${this.assetsPath}/${chunk.file}`);
+          const text = await Nex.gunzip(res).text();
+          notes = JSON.parse(text) as AnkiNote[];
+          this.chunkCache.set(chunk.file, notes);
+        }
 
         for (const note of notes) {
           if (note.modelName !== "Kiku" && note.modelName !== "Lapis") continue;
