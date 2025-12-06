@@ -44,6 +44,7 @@ export async function init({
   KIKU_STATE.ssr = ssr;
   KIKU_STATE.aborter.abort();
   KIKU_STATE.aborter = new AbortController();
+  KIKU_STATE.dispose?.();
   await setup({ aborter: KIKU_STATE.aborter });
   KIKU_STATE.startupTime = performance.now() - now;
 }
@@ -53,9 +54,13 @@ async function setup({ aborter }: { aborter: AbortController }) {
   try {
     if (!side) throw new Error("Side not set");
 
-    window.addEventListener("unload", () => {
-      if (KIKU_STATE.isAnkiDesktop) sessionStorage.clear();
-    });
+    if (!KIKU_STATE.unload) {
+      KIKU_STATE.unload = () => {
+        console.log("unload");
+        if (KIKU_STATE.isAnkiDesktop) sessionStorage.clear();
+      };
+      window.addEventListener("unload", KIKU_STATE.unload);
+    }
 
     if (KIKU_STATE.isAnkiWeb) {
       KIKU_STATE.logger.info("AnkiWeb detected");
@@ -124,6 +129,8 @@ async function setup({ aborter }: { aborter: AbortController }) {
     const [config, setConfig] = createStore(config$);
     KIKU_STATE.relax = false;
 
+    let dispose: (() => void) | undefined;
+
     if (side === "front") {
       const App = () => (
         <GeneralContextProvider aborter={aborter}>
@@ -144,8 +151,11 @@ async function setup({ aborter }: { aborter: AbortController }) {
           </AnkiFieldContextProvider>
         </GeneralContextProvider>
       );
-      if (ssr) return hydrate(App, root);
-      render(App, root);
+      if (ssr) {
+        dispose = hydrate(App, root);
+      } else {
+        dispose = render(App, root);
+      }
     } else if (side === "back") {
       const App = () => (
         <GeneralContextProvider aborter={aborter}>
@@ -166,9 +176,13 @@ async function setup({ aborter }: { aborter: AbortController }) {
           </AnkiFieldContextProvider>
         </GeneralContextProvider>
       );
-      if (ssr) return hydrate(App, root);
-      render(App, root);
+      if (ssr) {
+        dispose = hydrate(App, root);
+      } else {
+        dispose = render(App, root);
+      }
     }
+    KIKU_STATE.dispose = dispose;
   } catch (e) {
     sessionStorage.clear();
     Object.assign(document.body.style, {

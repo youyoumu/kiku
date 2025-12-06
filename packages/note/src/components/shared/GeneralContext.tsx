@@ -3,7 +3,7 @@ import type { JSX } from "solid-js/jsx-runtime";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
 import { isServer } from "solid-js/web";
 import type { KikuPlugin } from "#/plugins/pluginTypes";
-import type { KikuNotesManifest } from "#/types";
+import type { KanjiInfo, KikuNotesManifest } from "#/types";
 import { env } from "#/util/general";
 
 type GeneralStore = {
@@ -16,6 +16,7 @@ type GeneralStore = {
   contentRef: HTMLDivElement | undefined;
   toast: Toast;
   SAME_READING: symbol;
+  lookupKanjiCache: Map<string, KanjiInfo | undefined>;
 };
 
 type Toast = {
@@ -64,6 +65,7 @@ export function GeneralContextProvider(props: {
     contentRef: undefined,
     toast: { success, error, message: undefined, type: "success" },
     SAME_READING: Symbol.for("SAME_READING"),
+    lookupKanjiCache: new Map(),
   });
 
   return (

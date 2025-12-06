@@ -283,6 +283,8 @@ declare global {
     ssr?: boolean;
     aborter: AbortController;
     debug: Debug;
+    dispose?: () => void;
+    unload?: () => void;
   };
   var pycmd: () => void;
   var AnkiDroidJS: {

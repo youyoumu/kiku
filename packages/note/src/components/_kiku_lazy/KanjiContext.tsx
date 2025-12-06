@@ -7,6 +7,7 @@ import {
 } from "solid-js/store";
 import type { AnkiNote, KanjiInfo } from "#/types";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
+import { useGeneralContext } from "../shared/GeneralContext";
 
 type KanjiStore = {
   kanji: string;
@@ -21,19 +22,19 @@ type KanjiStore = {
 const KanjiContext =
   createContext<[Store<KanjiStore>, SetStoreFunction<KanjiStore>]>();
 
-const lookupKanjiCache = new Map<string, KanjiInfo | undefined>();
-
 export function KanjiContextProvider(props: {
   kanji: string;
   children: JSX.Element;
   fetchNotes?: boolean;
 }) {
+  const [$general, $setGeneral] = useGeneralContext();
   const { ankiFields } = useAnkiFieldContext<"back">();
   const [$kanji, $setKanji] = createStore<KanjiStore>({
     kanji: props.kanji,
     kanjiInfo: undefined,
     status: props.fetchNotes ? "loading" : "success",
   });
+  const lookupKanjiCache = $general.lookupKanjiCache;
 
   onMount(async () => {
     const nex = await KIKU_STATE.nexClient?.nex;
