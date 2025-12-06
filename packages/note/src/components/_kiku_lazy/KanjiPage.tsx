@@ -8,6 +8,7 @@ import HeaderKanjiPage from "./HeaderKanjiPage";
 import { ArrowLeftIcon } from "./Icons";
 import { KanjiContextProvider, useKanjiContext } from "./KanjiContext";
 import {
+  type ContextLabel,
   KanjiPageContextProvider,
   useKanjiPageContext,
 } from "./KanjiPageContext";
@@ -44,21 +45,35 @@ function Page() {
             kanji: $kanjiPage.nestedFocus.kanji,
             noteId: $kanjiPage.nestedFocus.noteId,
           }}
-          selectedKanji={$kanjiPage.selectedKanji}
           id={$kanjiPage.nestedId}
+          contextLabel={$kanjiPage.nestedContextLabel}
         >
           <Page />
         </KanjiPageContextProvider>
       </Match>
       <Match when={!$kanjiPage.nested}>
         <HeaderKanjiPage />
-        <Show when={$kanjiPage.selectedKanji}>
+        <Show when={$kanjiPage.contextLabel}>
           <div class="flex flex-col items-center gap-2">
-            {/* TODO: change text  */}
-            <div class="text-lg text-base-content-calm">Similar Kanji</div>
             <div class="flex justify-center text-7xl font-secondary ">
-              {$kanjiPage.selectedKanji?.kanji}
+              {$kanjiPage.contextLabel?.text}
             </div>
+            <Switch>
+              <Match when={$kanjiPage.contextLabel?.type === "similar"}>
+                <div class="text-lg text-base-content-calm">
+                  Visually Similar
+                </div>
+              </Match>
+              <Match when={$kanjiPage.contextLabel?.type === "composedOf"}>
+                <div class="text-lg text-base-content-calm">Composed of</div>
+              </Match>
+              <Match when={$kanjiPage.contextLabel?.type === "usedIn"}>
+                <div class="text-lg text-base-content-calm">Used in</div>
+              </Match>
+              <Match when={$kanjiPage.contextLabel?.type === "related"}>
+                <div class="text-lg text-base-content-calm">Related</div>
+              </Match>
+            </Switch>
           </div>
         </Show>
 
@@ -134,6 +149,10 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                             kanji: kanji,
                             noteId: undefined,
                           }}
+                          contextLabel={{
+                            text: kanji,
+                            type: "similar",
+                          }}
                         />
                       </KanjiContextProvider>
                     );
@@ -162,6 +181,10 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                             kanji: kanji,
                             noteId: undefined,
                           }}
+                          contextLabel={{
+                            text: kanji,
+                            type: "composedOf",
+                          }}
                         />
                       </KanjiContextProvider>
                     );
@@ -189,6 +212,10 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                           nestedFocus={{
                             kanji: kanji,
                             noteId: undefined,
+                          }}
+                          contextLabel={{
+                            text: kanji,
+                            type: "usedIn",
                           }}
                         />
                       </KanjiContextProvider>
@@ -240,6 +267,10 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
                             kanji: kanji,
                             noteId: undefined,
                           }}
+                          contextLabel={{
+                            text: kanji,
+                            type: "related",
+                          }}
                         />
                       </KanjiContextProvider>
                     );
@@ -268,6 +299,7 @@ function KanjiKeyword(props: {
     kanji: string | symbol | undefined;
     noteId: number | undefined;
   };
+  contextLabel?: ContextLabel;
 }) {
   const [$kanji, $setKanji] = useKanjiContext();
   const [$kanjiPage, $setKanjiPage] = useKanjiPageContext();
@@ -288,6 +320,7 @@ function KanjiKeyword(props: {
         navigate(
           () => {
             if (!props.noteList) return;
+            $setKanjiPage("nestedContextLabel", props.contextLabel);
             $setKanjiPage("nestedId", createUniqueId());
             $setKanjiPage("nestedFocus", {
               kanji: props.nestedFocus.kanji,

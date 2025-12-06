@@ -8,6 +8,11 @@ import {
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
 import type { AnkiNote } from "#/types";
 
+export type ContextLabel = {
+  text: string;
+  type: "similar" | "composedOf" | "usedIn" | "related";
+};
+
 type KanjiPageContextStore = {
   noteList: [string, AnkiNote[]][];
   sameReading?: AnkiNote[];
@@ -15,10 +20,7 @@ type KanjiPageContextStore = {
     kanji: string | symbol | undefined;
     noteId: number | undefined;
   };
-  selectedKanji?: {
-    kanji: string;
-    type: "similar" | "composedOf" | "usedIn";
-  };
+  contextLabel?: ContextLabel;
   nested: boolean;
   nestedId: string;
   nestedNoteList: [string, AnkiNote[]][];
@@ -26,6 +28,7 @@ type KanjiPageContextStore = {
     kanji: string | symbol | undefined;
     noteId: number | undefined;
   };
+  nestedContextLabel?: ContextLabel;
 };
 
 const KanjiPageContext =
@@ -46,10 +49,7 @@ export function KanjiPageContextProvider(props: {
     kanji: string | symbol | undefined;
     noteId: number | undefined;
   };
-  selectedKanji?: {
-    kanji: string;
-    type: "similar" | "composedOf" | "usedIn";
-  };
+  contextLabel?: ContextLabel;
   nested?: boolean;
   id: string;
 }) {
@@ -59,7 +59,7 @@ export function KanjiPageContextProvider(props: {
     saved ??
     createStore<KanjiPageContextStore>({
       noteList: props.noteList,
-      selectedKanji: props.selectedKanji,
+      contextLabel: props.contextLabel,
       sameReading: props.sameReading,
       focus: {
         kanji: props.focus?.kanji,
@@ -72,6 +72,7 @@ export function KanjiPageContextProvider(props: {
         kanji: undefined,
         noteId: undefined,
       },
+      nestedContextLabel: undefined,
     });
 
   onMount(() => {
