@@ -152,10 +152,10 @@ function GeneralSettings() {
       <div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] rounded-box gap-4">
         <fieldset class="fieldset">
           <legend class="fieldset-legend">
-            Volume
+            Web Volume
             <div
               class="tooltip"
-              data-tip="Controls the volume of audio played in the webview (Desktop only)."
+              data-tip="Controls the volume of audio played in the webview (Desktop and AnkiWeb only)."
             >
               <InfoIcon class="size-4 text-base-content-calm" />
             </div>

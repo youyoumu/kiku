@@ -84,11 +84,12 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
   let autoPlay = true;
   createEffect(() => {
     $group.sentenceAudioField;
+    const useWebVolume = bp.isAtLeast("sm") || KIKU_STATE.isAnkiWeb;
     $card.expressionAudioRef?.querySelectorAll("audio").forEach((el) => {
-      el.volume = bp.isAtLeast("sm") ? $config.volume / 100 : 1;
+      el.volume = useWebVolume ? $config.volume / 100 : 1;
     });
     $card.sentenceAudioRef?.querySelectorAll("audio").forEach((el) => {
-      el.volume = bp.isAtLeast("sm") ? $config.volume / 100 : 1;
+      el.volume = useWebVolume ? $config.volume / 100 : 1;
     });
 
     if ($card.nested && autoPlay) {
