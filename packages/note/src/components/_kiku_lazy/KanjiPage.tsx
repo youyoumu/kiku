@@ -75,7 +75,9 @@ function Page() {
           <Show
             when={$kanjiPage.sameReading && $kanjiPage.sameReading.length > 0}
           >
-            <SameReadingCollapsible />
+            <KanjiContextProvider kanji="">
+              <SameReadingCollapsible />
+            </KanjiContextProvider>
           </Show>
         </div>
         <div class="flex justify-center items-center">
@@ -383,7 +385,6 @@ function AnkiNoteItem(props: {
   const { navigate } = useNavigationTransition();
   const [$card, $setCard] = useCardContext();
   const [$general, $setGeneral] = useGeneralContext();
-  //TODO: this will crash?
   const [$kanji, $setKanji] = useKanjiContext();
   const [$kanjiPage, $setKanjiPage] = useKanjiPageContext();
 

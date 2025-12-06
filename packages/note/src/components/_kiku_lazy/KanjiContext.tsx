@@ -37,7 +37,7 @@ export function KanjiContextProvider(props: {
 
   onMount(async () => {
     const nex = await KIKU_STATE.nexClient?.nex;
-    if (nex) {
+    if (nex && props.kanji) {
       let kanjiInfo = lookupKanjiCache.get(props.kanji);
       if (!kanjiInfo) {
         kanjiInfo = await nex.lookupKanji(props.kanji);
