@@ -1,4 +1,5 @@
 import {
+  createEffect,
   createSignal,
   getOwner,
   lazy,
@@ -164,7 +165,8 @@ export function Back(props: { onExitNested?: () => void }) {
 function ExpressionSection() {
   const [$card, $setCard] = useCardContext();
   const { ankiFields } = useAnkiFieldContext<"back">();
-  const [ref, setRef] = createSignal<HTMLDivElement>();
+  const [ref1, setRef1] = createSignal<HTMLSpanElement>();
+  const [ref2, setRef2] = createSignal<HTMLSpanElement>();
 
   const expressionInnerHtml = () => {
     if ($card.nested) {
@@ -182,22 +184,39 @@ function ExpressionSection() {
   };
 
   onMount(() => {
-    const el = ref();
-    if (el) {
-      el.innerHTML = "";
-      render(Lazy.Expression, el);
+    const el2 = ref2();
+    if (el2) {
+      render(Lazy.Expression, el2);
+    }
+  });
+
+  createEffect(() => {
+    const el1 = ref1();
+    const el2 = ref2();
+    if ($card.expressionReady && el1 && el2) {
+      el1.style.display = "none";
+      el2.style.display = "";
     }
   });
 
   return (
-    <div
-      ref={(ref) => setRef(ref)}
-      class="expression font-secondary text-center vertical-rl"
-      innerHTML={expressionInnerHtml()}
-    >
-      {isServer
-        ? "{{#ExpressionFurigana}}{{furigana:ExpressionFurigana}}{{/ExpressionFurigana}}{{^ExpressionFurigana}}{{Expression}}{{/ExpressionFurigana}}"
-        : undefined}
-    </div>
+    <>
+      <div
+        ref={(ref) => setRef1(ref)}
+        class="expression font-secondary text-center vertical-rl"
+        innerHTML={expressionInnerHtml()}
+      >
+        {isServer
+          ? "{{#ExpressionFurigana}}{{furigana:ExpressionFurigana}}{{/ExpressionFurigana}}{{^ExpressionFurigana}}{{Expression}}{{/ExpressionFurigana}}"
+          : undefined}
+      </div>
+      <div
+        class="expression font-secondary text-center vertical-rl"
+        style={{
+          display: "none",
+        }}
+        ref={(ref) => setRef2(ref)}
+      ></div>
+    </>
   );
 }

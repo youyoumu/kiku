@@ -4,10 +4,13 @@ import { createStore } from "solid-js/store";
 import { extractKanji } from "#/util/general";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useBreakpointContext } from "../shared/BreakpointContext";
+import { useCardContext } from "../shared/CardContext";
 import { KanjiContextProvider, useKanjiContext } from "./KanjiContext";
 import { KanjiInfo, KanjiInfoExtra } from "./KanjiInfo";
+import { parseFurigana } from "./util/parseFurigana";
 
 export default function Expression() {
+  const [$card, $setCard] = useCardContext();
   const { ankiFields } = useAnkiFieldContext<"back">();
   const bp = useBreakpointContext();
   const [$kanjiEl, $setKanjiEl] = createStore<{
@@ -69,27 +72,86 @@ export default function Expression() {
         }
       });
     });
+
+    setTimeout(() => {
+      $setCard("expressionReady", true);
+    }, 100);
   });
 
+  const furiganaData = parseFurigana(ankiFields.ExpressionFurigana);
+
+  if (furiganaData.length === 0) {
+    return (
+      <ruby>
+        {ankiFields.Expression.split("").map((char, i) => (
+          <span
+            class="relative"
+            ref={(el) => {
+              $setKanjiEl("el", "kanji", char + i, el);
+            }}
+          >
+            <KanjiContextProvider kanji={extractKanji(char)[0] ?? ""}>
+              <KanjiTooltip
+                ref={(el) => $setKanjiEl("el", "tooltip", char + i, el)}
+              />
+            </KanjiContextProvider>
+            {char}
+          </span>
+        ))}
+        <rt>{ankiFields.ExpressionReading}</rt>
+      </ruby>
+    );
+  }
+
   return (
-    <ruby>
-      {ankiFields.Expression.split("").map((char, i) => (
-        <span
-          class="relative"
-          ref={(el) => {
-            $setKanjiEl("el", "kanji", char + i, el);
-          }}
-        >
-          <KanjiContextProvider kanji={extractKanji(char)[0] ?? ""}>
-            <KanjiTooltip
-              ref={(el) => $setKanjiEl("el", "tooltip", char + i, el)}
-            />
-          </KanjiContextProvider>
-          {char}
-        </span>
-      ))}
-      <rt>{ankiFields.ExpressionReading}</rt>
-    </ruby>
+    <>
+      {furiganaData.map((item, i) => {
+        if (item.type === "ruby") {
+          return (
+            <ruby>
+              {item.text.split("").map((char, j) => (
+                <span
+                  class="relative"
+                  ref={(el) =>
+                    $setKanjiEl("el", "kanji", char + i + "-" + j, el)
+                  }
+                >
+                  <KanjiContextProvider kanji={extractKanji(char)[0] ?? ""}>
+                    <KanjiTooltip
+                      ref={(el) =>
+                        $setKanjiEl("el", "tooltip", char + i + "-" + j, el)
+                      }
+                    />
+                  </KanjiContextProvider>
+                  {char}
+                </span>
+              ))}
+              <rt>{item.reading}</rt>
+            </ruby>
+          );
+        }
+
+        return (
+          <span>
+            {item.text.split("").map((char, j) => (
+              <span
+                class="relative"
+                ref={(el) => $setKanjiEl("el", "kanji", char + i + "-" + j, el)}
+              >
+                <KanjiContextProvider kanji={extractKanji(char)[0] ?? ""}>
+                  <KanjiTooltip
+                    ref={(el) =>
+                      $setKanjiEl("el", "tooltip", char + i + "-" + j, el)
+                    }
+                  />
+                </KanjiContextProvider>
+                {char}
+              </span>
+            ))}
+          </span>
+        );
+      })}
+    </>
   );
 }
 
