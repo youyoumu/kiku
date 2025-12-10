@@ -161,7 +161,7 @@ function KanjiTooltip(props: { ref: (ref: HTMLDivElement) => void }) {
 
   return (
     <div
-      class="absolute text-base bg-base-200/95 z-10 p-2 sm:p-4 border border-base-300 rounded-lg font-primary w-xs sm:w-md lg:w-lg shadow-lg hidden"
+      class="absolute text-base bg-base-200/95 z-10 p-2 sm:p-4 border border-base-300 rounded-lg font-primary w-xs sm:w-md lg:w-lg shadow-lg hidden horizontal-tb"
       ref={props.ref}
     >
       <KanjiInfo />

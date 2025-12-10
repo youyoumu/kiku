@@ -192,6 +192,10 @@
   [data-mod-vertical="true"] .vertical-rl {
     writing-mode: vertical-rl;
   }
+
+  .horizontal-tb {
+    writing-mode: horizontal-tb;
+  }
 }
 
 @font-face {
