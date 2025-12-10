@@ -1,3 +1,4 @@
+import { Show } from "solid-js";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { InfoIcon } from "./Icons";
 
@@ -19,11 +20,13 @@ export default function BackFooter(props: { tags: string[] }) {
           ></div>
         </div>
       )}
-      <div class="flex gap-2 items-center justify-center animate-fade-in flex-wrap">
-        {props.tags.map((tag) => {
-          return <div class="badge badge-secondary">{tag}</div>;
-        })}
-      </div>
+      <Show when={props.tags.length}>
+        <div class="flex gap-2 items-center justify-center animate-fade-in flex-wrap">
+          {props.tags.map((tag) => {
+            return <div class="badge badge-secondary">{tag}</div>;
+          })}
+        </div>
+      </Show>
     </>
   );
 }
