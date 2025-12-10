@@ -9,7 +9,7 @@ export function KanjiInfo() {
   const [$kanji, $setKanji] = useKanjiContext();
 
   return (
-    <div class="flex flex-col text-xs sm:text-sm text-base-content-calm items-start">
+    <div class="flex flex-col text-xs sm:text-sm text-base-content-calm items-start z-10 relative">
       <div
         classList={{
           hidden: !$kanji.kanjiInfo?.keyword,

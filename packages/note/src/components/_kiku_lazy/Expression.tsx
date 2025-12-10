@@ -1,4 +1,4 @@
-import { computePosition, flip, shift } from "@floating-ui/dom";
+import { arrow, computePosition, flip, shift } from "@floating-ui/dom";
 import { onMount } from "solid-js";
 import { createStore } from "solid-js/store";
 import { extractKanji } from "#/util/general";
@@ -17,11 +17,13 @@ export default function Expression() {
     el: {
       kanji: Record<string, HTMLSpanElement | undefined>;
       tooltip: Record<string, HTMLSpanElement | undefined>;
+      arrow: Record<string, HTMLDivElement | undefined>;
     };
   }>({
     el: {
       kanji: {},
       tooltip: {},
+      arrow: {},
     },
   });
 
@@ -38,14 +40,41 @@ export default function Expression() {
     const charEls = Object.entries($kanjiEl.el.kanji);
     charEls.forEach(([char, kanji]) => {
       const tooltip = $kanjiEl.el.tooltip[char];
-      if (kanji && tooltip) {
+      const arrowEl = $kanjiEl.el.arrow[char];
+      if (kanji && tooltip && arrowEl) {
         computePosition(kanji, tooltip, {
           placement: bp.isAtLeast("sm") ? "bottom-start" : "bottom",
-          middleware: [flip(), shift({ padding: 5 })],
-        }).then(({ x, y }) => {
+          middleware: [
+            flip(),
+            shift({ padding: 5 }),
+            arrow({
+              element: arrowEl,
+            }),
+          ],
+        }).then(({ x, y, placement, middlewareData }) => {
           Object.assign(tooltip.style, {
             left: `${x}px`,
             top: `${y}px`,
+          });
+
+          const { x: arrowX, y: arrowY } = middlewareData.arrow ?? {
+            x: 0,
+            y: 0,
+          };
+          const staticSide =
+            {
+              top: "bottom",
+              right: "left",
+              bottom: "top",
+              left: "right",
+            }[placement.split("-")[0]] ?? "never";
+
+          Object.assign(arrowEl.style, {
+            left: arrowX != null ? `${arrowX}px` : "",
+            top: arrowY != null ? `${arrowY}px` : "",
+            right: "",
+            bottom: "",
+            [staticSide]: "-4px",
           });
         });
       }
@@ -92,6 +121,7 @@ export default function Expression() {
           >
             <KanjiContextProvider kanji={extractKanji(char)[0] ?? ""}>
               <KanjiTooltip
+                arrowRef={(el) => $setKanjiEl("el", "arrow", char + i, el)}
                 ref={(el) => $setKanjiEl("el", "tooltip", char + i, el)}
               />
             </KanjiContextProvider>
@@ -118,6 +148,9 @@ export default function Expression() {
                 >
                   <KanjiContextProvider kanji={extractKanji(char)[0] ?? ""}>
                     <KanjiTooltip
+                      arrowRef={(el) =>
+                        $setKanjiEl("el", "arrow", char + i + "-" + j, el)
+                      }
                       ref={(el) =>
                         $setKanjiEl("el", "tooltip", char + i + "-" + j, el)
                       }
@@ -140,6 +173,9 @@ export default function Expression() {
               >
                 <KanjiContextProvider kanji={extractKanji(char)[0] ?? ""}>
                   <KanjiTooltip
+                    arrowRef={(el) =>
+                      $setKanjiEl("el", "arrow", char + i + "-" + j, el)
+                    }
                     ref={(el) =>
                       $setKanjiEl("el", "tooltip", char + i + "-" + j, el)
                     }
@@ -155,18 +191,24 @@ export default function Expression() {
   );
 }
 
-function KanjiTooltip(props: { ref: (ref: HTMLDivElement) => void }) {
+function KanjiTooltip(props: {
+  ref: (ref: HTMLDivElement) => void;
+  arrowRef: (ref: HTMLDivElement) => void;
+}) {
   const [$kanji, $setKanji] = useKanjiContext();
   if (!$kanji.kanji) return null;
 
   return (
-    <div
-      class="absolute text-base bg-base-200/97 z-10 p-2 sm:p-4 border border-base-300 rounded-lg font-primary w-xs sm:w-md lg:w-lg shadow-lg hidden horizontal-tb"
-      ref={props.ref}
-    >
-      <KanjiInfo />
-      <div class="text-sm mt-2 sm:mt-4 flex flex-col gap-1 sm:gap-2">
-        <KanjiInfoExtra />
+    <div class="absolute z-10 overflow-hidden hidden" ref={props.ref}>
+      <div
+        ref={props.arrowRef}
+        class="absolute bg-base-content-faint size-8 rotate-45 z-20 -translate-y-6"
+      ></div>
+      <div class="relative text-base bg-base-200/97 z-10 p-2 sm:p-4 border border-base-300 rounded-lg font-primary w-xs sm:w-md lg:w-lg shadow-lg horizontal-tb">
+        <KanjiInfo />
+        <div class="text-sm mt-2 sm:mt-4 flex flex-col gap-1 sm:gap-2">
+          <KanjiInfoExtra />
+        </div>
       </div>
     </div>
   );
