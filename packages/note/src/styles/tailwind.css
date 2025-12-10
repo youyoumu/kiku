@@ -237,6 +237,10 @@
 body {
   margin: 0;
   background: var(--color-base-100);
+
+  /* Keep this until most Anki's webview is updated */
+  /* https://issues.chromium.org/issues/40792788 */
+  overflow-y: scroll;
 }
 
 *::-webkit-scrollbar {
