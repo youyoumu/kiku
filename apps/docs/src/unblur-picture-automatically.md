@@ -4,7 +4,7 @@ outline: deep
 
 # Unblur Picture Automatically
 
-Using `_kiku_plugin.js`
+Using `_kiku_plugin.js`, this will unblur the picture during non-working time
 
 ```js
 export const plugin = {
