@@ -41,9 +41,9 @@ export function KanjiInfo() {
             {(reading) => {
               return (
                 <Show when={reading.percentage}>
-                  <span class="border border-base-300 inline-flex">
+                  <span class="border border-base-content-subtle-100 inline-flex">
                     <span class="px-0.5">{reading.reading}</span>
-                    <span class="border border-base-300 px-0.5 bg-base-300 text-base-content-soft">
+                    <span class="border-s border-base-300 px-0.5 bg-base-300 text-base-content-soft">
                       {reading.percentage}
                     </span>
                   </span>
@@ -240,7 +240,7 @@ function KanjiKeyword(props: {
 
   return (
     <div
-      class="inline-flex border border-base-300 transition-colors hover:border-base-content-subtle-200"
+      class="inline-flex border border-base-content-subtle-100 transition-colors hover:border-base-content-subtle-200"
       classList={{
         "cursor-pointer": $kanji.status === "success",
       }}
