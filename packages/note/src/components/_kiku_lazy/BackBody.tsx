@@ -18,7 +18,7 @@ export default function BackBody(props: {
   const { ankiFields } = useAnkiFieldContext<"back">();
   const [$config] = useConfigContext();
   const [definitionPage, setDefinitionPage] = createSignal(
-    ankiFields.SelectionText ? 0 : 1,
+    ankiFields.SelectionText ? 0 : ankiFields.MainDefinition ? 1 : 2,
   );
   const [definitionPicture, setDefinitionPicture] = createSignal<string>();
 
