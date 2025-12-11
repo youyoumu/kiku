@@ -23,7 +23,7 @@ export default function HeaderSettings() {
 
   onMount(async () => {
     //NOTE: move this to somewhere higher
-    AnkiConnect.changePort(Number($config.ankiConnectPort));
+    AnkiConnect.changeAddress($config.ankiConnectAddress);
 
     if (!bp.isAtLeast("sm")) return;
     await checkAnkiConnect();

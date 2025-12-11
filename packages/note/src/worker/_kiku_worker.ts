@@ -15,7 +15,7 @@ type SimilarKanjiDB = Record<
 >;
 type SimilarKanjiDBs = Record<string, SimilarKanjiDB>;
 
-let ankiConnectPort = 8765;
+let ankiConnectAddress = "";
 
 const logger = {
   trace: (...args: unknown[]) => postMessage({ log: { level: "trace", args } }),
@@ -27,7 +27,7 @@ const logger = {
 
 const AnkiConnect = {
   invoke: async (action: string, params: Record<string, unknown> = {}) => {
-    const res = await fetch(`http://127.0.0.1:${ankiConnectPort}`, {
+    const res = await fetch(ankiConnectAddress, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action, version: 6, params }),
@@ -126,7 +126,7 @@ export class Nex {
     this.env = payload.env;
     this.config = payload.config;
     this.preferAnkiConnect = payload.preferAnkiConnect;
-    ankiConnectPort = Number(this.config.ankiConnectPort);
+    ankiConnectAddress = this.config.ankiConnectAddress;
   }
 
   async getSimilarKanji(kanji: string) {

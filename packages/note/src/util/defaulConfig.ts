@@ -13,7 +13,7 @@ export const defaultConfig: KikuConfig = {
   pictureOnFront: false,
   showTheme: true,
   showStartupTime: true,
-  ankiConnectPort: 8765,
+  ankiConnectAddress: "http://127.0.0.1:8765",
   ankiDroidEnableIntegration: true,
   ankiDroidReverseSwipeDirection: false,
   volume: 100,

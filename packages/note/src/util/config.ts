@@ -14,7 +14,7 @@ export type KikuConfig = {
   pictureOnFront: boolean;
   showTheme: boolean;
   showStartupTime: boolean;
-  ankiConnectPort: number;
+  ankiConnectAddress: string;
   ankiDroidEnableIntegration: boolean;
   ankiDroidReverseSwipeDirection: boolean;
   volume: number;
@@ -86,7 +86,8 @@ export function validateConfig(config: KikuConfig): KikuConfig {
       pictureOnFront: typeof config.pictureOnFront === "boolean" ? config.pictureOnFront : defaultConfig.pictureOnFront,
       showTheme: typeof config.showTheme === "boolean" ? config.showTheme : defaultConfig.showTheme,
       showStartupTime: typeof config.showStartupTime === "boolean" ? config.showStartupTime : defaultConfig.showStartupTime,
-      ankiConnectPort: typeof config.ankiConnectPort === "number" && config.ankiConnectPort > 0 && config.ankiConnectPort < 65535 ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
+      // ankiConnectPort: typeof config.ankiConnectPort === "number" && config.ankiConnectPort > 0 && config.ankiConnectPort < 65535 ? config.ankiConnectPort : defaultConfig.ankiConnectPort,
+      ankiConnectAddress: typeof config.ankiConnectAddress === "string" ? config.ankiConnectAddress : defaultConfig.ankiConnectAddress,
       ankiDroidEnableIntegration: typeof config.ankiDroidEnableIntegration === "boolean" ? config.ankiDroidEnableIntegration : defaultConfig.ankiDroidEnableIntegration,
       ankiDroidReverseSwipeDirection: typeof config.ankiDroidReverseSwipeDirection === "boolean" ? config.ankiDroidReverseSwipeDirection : defaultConfig.ankiDroidReverseSwipeDirection,
       volume: typeof config.volume === "number" && config.volume >= 0 && config.volume <= 100 ? config.volume : defaultConfig.volume,

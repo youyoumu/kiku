@@ -817,12 +817,13 @@ function DebugSettings() {
                   class="h-4 w-4 cursor-pointer"
                   classList={{
                     hidden:
-                      $config.ankiConnectPort === defaultConfig.ankiConnectPort,
+                      $config.ankiConnectAddress ===
+                      defaultConfig.ankiConnectAddress,
                   }}
                   on:click={() => {
                     $setConfig(
-                      "ankiConnectPort",
-                      defaultConfig.ankiConnectPort,
+                      "ankiConnectAddress",
+                      defaultConfig.ankiConnectAddress,
                     );
                   }}
                 />
@@ -830,13 +831,11 @@ function DebugSettings() {
               <input
                 type="text"
                 class="input w-full"
-                placeholder={defaultConfig.ankiConnectPort.toString()}
-                value={$config.ankiConnectPort}
+                placeholder={defaultConfig.ankiConnectAddress}
+                value={$config.ankiConnectAddress}
                 on:input={(e) => {
-                  let value = (e.target as HTMLInputElement).value;
-                  value = value.replaceAll(/[^0-9]/g, "");
-                  (e.target as HTMLInputElement).value = value;
-                  $setConfig("ankiConnectPort", Number(value));
+                  const value = (e.target as HTMLInputElement).value;
+                  $setConfig("ankiConnectAddress", value);
                 }}
               />
             </fieldset>
