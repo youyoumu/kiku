@@ -25,7 +25,7 @@ export const env = {
   KIKU_DB_KANJI_COMPACT: "kiku_db_kanji_compact.json.gz",
 
   KIKU_PLUGIN_MODULE: "_kiku_plugin.js",
-  KIKU_VERSION: "1.4.0",
+  KIKU_VERSION: "1.5.0",
   KIKU_IMPORTANT_FILES: [
     "_kiku.js",
     "_kiku_libs.js",
