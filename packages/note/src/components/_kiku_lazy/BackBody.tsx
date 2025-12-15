@@ -5,6 +5,7 @@ import {
   onMount,
   Show,
 } from "solid-js";
+import { isHtmlEffectivelyEmpty } from "#/util/general";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useConfigContext } from "../shared/ConfigContext";
 import { useCtxContext } from "../shared/CtxContext";
@@ -17,8 +18,13 @@ export default function BackBody(props: {
   let definitionEl: HTMLDivElement | undefined;
   const { ankiFields } = useAnkiFieldContext<"back">();
   const [$config] = useConfigContext();
+  //TODO: refactor this
   const [definitionPage, setDefinitionPage] = createSignal(
-    ankiFields.SelectionText ? 0 : ankiFields.MainDefinition ? 1 : 2,
+    ankiFields.SelectionText
+      ? 0
+      : isHtmlEffectivelyEmpty(ankiFields.MainDefinition)
+        ? 2
+        : 1,
   );
   const [definitionPicture, setDefinitionPicture] = createSignal<string>();
 
@@ -27,6 +33,7 @@ export default function BackBody(props: {
     ankiFields.MainDefinition,
     ankiFields.Glossary,
   ];
+
   const pagesWithContent = pages.filter((page) => page?.trim());
 
   const pageType = () => {

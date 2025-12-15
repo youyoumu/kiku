@@ -114,6 +114,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
   const [$kanji, $setKanji] = useKanjiContext();
   const data = () => props.data;
 
+  //TODO: better ux to expand/collapse
   return (
     <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
       <input
