@@ -199,12 +199,15 @@ function KanjiTooltip(props: {
   if (!$kanji.kanji) return null;
 
   return (
-    <div class="absolute z-10 overflow-hidden hidden" ref={props.ref}>
+    <div
+      class="absolute z-10 overflow-hidden hidden rounded-lg"
+      ref={props.ref}
+    >
       <div
         ref={props.arrowRef}
         class="absolute bg-base-content-faint size-8 rotate-45 z-20 -translate-y-6"
       ></div>
-      <div class="relative text-base bg-base-200/97 z-10 p-2 sm:p-4 border border-base-300 rounded-lg font-primary w-xs sm:w-md lg:w-lg shadow-lg horizontal-tb">
+      <div class="relative text-base bg-base-200/97 z-10 p-2 sm:p-4 border border-base-300 rounded-lg font-primary w-xs sm:w-md lg:w-lg shadow-lg horizontal-tb max-h-[75svh] overflow-auto">
         <KanjiInfo />
         <div class="text-sm mt-2 sm:mt-4 flex flex-col gap-1 sm:gap-2">
           <KanjiInfoExtra />
