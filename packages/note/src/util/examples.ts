@@ -395,3 +395,36 @@ export const exampleFields12: AnkiFields = {
   "furigana:SentenceFurigana": "",
   "kana:SentenceFurigana": ""
 }
+
+// biome-ignore format: this looks nicer
+export const exampleFields13: AnkiFields = {
+  "Expression": "醜い",
+  "ExpressionFurigana": "醜[みにく]い",
+  "ExpressionReading": "みにくい",
+  "ExpressionAudio": "<a class=\"replay-button soundLink\" href=\"#\" onclick=\"pycmd('play:a:0'); return false;\" draggable=\"false\">\n    <svg class=\"playImage\" viewBox=\"0 0 64 64\" version=\"1.1\">\n        <circle cx=\"32\" cy=\"32\" r=\"29\"></circle>\n        <path d=\"M56.502,32.301l-37.502,20.101l0.329,-40.804l37.173,20.703Z\"></path>\n    </svg>\n</a>",
+  "SelectionText": "<ol><li data-details=\"JMdict\"><span class=\"dict-group__tag-list\"><span class=\"dict-group__tag dict-group__tag--name\"><span class=\"dict-group__tag-inner\">1</span></span><span class=\"dict-group__tag dict-group__tag--name\"><span class=\"dict-group__tag-inner\">adj-i</span></span><span class=\"dict-group__tag dict-group__tag--dict\"><span class=\"dict-group__tag-inner\">JMdict</span></span></span><span class=\"dict-group__glossary\"><span><ul data-sc-content=\"glossary\" lang=\"en\" style=\"list-style-type: circle;\"><li>ugly</li><li>unattractive</li><li>bad-looking</li></ul><ul data-sc-content=\"examples\" lang=\"ja\" style=\"list-style-type: square;\"><li>「美しい」とか「醜い」といった言葉は相対的な用語である。</li><li lang=\"en\" style=\"font-size: 60%; list-style-type: none;\">The words 'beautiful' and 'ugly' are relative terms.</li></ul></span></span></li><li data-details=\"JMdict\"><span class=\"dict-group__tag-list\"><span class=\"dict-group__tag dict-group__tag--name\"><span class=\"dict-group__tag-inner\">2</span></span><span class=\"dict-group__tag dict-group__tag--name\"><span class=\"dict-group__tag-inner\">adj-i</span></span><span class=\"dict-group__tag dict-group__tag--dict\"><span class=\"dict-group__tag-inner\">JMdict</span></span></span><span class=\"dict-group__glossary\"><span><ul data-sc-content=\"glossary\" lang=\"en\" style=\"list-style-type: circle;\"><li>unsightly</li><li>unseemly</li><li>disgraceful</li><li>shameful</li><li>dishonorable</li></ul><ul data-sc-content=\"examples\" lang=\"ja\" style=\"list-style-type: square;\"><li>オレの醜い部分がオレを引き裂く。</li><li lang=\"en\" style=\"font-size: 60%; list-style-type: none;\">The ugly side of myself tears me up.</li></ul></span></span></li><li data-details=\"JMdict\"><span class=\"dict-group__tag-list\"><span class=\"dict-group__tag dict-group__tag--name\"><span class=\"dict-group__tag-inner\">forms</span></span><span class=\"dict-group__tag dict-group__tag--dict\"><span class=\"dict-group__tag-inner\">JMdict</span></span></span><span class=\"dict-group__glossary\">醜い（★） | 見憎い（🅁）</span></li></ol>",
+  "MainDefinition": "",
+  "DefinitionPicture": "",
+  "Sentence": "心は<b>醜い</b>が<br>美しい手と顔をした女だ",
+  "SentenceFurigana": "",
+  "SentenceAudio": "<a class=\"replay-button soundLink\" href=\"#\" onclick=\"pycmd('play:a:1'); return false;\" draggable=\"false\">\n    <svg class=\"playImage\" viewBox=\"0 0 64 64\" version=\"1.1\">\n        <circle cx=\"32\" cy=\"32\" r=\"29\"></circle>\n        <path d=\"M56.502,32.301l-37.502,20.101l0.329,-40.804l37.173,20.703Z\"></path>\n    </svg>\n</a>",
+  "Picture": "<div><img src=\"dbjojo_s%20bizarre%20adventure%20diamond%20is%20unbreakable_-_22_(10bit_bd1080p_x265).mkv_908615.webp\" decoding=\"async\"></div>",
+  "Glossary": "",
+  "Hint": "",
+  "IsWordAndSentenceCard": "",
+  "IsClickCard": "",
+  "IsSentenceCard": "",
+  "IsAudioCard": "",
+  "PitchPosition": "<div class=\"pa-positions__group\" data-details=\"アクセント辞典\"><div class=\"pa-positions__dictionary\"><div class=\"pa-positions__dictionary-inner\">アクセント辞典</div></div><ol><li><span style=\"display:inline;\"><span>[</span><span>3</span><span>]</span></span></li></ol></div>",
+  "PitchCategories": "",
+  "Frequency": "",
+  "FreqSort": "5416",
+  "MiscInfo": "",
+  "Tags": "yomichan",
+  "furigana:ExpressionFurigana": "<ruby><rb>醜</rb><rt>みにく</rt></ruby>い",
+  "kana:ExpressionFurigana": "みにくい",
+  "furigana:Sentence": "心は<b>醜い</b>が<br>美しい手と顔をした女だ",
+  "kanji:Sentence": "心は<b>醜い</b>が<br>美しい手と顔をした女だ",
+  "furigana:SentenceFurigana": "",
+  "kana:SentenceFurigana": ""
+}
