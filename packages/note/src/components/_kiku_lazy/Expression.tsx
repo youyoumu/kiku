@@ -133,56 +133,43 @@ export default function Expression() {
     );
   }
 
+  function CharSpan(props: { char: string; i: number; j: number }) {
+    const key = props.char + props.i + "-" + props.j;
+
+    return (
+      <span class="relative" ref={(el) => $setKanjiEl("el", "kanji", key, el)}>
+        <KanjiContextProvider kanji={extractKanji(props.char)[0] ?? ""}>
+          <KanjiTooltip
+            arrowRef={(el) => $setKanjiEl("el", "arrow", key, el)}
+            ref={(el) => $setKanjiEl("el", "tooltip", key, el)}
+          />
+        </KanjiContextProvider>
+        {props.char}
+      </span>
+    );
+  }
+
   return (
     <>
       {furiganaData.map((item, i) => {
+        const chars = item.text.trim().split("");
+
         if (item.type === "ruby") {
           return (
             <ruby>
-              {item.text.split("").map((char, j) => (
-                <span
-                  class="relative"
-                  ref={(el) =>
-                    $setKanjiEl("el", "kanji", char + i + "-" + j, el)
-                  }
-                >
-                  <KanjiContextProvider kanji={extractKanji(char)[0] ?? ""}>
-                    <KanjiTooltip
-                      arrowRef={(el) =>
-                        $setKanjiEl("el", "arrow", char + i + "-" + j, el)
-                      }
-                      ref={(el) =>
-                        $setKanjiEl("el", "tooltip", char + i + "-" + j, el)
-                      }
-                    />
-                  </KanjiContextProvider>
-                  {char}
-                </span>
+              {chars.map((char, j) => (
+                <CharSpan char={char} i={i} j={j} />
               ))}
-              <rt>{item.reading}</rt>
+
+              {item.reading.trim() !== "" && <rt>{item.reading}</rt>}
             </ruby>
           );
         }
 
         return (
           <span>
-            {item.text.split("").map((char, j) => (
-              <span
-                class="relative"
-                ref={(el) => $setKanjiEl("el", "kanji", char + i + "-" + j, el)}
-              >
-                <KanjiContextProvider kanji={extractKanji(char)[0] ?? ""}>
-                  <KanjiTooltip
-                    arrowRef={(el) =>
-                      $setKanjiEl("el", "arrow", char + i + "-" + j, el)
-                    }
-                    ref={(el) =>
-                      $setKanjiEl("el", "tooltip", char + i + "-" + j, el)
-                    }
-                  />
-                </KanjiContextProvider>
-                {char}
-              </span>
+            {chars.map((char, j) => (
+              <CharSpan char={char} i={i} j={j} />
             ))}
           </span>
         );
