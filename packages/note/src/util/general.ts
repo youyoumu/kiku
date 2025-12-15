@@ -1,20 +1,6 @@
 import { isServer } from "solid-js/web";
 import { type AnkiFields, ankiFieldsSkeleton } from "#/types";
-import {
-  exampleFields,
-  exampleFields2,
-  exampleFields3,
-  exampleFields4,
-  exampleFields5,
-  exampleFields6,
-  exampleFields7,
-  exampleFields8,
-  exampleFields9,
-  exampleFields10,
-  exampleFields11,
-  exampleFields12,
-  exampleFields13,
-} from "./examples";
+import { exampleFields } from "./examples";
 
 // biome-ignore format: this looks nicer
 export const env = {
@@ -83,7 +69,7 @@ export function getAnkiFields() {
     ? undefined
     : document.querySelectorAll("#anki-fields > div");
   if (import.meta.env.DEV && !isServer) {
-    divs = Object.entries(exampleFields13).map(([key, value]) => {
+    divs = Object.entries(exampleFields).map(([key, value]) => {
       const div = document.createElement("div");
       div.dataset.field = key;
       div.innerHTML = value;

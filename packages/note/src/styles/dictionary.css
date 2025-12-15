@@ -1,42 +1,61 @@
-/*
- *    ────────────────────────────── Jitendex ─────────────────────────────
-*/
-[data-sc-content="example-sentence"] {
-  background-color: var(--color-base-300) !important;
-  border-color: var(--color-primary) !important;
-}
+.definition-field {
+  ol {
+    list-style-position: inside;
+  }
 
-[data-sc-content="example-keyword"] {
-  color: var(--color-base-content-primary) !important;
-}
+  ul {
+    list-style-position: inside;
+  }
 
-[data-jitendex-tag="true"] {
-  background-color: var(--color-secondary) !important;
-  color: var(--color-secondary-content) !important;
-}
+  /*
+  *   ────────────────────────────── Jitendex ─────────────────────────────
+  */
+  [data-sc-content="example-sentence"] {
+    background-color: var(--color-base-300) !important;
+    border-color: var(--color-primary) !important;
+  }
 
-[data-jitendex-i="true"] {
-  color: var(--color-base-content-calm) !important;
-}
+  [data-sc-content="example-keyword"] {
+    color: var(--color-base-content-primary) !important;
+  }
 
-/*
- *    ─────────────────────────────── JMdict ──────────────────────────────
-*/
+  [data-jitendex-tag="true"] {
+    background-color: var(--color-secondary) !important;
+    color: var(--color-secondary-content) !important;
+  }
 
-[data-details="JMdict"] > .dict-group__tag-list::before {
-  content: "(";
-}
+  [data-jitendex-i="true"] {
+    color: var(--color-base-content-calm) !important;
+  }
 
-[data-details="JMdict"] > .dict-group__tag-list::after {
-  content: ") ";
-}
+  /*
+  *   ─────────────────────────────── JMdict ──────────────────────────────
+  */
 
-[data-details="JMdict"]
-  .dict-group__tag-list
-  .dict-group__tag:not(:first-child)::before {
-  content: ", ";
-}
+  [data-details="JMdict"] > .dict-group__tag-list::before {
+    content: "(";
+  }
 
-ol:has(> li[data-details="JMdict"]) {
-  list-style-type: disc;
+  [data-details="JMdict"] > .dict-group__tag-list::after {
+    content: ") ";
+  }
+
+  [data-details="JMdict"]
+    .dict-group__tag-list
+    .dict-group__tag:not(:first-child)::before {
+    content: ", ";
+  }
+
+  ol:has(> li[data-details="JMdict"]) {
+    list-style-type: disc;
+  }
+
+  ol:has(> li[data-dictionary^="JMdict"]) {
+    list-style-type: disc;
+  }
+
+  ol:has(> li[data-dictionary^="JMdict"]) ul {
+    padding-left: 1em;
+    list-style-type: circle;
+  }
 }
