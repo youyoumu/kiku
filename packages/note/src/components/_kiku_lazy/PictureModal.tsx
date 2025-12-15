@@ -22,7 +22,7 @@ export default function PictureModal(props: {
     <Portal mount={$general.layoutRef}>
       <div
         part="picture-modal"
-        class="z-20 top-0 left-0 w-full h-full p-4 sm:p-8 bg-black/75 flex justify-center items-center [&_*:not(img)]:contents transition-opacity"
+        class="z-20 top-0 left-0 w-full h-full p-4 sm:p-8 bg-black/75 flex justify-center items-center [&_*:not(img)]:contents transition-opacity [&_img]:max-h-[95vh]"
         classList={{
           fixed: !KIKU_STATE.isAnkiWeb,
           absolute: KIKU_STATE.isAnkiWeb,
