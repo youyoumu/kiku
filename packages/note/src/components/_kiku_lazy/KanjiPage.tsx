@@ -126,7 +126,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
           <div class="absolute top-2 right-2 sm:top-4 sm:right-4 loading loading-sm text-base-content-soft animate-fade-in-sm"></div>
         </Show>
         <Show when={$kanji.status === "success"}>
-          <div class="absolute top-2 right-2 sm:top-4 sm:right-4 text-base-content-soft bg-base-300 px-1 rounded-xs animate-fade-in-sm">
+          <div class="absolute top-2 right-2 sm:top-4 sm:right-4 text-base-content-soft bg-base-300 px-1 rounded-xs animate-fade-in-sm text-sm sm:text-base">
             {data().length}
           </div>
         </Show>
