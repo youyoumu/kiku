@@ -30,5 +30,5 @@
       "#/*": ["./src/*"]
     }
   },
-  "include": ["src", "script/ssr.tsx"]
+  "include": ["src", "script/generateSsrTemplate.tsx"]
 }

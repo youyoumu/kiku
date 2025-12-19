@@ -25,7 +25,7 @@ globalThis.KIKU_STATE = {
   debug,
 };
 
-export function getSsrTemplate() {
+export function generateSsrTemplate() {
   const frontSsrTemplate = renderToString(() => (
     <GeneralContextProvider aborter={globalThis.KIKU_STATE.aborter}>
       <AnkiFieldContextProvider>

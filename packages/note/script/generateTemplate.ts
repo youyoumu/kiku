@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { env } from "../src/util/general";
-import { getSsrTemplate } from "./ssr.js";
+import { generateSsrTemplate } from "./generateSsrTemplate.js";
 import { log } from "./util.js";
 
 class Script {
@@ -62,7 +62,7 @@ class Script {
     plugin: string;
   }) {
     const { frontSsrTemplate, backSsrTemplate, hydrationScript } =
-      getSsrTemplate();
+      generateSsrTemplate();
 
     log.yellow("Front SSR Template:");
     log.gray(frontSsrTemplate);
