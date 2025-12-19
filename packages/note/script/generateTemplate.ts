@@ -11,18 +11,19 @@ class Script {
   VERSION: string;
 
   PATHS = {
-    frontSrc: join(this.SRC_DIR, "front.html"),
-    backSrc: join(this.SRC_DIR, "back.html"),
-    styleSrc: join(this.SRC_DIR, "style.css"),
+    FRONT_SRC: join(this.SRC_DIR, "front.html"),
+    BACK_SRC: join(this.SRC_DIR, "back.html"),
+    STYLE_SRC: join(this.SRC_DIR, "style.css"),
 
-    frontDest: join(this.DIST_DIR, "_kiku_front.html"),
-    backDest: join(this.DIST_DIR, "_kiku_back.html"),
-    styleDest: join(this.DIST_DIR, "_kiku_style.css"),
+    FRONT_DEST: join(this.DIST_DIR, "_kiku_front.html"),
+    BACK_DEST: join(this.DIST_DIR, "_kiku_back.html"),
+    STYLE_DEST: join(this.DIST_DIR, "_kiku_style.css"),
 
-    cssSrc: join(this.DIST_DIR, "_kiku.css"),
-    cssDest: join(this.DIST_DIR, "_kiku.css"),
+    CSS_SRC: join(this.DIST_DIR, "_kiku.css"),
+    CSS_DEST: join(this.DIST_DIR, "_kiku.css"),
 
-    pluginDest: join(this.DIST_DIR, "_kiku_plugin.js"),
+    PLUGIN_SRC: join(this.SRC_DIR, "_kiku_plugin.js"),
+    PLUGIN_DEST: join(this.DIST_DIR, "_kiku_plugin.js"),
   };
 
   async validateVersion() {
@@ -43,22 +44,23 @@ class Script {
   }
 
   async loadSources() {
-    const { frontSrc, backSrc, styleSrc, cssSrc } = this.PATHS;
-    const [front, back, style, css] = await Promise.all([
-      readFile(frontSrc, "utf8"),
-      readFile(backSrc, "utf8"),
-      readFile(styleSrc, "utf8"),
-      readFile(cssSrc, "utf8"),
+    const [front, back, style, css, plugin] = await Promise.all([
+      readFile(this.PATHS.FRONT_SRC, "utf8"),
+      readFile(this.PATHS.BACK_SRC, "utf8"),
+      readFile(this.PATHS.STYLE_SRC, "utf8"),
+      readFile(this.PATHS.CSS_SRC, "utf8"),
+      readFile(this.PATHS.PLUGIN_SRC, "utf8"),
     ]);
-    return { front, back, style, css };
+    return { front, back, style, css, plugin };
   }
 
-  buildTemplates(
-    frontSrc: string,
-    backSrc: string,
-    styleSrc: string,
-    cssSrc: string,
-  ) {
+  buildTemplates(src: {
+    front: string;
+    back: string;
+    style: string;
+    css: string;
+    plugin: string;
+  }) {
     const { frontSsrTemplate, backSsrTemplate, hydrationScript } =
       getSsrTemplate();
 
@@ -69,18 +71,19 @@ class Script {
     log.yellow("Hydration Script:");
     log.gray(hydrationScript);
 
-    const front = frontSrc
+    const front = src.front
       .replace("__VERSION__", this.VERSION)
       .replace("<!-- SSR_TEMPLATE -->", frontSsrTemplate)
       .replace("<!-- HYDRATION_SCRIPT -->", hydrationScript);
-    const back = backSrc
+    const back = src.back
       .replace("__VERSION__", this.VERSION)
       .replace("<!-- SSR_TEMPLATE -->", backSsrTemplate)
       .replace("<!-- HYDRATION_SCRIPT -->", hydrationScript);
+    const style = src.style.replace("__VERSION__", this.VERSION);
+    const css = src.css;
+    const plugin = src.plugin;
 
-    const style = styleSrc.replace("__VERSION__", this.VERSION);
-    const css = cssSrc;
-    return { front, back, style, css };
+    return { front, back, style, css, plugin };
   }
 
   async writeOutputs(templates: {
@@ -88,26 +91,21 @@ class Script {
     back: string;
     style: string;
     css: string;
+    plugin: string;
   }) {
-    const { frontDest, backDest, styleDest, cssDest, pluginDest } = this.PATHS;
     await Promise.all([
-      writeFile(frontDest, templates.front),
-      writeFile(backDest, templates.back),
-      writeFile(styleDest, templates.style),
-      writeFile(cssDest, templates.css),
-      writeFile(pluginDest, "export const plugin = {}"),
+      writeFile(this.PATHS.FRONT_DEST, templates.front),
+      writeFile(this.PATHS.BACK_DEST, templates.back),
+      writeFile(this.PATHS.STYLE_DEST, templates.style),
+      writeFile(this.PATHS.CSS_DEST, templates.css),
+      writeFile(this.PATHS.PLUGIN_DEST, templates.plugin),
     ]);
   }
 
   async run() {
     this.VERSION = `v${await this.validateVersion()}`;
     const sources = await this.loadSources();
-    const templates = this.buildTemplates(
-      sources.front,
-      sources.back,
-      sources.style,
-      sources.css,
-    );
+    const templates = this.buildTemplates(sources);
     await this.writeOutputs(templates);
   }
 }

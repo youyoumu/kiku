@@ -4,11 +4,11 @@ import { AnkiConnect } from "./util.js";
 
 class Script {
   DECK_NAME = "Kiku"; // change if needed
-  PROJECT_ROOT = join(import.meta.dirname, "..");
+  ROOT_DIR = join(import.meta.dirname, "..");
   RELEASE_DIR = join(import.meta.dirname, "../.release");
 
   async getVersion() {
-    const pkgJsonPath = join(this.PROJECT_ROOT, "package.json");
+    const pkgJsonPath = join(this.ROOT_DIR, "package.json");
     const pkg = JSON.parse(await readFile(pkgJsonPath, "utf8"));
     return pkg.version as string;
   }
@@ -28,9 +28,7 @@ class Script {
       path: outputPath,
       includeSched: false,
     });
-    if (!result) {
-      throw new Error(`Failed to export deck "${this.DECK_NAME}"`);
-    }
+    if (!result) throw new Error(`Failed to export deck "${this.DECK_NAME}"`);
     console.log(
       `✅ Successfully exported deck "${this.DECK_NAME}" to: ${outputPath}`,
     );
