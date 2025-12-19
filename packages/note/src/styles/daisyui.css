@@ -4,7 +4,7 @@
   include:
     properties, reset, rootcolor, rootscrollgutter, rootscrolllock, svg, scrollbar, button, input,
     label, fieldset, select, alert, badge, toast, collapse, status, toggle, list, loading, range,
-    tooltip, divider;
+    tooltip, divider, modal;
 }
 
 /* biome-ignore format: this looks nicer */

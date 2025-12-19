@@ -17,8 +17,10 @@ import {
   ArrowLeftIcon,
   BoltIcon,
   CircleChevronDownIcon,
+  GitPullRequestArrow,
   PaintbrushIcon,
 } from "./Icons";
+import MergeContextModal from "./MergeContextModal";
 import { capitalize } from "./util/general";
 
 export default function HeaderMain(props: { onExitNested?: () => void }) {
@@ -42,7 +44,8 @@ export default function HeaderMain(props: { onExitNested?: () => void }) {
             <ArrowLeftIcon
               class="size-5 cursor-pointer text-base-content-soft"
               on:click={props.onExitNested}
-            ></ArrowLeftIcon>
+            />
+            <MergeContextModal />
           </Match>
           <Match when={!$card.nested}>
             <div class="relative">

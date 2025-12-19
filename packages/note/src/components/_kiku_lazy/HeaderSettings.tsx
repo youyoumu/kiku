@@ -37,7 +37,7 @@ export default function HeaderSettings() {
           on:click={() => {
             navigateBack();
           }}
-        ></ArrowLeftIcon>
+        />
       </div>
       <div class="flex flex-row gap-2 items-center">
         {$general.isAnkiConnectAvailable && (
