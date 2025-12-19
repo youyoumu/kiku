@@ -12,6 +12,10 @@ Kiku is designed to be compatible with [Lapis](https://github.com/donkuri/lapis)
 This documentation assumes you already know about Anki, Yomitan, and mining-stuff.
 :::
 
+::: warning
+Anki 25.09 or later is required.
+:::
+
 ## Installing notetype
 
 Download the latest release `Kiku_v*.apkg` from [Release](https://github.com/youyoumu/kiku/releases/latest), and then import it to your Anki. After that the `Kiku` notetype should be available in your `Note Types` list.

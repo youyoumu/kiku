@@ -26,6 +26,7 @@ export type AnkiFields = {
   FreqSort: string;
   MiscInfo: string;
   Tags: string;
+  CardID: string;
 
   // === Variants (for furigana/kana helpers) ===
   "furigana:ExpressionFurigana": string;
@@ -34,40 +35,6 @@ export type AnkiFields = {
   "kanji:Sentence": string;
   "furigana:SentenceFurigana": string;
   "kana:SentenceFurigana": string;
-};
-
-export type AnkiFieldNodes = {
-  Expression: NodeList;
-  ExpressionFurigana: NodeList;
-  ExpressionReading: NodeList;
-  ExpressionAudio: NodeList;
-  SelectionText: NodeList;
-  MainDefinition: NodeList;
-  DefinitionPicture: NodeList;
-  Sentence: NodeList;
-  SentenceFurigana: NodeList;
-  SentenceAudio: NodeList;
-  Picture: NodeList;
-  Glossary: NodeList;
-  Hint: NodeList;
-  IsWordAndSentenceCard: NodeList;
-  IsClickCard: NodeList;
-  IsSentenceCard: NodeList;
-  IsAudioCard: NodeList;
-  PitchPosition: NodeList;
-  PitchCategories: NodeList;
-  Frequency: NodeList;
-  FreqSort: NodeList;
-  MiscInfo: NodeList;
-  Tags: NodeList;
-
-  // === Variants (for furigana/kana helpers) ===
-  "furigana:ExpressionFurigana": NodeList;
-  "kana:ExpressionFurigana": NodeList;
-  "furigana:Sentence": NodeList;
-  "kanji:Sentence": NodeList;
-  "furigana:SentenceFurigana": NodeList;
-  "kana:SentenceFurigana": NodeList;
 };
 
 const frontKeys = [
@@ -88,17 +55,13 @@ const frontKeys = [
   "Hint",
   "Picture",
   "Tags",
+  "CardID",
 ] satisfies readonly (keyof AnkiFields)[];
 
 type ExtractUsedFields<T, U extends readonly (keyof T)[]> = Pick<T, U[number]>;
 
 export type AnkiFrontFields = ExtractUsedFields<AnkiFields, typeof frontKeys>;
 export type AnkiBackFields = AnkiFields;
-export type AnkiFrontFieldNodes = ExtractUsedFields<
-  AnkiFieldNodes,
-  typeof frontKeys
->;
-export type AnkiBackFieldNodes = AnkiFieldNodes;
 
 export type AnkiNote = {
   cards: number[];
@@ -178,6 +141,7 @@ export const ankiFieldsSkeleton: AnkiFields = {
   "FreqSort": "",
   "MiscInfo": "",
   "Tags": "",
+  "CardID": "",
   "furigana:ExpressionFurigana": "",
   "kana:ExpressionFurigana": "",
   "furigana:Sentence": "",
