@@ -462,4 +462,4 @@ export const exampleFields14: AnkiFields = {
   "kana:SentenceFurigana": "（ウララ）<br>こんにち,きょう,こんちは <b>おしかった</b>ね～"
 }
 
-export const exampleFields = exampleFields12;
+export const exampleFields = exampleFields13;

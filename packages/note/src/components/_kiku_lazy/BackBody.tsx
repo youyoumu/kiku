@@ -5,7 +5,7 @@ import {
   onMount,
   Show,
 } from "solid-js";
-import { isHtmlEffectivelyEmpty } from "#/util/general";
+import { isHtmlEffectivelyEmpty, parseHtml } from "#/util/general";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useConfigContext } from "../shared/ConfigContext";
 import { useCtxContext } from "../shared/CtxContext";
@@ -54,9 +54,8 @@ export default function BackBody(props: {
   }
 
   onMount(() => {
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = ankiFields.DefinitionPicture;
-    setDefinitionPicture(tempDiv.querySelector("img")?.outerHTML ?? "");
+    const imgDoc = parseHtml(ankiFields.DefinitionPicture);
+    setDefinitionPicture(imgDoc.querySelector("img")?.outerHTML ?? "");
   });
 
   createEffect(() => {

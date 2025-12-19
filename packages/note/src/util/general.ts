@@ -100,3 +100,7 @@ export function isHtmlEffectivelyEmpty(html: string): boolean {
 
   return !meaningfulSelectors.some((sel) => doc.body.querySelector(sel));
 }
+
+export function parseHtml(html: string) {
+  return new DOMParser().parseFromString(html, "text/html");
+}

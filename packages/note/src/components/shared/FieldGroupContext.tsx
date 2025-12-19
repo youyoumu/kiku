@@ -1,6 +1,7 @@
 import { createContext, createEffect, useContext } from "solid-js";
 import type { JSX } from "solid-js/jsx-runtime";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
+import { parseHtml } from "#/util/general";
 import { useAnkiFieldContext } from "./AnkiFieldsContext";
 import { useCardContext } from "./CardContext";
 
@@ -47,16 +48,15 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
   };
 
   createEffect(() => {
-    const tempDivSentenceField = document.createElement("div");
-    tempDivSentenceField.innerHTML = sentenceField();
+    const sentenceFieldDoc = parseHtml(sentenceField());
     const sentenceFieldWithGroup =
-      tempDivSentenceField.querySelectorAll("[data-group-id]");
+      sentenceFieldDoc.querySelectorAll("[data-group-id]");
     sentenceFieldWithGroup.forEach((el) => {
       const id = (el as HTMLSpanElement).dataset.groupId;
       addIds(id);
     });
     const sentenceFieldWithoutGroup = Array.from(
-      tempDivSentenceField.childNodes,
+      sentenceFieldDoc.childNodes,
     ).filter((el) => !(el as HTMLSpanElement).dataset?.groupId);
     const sentenceFieldWithoutGroupHtml = sentenceFieldWithoutGroup
       .map((node) => {
@@ -71,9 +71,8 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       sentenceFieldWithoutGroupHtml,
     );
 
-    const tempDivPictureField = document.createElement("div");
-    tempDivPictureField.innerHTML = pictureField;
-    const pictureFieldWithGroup = tempDivPictureField.querySelectorAll("img");
+    const pictureFieldDoc = parseHtml(pictureField);
+    const pictureFieldWithGroup = pictureFieldDoc.querySelectorAll("img");
     pictureFieldWithGroup.forEach((el, i) => {
       let id = (el as HTMLSpanElement).dataset.groupId;
       if (!id) {
@@ -83,16 +82,15 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       addIds(id);
     });
 
-    const tempDivSentenceAudioField = document.createElement("div");
-    tempDivSentenceAudioField.innerHTML = sentenceAudioField;
+    const sentenceAudioFieldDoc = parseHtml(sentenceAudioField);
     const sentenceAudioFieldWithGroup =
-      tempDivSentenceAudioField.querySelectorAll("[data-group-id]");
+      sentenceAudioFieldDoc.querySelectorAll("[data-group-id]");
     sentenceAudioFieldWithGroup.forEach((el) => {
       const id = (el as HTMLSpanElement).dataset.groupId;
       addIds(id);
     });
     const sentenceAudioFieldWithoutGroup = Array.from(
-      tempDivSentenceAudioField.childNodes,
+      sentenceAudioFieldDoc.childNodes,
     ).filter((el) => !(el as HTMLSpanElement).dataset?.groupId);
     const sentenceAudioFieldWithoutGroupHtml = sentenceAudioFieldWithoutGroup
       .map((node) => {
