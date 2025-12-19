@@ -254,12 +254,17 @@ class Script {
 }
 
 const kikuDbMainScript = new Script();
+// step 1
 // await kikuDbMainScript.compareKanjiVgAndJpdb();
 
+// step 2
 // await kikuDbMainScript.writeKikuDbKanji();
 
+// step 3
 // await kikuDbMainScript.gzipKikuDbKanjiCompactJson();
 
+// step 4
 await kikuDbMainScript.generateDbMainTar();
 
+// step 5
 await kikuDbMainScript.writeDbMainManifest();

@@ -9,8 +9,8 @@ type JmdictTerm = {
 };
 
 export class JmdictParser {
-  ROOT_PATH = join(import.meta.dirname, "../");
-  JMDICT_DIR = join(this.ROOT_PATH, ".jmdict");
+  ROOT_DIR = join(import.meta.dirname, "../");
+  JMDICT_DIR = join(this.ROOT_DIR, ".jmdict");
   JMDICT_PATH = join(this.JMDICT_DIR, "JMdict_e");
   JMDICT_TERM_PATH = join(this.JMDICT_DIR, "term.json");
   JMDICT_TERM_MAP_PATH = join(this.JMDICT_DIR, "termMap.json");
@@ -106,6 +106,8 @@ export class JmdictParser {
 
 export const jmdictParser = new JmdictParser();
 
+// step 1
 // await jmdictParser.writeTerm();
 
-await jmdictParser.writeTermMap();
+// step 2
+// await jmdictParser.writeTermMap();
