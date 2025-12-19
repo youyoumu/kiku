@@ -11,7 +11,7 @@ export type KanjiComposition = Record<
   }
 >;
 
-class KanjiVgScraper {
+class KanjiVgParser {
   ROOT_DIR = join(import.meta.dirname, "../");
   KANJI_VG_DIR = join(this.ROOT_DIR, ".kanjivg");
   DOWNLOAD_URL =
@@ -99,14 +99,14 @@ class KanjiVgScraper {
 
   async readKanjiVgJson() {
     return JSON.parse(
-      await readFile(kanjiVgScraper.KANJI_VG_KANJI_JSON, "utf8"),
+      await readFile(kanjiVgParser.KANJI_VG_KANJI_JSON, "utf8"),
     ) as KanjiComposition;
   }
 }
 
-export const kanjiVgScraper = new KanjiVgScraper();
+export const kanjiVgParser = new KanjiVgParser();
 // step 1
-// await kanjiVgScraper.fetchAndExtractKanjiVG();
+// await kanjiVgParser.fetchAndExtractKanjiVG();
 
 // step 2
-// await kanjiVgScraper.writeKanjiVgJson();
+// await kanjiVgParser.writeKanjiVgJson();

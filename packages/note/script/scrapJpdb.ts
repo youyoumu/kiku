@@ -308,16 +308,16 @@ export const jpdbScraper = new JpdbScraper();
 await jpdbScraper.ensureDir();
 
 // step 1
-// kanjiByFrequency.writeKanjiByFrequencyHtml();
+// jpdbScraper.writeKanjiByFrequencyHtml();
 
 // step 2
-// await kanjiByFrequency.writeKanjiByFrequencyJson();
+// await jpdbScraper.writeKanjiByFrequencyJson();
 
 // step 3
-// await kanjiByFrequency.writeKanjiHtml();
+// await jpdbScraper.writeKanjiHtml();
 
 // step 4
-// await kanjiByFrequency.writeKanjiJson();
+// await jpdbScraper.writeKanjiJson();
 
 // step 5
-// await kanjiByFrequency.gzipKanjiJson();
+// await jpdbScraper.gzipKanjiJson();

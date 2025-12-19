@@ -2,8 +2,8 @@ import { writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 import * as tar from "tar";
 import { jmdictParser } from "./parseJmdict.js";
+import { kanjiVgParser } from "./parseKanjiVg.js";
 import { jpdbScraper } from "./scrapJpdb.js";
-import { kanjiVgScraper } from "./scrapKanjiVg.js";
 import { wkScraper } from "./scrapWk.js";
 import { gzipFile } from "./util.js";
 
@@ -66,7 +66,7 @@ class Script {
   );
 
   async compareKanjiVgAndJpdb() {
-    const kanjiVgJson = await kanjiVgScraper.readKanjiVgJson();
+    const kanjiVgJson = await kanjiVgParser.readKanjiVgJson();
     const jpdbJson = await jpdbScraper.readKanjiJson();
 
     const diff: Record<
@@ -101,7 +101,7 @@ class Script {
   }
 
   async writeKikuDbKanji() {
-    const kanjiVgJson = await kanjiVgScraper.readKanjiVgJson();
+    const kanjiVgJson = await kanjiVgParser.readKanjiVgJson();
     const jpdbJson = await jpdbScraper.readKanjiJson();
     const wkJson = await wkScraper.readWkKanjiInfoJson();
 

@@ -11,6 +11,7 @@ type JmdictTerm = {
 export class JmdictParser {
   ROOT_DIR = join(import.meta.dirname, "../");
   JMDICT_DIR = join(this.ROOT_DIR, ".jmdict");
+  //NOTE: download and extract JMdict_e from ftp://ftp.edrdg.org/pub/Nihongo//JMdict_e.gz
   JMDICT_PATH = join(this.JMDICT_DIR, "JMdict_e");
   JMDICT_TERM_PATH = join(this.JMDICT_DIR, "term.json");
   JMDICT_TERM_MAP_PATH = join(this.JMDICT_DIR, "termMap.json");
