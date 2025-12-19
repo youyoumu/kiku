@@ -24,6 +24,9 @@ class Script {
 
     PLUGIN_SRC: join(this.SRC_DIR, "_kiku_plugin.js"),
     PLUGIN_DEST: join(this.DIST_DIR, "_kiku_plugin.js"),
+
+    CSS_PLUGIN_SRC: join(this.SRC_DIR, "_kiku_plugin.css"),
+    CSS_PLUGIN_DEST: join(this.DIST_DIR, "_kiku_plugin.css"),
   };
 
   async validateVersion() {
@@ -44,14 +47,15 @@ class Script {
   }
 
   async loadSources() {
-    const [front, back, style, css, plugin] = await Promise.all([
+    const [front, back, style, css, plugin, cssPlugin] = await Promise.all([
       readFile(this.PATHS.FRONT_SRC, "utf8"),
       readFile(this.PATHS.BACK_SRC, "utf8"),
       readFile(this.PATHS.STYLE_SRC, "utf8"),
       readFile(this.PATHS.CSS_SRC, "utf8"),
       readFile(this.PATHS.PLUGIN_SRC, "utf8"),
+      readFile(this.PATHS.CSS_PLUGIN_SRC, "utf8"),
     ]);
-    return { front, back, style, css, plugin };
+    return { front, back, style, css, plugin, cssPlugin };
   }
 
   buildTemplates(src: {
@@ -60,6 +64,7 @@ class Script {
     style: string;
     css: string;
     plugin: string;
+    cssPlugin: string;
   }) {
     const { frontSsrTemplate, backSsrTemplate, hydrationScript } =
       generateSsrTemplate();
@@ -82,8 +87,9 @@ class Script {
     const style = src.style.replace("__VERSION__", this.VERSION);
     const css = src.css;
     const plugin = src.plugin;
+    const cssPlugin = src.cssPlugin;
 
-    return { front, back, style, css, plugin };
+    return { front, back, style, css, plugin, cssPlugin };
   }
 
   async writeOutputs(templates: {
@@ -92,6 +98,7 @@ class Script {
     style: string;
     css: string;
     plugin: string;
+    cssPlugin: string;
   }) {
     await Promise.all([
       writeFile(this.PATHS.FRONT_DEST, templates.front),
@@ -99,6 +106,7 @@ class Script {
       writeFile(this.PATHS.STYLE_DEST, templates.style),
       writeFile(this.PATHS.CSS_DEST, templates.css),
       writeFile(this.PATHS.PLUGIN_DEST, templates.plugin),
+      writeFile(this.PATHS.CSS_PLUGIN_DEST, templates.cssPlugin),
     ]);
   }
 

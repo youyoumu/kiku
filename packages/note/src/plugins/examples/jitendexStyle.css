@@ -1,0 +1,16 @@
+[data-sc-content="example-sentence-b"] {
+  height: 0;
+  overflow: hidden;
+  interpolate-size: allow-keywords;
+  transition-property: height, opacity;
+  transition-duration: 0.2s;
+  opacity: 0;
+}
+
+[data-sc-content="example-sentence"]:hover {
+  [data-sc-content="example-sentence-b"] {
+    height: auto;
+    overflow: unset;
+    opacity: 1;
+  }
+}

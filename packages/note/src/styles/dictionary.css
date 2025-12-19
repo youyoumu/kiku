@@ -14,7 +14,7 @@
     background-color: var(--color-base-300) !important;
     border-color: var(--color-primary) !important;
     span[style^="color"] {
-      color: var(--color-primary) !important;
+      color: var(--color-base-content-primary) !important;
     }
   }
 

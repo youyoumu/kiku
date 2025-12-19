@@ -93,11 +93,15 @@ async function setup({ aborter }: { aborter: AbortController }) {
     if (tailwind) {
       shadow?.appendChild(tailwind.cloneNode(true));
     } else {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "./_kiku.css";
-      shadow?.prepend(link);
+      const kikuCss = document.createElement("link");
+      kikuCss.rel = "stylesheet";
+      kikuCss.href = "./_kiku.css";
+      shadow?.prepend(kikuCss);
     }
+    const kikuPluginCss = document.createElement("link");
+    kikuPluginCss.rel = "stylesheet";
+    kikuPluginCss.href = "./_kiku_plugin.css";
+    shadow?.prepend(kikuPluginCss);
     shadow?.appendChild(root);
 
     let config$: KikuConfig;

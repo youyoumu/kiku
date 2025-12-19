@@ -38,6 +38,7 @@ class Script {
       "_kiku_shared.js",
       "_kiku_worker.js",
       "_kiku_plugin.js",
+      "_kiku_plugin.css",
     ];
 
     const srcDir = join(import.meta.dirname, "../dist");

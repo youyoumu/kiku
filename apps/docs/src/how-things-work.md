@@ -17,6 +17,7 @@ Kiku stores certain files in your Anki `collection.media` directory. All of thes
 [
   "_kiku_style.css",
   "_kiku.css",
+  "_kiku_plugin.css",
   "_kiku_notes_0.json.gz",
   "_kiku_notes_1.json.gz",
   "_kiku_notes_2.json.gz",
