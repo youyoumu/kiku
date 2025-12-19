@@ -1,5 +1,5 @@
-import { writeFile } from "fs/promises";
-import { basename, join } from "path";
+import { writeFile } from "node:fs/promises";
+import { basename, join } from "node:path";
 import * as tar from "tar";
 import { jmdictParser } from "./parseJmdict.js";
 import { jpdbScraper } from "./scrapJpdb.js";

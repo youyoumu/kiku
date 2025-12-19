@@ -2,36 +2,50 @@ import { mkdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { AnkiConnect } from "./util.js";
 
-async function main() {
-  const projectRoot = join(import.meta.dirname, "..");
-  const pkgJsonPath = join(projectRoot, "package.json");
-  const pkg = JSON.parse(await readFile(pkgJsonPath, "utf8"));
-  const version = pkg.version;
+class Script {
+  DECK_NAME = "Kiku"; // change if needed
+  PROJECT_ROOT = join(import.meta.dirname, "..");
+  RELEASE_DIR = join(import.meta.dirname, "../.release");
 
-  const deckName = "Kiku"; // change to your deck name
-  const releaseDir = join(import.meta.dirname, "../.release");
-  await mkdir(releaseDir, { recursive: true });
-  const outputPath = join(releaseDir, `${deckName}_v${version}.apkg`);
+  async getVersion() {
+    const pkgJsonPath = join(this.PROJECT_ROOT, "package.json");
+    const pkg = JSON.parse(await readFile(pkgJsonPath, "utf8"));
+    return pkg.version as string;
+  }
 
-  console.log(`📦 Exporting deck "${deckName}" to ${outputPath}...`);
+  async ensureReleaseDir() {
+    await mkdir(this.RELEASE_DIR, { recursive: true });
+  }
 
-  const result = await AnkiConnect.call("exportPackage", {
-    deck: deckName,
-    path: outputPath,
-    includeSched: false,
-  });
+  buildOutputPath(version: string) {
+    return join(this.RELEASE_DIR, `${this.DECK_NAME}_v${version}.apkg`);
+  }
 
-  if (result) {
+  async exportDeck(outputPath: string) {
+    console.log(`📦 Exporting deck "${this.DECK_NAME}" to ${outputPath}...`);
+    const result = await AnkiConnect.call("exportPackage", {
+      deck: this.DECK_NAME,
+      path: outputPath,
+      includeSched: false,
+    });
+    if (!result) {
+      throw new Error(`Failed to export deck "${this.DECK_NAME}"`);
+    }
     console.log(
-      `✅ Successfully exported deck "${deckName}" to: ${outputPath}`,
+      `✅ Successfully exported deck "${this.DECK_NAME}" to: ${outputPath}`,
     );
-  } else {
-    console.error(`❌ Failed to export deck "${deckName}".`);
-    process.exit(1);
+  }
+
+  async run() {
+    const version = await this.getVersion();
+    await this.ensureReleaseDir();
+    const outputPath = this.buildOutputPath(version);
+    await this.exportDeck(outputPath);
   }
 }
 
-main().catch((err) => {
+const script = new Script();
+script.run().catch((err) => {
   console.error("❌ Error exporting deck:", err);
   process.exit(1);
 });

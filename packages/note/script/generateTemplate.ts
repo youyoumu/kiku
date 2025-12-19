@@ -4,86 +4,121 @@ import { env } from "../src/util/general";
 import { getSsrTemplate } from "./ssr.js";
 import { log } from "./util.js";
 
-export async function validateVersion() {
-  const projectRoot = join(import.meta.dirname, "..");
-  const pkgJsonPath = join(projectRoot, "package.json");
-  const pkg = JSON.parse(await readFile(pkgJsonPath, "utf8"));
+class Script {
+  ROOT_DIR = join(import.meta.dirname, "..");
+  SRC_DIR = join(import.meta.dirname, "../src");
+  DIST_DIR = join(import.meta.dirname, "../dist");
+  VERSION: string;
 
-  const declared = env.KIKU_VERSION;
-  const actual = pkg.version;
+  PATHS = {
+    frontSrc: join(this.SRC_DIR, "front.html"),
+    backSrc: join(this.SRC_DIR, "back.html"),
+    styleSrc: join(this.SRC_DIR, "style.css"),
 
-  if (!actual) {
-    console.error("❌ package.json has no version field.");
-    process.exit(1);
+    frontDest: join(this.DIST_DIR, "_kiku_front.html"),
+    backDest: join(this.DIST_DIR, "_kiku_back.html"),
+    styleDest: join(this.DIST_DIR, "_kiku_style.css"),
+
+    cssSrc: join(this.DIST_DIR, "_kiku.css"),
+    cssDest: join(this.DIST_DIR, "_kiku.css"),
+
+    pluginDest: join(this.DIST_DIR, "_kiku_plugin.js"),
+  };
+
+  async validateVersion() {
+    const pkgJsonPath = join(this.ROOT_DIR, "package.json");
+    const pkg = JSON.parse(await readFile(pkgJsonPath, "utf8"));
+    const declared = env.KIKU_VERSION;
+    const actual = pkg.version;
+
+    if (!actual) throw new Error("package.json has no version field.");
+    if (declared !== actual) {
+      throw new Error(
+        `Version mismatch: env.KIKU_VERSION = ${declared} -- package.json version = ${actual}`,
+      );
+    }
+
+    console.log(`✅ Version OK: ${declared}`);
+    return actual as string;
   }
 
-  if (declared !== actual) {
-    console.error(
-      `❌ Version mismatch:
-      env.KIKU_VERSION = ${declared}
-      package.json version = ${actual}`,
+  async loadSources() {
+    const { frontSrc, backSrc, styleSrc, cssSrc } = this.PATHS;
+    const [front, back, style, css] = await Promise.all([
+      readFile(frontSrc, "utf8"),
+      readFile(backSrc, "utf8"),
+      readFile(styleSrc, "utf8"),
+      readFile(cssSrc, "utf8"),
+    ]);
+    return { front, back, style, css };
+  }
+
+  buildTemplates(
+    frontSrc: string,
+    backSrc: string,
+    styleSrc: string,
+    cssSrc: string,
+  ) {
+    const { frontSsrTemplate, backSsrTemplate, hydrationScript } =
+      getSsrTemplate();
+
+    log.yellow("Front SSR Template:");
+    log.gray(frontSsrTemplate);
+    log.yellow("Back SSR Template:");
+    log.gray(backSsrTemplate);
+    log.yellow("Hydration Script:");
+    log.gray(hydrationScript);
+
+    const front = frontSrc
+      .replace("__VERSION__", this.VERSION)
+      .replace("<!-- SSR_TEMPLATE -->", frontSsrTemplate)
+      .replace("<!-- HYDRATION_SCRIPT -->", hydrationScript);
+    const back = backSrc
+      .replace("__VERSION__", this.VERSION)
+      .replace("<!-- SSR_TEMPLATE -->", backSsrTemplate)
+      .replace("<!-- HYDRATION_SCRIPT -->", hydrationScript);
+
+    const style = styleSrc.replace("__VERSION__", this.VERSION);
+    const css = cssSrc;
+    return { front, back, style, css };
+  }
+
+  async writeOutputs(templates: {
+    front: string;
+    back: string;
+    style: string;
+    css: string;
+  }) {
+    const { frontDest, backDest, styleDest, cssDest, pluginDest } = this.PATHS;
+    await Promise.all([
+      writeFile(frontDest, templates.front),
+      writeFile(backDest, templates.back),
+      writeFile(styleDest, templates.style),
+      writeFile(cssDest, templates.css),
+      writeFile(pluginDest, "export const plugin = {}"),
+    ]);
+  }
+
+  async run() {
+    this.VERSION = `v${await this.validateVersion()}`;
+    const sources = await this.loadSources();
+    const templates = this.buildTemplates(
+      sources.front,
+      sources.back,
+      sources.style,
+      sources.css,
     );
-    process.exit(1);
+    await this.writeOutputs(templates);
   }
-
-  console.log(`✅ Version OK: ${declared}`);
-  return actual;
 }
 
-async function main() {
-  const version = `v${await validateVersion()}`;
-
-  const frontSrcPath = join(import.meta.dirname, "../src/front.html");
-  const frontDestPath = join(import.meta.dirname, "../dist/_kiku_front.html");
-  const backSrcPath = join(import.meta.dirname, "../src/back.html");
-  const backDestPath = join(import.meta.dirname, "../dist/_kiku_back.html");
-  const styleSrcPath = join(import.meta.dirname, "../src/style.css");
-  const styleDestPath = join(import.meta.dirname, "../dist/_kiku_style.css");
-  const cssSrcPath = join(import.meta.dirname, "../dist/_kiku.css");
-  const cssDestPath = join(import.meta.dirname, "../dist/_kiku.css");
-  const pluginDestPath = join(import.meta.dirname, "../dist/_kiku_plugin.js");
-
-  const [frontSrc, backSrc, styleSrc, cssSrc] = await Promise.all([
-    readFile(frontSrcPath, "utf8"),
-    readFile(backSrcPath, "utf8"),
-    readFile(styleSrcPath, "utf8"),
-    readFile(cssSrcPath, "utf8"),
-  ]);
-
-  const { frontSsrTemplate, backSsrTemplate, hydrationScript } =
-    getSsrTemplate();
-
-  log.yellow("Front SSR Template:");
-  log.gray(frontSsrTemplate);
-  log.yellow("Back SSR Template:");
-  log.gray(backSsrTemplate);
-  log.yellow("Hydration Script:");
-  log.gray(hydrationScript);
-
-  const frontTemplate = frontSrc
-    .replace("__VERSION__", version)
-    .replace("<!-- SSR_TEMPLATE -->", frontSsrTemplate)
-    .replace("<!-- HYDRATION_SCRIPT -->", hydrationScript);
-  const backTemplate = backSrc
-    .replace("__VERSION__", version)
-    .replace("<!-- SSR_TEMPLATE -->", backSsrTemplate)
-    .replace("<!-- HYDRATION_SCRIPT -->", hydrationScript);
-  const styleTemplate = styleSrc.replace("__VERSION__", version);
-  const cssTemplate = cssSrc;
-
-  await Promise.all([
-    writeFile(frontDestPath, frontTemplate),
-    writeFile(backDestPath, backTemplate),
-    writeFile(styleDestPath, styleTemplate),
-    writeFile(cssDestPath, cssTemplate),
-    writeFile(pluginDestPath, "export const plugin = {}"),
-  ]);
-}
-main()
+const script = new Script();
+script
+  .run()
+  .then(() => {
+    console.log("✅ Generated template");
+  })
   .catch((err) => {
     console.error("❌ Failed to generate template:", err);
     process.exit(1);
-  })
-  .then(() => {
-    console.log("✅ Generated template");
   });
