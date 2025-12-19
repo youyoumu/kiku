@@ -27,6 +27,14 @@ export default function Expression() {
     },
   });
 
+  function isValidExpressionFurigana() {
+    if (ankiFields.ExpressionFurigana.includes("<ruby")) return false;
+    if (!ankiFields.ExpressionFurigana.includes("[")) return false;
+    return true;
+  }
+
+  if (!isValidExpressionFurigana()) return null;
+
   function showEl(el: HTMLElement) {
     el.style.display = "block";
     applyTooltip();
