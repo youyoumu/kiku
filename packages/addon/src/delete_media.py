@@ -6,6 +6,7 @@ import os
 KIKU_WHITELIST = {
     "_kiku_config.json",
     "_kiku_plugin.js",
+    "_kiku_plugin.css",
 }
 
 KIKU_EXCEPTIONS = {

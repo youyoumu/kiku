@@ -9,12 +9,6 @@ import type {
 import type { KikuConfig } from "#/util/config";
 import type { Env } from "#/util/general";
 
-type SimilarKanjiDB = Record<
-  string,
-  Array<string | { score: number; kan: string }>
->;
-type SimilarKanjiDBs = Record<string, SimilarKanjiDB>;
-
 let ankiConnectAddress = "";
 
 const logger = {
@@ -88,21 +82,6 @@ export class Nex {
   env!: Env;
   config!: KikuConfig;
   preferAnkiConnect!: boolean;
-
-  similar_kanji_min_score = 0.5;
-  //biome-ignore format: this looks nicer
-  similar_kanji_sources = () => [
-    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_FROM_KEISEI}`, base_score: 0.65, },
-    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_MANUAL}`, base_score: 0.9, },
-    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_WK_NIAI_NOTO}`, base_score: 0.1, },
-  ];
-  //biome-ignore format: this looks nicer
-  alternative_similar_kanji_sources = () => [
-    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_OLD_SCRIPT}`, base_score: 0.4, },
-    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_STROKE_EDIT_DIST}`, base_score: -0.2, },
-    { file: `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_YL_RADICAL}`, base_score: -0.2, },
-  ];
-
   cache = new Map();
 
   constructor(payload: {
@@ -127,37 +106,6 @@ export class Nex {
     this.config = payload.config;
     this.preferAnkiConnect = payload.preferAnkiConnect;
     ankiConnectAddress = this.config.ankiConnectAddress;
-  }
-
-  async getSimilarKanji(kanji: string) {
-    const store: Record<string, { kanji: string; score: number }> = {};
-    const sources = this.similar_kanji_sources();
-    const similarKanjiDbs = await this.similarKanjiDBs();
-
-    sources.forEach((source) => {
-      const db = similarKanjiDbs[source.file];
-      if (!db || !(kanji in db)) return;
-
-      db[kanji].forEach((similarity_info) => {
-        const isObject =
-          typeof similarity_info !== "string" && "kan" in similarity_info;
-        const similar_kanji = isObject ? similarity_info.kan : similarity_info;
-        const score =
-          source.base_score + (isObject ? (similarity_info.score ?? 0) : 0);
-
-        const oldScore = store[similar_kanji]?.score ?? 0;
-        if (
-          score > this.similar_kanji_min_score ||
-          (score > 0 && oldScore > 0)
-        ) {
-          store[similar_kanji] = { kanji: similar_kanji, score };
-        } else if (score < 0) {
-          delete store[similar_kanji];
-        }
-      });
-    });
-
-    return Object.keys(store);
   }
 
   chunkCache = new Map<string, AnkiNote[]>();
@@ -332,30 +280,6 @@ export class Nex {
     }
   }
 
-  // TODO: remove lookup
-  //
-  // async lookup(kanji: string): Promise<Kanji> {
-  //   console.warn("lookup is deprecated, use lookupKanji instead");
-  //   const key = this.lookup.name;
-  //   const cache = this.cache.get(key);
-  //   if (!cache) {
-  //     const res = await fetch(
-  //       `${this.assetsPath}/${this.env.KIKU_DB_SIMILAR_KANJI_LOOKUP}`,
-  //     );
-  //     if (!res.body) {
-  //       logger.error("Failed to lookup", kanji);
-  //       throw new Error(`Failed to lookup ${kanji}`);
-  //     }
-  //     const ds = new DecompressionStream("gzip");
-  //     const decompressed = res.body.pipeThrough(ds);
-  //     const text = await new Response(decompressed).text();
-  //     const lookupDb = JSON.parse(text);
-  //
-  //     this.cache.set(key, lookupDb);
-  //   }
-  //   return this.cache.get(key)[kanji];
-  // }
-
   lookupKanjiPromise:
     | PromiseWithResolvers<Record<string, KanjiInfo>>
     | undefined;
@@ -428,28 +352,6 @@ export class Nex {
     return manifest;
   }
 
-  // TODO: remove
-  async similarKanjiDBs(): Promise<SimilarKanjiDBs> {
-    const key = this.similarKanjiDBs.name;
-    if (this.cache.has(key)) return this.cache.get(key);
-    const similarKanjiDbs: SimilarKanjiDBs = {};
-    const allSources = [
-      ...this.similar_kanji_sources(),
-      // ...this.alternative_similar_kanji_sources,
-    ];
-    for (const src of allSources) {
-      if (!similarKanjiDbs[src.file]) {
-        const res = await fetch(src.file);
-        const text = await Nex.gunzip(res).text();
-        const db = JSON.parse(text);
-
-        similarKanjiDbs[src.file] = db;
-      }
-    }
-    this.cache.set(key, similarKanjiDbs);
-    return this.cache.get(key);
-  }
-
   static fromCompact(c: KanjiInfoCompact | undefined): KanjiInfo | undefined {
     if (!c) return undefined;
     return {
@@ -509,7 +411,6 @@ const nexApi = {
   async init(payload: ConstructorParameters<typeof Nex>[0]) { if (nex) { nex.init(payload); } else { nex = new Nex(payload); }},
   notesManifest: () => nex.notesManifest(),
   query: (...args: Parameters<typeof nex.query>) => nex.query(...args),
-  getSimilarKanji: (...args: Parameters<typeof nex.getSimilarKanji>) => nex.getSimilarKanji(...args),
   queryShared: ( ...args: Parameters<typeof nex.queryShared>) => nex.queryShared(...args),
   lookupKanji: (...args: Parameters<typeof nex.lookupKanji>) => nex.lookupKanji(...args),
 } satisfies NexApi$;

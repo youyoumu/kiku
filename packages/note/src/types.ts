@@ -127,15 +127,6 @@ export type KikuDbMainManifest = {
   files: Record<string, { start: number; end: number; size: number }>;
 };
 
-export type Kanji = {
-  level: number;
-  meanings: string[];
-  onyomi: string[];
-  kunyomi: string[];
-  important_reading: "onyomi" | "kunyomi";
-  nanori: string[];
-};
-
 export type KanjiInfo = {
   composedOf: string[];
   usedIn: string[];
