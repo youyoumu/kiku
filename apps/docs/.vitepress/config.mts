@@ -62,6 +62,10 @@ export default defineConfig({
             link: "/random-font",
           },
           {
+            text: "Custom Dictionary Style",
+            link: "/custom-dictionary-style",
+          },
+          {
             text: "Custom Pitch Color",
             link: "/custom-pitch-color",
           },
