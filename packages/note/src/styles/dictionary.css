@@ -13,15 +13,23 @@
   [data-sc-content="example-sentence"] {
     background-color: var(--color-base-300) !important;
     border-color: var(--color-primary) !important;
+    span[style^="color"] {
+      color: var(--color-primary) !important;
+    }
   }
 
   [data-sc-content="example-keyword"] {
     color: var(--color-base-content-primary) !important;
   }
 
-  [data-jitendex-tag="true"] {
+  [data-jitendex-tag-gray="true"] {
     background-color: var(--color-secondary) !important;
     color: var(--color-secondary-content) !important;
+  }
+
+  [data-jitendex-tag-brown="true"] {
+    background-color: var(--color-accent) !important;
+    color: var(--color-accent-content) !important;
   }
 
   [data-jitendex-i="true"] {
