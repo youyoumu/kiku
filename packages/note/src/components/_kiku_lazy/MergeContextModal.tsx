@@ -175,19 +175,21 @@ export default function MergeContextModal() {
         if (dialogRef) dialogRef.close();
         const rootNoteId = rootNote()?.noteId;
         if (deleteRootNote() && rootNoteId) {
-          AnkiConnect.invoke("deleteNotes", {
-            notes: [rootNoteId],
-          })
-            .catch((e) => {
-              $general.toast.error(
-                `Failed to delete note: ${e instanceof Error ? e.message : ""}`,
-              );
+          setTimeout(() => {
+            AnkiConnect.invoke("deleteNotes", {
+              notes: [rootNoteId],
             })
-            .then(() => {
-              $general.toast.success(
-                `Note ${payload?.note.id} has been updated! Note ${rootNoteId} has been deleted!`,
-              );
-            });
+              .catch((e) => {
+                $general.toast.error(
+                  `Failed to delete note: ${e instanceof Error ? e.message : ""}`,
+                );
+              })
+              .then(() => {
+                $general.toast.success(
+                  `Note ${payload?.note.id} has been updated! Note ${rootNoteId} has been deleted!`,
+                );
+              });
+          }, 500);
         }
       });
   };
