@@ -380,21 +380,61 @@ function mergeContext(base: ContextField, extra: ContextField) {
   const normalizedExtra = normalizeFields(extra);
 
   // if one of them is empty, delete both
-  const SentenceFurigana = () => {
+  const getSentenceFurigana = () => {
     if (!normalizedBase.SentenceFurigana || !normalizedExtra.SentenceFurigana) {
       return "";
     }
     return normalizedBase.SentenceFurigana + normalizedExtra.SentenceFurigana;
   };
 
-  // TODO: short by groupId
   // biome-ignore format: this looks nicer
   const merged = {
     Sentence: normalizedBase.Sentence + normalizedExtra.Sentence,
-    SentenceFurigana: SentenceFurigana(),
+    SentenceFurigana: getSentenceFurigana(),
     SentenceAudio: normalizedBase.SentenceAudio + normalizedExtra.SentenceAudio,
     Picture: normalizedBase.Picture + normalizedExtra.Picture,
   };
+  const sentenceDoc = parseHtml(merged.Sentence);
+  const sentenceWithGroup = sentenceDoc.querySelectorAll("[data-group-id]");
+  console.log("DEBUG[1372]: sentenceWithGroup=", sentenceWithGroup);
+  const Sentence = Array.from(sentenceWithGroup).sort((a, b) => {
+    const aId = Number((a as HTMLSpanElement).dataset.groupId);
+    const bId = Number((b as HTMLSpanElement).dataset.groupId);
+    return bId - aId;
+  });
+  merged.Sentence = nodesToString(Sentence);
+
+  const sentenceFuriganaDoc = parseHtml(merged.SentenceFurigana);
+  const sentenceFuriganaWithGroup =
+    sentenceFuriganaDoc.querySelectorAll("[data-group-id]");
+  const SentenceFurigana = Array.from(sentenceFuriganaWithGroup).sort(
+    (a, b) => {
+      const aId = Number((a as HTMLSpanElement).dataset.groupId);
+      const bId = Number((b as HTMLSpanElement).dataset.groupId);
+      return bId - aId;
+    },
+  );
+  merged.SentenceFurigana = nodesToString(SentenceFurigana);
+
+  const sentenceAudioDoc = parseHtml(merged.SentenceAudio);
+  const sentenceAudioWithGroup =
+    sentenceAudioDoc.querySelectorAll("[data-group-id]");
+  const SentenceAudio = Array.from(sentenceAudioWithGroup).sort((a, b) => {
+    const aId = Number((a as HTMLSpanElement).dataset.groupId);
+    const bId = Number((b as HTMLSpanElement).dataset.groupId);
+    return bId - aId;
+  });
+  merged.SentenceAudio = nodesToString(SentenceAudio);
+
+  const PictureDoc = parseHtml(merged.Picture);
+  const PictureWithGroup = PictureDoc.querySelectorAll("img[data-group-id]");
+  const Picture = Array.from(PictureWithGroup).sort((a, b) => {
+    const aId = Number((a as HTMLSpanElement).dataset.groupId);
+    const bId = Number((b as HTMLSpanElement).dataset.groupId);
+    return bId - aId;
+  });
+  merged.Picture = nodesToString(Picture);
+
   return merged;
 }
 
