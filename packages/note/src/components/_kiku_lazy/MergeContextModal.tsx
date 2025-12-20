@@ -254,7 +254,7 @@ export default function MergeContextModal() {
                 <ArrowLeftIcon
                   class="self-center text-base-content-calm size-10 cursor-pointer transition-transform"
                   on:click={() => {
-                    // NOTE: we can't update root while opening root https://github.com/FooSoft/anki-connect/issues/82
+                    // NOTE: we can't update root while opening the note in anki browser. https://github.com/FooSoft/anki-connect/issues/82
                     // setMergeDirection((prev) =>
                     //   prev === "toRoot" ? "toCurrent" : "toRoot",
                     // );
@@ -393,44 +393,35 @@ function mergeContext(base: ContextField, extra: ContextField) {
     SentenceAudio: normalizedBase.SentenceAudio + normalizedExtra.SentenceAudio,
     Picture: normalizedBase.Picture + normalizedExtra.Picture,
   };
+
+  function sortGroup(nodes: NodeListOf<Element>) {
+    return Array.from(nodes).sort((a, b) => {
+      const aId = Number((a as HTMLSpanElement).dataset.groupId);
+      const bId = Number((b as HTMLSpanElement).dataset.groupId);
+      return bId - aId;
+    });
+  }
+
   const sentenceDoc = parseHtml(merged.Sentence);
   const sentenceWithGroup = sentenceDoc.querySelectorAll("[data-group-id]");
-  const Sentence = Array.from(sentenceWithGroup).sort((a, b) => {
-    const aId = Number((a as HTMLSpanElement).dataset.groupId);
-    const bId = Number((b as HTMLSpanElement).dataset.groupId);
-    return bId - aId;
-  });
+  const Sentence = sortGroup(sentenceWithGroup);
   merged.Sentence = nodesToString(Sentence);
 
   const sentenceFuriganaDoc = parseHtml(merged.SentenceFurigana);
   const sentenceFuriganaWithGroup =
     sentenceFuriganaDoc.querySelectorAll("[data-group-id]");
-  const SentenceFurigana = Array.from(sentenceFuriganaWithGroup).sort(
-    (a, b) => {
-      const aId = Number((a as HTMLSpanElement).dataset.groupId);
-      const bId = Number((b as HTMLSpanElement).dataset.groupId);
-      return bId - aId;
-    },
-  );
+  const SentenceFurigana = sortGroup(sentenceFuriganaWithGroup);
   merged.SentenceFurigana = nodesToString(SentenceFurigana);
 
   const sentenceAudioDoc = parseHtml(merged.SentenceAudio);
   const sentenceAudioWithGroup =
     sentenceAudioDoc.querySelectorAll("[data-group-id]");
-  const SentenceAudio = Array.from(sentenceAudioWithGroup).sort((a, b) => {
-    const aId = Number((a as HTMLSpanElement).dataset.groupId);
-    const bId = Number((b as HTMLSpanElement).dataset.groupId);
-    return bId - aId;
-  });
+  const SentenceAudio = sortGroup(sentenceAudioWithGroup);
   merged.SentenceAudio = nodesToString(SentenceAudio);
 
-  const PictureDoc = parseHtml(merged.Picture);
-  const PictureWithGroup = PictureDoc.querySelectorAll("img[data-group-id]");
-  const Picture = Array.from(PictureWithGroup).sort((a, b) => {
-    const aId = Number((a as HTMLSpanElement).dataset.groupId);
-    const bId = Number((b as HTMLSpanElement).dataset.groupId);
-    return bId - aId;
-  });
+  const pictureDoc = parseHtml(merged.Picture);
+  const pictureWithGroup = pictureDoc.querySelectorAll("img[data-group-id]");
+  const Picture = sortGroup(pictureWithGroup);
   merged.Picture = nodesToString(Picture);
 
   return merged;
