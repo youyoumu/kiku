@@ -17,20 +17,18 @@ export default function MergeContextModal() {
   const [$card, $setCard] = useCardContext();
   const { ankiFields: rootAnkiFields } = useRootFieldGroupContext();
   const { ankiFields, noteId } = useAnkiFieldContext<"back">();
+
   const [rootNote, setRootNote] = createSignal<AnkiNote>();
   const [mergeDirection, setMergeDirection] = createSignal<
     "toRoot" | "toCurrent"
   >("toCurrent");
+  const [deleteRootNote, setDeleteRootNote] = createSignal(false);
 
   if ($card.isMergePreview) return null;
 
   $general.useCheckAnkiConnect();
 
   createEffect(async () => {
-    if (dialogRef) {
-      dialogRef.showModal();
-    }
-
     if ($general.isAnkiConnectAvailable) {
       try {
         const noteIds = await AnkiConnect.invoke("findNotes", {
@@ -134,21 +132,41 @@ export default function MergeContextModal() {
     });
   };
 
-  const onMergeClick = () => {
+  const onMergeClick = async () => {
     const payload = updateNoteFieldsPayload();
-    AnkiConnect.invoke("updateNoteFields", payload)
+    await AnkiConnect.invoke("updateNoteFields", payload)
       .catch((e) => {
         $general.toast.error(
           `Failed to update note fields: ${e instanceof Error ? e.message : ""}`,
         );
       })
       .then(() => {
-        $general.toast.success("Note fields updated!");
-        if (dialogRef) {
-          dialogRef.close();
+        $general.toast.success(`Note ${payload?.note.id} has been updated!`);
+        if (dialogRef) dialogRef.close();
+        const rootNoteId = rootNote()?.noteId;
+        if (deleteRootNote() && rootNoteId) {
+          AnkiConnect.invoke("deleteNotes", {
+            notes: [rootNoteId],
+          })
+            .catch((e) => {
+              $general.toast.error(
+                `Failed to delete note: ${e instanceof Error ? e.message : ""}`,
+              );
+            })
+            .then(() => {
+              $general.toast.success(
+                `Note ${payload?.note.id} has been updated! Note ${rootNoteId} has been deleted!`,
+              );
+            });
         }
       });
   };
+
+  createEffect(() => {
+    if (mergeDirection() === "toRoot") {
+      setDeleteRootNote(false);
+    }
+  });
 
   return (
     <>
@@ -193,9 +211,10 @@ export default function MergeContextModal() {
                 <ArrowLeftIcon
                   class="self-center text-base-content-calm size-10 cursor-pointer transition-transform"
                   on:click={() => {
-                    setMergeDirection((prev) =>
-                      prev === "toRoot" ? "toCurrent" : "toRoot",
-                    );
+                    // NOTE: we can't update root while opening root https://github.com/FooSoft/anki-connect/issues/82
+                    // setMergeDirection((prev) =>
+                    //   prev === "toRoot" ? "toCurrent" : "toRoot",
+                    // );
                   }}
                   classList={{
                     "rotate-0": mergeDirection() === "toRoot",
@@ -237,6 +256,28 @@ export default function MergeContextModal() {
                   content={JSON.stringify(updateNoteFieldsPayload(), null, 2)}
                 />
               </div>
+
+              <Show
+                when={
+                  // only show if root note is not older than 1 day
+                  Date.now() - (rootNote()?.noteId ?? Date.now()) <
+                    1000 * 60 * 60 * 24 && mergeDirection() === "toCurrent"
+                }
+              >
+                <fieldset class="fieldset">
+                  <legend class="fieldset-legend">Delete Root Note</legend>
+                  <label class="label">
+                    <input
+                      type="checkbox"
+                      checked={deleteRootNote()}
+                      class="toggle"
+                      on:change={(e) => {
+                        setDeleteRootNote(e.target.checked);
+                      }}
+                    />
+                  </label>
+                </fieldset>
+              </Show>
             </div>
 
             <div class="modal-action">
@@ -246,7 +287,14 @@ export default function MergeContextModal() {
               <button class="btn btn-secondary" on:click={onPreviewClick}>
                 Preview
               </button>
-              <button class="btn btn-primary" on:click={onMergeClick}>
+              <button
+                class="btn"
+                classList={{
+                  "btn-primary": !deleteRootNote(),
+                  "btn-error": deleteRootNote(),
+                }}
+                on:click={onMergeClick}
+              >
                 Merge
               </button>
             </div>
@@ -292,6 +340,7 @@ function mergeContext(base: ContextField, extra: ContextField) {
     return normalizedBase.SentenceFurigana + normalizedExtra.SentenceFurigana;
   };
 
+  // TODO: short by groupId
   // biome-ignore format: this looks nicer
   const merged = {
     Sentence: normalizedBase.Sentence + normalizedExtra.Sentence,
