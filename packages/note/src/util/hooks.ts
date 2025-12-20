@@ -57,7 +57,7 @@ export function useNavigationTransition() {
           document.documentElement.dataset.transitionDirection = direction;
         },
       })?.finished.then(() => {
-        // TODO: this callback is called to fast when naviating to nested card, not sure why.
+        // TODO: this callback is called too fast when naviating to nested card, not sure why.
         document.documentElement.removeAttribute("data-transition-direction");
       });
     } else {
