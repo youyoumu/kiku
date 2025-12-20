@@ -1,11 +1,13 @@
-import { Match, onMount, Switch } from "solid-js";
+import { createSignal, Match, onMount, Switch } from "solid-js";
+import type { AnkiNote } from "#/types";
 import { useBreakpointContext } from "../shared/BreakpointContext";
 import {
   useFieldGroupContext,
   useRootFieldGroupContext,
 } from "../shared/FieldGroupContext";
 import { useGeneralContext } from "../shared/GeneralContext";
-import { GitPullRequestArrow, RefreshCwIcon } from "./Icons";
+import { ArrowLeftIcon, GitPullRequestArrow, RefreshCwIcon } from "./Icons";
+import { AnkiConnect } from "./util/ankiConnect";
 
 export default function MergeContextModal() {
   let dialogRef: HTMLDialogElement | undefined;
@@ -13,6 +15,10 @@ export default function MergeContextModal() {
   const { $group: $rootGroup, ankiFields: rootAnkiFields } =
     useRootFieldGroupContext();
   const { $group, ankiFields } = useFieldGroupContext();
+  const [rootNote, setRootNote] = createSignal<AnkiNote>();
+  const [mergeDirection, setMergeDirection] = createSignal<"up" | "down">(
+    "down",
+  );
   const bp = useBreakpointContext();
 
   onMount(async () => {
@@ -21,7 +27,23 @@ export default function MergeContextModal() {
     }
 
     if (!bp.isAtLeast("sm")) return;
-    await $general.checkAnkiConnect();
+    try {
+      await $general.checkAnkiConnect();
+      if ($general.isAnkiConnectAvailable) {
+        const noteIds = await AnkiConnect.invoke("findNotes", {
+          query: `cid:${rootAnkiFields.CardID}`,
+        });
+        const noteId = noteIds.result[0];
+        const notes = await AnkiConnect.invoke("notesInfo", {
+          notes: [noteId],
+        });
+        const note = notes.result[0];
+        setRootNote(note);
+      }
+    } catch (e) {
+      $general.toast.error("Failed to load root note");
+      KIKU_STATE.logger.error("Failed to load root note", e);
+    }
   });
 
   return (
@@ -60,26 +82,56 @@ export default function MergeContextModal() {
         <div class="modal-box">
           <h3 class="text-lg font-bold">Merge Context</h3>
 
-          <div>
-            <h4 class="font-bold">Origin</h4>
-            <div>
-              <div>Sentence</div>
-              <pre class="text-xs bg-base-200 p-2 rounded-sm overflow-auto max-h-[90svh]">
-                {$rootGroup.sentenceField}
-              </pre>
-              <div>SentenceAudio</div>
-              <pre class="text-xs bg-base-200 p-2 rounded-sm overflow-auto max-h-[90svh]">
-                {$rootGroup.sentenceAudioField}
-              </pre>
-              <div>Picture</div>
-              <pre class="text-xs bg-base-200 p-2 rounded-sm overflow-auto max-h-[90svh]">
-                {$rootGroup.pictureField}
-              </pre>
+          <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2">
+              <h4 class="font-bold">Root</h4>
+              <div class="flex flex-col gap-1">
+                <FieldPreview
+                  title="Sentence"
+                  content={rootNote()?.fields.Sentence.value ?? ""}
+                />
+                <FieldPreview
+                  title="SentenceFurigana"
+                  content={rootNote()?.fields.SentenceFurigana.value ?? ""}
+                />
+                <FieldPreview
+                  title="SentenceAudio"
+                  content={rootNote()?.fields.SentenceAudio.value ?? ""}
+                />
+                <FieldPreview
+                  title="Picture"
+                  content={rootNote()?.fields.Picture.value ?? ""}
+                />
+              </div>
+            </div>
+            <ArrowLeftIcon
+              class="self-center text-base-content-calm size-12 cursor-pointer transition-transform"
+              on:click={() => {
+                setMergeDirection((prev) => (prev === "up" ? "down" : "up"));
+              }}
+              classList={{
+                "rotate-90": mergeDirection() === "up",
+                "rotate-270": mergeDirection() === "down",
+              }}
+            />
+
+            <div class="flex flex-col gap-2">
+              <h4 class="font-bold">Current</h4>
+              <div class="flex flex-col gap-1">
+                <FieldPreview title="Sentence" content={ankiFields.Sentence} />
+                <FieldPreview
+                  title="SentenceFurigana"
+                  content={ankiFields.SentenceFurigana}
+                />
+                <FieldPreview
+                  title="SentenceAudio"
+                  content={ankiFields.SentenceAudio}
+                />
+                <FieldPreview title="Picture" content={ankiFields.Picture} />
+              </div>
             </div>
           </div>
-          <div>{$group.pictureField}</div>
 
-          <p class="py-4">Press ESC key or click the button below to close</p>
           <div class="modal-action">
             <form method="dialog">
               <button class="btn">Close</button>
@@ -88,5 +140,16 @@ export default function MergeContextModal() {
         </div>
       </dialog>
     </>
+  );
+}
+
+function FieldPreview(props: { title: string; content: string }) {
+  return (
+    <div>
+      <div class="text-xs">{props.title}</div>
+      <pre class="text-xs text-base-content-calm bg-base-200 p-2 rounded-sm overflow-auto max-h-[90svh]">
+        {props.content}
+      </pre>
+    </div>
   );
 }
