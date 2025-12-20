@@ -6,6 +6,7 @@ import type { KikuPlugin } from "#/plugins/pluginTypes";
 import type { KanjiInfo, KikuNotesManifest } from "#/types";
 import { env } from "#/util/general";
 import type { NexClient } from "#/worker/client";
+import { AnkiConnect } from "../_kiku_lazy/util/ankiConnect";
 
 type GeneralStore = {
   plugin: KikuPlugin | undefined;
@@ -19,6 +20,7 @@ type GeneralStore = {
   SAME_READING: symbol;
   lookupKanjiCache: Map<string, KanjiInfo | undefined>;
   nexClientPromise: PromiseWithResolvers<NexClient>;
+  checkAnkiConnect: () => Promise<void>;
 };
 
 type Toast = {
@@ -51,6 +53,14 @@ export function GeneralContextProvider(props: {
     }, 3000);
   };
 
+  async function checkAnkiConnect() {
+    const version = await AnkiConnect.getVersion();
+    if (version) {
+      KIKU_STATE.logger.info("AnkiConnect version:", version);
+      $setGeneral("isAnkiConnectAvailable", true);
+    }
+  }
+
   const [$general, $setGeneral] = createStore<GeneralStore>({
     plugin: undefined,
     isThemeChanged: isServer
@@ -69,6 +79,7 @@ export function GeneralContextProvider(props: {
     SAME_READING: Symbol.for("SAME_READING"),
     lookupKanjiCache: new Map(),
     nexClientPromise: Promise.withResolvers(),
+    checkAnkiConnect,
   });
 
   return (

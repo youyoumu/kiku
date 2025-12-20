@@ -4,6 +4,7 @@ import type { SetStoreFunction, Store } from "solid-js/store";
 import { type KikuConfig, updateConfigState } from "#/util/config";
 import { env } from "#/util/general";
 import type { DaisyUITheme } from "#/util/theme";
+import { AnkiConnect } from "../_kiku_lazy/util/ankiConnect";
 import { useGeneralContext } from "./GeneralContext";
 
 const ConfigContext =
@@ -22,6 +23,7 @@ export function ConfigContextProvider(props: {
     KIKU_STATE.logger.debug("Updating config:", $config);
     if (!KIKU_STATE.root) throw new Error("Missing root");
     updateConfigState(KIKU_STATE.root, $config);
+    AnkiConnect.changeAddress($config.ankiConnectAddress);
     sessionStorage.setItem(
       env.KIKU_CONFIG_SESSION_STORAGE_KEY,
       JSON.stringify($config),

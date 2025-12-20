@@ -1,32 +1,18 @@
 import { onMount } from "solid-js";
 import { useNavigationTransition } from "#/util/hooks";
 import { useBreakpointContext } from "../shared/BreakpointContext";
-import { useConfigContext } from "../shared/ConfigContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 import HeaderLayout from "./HeaderLayout";
 import { ArrowLeftIcon, RefreshCwIcon } from "./Icons";
-import { AnkiConnect } from "./util/ankiConnect";
 
 export default function HeaderSettings() {
   const [$general, $setGeneral] = useGeneralContext();
-  const [$config, $setConfig] = useConfigContext();
   const bp = useBreakpointContext();
   const { navigateBack } = useNavigationTransition();
 
-  async function checkAnkiConnect() {
-    const version = await AnkiConnect.getVersion();
-    if (version) {
-      KIKU_STATE.logger.info("AnkiConnect version:", version);
-      $setGeneral("isAnkiConnectAvailable", true);
-    }
-  }
-
   onMount(async () => {
-    //NOTE: move this to somewhere higher
-    AnkiConnect.changeAddress($config.ankiConnectAddress);
-
     if (!bp.isAtLeast("sm")) return;
-    await checkAnkiConnect();
+    await $general.checkAnkiConnect();
   });
 
   return (
@@ -54,7 +40,7 @@ export default function HeaderSettings() {
               class="size-4 cursor-pointer text-base-content-soft"
               on:click={async () => {
                 try {
-                  await checkAnkiConnect();
+                  await $general.checkAnkiConnect();
                 } catch {
                   $general.toast.error("AnkiConnect is not available");
                 }

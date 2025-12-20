@@ -7,8 +7,9 @@ import { GitPullRequestArrow } from "./Icons";
 
 export default function MergeContextModal() {
   let dialogRef: HTMLDialogElement | undefined;
-  const { $group: $rootGroup } = useRootFieldGroupContext();
-  const { $group } = useFieldGroupContext();
+  const { $group: $rootGroup, ankiFields: rootAnkiFields } =
+    useRootFieldGroupContext();
+  const { $group, ankiFields } = useFieldGroupContext();
 
   onMount(() => {
     if (dialogRef) {
