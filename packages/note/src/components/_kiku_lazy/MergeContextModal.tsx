@@ -44,29 +44,44 @@ export default function MergeContextModal() {
     }
   });
 
-  const merged = () =>
-    mergeContext(
-      {
-        noteId: rootNote()?.noteId,
-        Sentence: rootNote()?.fields.Sentence.value ?? "",
-        SentenceFurigana: rootNote()?.fields.SentenceFurigana.value ?? "",
-        SentenceAudio: rootNote()?.fields.SentenceAudio.value ?? "",
-        Picture: rootNote()?.fields.Picture.value ?? "",
-      },
-      {
-        noteId: noteId,
-        Sentence: ankiFields.Sentence,
-        SentenceFurigana: ankiFields.SentenceFurigana,
-        SentenceAudio: ankiFields.SentenceAudio,
-        Picture: ankiFields.Picture,
-      },
-    );
+  const merged = () => {
+    const root = {
+      noteId: rootNote()?.noteId,
+      Sentence: rootNote()?.fields.Sentence.value ?? "",
+      SentenceFurigana: rootNote()?.fields.SentenceFurigana.value ?? "",
+      SentenceAudio: rootNote()?.fields.SentenceAudio.value ?? "",
+      Picture: rootNote()?.fields.Picture.value ?? "",
+    };
+    const current = {
+      noteId: noteId,
+      Sentence: ankiFields.Sentence,
+      SentenceFurigana: ankiFields.SentenceFurigana,
+      SentenceAudio: ankiFields.SentenceAudio,
+      Picture: ankiFields.Picture,
+    };
+    if (mergeDirection() === "toRoot") {
+      return mergeContext(root, current);
+    } else {
+      return mergeContext(current, root);
+    }
+  };
 
   const mergedAnkiFields = () => {
     if (mergeDirection() === "toRoot") {
+      const rootNote$ = rootNote();
+      if (!rootNote$) return ankiFieldsSkeleton;
+      const ankiFields = {
+        ...ankiFieldsSkeleton,
+        ...Object.fromEntries(
+          Object.entries(rootNote$.fields).map(([key, value]) => {
+            return [key, value.value];
+          }),
+        ),
+        Tags: rootNote$.tags.join(" "),
+      };
       return {
         ...ankiFieldsSkeleton,
-        ...rootAnkiFields,
+        ...ankiFields,
         ...merged(),
       };
     } else {
@@ -78,6 +93,30 @@ export default function MergeContextModal() {
     }
   };
 
+  const updateNoteFieldsPayload = () => {
+    const targetId =
+      mergeDirection() === "toRoot" ? rootNote()?.noteId : noteId;
+    if (!targetId) return;
+    const fields = mergedAnkiFields();
+    for (const key in fields) {
+      if (
+        key.startsWith("furigana:") ||
+        key.startsWith("kana:") ||
+        key.startsWith("kanji:") ||
+        key === "Tags" ||
+        key === "CardID"
+      ) {
+        delete fields[key as keyof typeof fields];
+      }
+    }
+    return {
+      note: {
+        id: targetId,
+        fields: fields,
+      },
+    };
+  };
+
   const onPreviewClick = () => {
     $setCard("nestedIsMergePreview", true);
     $setCard({ nestedAnkiFields: mergedAnkiFields() });
@@ -86,6 +125,22 @@ export default function MergeContextModal() {
       navigate("main", "back");
       $setCard("nestedIsMergePreview", false);
     });
+  };
+
+  const onMergeClick = () => {
+    const payload = updateNoteFieldsPayload();
+    AnkiConnect.invoke("updateNoteFields", payload)
+      .catch((e) => {
+        $general.toast.error(
+          `Failed to update note fields: ${e instanceof Error ? e.message : ""}`,
+        );
+      })
+      .then(() => {
+        $general.toast.success("Note fields updated!");
+        if (dialogRef) {
+          dialogRef.close();
+        }
+      });
   };
 
   return (
@@ -121,7 +176,7 @@ export default function MergeContextModal() {
       </Switch>
 
       <dialog class="modal" ref={dialogRef}>
-        <div class="modal-box">
+        <div class="modal-box max-h-[80svh]">
           <h3 class="text-lg font-bold mb-4">Merge Context</h3>
 
           <div class="flex flex-col gap-4">
@@ -143,19 +198,20 @@ export default function MergeContextModal() {
             </div>
 
             <div class="flex flex-col gap-2">
-              <h4 class="font-bold">Result</h4>
-              <div class="flex flex-col gap-1">
-                <FieldPreview title="Sentence" content={merged().Sentence} />
-                <FieldPreview
-                  title="SentenceFurigana"
-                  content={merged().SentenceFurigana}
-                />
-                <FieldPreview
-                  title="SentenceAudio"
-                  content={merged().SentenceAudio}
-                />
-                <FieldPreview title="Picture" content={merged().Picture} />
-              </div>
+              <FieldPreview title="Sentence" content={merged().Sentence} />
+              <FieldPreview
+                title="SentenceFurigana"
+                content={merged().SentenceFurigana}
+              />
+              <FieldPreview
+                title="SentenceAudio"
+                content={merged().SentenceAudio}
+              />
+              <FieldPreview title="Picture" content={merged().Picture} />
+              <FieldPreview
+                title="AnkiConnect Payload Preview"
+                content={JSON.stringify(updateNoteFieldsPayload(), null, 2)}
+              />
             </div>
           </div>
 
@@ -166,7 +222,9 @@ export default function MergeContextModal() {
             <button class="btn btn-secondary" on:click={onPreviewClick}>
               Preview
             </button>
-            <button class="btn btn-primary">Merge</button>
+            <button class="btn btn-primary" on:click={onMergeClick}>
+              Merge
+            </button>
           </div>
         </div>
       </dialog>
