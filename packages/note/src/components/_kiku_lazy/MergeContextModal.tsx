@@ -41,13 +41,19 @@ export default function MergeContextModal() {
         });
         const rootNote = notes.result[0];
         const currentNote = notes.result[1];
-        if (!rootNote || !currentNote)
-          throw new Error("Root or Current note not found");
+        if (!rootNote?.noteId) throw new Error("Failed to load root note");
+        if (!currentNote?.noteId)
+          throw new Error(
+            "Failed to load current note, is your notes cache up to date?",
+          );
         setRootNote(rootNote);
         setCurrentNote(currentNote);
       } catch (e) {
-        $general.toast.error("Failed to load root note");
-        KIKU_STATE.logger.error("Failed to load root note", e);
+        console.log("DEBUG[1369]: e=", e);
+        $general.toast.error(
+          e instanceof Error ? e.message : "Failed to load notes",
+        );
+        KIKU_STATE.logger.error(e);
       }
     }
   });
@@ -192,14 +198,12 @@ export default function MergeContextModal() {
     }
   });
 
-  const ready = () => {
-    return $general.isAnkiConnectAvailable && rootNote() && currentNote();
-  };
-
   return (
     <>
       <Switch>
-        <Match when={ready()}>
+        <Match
+          when={$general.isAnkiConnectAvailable && rootNote() && currentNote()}
+        >
           <GitPullRequestArrow
             class="size-4 cursor-pointer text-base-content-soft"
             on:click={() => {
@@ -209,7 +213,14 @@ export default function MergeContextModal() {
             }}
           />
         </Match>
-        <Match when={!ready()}>
+        <Match
+          when={
+            $general.isAnkiConnectAvailable && (!rootNote() || !currentNote())
+          }
+        >
+          <span class="status status-error animate-ping"></span>
+        </Match>
+        <Match when={!$general.isAnkiConnectAvailable}>
           <div class="indicator">
             <div class="place-items-center">
               <RefreshCwIcon
