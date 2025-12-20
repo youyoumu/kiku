@@ -91,7 +91,11 @@ export function Back(props: { onExitNested?: () => void }) {
         </Match>
         <Match when={$card.page === "nested" && $card.ready}>
           <AnkiFieldContextProvider ankiFields={$card.nestedAnkiFields}>
-            <CardStoreContextProvider nested side="back">
+            <CardStoreContextProvider
+              nested
+              side="back"
+              isMergePreview={$card.nestedIsMergePreview}
+            >
               <FieldGroupContextProvider>
                 <CtxContextProvider>
                   <Back onExitNested={navigateBack} />

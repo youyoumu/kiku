@@ -1,7 +1,9 @@
 import { createSignal, Match, onMount, Switch } from "solid-js";
 import type { AnkiNote } from "#/types";
 import { nodesToString, parseHtml } from "#/util/general";
+import { useNavigationTransition } from "#/util/hooks";
 import { useBreakpointContext } from "../shared/BreakpointContext";
+import { useCardContext } from "../shared/CardContext";
 import {
   useFieldGroupContext,
   useRootFieldGroupContext,
@@ -13,6 +15,8 @@ import { AnkiConnect } from "./util/ankiConnect";
 export default function MergeContextModal() {
   let dialogRef: HTMLDialogElement | undefined;
   const [$general] = useGeneralContext();
+  const { navigate } = useNavigationTransition();
+  const [$card, $setCard] = useCardContext();
   const { $group: $rootGroup, ankiFields: rootAnkiFields } =
     useRootFieldGroupContext();
   const { $group, ankiFields } = useFieldGroupContext();
@@ -21,6 +25,8 @@ export default function MergeContextModal() {
     "toRoot" | "toCurrent"
   >("toCurrent");
   const bp = useBreakpointContext();
+
+  if ($card.isMergePreview) return null;
 
   onMount(async () => {
     if (dialogRef) {
@@ -63,7 +69,30 @@ export default function MergeContextModal() {
       },
     );
 
+  const mergedAnkiFields = () => {
+    if (mergeDirection() === "toRoot") {
+      return {
+        ...rootAnkiFields,
+        ...merged(),
+      };
+    } else {
+      return {
+        ...ankiFields,
+        ...merged(),
+      };
+    }
+  };
+
   console.log("DEBUG[1340]: result=", merged());
+
+  const onPreviewClick = () => {
+    $setCard("nestedIsMergePreview", true);
+    $setCard("nestedAnkiFields", mergedAnkiFields());
+    navigate("nested", "forward", () => {
+      navigate("main", "back");
+      $setCard("nestedIsMergePreview", false);
+    });
+  };
 
   return (
     <>
@@ -140,7 +169,9 @@ export default function MergeContextModal() {
             <form method="dialog">
               <button class="btn">Close</button>
             </form>
-            <button class="btn btn-secondary">Preview</button>
+            <button class="btn btn-secondary" on:click={onPreviewClick}>
+              Preview
+            </button>
             <button class="btn btn-primary">Merge</button>
           </div>
         </div>
@@ -262,7 +293,7 @@ function normalizeFields(fields: ContextField) {
 
   const Picture =
     nodesToString(Array.from(pictureWithGroup)).trim() +
-    pictureWithoutGroup?.outerHTML;
+    (pictureWithoutGroup?.outerHTML ?? "");
 
   return {
     Sentence,

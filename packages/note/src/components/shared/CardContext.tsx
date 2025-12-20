@@ -30,6 +30,8 @@ type CardStore = {
   navigateBack: (() => void)[];
   nestedAnkiFields: AnkiFields;
   nested: boolean;
+  isMergePreview: boolean;
+  nestedIsMergePreview: boolean;
 };
 
 const CardStoreContext =
@@ -38,6 +40,7 @@ const CardStoreContext =
 export function CardStoreContextProvider(props: {
   children: JSX.Element;
   nested?: boolean;
+  isMergePreview?: boolean;
   side: "front" | "back";
 }) {
   const [$card, $setCard] = createStore<CardStore>({
@@ -65,6 +68,8 @@ export function CardStoreContextProvider(props: {
     navigateBack: [],
     nestedAnkiFields: ankiFieldsSkeleton,
     nested: props.nested ?? false,
+    isMergePreview: props.isMergePreview ?? false,
+    nestedIsMergePreview: false,
   });
 
   return (
