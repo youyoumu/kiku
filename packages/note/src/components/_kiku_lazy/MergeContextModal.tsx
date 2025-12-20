@@ -17,9 +17,9 @@ export default function MergeContextModal() {
     useRootFieldGroupContext();
   const { $group, ankiFields } = useFieldGroupContext();
   const [rootNote, setRootNote] = createSignal<AnkiNote>();
-  const [mergeDirection, setMergeDirection] = createSignal<"up" | "down">(
-    "down",
-  );
+  const [mergeDirection, setMergeDirection] = createSignal<
+    "toRoot" | "toCurrent"
+  >("toCurrent");
   const bp = useBreakpointContext();
 
   onMount(async () => {
@@ -40,21 +40,30 @@ export default function MergeContextModal() {
         });
         const note = notes.result[0];
         setRootNote(note);
-
-        const result = normalizeFields({
-          Sentence: note.fields.Sentence.value,
-          SentenceFurigana: note.fields.SentenceFurigana.value,
-          SentenceAudio: note.fields.SentenceAudio.value,
-          Picture: note.fields.Picture.value,
-        });
-
-        console.log("DEBUG[1340]: result=", result);
       }
     } catch (e) {
       $general.toast.error("Failed to load root note");
       KIKU_STATE.logger.error("Failed to load root note", e);
     }
   });
+
+  const merged = () =>
+    mergeContext(
+      {
+        Sentence: rootNote()?.fields.Sentence.value ?? "",
+        SentenceFurigana: rootNote()?.fields.SentenceFurigana.value ?? "",
+        SentenceAudio: rootNote()?.fields.SentenceAudio.value ?? "",
+        Picture: rootNote()?.fields.Picture.value ?? "",
+      },
+      {
+        Sentence: ankiFields.Sentence,
+        SentenceFurigana: ankiFields.SentenceFurigana,
+        SentenceAudio: ankiFields.SentenceAudio,
+        Picture: ankiFields.Picture,
+      },
+    );
+
+  console.log("DEBUG[1340]: result=", merged());
 
   return (
     <>
@@ -90,54 +99,39 @@ export default function MergeContextModal() {
 
       <dialog class="modal" ref={dialogRef}>
         <div class="modal-box">
-          <h3 class="text-lg font-bold">Merge Context</h3>
+          <h3 class="text-lg font-bold mb-4">Merge Context</h3>
 
-          <div class="flex flex-col gap-2">
-            <div class="flex flex-col gap-2">
-              <h4 class="font-bold">Root</h4>
-              <div class="flex flex-col gap-1">
-                <FieldPreview
-                  title="Sentence"
-                  content={rootNote()?.fields.Sentence.value ?? ""}
-                />
-                <FieldPreview
-                  title="SentenceFurigana"
-                  content={rootNote()?.fields.SentenceFurigana.value ?? ""}
-                />
-                <FieldPreview
-                  title="SentenceAudio"
-                  content={rootNote()?.fields.SentenceAudio.value ?? ""}
-                />
-                <FieldPreview
-                  title="Picture"
-                  content={rootNote()?.fields.Picture.value ?? ""}
-                />
-              </div>
+          <div class="flex flex-col gap-4">
+            <div class="flex gap-4 items-center justify-center">
+              <div>Root</div>
+              <ArrowLeftIcon
+                class="self-center text-base-content-calm size-10 cursor-pointer transition-transform"
+                on:click={() => {
+                  setMergeDirection((prev) =>
+                    prev === "toRoot" ? "toCurrent" : "toRoot",
+                  );
+                }}
+                classList={{
+                  "rotate-0": mergeDirection() === "toRoot",
+                  "rotate-180": mergeDirection() === "toCurrent",
+                }}
+              />
+              <div>Current</div>
             </div>
-            <ArrowLeftIcon
-              class="self-center text-base-content-calm size-12 cursor-pointer transition-transform"
-              on:click={() => {
-                setMergeDirection((prev) => (prev === "up" ? "down" : "up"));
-              }}
-              classList={{
-                "rotate-90": mergeDirection() === "up",
-                "rotate-270": mergeDirection() === "down",
-              }}
-            />
 
             <div class="flex flex-col gap-2">
-              <h4 class="font-bold">Current</h4>
+              <h4 class="font-bold">Result</h4>
               <div class="flex flex-col gap-1">
-                <FieldPreview title="Sentence" content={ankiFields.Sentence} />
+                <FieldPreview title="Sentence" content={merged().Sentence} />
                 <FieldPreview
                   title="SentenceFurigana"
-                  content={ankiFields.SentenceFurigana}
+                  content={merged().SentenceFurigana}
                 />
                 <FieldPreview
                   title="SentenceAudio"
-                  content={ankiFields.SentenceAudio}
+                  content={merged().SentenceAudio}
                 />
-                <FieldPreview title="Picture" content={ankiFields.Picture} />
+                <FieldPreview title="Picture" content={merged().Picture} />
               </div>
             </div>
           </div>
@@ -146,6 +140,8 @@ export default function MergeContextModal() {
             <form method="dialog">
               <button class="btn">Close</button>
             </form>
+            <button class="btn btn-secondary">Preview</button>
+            <button class="btn btn-primary">Merge</button>
           </div>
         </div>
       </dialog>
@@ -155,7 +151,7 @@ export default function MergeContextModal() {
 
 function FieldPreview(props: { title: string; content: string }) {
   return (
-    <div>
+    <div class="flex flex-col gap-0.5">
       <div class="text-xs">{props.title}</div>
       <pre class="text-xs text-base-content-calm bg-base-200 p-2 rounded-sm overflow-auto max-h-[90svh]">
         {props.content}
@@ -170,6 +166,28 @@ type ContextField = {
   SentenceAudio: string;
   Picture: string;
 };
+
+function mergeContext(base: ContextField, extra: ContextField) {
+  const normalizedBase = normalizeFields(base);
+  const normalizedExtra = normalizeFields(extra);
+
+  // if one of them is empty, delete both
+  const SentenceFurigana = () => {
+    if (!normalizedBase.SentenceFurigana || !normalizedExtra.SentenceFurigana) {
+      return "";
+    }
+    return normalizedBase.SentenceFurigana + normalizedExtra.SentenceFurigana;
+  };
+
+  // biome-ignore format: this looks nicer
+  const merged = {
+    Sentence: normalizedBase.Sentence + normalizedExtra.Sentence,
+    SentenceFurigana: SentenceFurigana(),
+    SentenceAudio: normalizedBase.SentenceAudio + normalizedExtra.SentenceAudio,
+    Picture: normalizedBase.Picture + normalizedExtra.Picture,
+  };
+  return merged;
+}
 
 function normalizeFields(fields: ContextField) {
   let newId = Date.now();
