@@ -2,12 +2,10 @@ import { createSignal, Match, onMount, Switch } from "solid-js";
 import type { AnkiNote } from "#/types";
 import { nodesToString, parseHtml } from "#/util/general";
 import { useNavigationTransition } from "#/util/hooks";
+import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useBreakpointContext } from "../shared/BreakpointContext";
 import { useCardContext } from "../shared/CardContext";
-import {
-  useFieldGroupContext,
-  useRootFieldGroupContext,
-} from "../shared/FieldGroupContext";
+import { useRootFieldGroupContext } from "../shared/FieldGroupContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 import { ArrowLeftIcon, GitPullRequestArrow, RefreshCwIcon } from "./Icons";
 import { AnkiConnect } from "./util/ankiConnect";
@@ -17,9 +15,8 @@ export default function MergeContextModal() {
   const [$general] = useGeneralContext();
   const { navigate } = useNavigationTransition();
   const [$card, $setCard] = useCardContext();
-  const { $group: $rootGroup, ankiFields: rootAnkiFields } =
-    useRootFieldGroupContext();
-  const { $group, ankiFields } = useFieldGroupContext();
+  const { ankiFields: rootAnkiFields } = useRootFieldGroupContext();
+  const { ankiFields, noteId } = useAnkiFieldContext<"back">();
   const [rootNote, setRootNote] = createSignal<AnkiNote>();
   const [mergeDirection, setMergeDirection] = createSignal<
     "toRoot" | "toCurrent"
@@ -56,12 +53,14 @@ export default function MergeContextModal() {
   const merged = () =>
     mergeContext(
       {
+        noteId: rootNote()?.noteId,
         Sentence: rootNote()?.fields.Sentence.value ?? "",
         SentenceFurigana: rootNote()?.fields.SentenceFurigana.value ?? "",
         SentenceAudio: rootNote()?.fields.SentenceAudio.value ?? "",
         Picture: rootNote()?.fields.Picture.value ?? "",
       },
       {
+        noteId: noteId,
         Sentence: ankiFields.Sentence,
         SentenceFurigana: ankiFields.SentenceFurigana,
         SentenceAudio: ankiFields.SentenceAudio,
@@ -88,6 +87,7 @@ export default function MergeContextModal() {
   const onPreviewClick = () => {
     $setCard("nestedIsMergePreview", true);
     $setCard("nestedAnkiFields", mergedAnkiFields());
+    $setCard("nestedNoteId", noteId);
     navigate("nested", "forward", () => {
       navigate("main", "back");
       $setCard("nestedIsMergePreview", false);
@@ -192,6 +192,7 @@ function FieldPreview(props: { title: string; content: string }) {
 }
 
 type ContextField = {
+  noteId: number | undefined;
   Sentence: string;
   SentenceFurigana: string;
   SentenceAudio: string;
@@ -220,9 +221,23 @@ function mergeContext(base: ContextField, extra: ContextField) {
   return merged;
 }
 
-function normalizeFields(fields: ContextField) {
+const usedIds = new Set<number>();
+function getNewId() {
   let newId = Date.now();
+  while (usedIds.has(newId)) {
+    newId = newId + 1;
+  }
+  usedIds.add(newId);
+  return newId;
+}
+
+function normalizeFields(fields: ContextField) {
+  let newId = fields.noteId ?? getNewId();
   function recalculateNewId(nodes: NodeListOf<Element>) {
+    if (fields.noteId) {
+      newId = fields.noteId;
+      return;
+    }
     nodes.forEach((el) => {
       const id = Number((el as HTMLSpanElement).dataset.groupId);
       if (newId >= id) {
@@ -230,7 +245,7 @@ function normalizeFields(fields: ContextField) {
       }
     });
     if (newId <= 0) {
-      newId = Date.now();
+      newId = getNewId();
     }
   }
 

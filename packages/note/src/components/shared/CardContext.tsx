@@ -28,10 +28,11 @@ type CardStore = {
     noteId: number | undefined;
   };
   navigateBack: (() => void)[];
-  nestedAnkiFields: AnkiFields;
   nested: boolean;
-  isMergePreview: boolean;
+  nestedAnkiFields: AnkiFields;
+  nestedNoteId: number | undefined;
   nestedIsMergePreview: boolean;
+  isMergePreview: boolean;
 };
 
 const CardStoreContext =
@@ -66,10 +67,11 @@ export function CardStoreContextProvider(props: {
       noteId: undefined,
     },
     navigateBack: [],
-    nestedAnkiFields: ankiFieldsSkeleton,
     nested: props.nested ?? false,
-    isMergePreview: props.isMergePreview ?? false,
+    nestedAnkiFields: ankiFieldsSkeleton,
+    nestedNoteId: undefined,
     nestedIsMergePreview: false,
+    isMergePreview: props.isMergePreview ?? false,
   });
 
   return (

@@ -5,16 +5,18 @@ import { getAnkiFields } from "#/util/general";
 
 const AnkiFieldsContext = createContext<{
   ankiFields: AnkiFields;
+  noteId?: number;
 }>();
 
 export function AnkiFieldContextProvider(props: {
   children: JSX.Element;
   ankiFields?: AnkiFields;
+  noteId?: number;
 }) {
   const ankiFields = props.ankiFields ?? getAnkiFields();
 
   return (
-    <AnkiFieldsContext.Provider value={{ ankiFields }}>
+    <AnkiFieldsContext.Provider value={{ ankiFields, noteId: props.noteId }}>
       {props.children}
     </AnkiFieldsContext.Provider>
   );
@@ -23,9 +25,11 @@ export function AnkiFieldContextProvider(props: {
 type useAnkiFieldType = {
   front: {
     ankiFields: AnkiFrontFields;
+    noteId?: number;
   };
   back: {
     ankiFields: AnkiBackFields;
+    noteId?: number;
   };
 };
 

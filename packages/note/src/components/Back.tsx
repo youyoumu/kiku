@@ -90,7 +90,10 @@ export function Back(props: { onExitNested?: () => void }) {
           <Lazy.KanjiPage />
         </Match>
         <Match when={$card.page === "nested" && $card.ready}>
-          <AnkiFieldContextProvider ankiFields={$card.nestedAnkiFields}>
+          <AnkiFieldContextProvider
+            ankiFields={$card.nestedAnkiFields}
+            noteId={$card.nestedNoteId}
+          >
             <CardStoreContextProvider
               nested
               side="back"
