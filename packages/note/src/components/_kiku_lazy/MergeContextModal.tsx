@@ -52,7 +52,6 @@ export default function MergeContextModal() {
         setRootNote(rootNote);
         setCurrentNote(currentNote);
       } catch (e) {
-        console.log("DEBUG[1369]: e=", e);
         $general.toast.error(
           e instanceof Error ? e.message : "Failed to load notes",
         );
@@ -396,7 +395,6 @@ function mergeContext(base: ContextField, extra: ContextField) {
   };
   const sentenceDoc = parseHtml(merged.Sentence);
   const sentenceWithGroup = sentenceDoc.querySelectorAll("[data-group-id]");
-  console.log("DEBUG[1372]: sentenceWithGroup=", sentenceWithGroup);
   const Sentence = Array.from(sentenceWithGroup).sort((a, b) => {
     const aId = Number((a as HTMLSpanElement).dataset.groupId);
     const bId = Number((b as HTMLSpanElement).dataset.groupId);
@@ -475,6 +473,7 @@ function normalizeFields(fields: ContextField) {
   }
 
   function wrapInSpan(html: string) {
+    if (!html) return "";
     const span = document.createElement("span");
     span.innerHTML = html;
     span.dataset.groupId = newId.toString();
@@ -485,14 +484,9 @@ function normalizeFields(fields: ContextField) {
     nodesToString(Array.from(sentenceWithGroup)).trim() +
     wrapInSpan(nodesToString(sentenceWithoutGroup).trim());
 
-  const sentenceFuriganaWithoutGroupHtml = nodesToString(
-    sentenceFuriganaWithoutGroup,
-  ).trim();
   const SentenceFurigana =
     nodesToString(Array.from(sentenceFuriganaWithGroup)).trim() +
-    sentenceFuriganaWithoutGroupHtml
-      ? wrapInSpan(sentenceFuriganaWithoutGroupHtml)
-      : "";
+    wrapInSpan(nodesToString(sentenceFuriganaWithoutGroup).trim());
 
   const SentenceAudio =
     nodesToString(Array.from(sentenceAudioWithGroup)).trim() +
