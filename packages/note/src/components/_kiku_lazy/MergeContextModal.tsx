@@ -1,5 +1,5 @@
-import { createSignal, Match, onMount, Switch } from "solid-js";
-import type { AnkiNote } from "#/types";
+import { createEffect, createSignal, Match, onMount, Switch } from "solid-js";
+import { type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { nodesToString, parseHtml } from "#/util/general";
 import { useNavigationTransition } from "#/util/hooks";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
@@ -12,7 +12,7 @@ import { AnkiConnect } from "./util/ankiConnect";
 
 export default function MergeContextModal() {
   let dialogRef: HTMLDialogElement | undefined;
-  const [$general] = useGeneralContext();
+  const [$general, $setGeneral] = useGeneralContext();
   const { navigate } = useNavigationTransition();
   const [$card, $setCard] = useCardContext();
   const { ankiFields: rootAnkiFields } = useRootFieldGroupContext();
@@ -26,14 +26,13 @@ export default function MergeContextModal() {
   if ($card.isMergePreview) return null;
 
   onMount(async () => {
-    if (dialogRef) {
-      dialogRef.showModal();
-    }
-
     if (!bp.isAtLeast("sm")) return;
-    try {
-      await $general.checkAnkiConnect();
-      if ($general.isAnkiConnectAvailable) {
+    await $general.checkAnkiConnect();
+  });
+
+  createEffect(async () => {
+    if ($general.isAnkiConnectAvailable) {
+      try {
         const noteIds = await AnkiConnect.invoke("findNotes", {
           query: `cid:${rootAnkiFields.CardID}`,
         });
@@ -43,10 +42,10 @@ export default function MergeContextModal() {
         });
         const note = notes.result[0];
         setRootNote(note);
+      } catch (e) {
+        $general.toast.error("Failed to load root note");
+        KIKU_STATE.logger.error("Failed to load root note", e);
       }
-    } catch (e) {
-      $general.toast.error("Failed to load root note");
-      KIKU_STATE.logger.error("Failed to load root note", e);
     }
   });
 
@@ -71,22 +70,22 @@ export default function MergeContextModal() {
   const mergedAnkiFields = () => {
     if (mergeDirection() === "toRoot") {
       return {
+        ...ankiFieldsSkeleton,
         ...rootAnkiFields,
         ...merged(),
       };
     } else {
       return {
+        ...ankiFieldsSkeleton,
         ...ankiFields,
         ...merged(),
       };
     }
   };
 
-  console.log("DEBUG[1340]: result=", merged());
-
   const onPreviewClick = () => {
     $setCard("nestedIsMergePreview", true);
-    $setCard("nestedAnkiFields", mergedAnkiFields());
+    $setCard({ nestedAnkiFields: mergedAnkiFields() });
     $setCard("nestedNoteId", noteId);
     navigate("nested", "forward", () => {
       navigate("main", "back");
@@ -221,37 +220,14 @@ function mergeContext(base: ContextField, extra: ContextField) {
   return merged;
 }
 
-const usedIds = new Set<number>();
-function getNewId() {
-  let newId = Date.now();
-  while (usedIds.has(newId)) {
-    newId = newId + 1;
-  }
-  usedIds.add(newId);
-  return newId;
-}
+const randomNumber = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
 
 function normalizeFields(fields: ContextField) {
-  let newId = fields.noteId ?? getNewId();
-  function recalculateNewId(nodes: NodeListOf<Element>) {
-    if (fields.noteId) {
-      newId = fields.noteId;
-      return;
-    }
-    nodes.forEach((el) => {
-      const id = Number((el as HTMLSpanElement).dataset.groupId);
-      if (newId >= id) {
-        newId = id - 1;
-      }
-    });
-    if (newId <= 0) {
-      newId = getNewId();
-    }
-  }
+  const newId = fields.noteId ?? Date.now() + randomNumber(0, 1000);
 
   const sentenceDoc = parseHtml(fields.Sentence);
   const sentenceWithGroup = sentenceDoc.querySelectorAll("[data-group-id]");
-  recalculateNewId(sentenceWithGroup);
   const sentenceWithoutGroup = Array.from(sentenceDoc.body.childNodes).filter(
     (el) => !(el as HTMLSpanElement).dataset?.groupId,
   );
@@ -259,7 +235,6 @@ function normalizeFields(fields: ContextField) {
   const sentenceFuriganaDoc = parseHtml(fields.SentenceFurigana);
   const sentenceFuriganaWithGroup =
     sentenceFuriganaDoc.querySelectorAll("[data-group-id]");
-  recalculateNewId(sentenceFuriganaWithGroup);
   const sentenceFuriganaWithoutGroup = Array.from(
     sentenceFuriganaDoc.body.childNodes,
   ).filter((el) => !(el as HTMLSpanElement).dataset?.groupId);
@@ -267,7 +242,6 @@ function normalizeFields(fields: ContextField) {
   const sentenceAudioDoc = parseHtml(fields.SentenceAudio);
   const sentenceAudioWithGroup =
     sentenceAudioDoc.querySelectorAll("[data-group-id]");
-  recalculateNewId(sentenceAudioWithGroup);
   const sentenceAudioWithoutGroup = Array.from(
     sentenceAudioDoc.body.childNodes,
   ).filter((el) => !(el as HTMLSpanElement).dataset?.groupId);

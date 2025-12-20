@@ -282,7 +282,7 @@ function AnkiNoteItem(props: {
       $setCard("focus", { kanji: $kanji.kanji });
     }
     $setCard("focus", { noteId: data().noteId });
-    $setCard("nestedAnkiFields", ankiFields);
+    $setCard({ nestedAnkiFields: ankiFields });
     $setCard("nestedNoteId", data().noteId);
     navigate("nested", "forward", () => navigate("kanji", "back"));
   };
