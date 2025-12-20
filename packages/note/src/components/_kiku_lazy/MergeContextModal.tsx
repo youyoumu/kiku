@@ -16,9 +16,10 @@ export default function MergeContextModal() {
   const { navigate } = useNavigationTransition();
   const [$card, $setCard] = useCardContext();
   const { ankiFields: rootAnkiFields } = useRootFieldGroupContext();
-  const { ankiFields, noteId } = useAnkiFieldContext<"back">();
+  const { noteId: currentNoteId } = useAnkiFieldContext<"back">();
 
   const [rootNote, setRootNote] = createSignal<AnkiNote>();
+  const [currentNote, setCurrentNote] = createSignal<AnkiNote>();
   const [mergeDirection, setMergeDirection] = createSignal<
     "toRoot" | "toCurrent"
   >("toCurrent");
@@ -34,12 +35,16 @@ export default function MergeContextModal() {
         const noteIds = await AnkiConnect.invoke("findNotes", {
           query: `cid:${rootAnkiFields.CardID}`,
         });
-        const noteId = noteIds.result[0];
+        const rootNoteId = noteIds.result[0];
         const notes = await AnkiConnect.invoke("notesInfo", {
-          notes: [noteId],
+          notes: [rootNoteId, currentNoteId],
         });
-        const note = notes.result[0];
-        setRootNote(note);
+        const rootNote = notes.result[0];
+        const currentNote = notes.result[1];
+        if (!rootNote || !currentNote)
+          throw new Error("Root or Current note not found");
+        setRootNote(rootNote);
+        setCurrentNote(currentNote);
       } catch (e) {
         $general.toast.error("Failed to load root note");
         KIKU_STATE.logger.error("Failed to load root note", e);
@@ -56,11 +61,11 @@ export default function MergeContextModal() {
       Picture: rootNote()?.fields.Picture.value ?? "",
     };
     const current = {
-      noteId: noteId,
-      Sentence: ankiFields.Sentence,
-      SentenceFurigana: ankiFields.SentenceFurigana,
-      SentenceAudio: ankiFields.SentenceAudio,
-      Picture: ankiFields.Picture,
+      noteId: currentNote()?.noteId,
+      Sentence: currentNote()?.fields.Sentence.value ?? "",
+      SentenceFurigana: currentNote()?.fields.SentenceFurigana.value ?? "",
+      SentenceAudio: currentNote()?.fields.SentenceAudio.value ?? "",
+      Picture: currentNote()?.fields.Picture.value ?? "",
     };
     if (mergeDirection() === "toRoot") {
       return mergeContext(root, current);
@@ -90,6 +95,17 @@ export default function MergeContextModal() {
         ...merged(),
       };
     } else {
+      const currentNote$ = currentNote();
+      if (!currentNote$) return ankiFieldsSkeleton;
+      const ankiFields = {
+        ...ankiFieldsSkeleton,
+        ...Object.fromEntries(
+          Object.entries(currentNote$.fields).map(([key, value]) => {
+            return [key, value.value];
+          }),
+        ),
+        Tags: currentNote$.tags.join(" "),
+      };
       return {
         ...ankiFieldsSkeleton,
         ...ankiFields,
@@ -98,10 +114,18 @@ export default function MergeContextModal() {
     }
   };
 
-  const updateNoteFieldsPayload = () => {
+  const targetId = () => {
     const targetId =
-      mergeDirection() === "toRoot" ? rootNote()?.noteId : noteId;
+      mergeDirection() === "toRoot"
+        ? rootNote()?.noteId
+        : currentNote()?.noteId;
     if (!targetId) return;
+    return targetId;
+  };
+
+  const updateNoteFieldsPayload = () => {
+    const targetId$ = targetId();
+    if (!targetId$) return;
     const fields = mergedAnkiFields();
     for (const key in fields) {
       if (
@@ -116,7 +140,7 @@ export default function MergeContextModal() {
     }
     return {
       note: {
-        id: targetId,
+        id: targetId$,
         fields: fields,
       },
     };
@@ -125,7 +149,7 @@ export default function MergeContextModal() {
   const onPreviewClick = () => {
     $setCard("nestedIsMergePreview", true);
     $setCard({ nestedAnkiFields: mergedAnkiFields() });
-    $setCard("nestedNoteId", noteId);
+    $setCard("nestedNoteId", targetId());
     navigate("nested", "forward", () => {
       navigate("main", "back");
       $setCard("nestedIsMergePreview", false);
@@ -168,10 +192,14 @@ export default function MergeContextModal() {
     }
   });
 
+  const ready = () => {
+    return $general.isAnkiConnectAvailable && rootNote() && currentNote();
+  };
+
   return (
     <>
       <Switch>
-        <Match when={$general.isAnkiConnectAvailable}>
+        <Match when={ready()}>
           <GitPullRequestArrow
             class="size-4 cursor-pointer text-base-content-soft"
             on:click={() => {
@@ -181,7 +209,7 @@ export default function MergeContextModal() {
             }}
           />
         </Match>
-        <Match when={!$general.isAnkiConnectAvailable}>
+        <Match when={!ready()}>
           <div class="indicator">
             <div class="place-items-center">
               <RefreshCwIcon
@@ -226,7 +254,10 @@ export default function MergeContextModal() {
 
               <Show
                 when={
-                  rootNote()?.fields.Expression.value !== ankiFields.Expression
+                  rootNote()?.fields.Expression.value &&
+                  currentNote()?.fields.Expression.value &&
+                  rootNote()?.fields.Expression.value !==
+                    currentNote()?.fields.Expression.value
                 }
               >
                 <div role="alert" class="alert alert-warning">
