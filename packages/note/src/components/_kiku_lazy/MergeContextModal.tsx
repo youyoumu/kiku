@@ -1,9 +1,8 @@
-import { createEffect, createSignal, Match, onMount, Switch } from "solid-js";
+import { createEffect, createSignal, Match, Switch } from "solid-js";
 import { type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { nodesToString, parseHtml } from "#/util/general";
 import { useNavigationTransition } from "#/util/hooks";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
-import { useBreakpointContext } from "../shared/BreakpointContext";
 import { useCardContext } from "../shared/CardContext";
 import { useRootFieldGroupContext } from "../shared/FieldGroupContext";
 import { useGeneralContext } from "../shared/GeneralContext";
@@ -21,14 +20,10 @@ export default function MergeContextModal() {
   const [mergeDirection, setMergeDirection] = createSignal<
     "toRoot" | "toCurrent"
   >("toCurrent");
-  const bp = useBreakpointContext();
 
   if ($card.isMergePreview) return null;
 
-  onMount(async () => {
-    if (!bp.isAtLeast("sm")) return;
-    await $general.checkAnkiConnect();
-  });
+  $general.useCheckAnkiConnect();
 
   createEffect(async () => {
     if ($general.isAnkiConnectAvailable) {

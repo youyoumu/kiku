@@ -140,10 +140,10 @@ async function setup({ aborter }: { aborter: AbortController }) {
 
     if (side === "front") {
       const App = () => (
-        <GeneralContextProvider aborter={aborter}>
-          <AnkiFieldContextProvider>
-            <CardStoreContextProvider side="front">
-              <BreakpointContextProvider>
+        <BreakpointContextProvider>
+          <GeneralContextProvider aborter={aborter}>
+            <AnkiFieldContextProvider>
+              <CardStoreContextProvider side="front">
                 <ConfigContextProvider value={[config, setConfig]}>
                   <FieldGroupContextProvider>
                     <RootFieldGroupContextProvider>
@@ -155,10 +155,10 @@ async function setup({ aborter }: { aborter: AbortController }) {
                     </RootFieldGroupContextProvider>
                   </FieldGroupContextProvider>
                 </ConfigContextProvider>
-              </BreakpointContextProvider>
-            </CardStoreContextProvider>
-          </AnkiFieldContextProvider>
-        </GeneralContextProvider>
+              </CardStoreContextProvider>
+            </AnkiFieldContextProvider>
+          </GeneralContextProvider>
+        </BreakpointContextProvider>
       );
       if (ssr) {
         dispose = hydrate(App, root);

@@ -30,10 +30,10 @@ globalThis.KIKU_STATE = {
 
 export function generateSsrTemplate() {
   const frontSsrTemplate = renderToString(() => (
-    <GeneralContextProvider aborter={globalThis.KIKU_STATE.aborter}>
-      <AnkiFieldContextProvider>
-        <CardStoreContextProvider side="front">
-          <BreakpointContextProvider>
+    <BreakpointContextProvider>
+      <GeneralContextProvider aborter={globalThis.KIKU_STATE.aborter}>
+        <AnkiFieldContextProvider>
+          <CardStoreContextProvider side="front">
             <ConfigContextProvider value={[config, setConfig]}>
               <FieldGroupContextProvider>
                 <RootFieldGroupContextProvider>
@@ -45,16 +45,16 @@ export function generateSsrTemplate() {
                 </RootFieldGroupContextProvider>
               </FieldGroupContextProvider>
             </ConfigContextProvider>
-          </BreakpointContextProvider>
-        </CardStoreContextProvider>
-      </AnkiFieldContextProvider>
-    </GeneralContextProvider>
+          </CardStoreContextProvider>
+        </AnkiFieldContextProvider>
+      </GeneralContextProvider>
+    </BreakpointContextProvider>
   ));
   const backSsrTemplate = renderToString(() => (
-    <GeneralContextProvider aborter={globalThis.KIKU_STATE.aborter}>
-      <AnkiFieldContextProvider>
-        <CardStoreContextProvider side="back">
-          <BreakpointContextProvider>
+    <BreakpointContextProvider>
+      <GeneralContextProvider aborter={globalThis.KIKU_STATE.aborter}>
+        <AnkiFieldContextProvider>
+          <CardStoreContextProvider side="back">
             <ConfigContextProvider value={[config, setConfig]}>
               <FieldGroupContextProvider>
                 <RootFieldGroupContextProvider>
@@ -66,10 +66,10 @@ export function generateSsrTemplate() {
                 </RootFieldGroupContextProvider>
               </FieldGroupContextProvider>
             </ConfigContextProvider>
-          </BreakpointContextProvider>
-        </CardStoreContextProvider>
-      </AnkiFieldContextProvider>
-    </GeneralContextProvider>
+          </CardStoreContextProvider>
+        </AnkiFieldContextProvider>
+      </GeneralContextProvider>
+    </BreakpointContextProvider>
   ));
 
   const hydrationScript = generateHydrationScript();

@@ -1,4 +1,4 @@
-import { createContext, useContext } from "solid-js";
+import { createContext, onMount, useContext } from "solid-js";
 import type { JSX } from "solid-js/jsx-runtime";
 import { createStore, type SetStoreFunction, type Store } from "solid-js/store";
 import { isServer } from "solid-js/web";
@@ -7,6 +7,7 @@ import type { KanjiInfo, KikuNotesManifest } from "#/types";
 import { env } from "#/util/general";
 import type { NexClient } from "#/worker/client";
 import { AnkiConnect } from "../_kiku_lazy/util/ankiConnect";
+import { useBreakpointContext } from "./BreakpointContext";
 
 type GeneralStore = {
   plugin: KikuPlugin | undefined;
@@ -21,6 +22,7 @@ type GeneralStore = {
   lookupKanjiCache: Map<string, KanjiInfo | undefined>;
   nexClientPromise: PromiseWithResolvers<NexClient>;
   checkAnkiConnect: () => Promise<void>;
+  useCheckAnkiConnect: () => void;
 };
 
 type Toast = {
@@ -54,11 +56,24 @@ export function GeneralContextProvider(props: {
   };
 
   async function checkAnkiConnect() {
-    const version = await AnkiConnect.getVersion();
-    if (version) {
-      KIKU_STATE.logger.info("AnkiConnect version:", version);
-      $setGeneral("isAnkiConnectAvailable", true);
+    try {
+      const version = await AnkiConnect.getVersion();
+      if (version) {
+        KIKU_STATE.logger.info("AnkiConnect version:", version);
+        $setGeneral("isAnkiConnectAvailable", true);
+      }
+    } catch {
+      KIKU_STATE.logger.warn("AnkiConnect is not available");
+      $setGeneral("isAnkiConnectAvailable", false);
     }
+  }
+
+  function useCheckAnkiConnect() {
+    const bp = useBreakpointContext();
+    onMount(() => {
+      if (!bp.isAtLeast("sm")) return;
+      $general.checkAnkiConnect();
+    });
   }
 
   const [$general, $setGeneral] = createStore<GeneralStore>({
@@ -80,6 +95,7 @@ export function GeneralContextProvider(props: {
     lookupKanjiCache: new Map(),
     nexClientPromise: Promise.withResolvers(),
     checkAnkiConnect,
+    useCheckAnkiConnect,
   });
 
   return (
