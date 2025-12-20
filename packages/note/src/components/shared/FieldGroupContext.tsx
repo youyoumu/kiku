@@ -19,6 +19,18 @@ const FieldGroupContext = createContext<{
   $next: () => void;
   $prev: () => void;
 }>();
+
+function nodesToString(nodes: Node[]) {
+  return nodes
+    .map((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        return (node as Element).outerHTML;
+      }
+      return node.textContent ?? "";
+    })
+    .join("");
+}
+
 export function FieldGroupContextProvider(props: { children: JSX.Element }) {
   const { ankiFields } = useAnkiFieldContext();
   const [$card] = useCardContext();
@@ -55,22 +67,15 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       const id = (el as HTMLSpanElement).dataset.groupId;
       addIds(id);
     });
+
     const sentenceFieldWithoutGroup = Array.from(
-      sentenceFieldDoc.childNodes,
+      sentenceFieldDoc.body.childNodes,
     ).filter((el) => !(el as HTMLSpanElement).dataset?.groupId);
-    const sentenceFieldWithoutGroupHtml = sentenceFieldWithoutGroup
-      .map((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          return (node as Element).outerHTML;
-        }
-        return node.textContent ?? "";
-      })
-      .join("");
-    KIKU_STATE.logger.info(
-      "[Groups] sentenceFieldWithoutGroupHtml:",
-      sentenceFieldWithoutGroupHtml,
+    const sentenceFieldWithoutGroupHtml = nodesToString(
+      sentenceFieldWithoutGroup,
     );
 
+    // each img has their own separate page. img without group id will be given group id <= 0
     const pictureFieldDoc = parseHtml(pictureField);
     const pictureFieldWithGroup = pictureFieldDoc.querySelectorAll("img");
     pictureFieldWithGroup.forEach((el, i) => {
@@ -89,23 +94,15 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       const id = (el as HTMLSpanElement).dataset.groupId;
       addIds(id);
     });
-    const sentenceAudioFieldWithoutGroup = Array.from(
-      sentenceAudioFieldDoc.childNodes,
-    ).filter((el) => !(el as HTMLSpanElement).dataset?.groupId);
-    const sentenceAudioFieldWithoutGroupHtml = sentenceAudioFieldWithoutGroup
-      .map((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          return (node as Element).outerHTML;
-        }
-        return node.textContent ?? "";
-      })
-      .join("");
 
-    KIKU_STATE.logger.info(
-      "[Groups] sentenceAudioFieldWithoutGroupHtml:",
-      sentenceAudioFieldWithoutGroupHtml,
+    const sentenceAudioFieldWithoutGroup = Array.from(
+      sentenceAudioFieldDoc.body.childNodes,
+    ).filter((el) => !(el as HTMLSpanElement).dataset?.groupId);
+    const sentenceAudioFieldWithoutGroupHtml = nodesToString(
+      sentenceAudioFieldWithoutGroup,
     );
 
+    // create img with no src if ungrouped fields has no img
     let dummyImg: HTMLImageElement | undefined;
     if (
       !Array.from($group.ids)
@@ -119,13 +116,6 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       dummyImg = img;
       addIds("0");
     }
-
-    KIKU_STATE.logger.info("[Groups] DummyImg:", dummyImg);
-
-    KIKU_STATE.logger.info(
-      "[Groups] ids:",
-      $group.ids.map((id) => id.toString()),
-    );
 
     if ($group.ids.length > 0) {
       const sorted = $group.ids.map((id) => Number(id)).sort((a, b) => b - a);
@@ -197,5 +187,30 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
 export function useFieldGroupContext() {
   const fieldGroup = useContext(FieldGroupContext);
   if (!fieldGroup) throw new Error("Missing FieldGroupContext");
+  return fieldGroup;
+}
+
+const RootFieldGroupConext = createContext<{
+  $group: Store<GroupStore>;
+  $setGroup: SetStoreFunction<GroupStore>;
+  $next: () => void;
+  $prev: () => void;
+}>();
+
+export function RootFieldGroupContextProvider(props: {
+  children: JSX.Element;
+}) {
+  const value = useFieldGroupContext();
+
+  return (
+    <RootFieldGroupConext.Provider value={value}>
+      {props.children}
+    </RootFieldGroupConext.Provider>
+  );
+}
+
+export function useRootFieldGroupContext() {
+  const fieldGroup = useContext(RootFieldGroupConext);
+  if (!fieldGroup) throw new Error("Missing RootFieldGroupContext");
   return fieldGroup;
 }

@@ -17,7 +17,10 @@ import { AnkiFieldContextProvider } from "./components/shared/AnkiFieldsContext.
 import { CardStoreContextProvider } from "./components/shared/CardContext.tsx";
 import { ConfigContextProvider } from "./components/shared/ConfigContext.tsx";
 import { CtxContextProvider } from "./components/shared/CtxContext.tsx";
-import { FieldGroupContextProvider } from "./components/shared/FieldGroupContext.tsx";
+import {
+  FieldGroupContextProvider,
+  RootFieldGroupContextProvider,
+} from "./components/shared/FieldGroupContext.tsx";
 import { GeneralContextProvider } from "./components/shared/GeneralContext.tsx";
 import { debug } from "./util/debug.ts";
 import { Logger } from "./util/logger.ts";
@@ -143,11 +146,13 @@ async function setup({ aborter }: { aborter: AbortController }) {
               <BreakpointContextProvider>
                 <ConfigContextProvider value={[config, setConfig]}>
                   <FieldGroupContextProvider>
-                    <CtxContextProvider>
-                      <Layout>
-                        <Front />
-                      </Layout>
-                    </CtxContextProvider>
+                    <RootFieldGroupContextProvider>
+                      <CtxContextProvider>
+                        <Layout>
+                          <Front />
+                        </Layout>
+                      </CtxContextProvider>
+                    </RootFieldGroupContextProvider>
                   </FieldGroupContextProvider>
                 </ConfigContextProvider>
               </BreakpointContextProvider>
@@ -168,11 +173,13 @@ async function setup({ aborter }: { aborter: AbortController }) {
               <BreakpointContextProvider>
                 <ConfigContextProvider value={[config, setConfig]}>
                   <FieldGroupContextProvider>
-                    <CtxContextProvider>
-                      <Layout>
-                        <Back />
-                      </Layout>
-                    </CtxContextProvider>
+                    <RootFieldGroupContextProvider>
+                      <CtxContextProvider>
+                        <Layout>
+                          <Back />
+                        </Layout>
+                      </CtxContextProvider>
+                    </RootFieldGroupContextProvider>
                   </FieldGroupContextProvider>
                 </ConfigContextProvider>
               </BreakpointContextProvider>

@@ -6,7 +6,10 @@ import { AnkiFieldContextProvider } from "#/components/shared/AnkiFieldsContext"
 import { CardStoreContextProvider } from "#/components/shared/CardContext";
 import { ConfigContextProvider } from "#/components/shared/ConfigContext";
 import { CtxContextProvider } from "#/components/shared/CtxContext";
-import { FieldGroupContextProvider } from "#/components/shared/FieldGroupContext";
+import {
+  FieldGroupContextProvider,
+  RootFieldGroupContextProvider,
+} from "#/components/shared/FieldGroupContext";
 import { GeneralContextProvider } from "#/components/shared/GeneralContext";
 import { debug } from "#/util/debug";
 import { Logger } from "#/util/logger";
@@ -33,11 +36,13 @@ export function generateSsrTemplate() {
           <BreakpointContextProvider>
             <ConfigContextProvider value={[config, setConfig]}>
               <FieldGroupContextProvider>
-                <CtxContextProvider>
-                  <Layout>
-                    <Front />
-                  </Layout>
-                </CtxContextProvider>
+                <RootFieldGroupContextProvider>
+                  <CtxContextProvider>
+                    <Layout>
+                      <Front />
+                    </Layout>
+                  </CtxContextProvider>
+                </RootFieldGroupContextProvider>
               </FieldGroupContextProvider>
             </ConfigContextProvider>
           </BreakpointContextProvider>
@@ -52,11 +57,13 @@ export function generateSsrTemplate() {
           <BreakpointContextProvider>
             <ConfigContextProvider value={[config, setConfig]}>
               <FieldGroupContextProvider>
-                <CtxContextProvider>
-                  <Layout>
-                    <Back />
-                  </Layout>
-                </CtxContextProvider>
+                <RootFieldGroupContextProvider>
+                  <CtxContextProvider>
+                    <Layout>
+                      <Back />
+                    </Layout>
+                  </CtxContextProvider>
+                </RootFieldGroupContextProvider>
               </FieldGroupContextProvider>
             </ConfigContextProvider>
           </BreakpointContextProvider>
