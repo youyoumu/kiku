@@ -1,4 +1,5 @@
-import { createEffect, createSignal, Match, Switch } from "solid-js";
+import { createEffect, createSignal, Match, Show, Switch } from "solid-js";
+import { Portal } from "solid-js/web";
 import { type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { nodesToString, parseHtml } from "#/util/general";
 import { useNavigationTransition } from "#/util/hooks";
@@ -26,6 +27,10 @@ export default function MergeContextModal() {
   $general.useCheckAnkiConnect();
 
   createEffect(async () => {
+    if (dialogRef) {
+      dialogRef.showModal();
+    }
+
     if ($general.isAnkiConnectAvailable) {
       try {
         const noteIds = await AnkiConnect.invoke("findNotes", {
@@ -65,6 +70,8 @@ export default function MergeContextModal() {
       return mergeContext(current, root);
     }
   };
+
+  const mergedReadable = () => parseMergedIntoReadable(merged());
 
   const mergedAnkiFields = () => {
     if (mergeDirection() === "toRoot") {
@@ -175,59 +182,81 @@ export default function MergeContextModal() {
         </Match>
       </Switch>
 
-      <dialog class="modal" ref={dialogRef}>
-        <div class="modal-box max-h-[80svh]">
-          <h3 class="text-lg font-bold mb-4">Merge Context</h3>
+      <Portal mount={$general.layoutRef}>
+        <dialog class="modal" ref={dialogRef}>
+          <div class="modal-box max-h-[80svh]">
+            <h3 class="text-lg font-bold mb-4">Merge Context</h3>
 
-          <div class="flex flex-col gap-4">
-            <div class="flex gap-4 items-center justify-center">
-              <div>Root</div>
-              <ArrowLeftIcon
-                class="self-center text-base-content-calm size-10 cursor-pointer transition-transform"
-                on:click={() => {
-                  setMergeDirection((prev) =>
-                    prev === "toRoot" ? "toCurrent" : "toRoot",
-                  );
-                }}
-                classList={{
-                  "rotate-0": mergeDirection() === "toRoot",
-                  "rotate-180": mergeDirection() === "toCurrent",
-                }}
-              />
-              <div>Current</div>
+            <div class="flex flex-col gap-4">
+              <div class="flex gap-4 items-center justify-center">
+                <div>Root</div>
+                <ArrowLeftIcon
+                  class="self-center text-base-content-calm size-10 cursor-pointer transition-transform"
+                  on:click={() => {
+                    setMergeDirection((prev) =>
+                      prev === "toRoot" ? "toCurrent" : "toRoot",
+                    );
+                  }}
+                  classList={{
+                    "rotate-0": mergeDirection() === "toRoot",
+                    "rotate-180": mergeDirection() === "toCurrent",
+                  }}
+                />
+                <div>Current</div>
+              </div>
+
+              <Show
+                when={
+                  rootNote()?.fields.Expression.value !== ankiFields.Expression
+                }
+              >
+                <div role="alert" class="alert alert-warning">
+                  Root and Current have different Expression
+                </div>
+              </Show>
+
+              <div class="flex flex-col gap-2">
+                <FieldPreview
+                  title="Sentence"
+                  content={mergedReadable().Sentence}
+                />
+                <FieldPreview
+                  title="SentenceFurigana"
+                  content={mergedReadable().SentenceFurigana}
+                />
+                <FieldPreview
+                  title="SentenceAudio"
+                  content={mergedReadable().SentenceAudio}
+                />
+                <FieldPreview
+                  title="Picture"
+                  content={mergedReadable().Picture}
+                />
+                <FieldPreview
+                  title="AnkiConnect Payload Preview"
+                  content={JSON.stringify(updateNoteFieldsPayload(), null, 2)}
+                />
+              </div>
             </div>
 
-            <div class="flex flex-col gap-2">
-              <FieldPreview title="Sentence" content={merged().Sentence} />
-              <FieldPreview
-                title="SentenceFurigana"
-                content={merged().SentenceFurigana}
-              />
-              <FieldPreview
-                title="SentenceAudio"
-                content={merged().SentenceAudio}
-              />
-              <FieldPreview title="Picture" content={merged().Picture} />
-              <FieldPreview
-                title="AnkiConnect Payload Preview"
-                content={JSON.stringify(updateNoteFieldsPayload(), null, 2)}
-              />
+            <div class="modal-action">
+              <form method="dialog">
+                <button class="btn">Close</button>
+              </form>
+              <button class="btn btn-secondary" on:click={onPreviewClick}>
+                Preview
+              </button>
+              <button class="btn btn-primary" on:click={onMergeClick}>
+                Merge
+              </button>
             </div>
           </div>
 
-          <div class="modal-action">
-            <form method="dialog">
-              <button class="btn">Close</button>
-            </form>
-            <button class="btn btn-secondary" on:click={onPreviewClick}>
-              Preview
-            </button>
-            <button class="btn btn-primary" on:click={onMergeClick}>
-              Merge
-            </button>
-          </div>
-        </div>
-      </dialog>
+          <form method="dialog" class="modal-backdrop">
+            <button>Close</button>
+          </form>
+        </dialog>
+      </Portal>
     </>
   );
 }
@@ -235,9 +264,9 @@ export default function MergeContextModal() {
 function FieldPreview(props: { title: string; content: string }) {
   return (
     <div class="flex flex-col gap-0.5">
-      <div class="text-xs">{props.title}</div>
-      <pre class="text-xs text-base-content-calm bg-base-200 p-2 rounded-sm overflow-auto max-h-[90svh]">
-        {props.content}
+      <div class="text-sm">{props.title}</div>
+      <pre class="text-xs bg-base-200 p-2 rounded-sm overflow-auto max-h-[90svh]">
+        {props.content ? props.content : "\n"}
       </pre>
     </div>
   );
@@ -336,6 +365,54 @@ function normalizeFields(fields: ContextField) {
   const Picture =
     nodesToString(Array.from(pictureWithGroup)).trim() +
     (pictureWithoutGroup?.outerHTML ?? "");
+
+  return {
+    Sentence,
+    SentenceFurigana,
+    SentenceAudio,
+    Picture,
+  };
+}
+
+function parseMergedIntoReadable(fields: {
+  Sentence: string;
+  SentenceFurigana: string;
+  SentenceAudio: string;
+  Picture: string;
+}) {
+  const sentenceDoc = parseHtml(fields.Sentence);
+  const sentenceWithGroup = sentenceDoc.querySelectorAll("[data-group-id]");
+  const Sentence = Array.from(sentenceWithGroup)
+    .map((node) => {
+      return `${node.getAttribute("data-group-id")}: ${node.textContent}`;
+    })
+    .join("\n");
+
+  const sentenceFuriganaDoc = parseHtml(fields.SentenceFurigana);
+  const sentenceFuriganaWithGroup =
+    sentenceFuriganaDoc.querySelectorAll("[data-group-id]");
+  const SentenceFurigana = Array.from(sentenceFuriganaWithGroup)
+    .map((node) => {
+      return `${node.getAttribute("data-group-id")}: ${node.textContent}`;
+    })
+    .join("\n");
+
+  const sentenceAudioDoc = parseHtml(fields.SentenceAudio);
+  const sentenceAudioWithGroup =
+    sentenceAudioDoc.querySelectorAll("[data-group-id]");
+  const SentenceAudio = Array.from(sentenceAudioWithGroup)
+    .map((node) => {
+      return `${node.getAttribute("data-group-id")}: ${node.textContent}`;
+    })
+    .join("\n");
+
+  const pictureDoc = parseHtml(fields.Picture);
+  const pictureWithGroup = pictureDoc.querySelectorAll("img[data-group-id]");
+  const Picture = Array.from(pictureWithGroup)
+    .map((node) => {
+      return `${node.getAttribute("data-group-id")}: ${node.getAttribute("src")}`;
+    })
+    .join("\n");
 
   return {
     Sentence,
