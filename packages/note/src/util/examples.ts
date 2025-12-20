@@ -510,4 +510,38 @@ const exampleFields15: AnkiFields = {
   "kana:SentenceFurigana": ""
 }
 
-export const exampleFields = exampleFields15;
+// biome-ignore format: this looks nicer
+const exampleFields16: AnkiFields = {
+  "Expression": "品質",
+  "ExpressionFurigana": "品質[ひんしつ]",
+  "ExpressionReading": "ひんしつ",
+  "ExpressionAudio": "<a class=\"replay-button soundLink\" href=\"#\" onclick=\"pycmd('play:a:0'); return false;\" draggable=\"false\">\n    <svg class=\"playImage\" viewBox=\"0 0 64 64\" version=\"1.1\">\n        <circle cx=\"32\" cy=\"32\" r=\"29\"></circle>\n        <path d=\"M56.502,32.301l-37.502,20.101l0.329,-40.804l37.173,20.703Z\"></path>\n    </svg>\n</a>",
+  "SelectionText": "",
+  "MainDefinition": "<div style=\"text-align: left;\" class=\"yomitan-glossary\"><i>(★, Jitendex.org [2025-06-01])</i> <span><div><span data-sc-code=\"n\" title=\"noun (common) (futsuumeishi)\" style=\"font-weight: bold; font-size: 0.8em; color: white; background-color: rgb(86, 86, 86); vertical-align: text-bottom; border-radius: 0.3em; margin-right: 0.25em; padding: 0.2em 0.3em; word-break: keep-all; cursor: help;\">noun</span><div><ul data-sc-content=\"glossary\" style=\"padding-left: 0px; list-style-type: none;\"><li>quality (of a product or a service)</li></ul><div data-sc-content=\"extra-info\" style=\"margin-left: 0.5em;\"><div><div data-sc-content=\"example-sentence\" data-sc-source=\"193207\" style=\"background-color: color-mix(in srgb, var(--text-color, var(--fg, #333)) 5%, transparent); border-color: var(--text-color, var(--fg, #333)); border-style: none none none solid; border-radius: 0.4rem; border-width: calc(3em / var(--font-size-no-units, 14)); margin-top: 0.5rem; margin-bottom: 0.5rem; padding: 0.5rem;\"><div data-sc-content=\"example-sentence-a\" lang=\"ja\" style=\"font-size: 1.3em;\">もっと<span data-sc-content=\"example-keyword\" style=\"color: color-mix(in srgb, lime, var(--text-color, var(--fg, #333)));\"><ruby lang=\"ja\">品<rt lang=\"ja\">ひん</rt></ruby><ruby lang=\"ja\">質<rt lang=\"ja\">しつ</rt></ruby></span>の<ruby lang=\"ja\">良<rt lang=\"ja\">よ</rt></ruby>いものはありますか。</div><div data-sc-content=\"example-sentence-b\" style=\"font-size: 0.8em;\">Do you have better quality ones?</div></div></div></div></div></div><div data-sc-content=\"attribution\" style=\"font-size: 0.7em; text-align: right;\"><a href=\"https://www.edrdg.org/jmwsgi/entr.py?svc=jmdict&amp;q=1490580\"><span>JMdict</span><span style=\"display:none;\"></span></a> | <a href=\"https://tatoeba.org/en/sentences/show/193207\"><span>Tatoeba</span><span style=\"display:none;\"></span></a></div></span></div>",
+  "DefinitionPicture": "",
+  "Sentence": "<b>品質</b>を追求したんだよ",
+  "SentenceFurigana": "",
+  "SentenceAudio": "<a class=\"replay-button soundLink\" href=\"#\" onclick=\"pycmd('play:a:1'); return false;\" draggable=\"false\">\n    <svg class=\"playImage\" viewBox=\"0 0 64 64\" version=\"1.1\">\n        <circle cx=\"32\" cy=\"32\" r=\"29\"></circle>\n        <path d=\"M56.502,32.301l-37.502,20.101l0.329,-40.804l37.173,20.703Z\"></path>\n    </svg>\n</a>",
+  "Picture": "<img src=\"_Pog42__Kakushigoto_-_S0_947044_XRON8zP8.jpeg\" decoding=\"async\">",
+  "Glossary": "<div style=\"text-align: left;\" class=\"yomitan-glossary\"><i>(★, Jitendex.org [2025-06-01])</i> <span><div><span data-sc-code=\"n\" title=\"noun (common) (futsuumeishi)\" style=\"font-weight: bold; font-size: 0.8em; color: white; background-color: rgb(86, 86, 86); vertical-align: text-bottom; border-radius: 0.3em; margin-right: 0.25em; padding: 0.2em 0.3em; word-break: keep-all; cursor: help;\">noun</span><div><ul data-sc-content=\"glossary\" style=\"padding-left: 0px; list-style-type: none;\"><li>quality (of a product or a service)</li></ul><div data-sc-content=\"extra-info\" style=\"margin-left: 0.5em;\"><div><div data-sc-content=\"example-sentence\" data-sc-source=\"193207\" style=\"background-color: color-mix(in srgb, var(--text-color, var(--fg, #333)) 5%, transparent); border-color: var(--text-color, var(--fg, #333)); border-style: none none none solid; border-radius: 0.4rem; border-width: calc(3em / var(--font-size-no-units, 14)); margin-top: 0.5rem; margin-bottom: 0.5rem; padding: 0.5rem;\"><div data-sc-content=\"example-sentence-a\" lang=\"ja\" style=\"font-size: 1.3em;\">もっと<span data-sc-content=\"example-keyword\" style=\"color: color-mix(in srgb, lime, var(--text-color, var(--fg, #333)));\"><ruby lang=\"ja\">品<rt lang=\"ja\">ひん</rt></ruby><ruby lang=\"ja\">質<rt lang=\"ja\">しつ</rt></ruby></span>の<ruby lang=\"ja\">良<rt lang=\"ja\">よ</rt></ruby>いものはありますか。</div><div data-sc-content=\"example-sentence-b\" style=\"font-size: 0.8em;\">Do you have better quality ones?</div></div></div></div></div></div><div data-sc-content=\"attribution\" style=\"font-size: 0.7em; text-align: right;\"><a href=\"https://www.edrdg.org/jmwsgi/entr.py?svc=jmdict&amp;q=1490580\"><span>JMdict</span><span style=\"display:none;\"></span></a> | <a href=\"https://tatoeba.org/en/sentences/show/193207\"><span>Tatoeba</span><span style=\"display:none;\"></span></a></div></span></div>",
+  "Hint": "",
+  "IsWordAndSentenceCard": "",
+  "IsClickCard": "",
+  "IsSentenceCard": "",
+  "IsAudioCard": "",
+  "PitchPosition": "",
+  "PitchCategories": "",
+  "Frequency": "<ul style=\"text-align: left;\"><li>JLPT_Level: N1</li><li>SoL: 31263</li><li>Shonen: 18245</li><li>Netflix Freq: ★★★ (14251)</li><li>Anime &amp; J-drama: 18864</li><li>Youtube: 3890</li><li>VN: 14943</li><li>ICR: 29647</li><li>Narou: 4679</li><li>CC100: 1720</li><li>BCCWJ: 3165</li><li>BCCWJ: 4113</li><li>JPDBv2㋕: 13321</li><li>JPDBv2㋕: 192354㋕</li><li>H Freq: 13275-13768</li></ul>",
+  "FreqSort": "12",
+  "MiscInfo": "Kakushigoto - My Dad's Secret Ambition.S01E06.School Rucksack.WEBRip.ja[cc].srt (15m47s)",
+  "Tags": "yomitan",
+  "CardID": "1766077711373",
+  "furigana:ExpressionFurigana": "<ruby><rb>品質</rb><rt>ひんしつ</rt></ruby>",
+  "kana:ExpressionFurigana": "ひんしつ",
+  "furigana:Sentence": "<b>品質</b>を追求したんだよ",
+  "kanji:Sentence": "<b>品質</b>を追求したんだよ",
+  "furigana:SentenceFurigana": "",
+  "kana:SentenceFurigana": ""
+}
+
+export const exampleFields = exampleFields16;
