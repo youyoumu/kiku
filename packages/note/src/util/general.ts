@@ -104,3 +104,14 @@ export function isHtmlEffectivelyEmpty(html: string): boolean {
 export function parseHtml(html: string) {
   return new DOMParser().parseFromString(html, "text/html");
 }
+
+export function nodesToString(nodes: Node[]) {
+  return nodes
+    .map((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        return (node as Element).outerHTML;
+      }
+      return node.textContent ?? "";
+    })
+    .join("");
+}
