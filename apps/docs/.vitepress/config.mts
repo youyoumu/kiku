@@ -3,9 +3,9 @@ import { defineConfig } from "vitepress";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   srcDir: "src",
-
   title: "Kiku",
   description: "Modern Anki notes, built like web apps.",
+  head: [["link", { rel: "icon", href: "/favicon.ico" }]],
   themeConfig: {
     lastUpdated: {},
     // https://vitepress.dev/reference/default-theme-config
