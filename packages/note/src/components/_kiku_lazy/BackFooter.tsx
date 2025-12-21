@@ -4,6 +4,7 @@ import { InfoIcon } from "./Icons";
 
 export default function BackFooter(props: { tags: string[] }) {
   const { ankiFields } = useAnkiFieldContext<"back">();
+  const tags = () => props.tags.filter(Boolean);
 
   return (
     <>
@@ -20,9 +21,9 @@ export default function BackFooter(props: { tags: string[] }) {
           ></div>
         </div>
       )}
-      <Show when={props.tags.length}>
+      <Show when={tags().length}>
         <div class="flex gap-2 items-center justify-center animate-fade-in flex-wrap">
-          {props.tags.map((tag) => {
+          {tags().map((tag) => {
             return <div class="badge badge-secondary">{tag}</div>;
           })}
         </div>
