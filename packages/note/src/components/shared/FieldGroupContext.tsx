@@ -17,8 +17,8 @@ export type GroupStore = {
 const FieldGroupContext = createContext<{
   $group: Store<GroupStore>;
   $setGroup: SetStoreFunction<GroupStore>;
-  $next: () => void;
-  $prev: () => void;
+  $next: () => boolean;
+  $prev: () => boolean;
   ankiFields: AnkiFields | AnkiFrontFields;
 }>();
 
@@ -148,17 +148,23 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
   });
 
   function $next() {
+    let changed = false;
     $setGroup("index", (prev) => {
       const newIndex = (prev + 1 + $group.ids.length) % $group.ids.length;
+      if (newIndex !== prev) changed = true;
       return newIndex;
     });
+    return changed;
   }
 
   function $prev() {
+    let changed = false;
     $setGroup("index", (prev) => {
       const newIndex = (prev - 1 + $group.ids.length) % $group.ids.length;
+      if (newIndex !== prev) changed = true;
       return newIndex;
     });
+    return changed;
   }
 
   return (

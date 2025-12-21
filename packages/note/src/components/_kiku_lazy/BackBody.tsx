@@ -2,6 +2,7 @@ import {
   createEffect,
   createSignal,
   ErrorBoundary,
+  onCleanup,
   onMount,
   Show,
 } from "solid-js";
@@ -61,6 +62,16 @@ export default function BackBody(props: {
   createEffect(() => {
     definitionPage();
     styleJitendex(definitionEl);
+  });
+
+  onMount(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") changePage(-1);
+      if (e.key === "ArrowRight") changePage(1);
+    };
+
+    window.addEventListener("keydown", handler);
+    onCleanup(() => window.removeEventListener("keydown", handler));
   });
 
   return (
