@@ -19,6 +19,7 @@ export default function KanjiPage() {
     <KanjiPageContextProvider
       noteList={$card.query.noteList}
       sameReading={$card.query.sameReading}
+      sameExpression={$card.query.sameExpression}
       focus={{
         kanji: $card.focus.kanji,
         noteId: $card.focus.noteId,
@@ -40,6 +41,7 @@ function Page() {
         <KanjiPageContextProvider
           noteList={$kanjiPage.nestedNoteList}
           sameReading={[]}
+          sameExpression={[]}
           focus={{
             kanji: $kanjiPage.nestedFocus.kanji,
             noteId: $kanjiPage.nestedFocus.noteId,
@@ -90,7 +92,16 @@ function Page() {
             when={$kanjiPage.sameReading && $kanjiPage.sameReading.length > 0}
           >
             <KanjiContextProvider kanji="">
-              <SameReadingCollapsible />
+              <SameReadingCollapsible mode="reading" />
+            </KanjiContextProvider>
+          </Show>
+          <Show
+            when={
+              $kanjiPage.sameExpression && $kanjiPage.sameExpression.length > 0
+            }
+          >
+            <KanjiContextProvider kanji="">
+              <SameReadingCollapsible mode="expression" />
             </KanjiContextProvider>
           </Show>
         </div>
@@ -147,10 +158,19 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
   );
 }
 
-function SameReadingCollapsible() {
+function SameReadingCollapsible(props: { mode: "reading" | "expression" }) {
   const [$general] = useGeneralContext();
   const [$kanjiPage, $setKanjiPage] = useKanjiPageContext();
   const { ankiFields } = useAnkiFieldContext<"back">();
+
+  const symbol =
+    props.mode === "reading" ? $general.SAME_READING : $general.SAME_EXPRESSION;
+
+  const title = props.mode === "reading" ? "Same Reading" : "Same Expression";
+  const list =
+    props.mode === "reading"
+      ? $kanjiPage.sameReading
+      : $kanjiPage.sameExpression;
 
   const ExpressionFurigana = () => {
     if (ankiFields.Expression && ankiFields.ExpressionReading) {
@@ -169,7 +189,7 @@ function SameReadingCollapsible() {
   let ref: HTMLDivElement | undefined;
   onMount(() => {
     if (ref) {
-      if ($kanjiPage.focus.kanji === $general.SAME_READING) {
+      if ($kanjiPage.focus.kanji === symbol) {
         ref.scrollIntoView({ block: "center" });
       }
     }
@@ -177,14 +197,11 @@ function SameReadingCollapsible() {
 
   return (
     <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
-      <input
-        type="checkbox"
-        checked={$kanjiPage.focus.kanji === $general.SAME_READING}
-      />
+      <input type="checkbox" checked={$kanjiPage.focus.kanji === symbol} />
       <div class="collapse-title justify-between flex items-center ps-2 sm:ps-4 pe-2 sm:pe-4 py-2 sm:py-4">
         <span class="text-lg sm:text-2xl">
           <span class="text-base-content-calm" ref={ref}>
-            Same Reading
+            {title}
           </span>{" "}
           <span class="font-secondary">
             (
@@ -194,7 +211,7 @@ function SameReadingCollapsible() {
       </div>
       <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4">
         <ul class="list bg-base-100 rounded-box shadow-md">
-          <For each={$kanjiPage.sameReading ?? []}>
+          <For each={list ?? []}>
             {(data) => {
               return (
                 <AnkiNoteItem

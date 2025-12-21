@@ -16,6 +16,7 @@ export type ContextLabel = {
 type KanjiPageContextStore = {
   noteList: [string, AnkiNote[]][];
   sameReading?: AnkiNote[];
+  sameExpression?: AnkiNote[];
   focus: {
     kanji: string | symbol | undefined;
     noteId: number | undefined;
@@ -45,6 +46,7 @@ export function KanjiPageContextProvider(props: {
   children: JSX.Element;
   noteList: [string, AnkiNote[]][];
   sameReading?: AnkiNote[];
+  sameExpression?: AnkiNote[];
   focus: {
     kanji: string | symbol | undefined;
     noteId: number | undefined;
@@ -61,6 +63,7 @@ export function KanjiPageContextProvider(props: {
       noteList: props.noteList,
       contextLabel: props.contextLabel,
       sameReading: props.sameReading,
+      sameExpression: props.sameExpression,
       focus: {
         kanji: props.focus?.kanji,
         noteId: props.focus?.noteId,
