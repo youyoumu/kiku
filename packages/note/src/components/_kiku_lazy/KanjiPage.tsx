@@ -217,7 +217,7 @@ function SameReadingCollapsible(props: { mode: "reading" | "expression" }) {
                 <AnkiNoteItem
                   data={data}
                   reading={ankiFields.ExpressionReading}
-                  sameReadingSection
+                  mode={props.mode}
                 />
               );
             }}
@@ -231,7 +231,7 @@ function SameReadingCollapsible(props: { mode: "reading" | "expression" }) {
 function AnkiNoteItem(props: {
   data: AnkiNote;
   reading?: string;
-  sameReadingSection?: boolean;
+  mode?: "reading" | "expression";
 }) {
   const data = () => props.data;
   const reading = () => props.reading;
@@ -293,12 +293,17 @@ function AnkiNoteItem(props: {
       Tags: data().tags.join(" "),
     };
 
-    if (props.sameReadingSection) {
-      $setCard("focus", { kanji: $general.SAME_READING });
+    if (props.mode) {
+      if (props.mode === "reading") {
+        $setKanjiPage("focus", { kanji: $general.SAME_READING });
+      } else {
+        $setKanjiPage("focus", { kanji: $general.SAME_EXPRESSION });
+      }
     } else {
-      $setCard("focus", { kanji: $kanji.kanji });
+      $setKanjiPage("focus", { kanji: $kanji.kanji });
     }
-    $setCard("focus", { noteId: data().noteId });
+    $setKanjiPage("focus", { noteId: data().noteId });
+
     $setCard({ nestedAnkiFields: ankiFields });
     $setCard("nestedNoteId", data().noteId);
     navigate("nested", "forward", () => navigate("kanji", "back"));
