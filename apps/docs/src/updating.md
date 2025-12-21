@@ -9,7 +9,7 @@ Download the latest `Kiku_v*.apkg` from the [Release page](https://github.com/yo
 Before importing the `.apkg`, you need to delete all existing [Kiku files](./how-things-work.md#kiku-files).  
 This is required because Anki will not overwrite files that already exist.
 
-You may keep `_kiku_config.json` and `_kiku_plugin.js`.
+You may keep `_kiku_config.json`, `_kiku_plugin.js`, and `_kiku_plugin.css`.
 
 After that, import the `.apkg` into Anki as usual.
 
@@ -19,6 +19,6 @@ This ensures that the settings in the Front/Back/Styling templates are synced wi
 :::
 
 ::: tip
-You can delete all Kiku files except `_kiku_config.json` and `_kiku_plugin.js` by using Kiku Note Manager.
+You can delete all Kiku files except `_kiku_config.json`, `_kiku_plugin.js`, and `_kiku_plugin.css` by using Kiku Note Manager.
 Go to `Tools` > `Kiku Note Manager` > `Delete Kiku files`
 :::

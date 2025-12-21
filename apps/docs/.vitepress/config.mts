@@ -16,6 +16,10 @@ export default defineConfig({
         items: [
           { text: "Installation", link: "/installation" },
           {
+            text: "Updating Kiku",
+            link: "/updating",
+          },
+          {
             text: "Switching From Lapis",
             link: "/migration",
           },
@@ -33,10 +37,6 @@ export default defineConfig({
           {
             text: "Plugin",
             link: "/plugin",
-          },
-          {
-            text: "Updating Kiku",
-            link: "/updating",
           },
           {
             text: "How Things Work",
