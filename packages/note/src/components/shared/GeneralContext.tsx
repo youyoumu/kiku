@@ -19,6 +19,7 @@ type GeneralStore = {
   contentRef: HTMLDivElement | undefined;
   toast: Toast;
   SAME_READING: symbol;
+  SAME_EXPRESSION: symbol;
   lookupKanjiCache: Map<string, KanjiInfo | undefined>;
   nexClientPromise: PromiseWithResolvers<NexClient>;
   checkAnkiConnect: () => Promise<void>;
@@ -92,6 +93,7 @@ export function GeneralContextProvider(props: {
     contentRef: undefined,
     toast: { success, error, message: undefined, type: "success" },
     SAME_READING: Symbol.for("SAME_READING"),
+    SAME_EXPRESSION: Symbol.for("SAME_EXPRESSION"),
     lookupKanjiCache: new Map(),
     nexClientPromise: Promise.withResolvers(),
     checkAnkiConnect,

@@ -17,7 +17,6 @@ import {
   ArrowLeftIcon,
   BoltIcon,
   CircleChevronDownIcon,
-  GitPullRequestArrow,
   PaintbrushIcon,
 } from "./Icons";
 import MergeContextModal from "./MergeContextModal";
@@ -125,7 +124,9 @@ function KanjiPageIndicator() {
   const { navigate } = useNavigationTransition();
 
   const length = () =>
-    $card.query.noteList.length + ($card.query.sameReading?.length ? 1 : 0);
+    $card.query.noteList.length +
+    ($card.query.sameReading?.length ? 1 : 0) +
+    ($card.query.sameExpression?.length ? 1 : 0);
 
   const onClick = (key: string | symbol) => {
     const isKanjiResult = $card.query.noteList.length > 0;
@@ -183,6 +184,28 @@ function KanjiPageIndicator() {
     );
   }
 
+  function SameExpressionIndicator() {
+    return (
+      <div
+        class="flex gap-px sm:gap-0.5 items-start hover:text-base-content transition-colors"
+        on:click={() => {
+          onClick($general.SAME_EXPRESSION);
+        }}
+      >
+        <span>同</span>
+        <span
+          class="bg-base-content/5 leading-none text-xs sm:text-sm rounded-xs"
+          classList={{
+            "p-px": length() <= 4,
+            "p-0": length() > 4,
+          }}
+        >
+          {$card.query.sameExpression?.length ?? 0}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div
       class="flex sm:gap-2 items-center flex-wrap"
@@ -192,9 +215,19 @@ function KanjiPageIndicator() {
       }}
     >
       <KanjiIndicator />
-      <Show when={$card.query.sameReading?.length}>
+
+      <Show
+        when={
+          $card.query.sameReading?.length || $card.query.sameExpression?.length
+        }
+      >
         <span>•</span>
+      </Show>
+      <Show when={$card.query.sameReading?.length}>
         <SameReadingIndicator />
+      </Show>
+      <Show when={$card.query.sameExpression?.length}>
+        <SameExpressionIndicator />
       </Show>
     </div>
   );
