@@ -4,13 +4,11 @@ import { basename, join } from "node:path";
 class Script {
   BASE_DIR =
     process.platform === "win32"
-      ? process.env.APPDATA
+      ? (process.env.APPDATA ?? "")
       : join(process.env.HOME ?? "", ".local/share");
   USER = "yym"; // change if needed
-  ANKI_MEDIA_DIR = join(
-    this.BASE_DIR ?? "",
-    `Anki2/${this.USER}/collection.media`,
-  );
+  // USER = "User 1";
+  ANKI_MEDIA_DIR = join(this.BASE_DIR, `Anki2/${this.USER}/collection.media`);
 
   async ensureAnkiDir() {
     await stat(this.ANKI_MEDIA_DIR);

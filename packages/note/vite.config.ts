@@ -12,14 +12,11 @@ function serveAnkiCollectionMediaPlugin(): PluginOption {
     configureServer: async (server) => {
       const BASE_DIR =
         process.platform === "win32"
-          ? process.env.APPDATA
+          ? (process.env.APPDATA ?? "")
           : join(process.env.HOME ?? "", ".local/share");
       const USER = "yym";
       // const USER = "User 1";
-      const ANKI_MEDIA_DIR = join(
-        BASE_DIR || "",
-        `Anki2/${USER}/collection.media`,
-      );
+      const ANKI_MEDIA_DIR = join(BASE_DIR, `Anki2/${USER}/collection.media`);
       await stat(ANKI_MEDIA_DIR);
 
       //@ts-expect-error idk but it works

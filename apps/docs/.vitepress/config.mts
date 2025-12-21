@@ -7,6 +7,7 @@ export default defineConfig({
   title: "Kiku",
   description: "Modern Anki notes, built like web apps.",
   themeConfig: {
+    lastUpdated: {},
     // https://vitepress.dev/reference/default-theme-config
     nav: [{ text: "Home", link: "/" }],
 
@@ -41,6 +42,10 @@ export default defineConfig({
           {
             text: "How Things Work",
             link: "/how-things-work",
+          },
+          {
+            text: "Development",
+            link: "/development",
           },
         ],
       },
