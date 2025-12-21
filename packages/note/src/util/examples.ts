@@ -544,4 +544,38 @@ const exampleFields16: AnkiFields = {
   "kana:SentenceFurigana": ""
 }
 
-export const exampleFields = exampleFields15;
+// biome-ignore format: this looks nicer
+const exampleFields17: AnkiFields = {
+  "Expression": "おせち",
+  "ExpressionFurigana": "おせち",
+  "ExpressionReading": "おせち",
+  "ExpressionAudio": "<a class=\"replay-button soundLink\" href=\"#\" onclick=\"pycmd('play:a:0'); return false;\" draggable=\"false\">\n    <svg class=\"playImage\" viewBox=\"0 0 64 64\" version=\"1.1\">\n        <circle cx=\"32\" cy=\"32\" r=\"29\"></circle>\n        <path d=\"M56.502,32.301l-37.502,20.101l0.329,-40.804l37.173,20.703Z\"></path>\n    </svg>\n</a>",
+  "SelectionText": "",
+  "MainDefinition": "<div>\n</div>",
+  "DefinitionPicture": "<img alt=\"親子で覚えよう！おせち料理の種類やその意味って？ | PINTO | スタジオアリス\" src=\"paste-81ed7b0123e877aad7c3a0610a634944408ab5b1.jpg\" decoding=\"async\">",
+  "Sentence": "「ふふふっ、こんな時間だけど、帰ったらごはんにしようか。<b>おせち</b>たくさんあるから、好きなだけ食べてね」",
+  "SentenceFurigana": "<span class=\"term\">「</span><span class=\"term\">ふふふ</span><span class=\"term\">っ、こ</span><span class=\"term\">んな</span><span class=\"term\"><ruby>時間<rt>じかん</rt></ruby></span><span class=\"term\">だけど、</span><span class=\"term\"><ruby>帰<rt>かえ</rt></ruby>ったら</span><span class=\"term\">ごはん</span><span class=\"term\">にし</span><span class=\"term\">ようか</span><span class=\"term\"><ruby>。<rt>まる</rt></ruby></span><span class=\"term\">おせち</span><span class=\"term\">たくさん</span><span class=\"term\">あるから、</span><span class=\"term\"><ruby>好<rt>す</rt></ruby>きなだけ</span><span class=\"term\"><ruby>食<rt>た</rt></ruby>べて</span><span class=\"term\">ね</span><span class=\"term\">」</span>",
+  "SentenceAudio": "",
+  "Picture": "<img src=\"AmairoChocolata_2025-09-13-02-54-01-508.webp\" decoding=\"async\">",
+  "Glossary": "<div style=\"text-align: left;\" class=\"yomitan-glossary\"><i>(Pixiv [2024-08-01])</i> <span><div data-sc-pixiv=\"parent-link\" style=\"font-weight: bold;\"><details><summary><a href=\"#\"><span lang=\"ja\">←和食</span></a></summary><ul data-sc-pixiv=\"series\"><li><a href=\"#\"><span lang=\"ja\">日本料理</span></a></li><li><a href=\"#\"><span lang=\"ja\">料理</span></a></li><li><a href=\"#\"><span lang=\"ja\">食べ物</span></a></li><li><a href=\"#\"><span lang=\"ja\">食</span></a></li><li><a href=\"#\"><span lang=\"ja\">生活</span></a></li><li><a href=\"#\"><span lang=\"ja\">一般</span></a></li><li><a href=\"#\"><span lang=\"ja\">ピクシブ百科事典</span></a></li></ul></details></div><ul data-sc-pixiv=\"summary\"><li lang=\"ja\">正月に作られる料理の事。広くは節句に作られる料理全般を指す。</li></ul><div data-sc-pixiv=\"main-text-title\" lang=\"ja\" style=\"font-weight: bold;\">概要</div><ul data-sc-pixiv=\"main-text\" style=\"list-style-type: none;\"><li lang=\"ja\">内容は地方によって異なるが、エビ、昆布巻き、黒豆、数の子など。<br>正月に火を使う事を避ける風習からか、日持ちするものが多い。<br>エビは「腰が曲がるまで長生きできるように」、黒豆は「まめに働けるように」と<br>それぞれに縁起を担いだ由来がある。</li></ul><div data-sc-pixiv=\"related-tags\" style=\"margin-bottom: 0.4em;\"><div lang=\"ja\" style=\"font-weight: bold;\">関連記事</div><ul data-sc-pixiv=\"related-tags\" style=\"list-style-type: none;\"><div lang=\"ja\"><a href=\"#\"><span lang=\"ja\">ところてん</span></a>・<a href=\"#\"><span lang=\"ja\">寿司</span></a>・<a href=\"#\"><span lang=\"ja\">刺身</span></a>・<a href=\"#\"><span lang=\"ja\">うな重</span></a>・<a href=\"#\"><span lang=\"ja\">ねこまんま</span></a></div></ul></div><div data-sc-pixiv=\"footer\"><span data-sc-pixiv=\"read-more-link\"><a target=\"_blank\" rel=\"noreferrer noopener\" href=\"yomitan_dictionary_media_1_2025-08-12-19-53-55-066.png\" style=\"cursor:inherit;display:inline-block;position:relative;line-height:1;max-width:100%;color:inherit;vertical-align:middle;\"><span style=\"display:inline-block;white-space:nowrap;max-width:100%;max-height:100vh;position:relative;vertical-align:top;line-height:0;overflow:hidden;font-size:1px;font-size:1em;width: 1em;\"><span style=\"display:inline-block;width:0;vertical-align:top;font-size:0;padding-top: 100%;\"></span><span style=\"--image:none;position:absolute;left:0;top:0;width:100%;height:100%;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center center;-webkit-mask-mode:alpha;-webkit-mask-size:contain;-webkit-mask-image:var(--image);mask-repeat:no-repeat;mask-position:center center;mask-mode:alpha;mask-size:contain;mask-image:var(--image);background-color:currentColor;display:none;--image: url(&quot;yomitan_dictionary_media_1_2025-08-12-19-53-55-066.png&quot;);\"></span><span style=\"position:absolute;left:0;top:0;width:100%;height:100%;font-size:calc(1em * var(--font-size-no-units));line-height:var(--line-height);display:table;table-layout:fixed;white-space:normal;color:var(--text-color-light3);\"></span><img width=\"28\" height=\"28\" src=\"yomitan_dictionary_media_1_2025-08-12-19-53-55-066.png\" style=\"display:inline-block;vertical-align:top;object-fit:contain;border:none;outline:none;position:absolute;left:0;top:0;width:100%;height:100%;width: 100%; height: 100%;\" decoding=\"async\"></span><span style=\"display:none;line-height:var(--line-height);\">Image</span></a> <a href=\"https://dic.pixiv.net/a/おせち\"><span lang=\"ja\">pixivで読む</span><span style=\"display:none;\"></span></a></span></div></span></div>",
+  "Hint": "",
+  "IsWordAndSentenceCard": "",
+  "IsClickCard": "",
+  "IsSentenceCard": "",
+  "IsAudioCard": "",
+  "PitchPosition": "",
+  "PitchCategories": "",
+  "Frequency": "<ul style=\"text-align: left;\"><li>SoL: 8371</li><li>Shonen: 25238</li><li>Youtube: 15520</li><li>JPDBv2㋕: 44187㋕</li></ul>",
+  "FreqSort": "16250",
+  "MiscInfo": "",
+  "Tags": "Game::AmairoChocolata GSM yomitan",
+  "CardID": "1757706835786",
+  "furigana:ExpressionFurigana": "おせち",
+  "kana:ExpressionFurigana": "おせち",
+  "furigana:Sentence": "「ふふふっ、こんな時間だけど、帰ったらごはんにしようか。<b>おせち</b>たくさんあるから、好きなだけ食べてね」",
+  "kanji:Sentence": "「ふふふっ、こんな時間だけど、帰ったらごはんにしようか。<b>おせち</b>たくさんあるから、好きなだけ食べてね」",
+  "furigana:SentenceFurigana": "<span class=\"term\">「</span><span class=\"term\">ふふふ</span><span class=\"term\">っ、こ</span><span class=\"term\">んな</span><span class=\"term\"><ruby>時間<rt>じかん</rt></ruby></span><span class=\"term\">だけど、</span><span class=\"term\"><ruby>帰<rt>かえ</rt></ruby>ったら</span><span class=\"term\">ごはん</span><span class=\"term\">にし</span><span class=\"term\">ようか</span><span class=\"term\"><ruby>。<rt>まる</rt></ruby></span><span class=\"term\">おせち</span><span class=\"term\">たくさん</span><span class=\"term\">あるから、</span><span class=\"term\"><ruby>好<rt>す</rt></ruby>きなだけ</span><span class=\"term\"><ruby>食<rt>た</rt></ruby>べて</span><span class=\"term\">ね</span><span class=\"term\">」</span>",
+  "kana:SentenceFurigana": "<span class=\"term\">「</span><span class=\"term\">ふふふ</span><span class=\"term\">っ、こ</span><span class=\"term\">んな</span><span class=\"term\"><ruby>時間<rt>じかん</rt></ruby></span><span class=\"term\">だけど、</span><span class=\"term\"><ruby>帰<rt>かえ</rt></ruby>ったら</span><span class=\"term\">ごはん</span><span class=\"term\">にし</span><span class=\"term\">ようか</span><span class=\"term\"><ruby>。<rt>まる</rt></ruby></span><span class=\"term\">おせち</span><span class=\"term\">たくさん</span><span class=\"term\">あるから、</span><span class=\"term\"><ruby>好<rt>す</rt></ruby>きなだけ</span><span class=\"term\"><ruby>食<rt>た</rt></ruby>べて</span><span class=\"term\">ね</span><span class=\"term\">」</span>"
+}
+
+export const exampleFields = exampleFields17;

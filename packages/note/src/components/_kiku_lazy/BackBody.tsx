@@ -19,14 +19,13 @@ export default function BackBody(props: {
   let definitionEl: HTMLDivElement | undefined;
   const { ankiFields } = useAnkiFieldContext<"back">();
   const [$config] = useConfigContext();
-  //TODO: refactor this
-  const [definitionPage, setDefinitionPage] = createSignal(
-    ankiFields.SelectionText
-      ? 0
-      : isHtmlEffectivelyEmpty(ankiFields.MainDefinition)
-        ? 2
-        : 1,
-  );
+
+  const initPage = () => {
+    if (ankiFields.SelectionText) return 0;
+    if (!isHtmlEffectivelyEmpty(ankiFields.MainDefinition)) return 1;
+    return 2;
+  };
+  const [definitionPage, setDefinitionPage] = createSignal(initPage());
   const [definitionPicture, setDefinitionPicture] = createSignal<string>();
 
   const pages = [
@@ -35,7 +34,9 @@ export default function BackBody(props: {
     ankiFields.Glossary,
   ];
 
-  const pagesWithContent = pages.filter((page) => page?.trim());
+  const pagesWithContent = pages.filter(
+    (page) => !isHtmlEffectivelyEmpty(page?.trim()),
+  );
 
   const pageType = () => {
     if (definitionPage() === 0) return "Selection Text";
@@ -47,7 +48,7 @@ export default function BackBody(props: {
     setDefinitionPage((prev) => {
       let next = (prev + direction + pages.length) % pages.length;
       for (let i = 0; i < pages.length; i++) {
-        if (pages[next]?.trim()) break;
+        if (!isHtmlEffectivelyEmpty(pages[next]?.trim())) break;
         next = (next + direction + pages.length) % pages.length;
       }
       return next;
