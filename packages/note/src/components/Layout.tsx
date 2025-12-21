@@ -11,7 +11,7 @@ export function Layout(props: { children: JSX.Element }) {
       class="font-primary transition-colors relative"
     >
       <div
-        class="flex flex-col gap-6 p-2 sm:p-4 bg-base-100 min-h-full max-w-4xl mx-auto pt-10 sm:pt-14"
+        class="flex flex-col gap-6 p-2 sm:p-4 bg-base-100 min-h-full mx-auto pt-10 sm:pt-14 layout-max-width"
         ref={(ref) => $setGeneral("contentRef", ref)}
       >
         {props.children}

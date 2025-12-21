@@ -56,3 +56,7 @@
     line-height: var(--line-height-sm-hint);
   }
 }
+
+.layout-max-width {
+  max-width: var(--layout-max-width);
+}

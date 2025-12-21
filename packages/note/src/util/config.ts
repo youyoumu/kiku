@@ -33,6 +33,7 @@ export type KikuConfig = {
   fontSizeSmSentence: TailwindSize;
   fontSizeSmMiscInfo: TailwindSize;
   fontSizeSmHint: TailwindSize;
+  layoutMaxWidth: TailwindContainerSize;
 };
 
 //biome-ignore format: this looks nicer
@@ -54,6 +55,15 @@ export const tailwindFontSizeVar = {
   "8xl": { fontSize: "var(--text-8xl)", lineHeight: "var(--text-8xl--line-height)", },
   "9xl": { fontSize: "var(--text-9xl)", lineHeight: "var(--text-9xl--line-height)", },
 } as const;
+
+export const tailwindContainerSize = ["4xl", "5xl", "6xl", "7xl"] as const;
+export type TailwindContainerSize = (typeof tailwindContainerSize)[number];
+export const tailwindContainerSizeVar = {
+  "4xl": { maxWidth: "var(--container-4xl)" },
+  "5xl": { maxWidth: "var(--container-5xl)" },
+  "6xl": { maxWidth: "var(--container-6xl)" },
+  "7xl": { maxWidth: "var(--container-7xl)" },
+};
 
 const rootDatasetArray = ["theme", "blurNsfw", "modVertical"] as const;
 export type RootDatasetKey = (typeof rootDatasetArray)[number];
@@ -108,6 +118,8 @@ export function validateConfig(config: KikuConfig): KikuConfig {
       fontSizeSmSentence: tailwindSize.includes(config.fontSizeSmSentence) ? config.fontSizeSmSentence : defaultConfig.fontSizeSmSentence,
       fontSizeSmMiscInfo: tailwindSize.includes(config.fontSizeSmMiscInfo) ? config.fontSizeSmMiscInfo : defaultConfig.fontSizeSmMiscInfo,
       fontSizeSmHint: tailwindSize.includes(config.fontSizeSmHint) ? config.fontSizeSmHint : defaultConfig.fontSizeSmHint,
+
+      layoutMaxWidth: tailwindContainerSize.includes(config.layoutMaxWidth) ? config.layoutMaxWidth : defaultConfig.layoutMaxWidth,
     };
 
     return valid;
@@ -141,6 +153,8 @@ export type CssVar = {
   "--line-height-sm-misc-info": string;
   "--font-size-sm-hint": string;
   "--line-height-sm-hint": string;
+
+  "--layout-max-width": string;
 };
 
 // biome-ignore format: this looks nicer
@@ -187,6 +201,8 @@ export function getCssVar(config: KikuConfig) {
     "--line-height-sm-misc-info": tailwindFontSizeVar[config.fontSizeSmMiscInfo].lineHeight,
     "--font-size-sm-hint": tailwindFontSizeVar[config.fontSizeSmHint].fontSize,
     "--line-height-sm-hint": tailwindFontSizeVar[config.fontSizeSmHint].lineHeight,
+
+    "--layout-max-width": tailwindContainerSizeVar[config.layoutMaxWidth].maxWidth,
   };
 
   return cssVar;

@@ -32,4 +32,5 @@ export const defaultConfig: KikuConfig = {
   fontSizeSmSentence: "4xl",
   fontSizeSmMiscInfo: "sm",
   fontSizeSmHint: "2xl",
+  layoutMaxWidth: "4xl",
 };

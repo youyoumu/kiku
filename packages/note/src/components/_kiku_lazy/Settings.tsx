@@ -110,7 +110,7 @@ export default function Settings() {
               absolute: KIKU_STATE.isAnkiWeb,
             }}
           >
-            <div class="max-w-4xl mx-auto w-full relative">
+            <div class="mx-auto w-full relative layout-max-width">
               <div class="flex flex-row gap-2 justify-end animate-fade-in mb-4 px-2 sm:px-4">
                 <button class="btn" on:click={() => navigateBack()}>
                   Back
