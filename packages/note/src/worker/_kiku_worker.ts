@@ -32,25 +32,28 @@ const AnkiConnect = {
     return result;
   },
 
-  // Generalized search for Expression:*X* OR Reading:*Y*
   queryFieldContains: async ({
     kanjiList,
     readingList,
+    expressionList,
   }: {
     kanjiList?: string[];
     readingList?: string[];
+    expressionList?: string[];
   }) => {
     const kanjiListResult: Record<string, AnkiNote[]> = {};
     const readingListResult: Record<string, AnkiNote[]> = {};
+    const expressionListResult: Record<string, AnkiNote[]> = {};
 
-    // --- search kanji ---
+    const noteFilter = `("note:Kiku" OR "note:Lapis")`;
+
+    // --- search kanji (contains) ---
     if (kanjiList) {
       for (const kanji of kanjiList) {
-        const query = `("note:Kiku" OR "note:Lapis") AND "Expression:*${kanji}*"`;
+        const query = `${noteFilter} AND "Expression:*${kanji}*"`;
 
         const idsRes = await AnkiConnect.invoke("findNotes", { query });
         const ids: number[] = idsRes.result ?? [];
-
         if (ids.length === 0) continue;
 
         const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
@@ -58,14 +61,13 @@ const AnkiConnect = {
       }
     }
 
-    // --- search reading ---
+    // --- search reading (exact) ---
     if (readingList) {
       for (const reading of readingList) {
-        const query = `("note:Kiku" OR "note:Lapis") AND "ExpressionReading:${reading}"`;
+        const query = `${noteFilter} AND "ExpressionReading:${reading}"`;
 
         const idsRes = await AnkiConnect.invoke("findNotes", { query });
         const ids: number[] = idsRes.result ?? [];
-
         if (ids.length === 0) continue;
 
         const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
@@ -73,7 +75,25 @@ const AnkiConnect = {
       }
     }
 
-    return { kanjiListResult, readingListResult };
+    // --- search expression (exact) ---
+    if (expressionList) {
+      for (const expression of expressionList) {
+        const query = `${noteFilter} AND "Expression:${expression}"`;
+
+        const idsRes = await AnkiConnect.invoke("findNotes", { query });
+        const ids: number[] = idsRes.result ?? [];
+        if (ids.length === 0) continue;
+
+        const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
+        expressionListResult[expression] = notesRes.result ?? [];
+      }
+    }
+
+    return {
+      kanjiListResult,
+      readingListResult,
+      expressionListResult,
+    };
   },
 };
 
@@ -112,18 +132,22 @@ export class Nex {
   async query({
     kanjiList,
     readingList,
+    expressionList,
   }: {
     kanjiList: string[];
     readingList: string[];
+    expressionList: string[];
   }) {
     const queryWithNotesCache = async () => {
       const kanjiListResult: Record<string, AnkiNote[]> = {};
       const readingListResult: Record<string, AnkiNote[]> = {};
+      const expressionListResult: Record<string, AnkiNote[]> = {};
 
       const manifest = await this.notesManifest();
 
       const kanjiSet = new Set(kanjiList);
       const readingSet = new Set(readingList);
+      const expressionSet = new Set(expressionList);
 
       for (const chunk of manifest.chunks) {
         let notes = this.chunkCache.get(chunk.file);
@@ -140,29 +164,33 @@ export class Nex {
           const expr = note.fields.Expression.value;
           const reading = note.fields.ExpressionReading?.value ?? "";
 
-          // ------- Kanji Search -------
-          if (kanjiSet) {
-            for (const kanji of kanjiSet) {
-              if (expr.includes(kanji)) {
-                kanjiListResult[kanji] ??= [];
-                kanjiListResult[kanji].push(note);
-              }
+          // ------- Kanji Search (contains) -------
+          for (const kanji of kanjiSet) {
+            if (expr.includes(kanji)) {
+              kanjiListResult[kanji] ??= [];
+              kanjiListResult[kanji].push(note);
             }
           }
 
-          // ------- Reading Search -------
-          if (readingSet) {
-            for (const readingStr of readingSet) {
-              if (reading === readingStr) {
-                readingListResult[readingStr] ??= [];
-                readingListResult[readingStr].push(note);
-              }
-            }
+          // ------- Reading Search (exact) -------
+          if (readingSet.has(reading)) {
+            readingListResult[reading] ??= [];
+            readingListResult[reading].push(note);
+          }
+
+          // ------- Expression Search (exact) -------
+          if (expressionSet.has(expr)) {
+            expressionListResult[expr] ??= [];
+            expressionListResult[expr].push(note);
           }
         }
       }
 
-      return { kanjiListResult, readingListResult };
+      return {
+        kanjiListResult,
+        readingListResult,
+        expressionListResult,
+      };
     };
 
     if (this.preferAnkiConnect) {
@@ -171,6 +199,7 @@ export class Nex {
         return await AnkiConnect.queryFieldContains({
           kanjiList,
           readingList,
+          // expressionList intentionally not passed yet
         });
       } catch {
         logger.warn(
@@ -190,28 +219,32 @@ export class Nex {
       return await AnkiConnect.queryFieldContains({
         kanjiList,
         readingList,
+        // expressionList intentionally not passed yet
       });
     }
   }
-
   debounceTimer: number | null = null;
   debounceMs = 200;
   async queryShared({
     kanjiList,
     readingList,
+    expressionList,
     ankiFields,
   }: {
     kanjiList: string[];
     readingList?: string[];
+    expressionList?: string[];
     ankiFields: AnkiFields;
   }) {
     return new Promise<{
       kanjiResult: Record<string, AnkiNote[]>;
       readingResult: Record<string, AnkiNote[]>;
+      expressionResult: Record<string, AnkiNote[]>;
     }>((resolve) => {
       this.pendingQueryShared.push({
         kanjiList,
         readingList: readingList ?? [],
+        expressionList: expressionList ?? [],
         ankiFields,
         resolve,
       });
@@ -226,10 +259,12 @@ export class Nex {
   pendingQueryShared: {
     kanjiList: string[];
     readingList: string[];
+    expressionList: string[];
     ankiFields: AnkiFields;
     resolve: (v: {
       kanjiResult: Record<string, AnkiNote[]>;
       readingResult: Record<string, AnkiNote[]>;
+      expressionResult: Record<string, AnkiNote[]>;
     }) => void;
   }[] = [];
 
@@ -241,14 +276,21 @@ export class Nex {
     const batchedReadingList = [
       ...new Set(requests.flatMap((r) => r.readingList)),
     ];
+    const batchedExpressionList = [
+      ...new Set(requests.flatMap((r) => r.expressionList)),
+    ];
 
-    const { kanjiListResult, readingListResult } = await this.query({
-      kanjiList: batchedKanjiList,
-      readingList: batchedReadingList,
-    });
+    const { kanjiListResult, readingListResult, expressionListResult } =
+      await this.query({
+        kanjiList: batchedKanjiList,
+        readingList: batchedReadingList,
+        expressionList: batchedExpressionList,
+      });
 
     for (const req of requests) {
-      const { kanjiList, readingList, ankiFields } = req;
+      const { kanjiList, readingList, expressionList, ankiFields } = req;
+
+      //TODO: use card id to filter
       const filterSameNote = (note: AnkiNote) => {
         if (
           note.fields.Expression.value === ankiFields.Expression &&
@@ -260,12 +302,14 @@ export class Nex {
         return true;
       };
 
+      // --- kanji ---
       const kanjiResult: Record<string, AnkiNote[]> = {};
       for (const kanji of kanjiList) {
         kanjiResult[kanji] =
           kanjiListResult[kanji]?.filter(filterSameNote) ?? [];
       }
 
+      // --- reading ---
       const readingResult: Record<string, AnkiNote[]> = {};
       for (const reading of readingList) {
         readingResult[reading] =
@@ -276,7 +320,18 @@ export class Nex {
             ) ?? [];
       }
 
-      req.resolve({ kanjiResult, readingResult });
+      // --- expression ---
+      const expressionResult: Record<string, AnkiNote[]> = {};
+      for (const expression of expressionList) {
+        expressionResult[expression] =
+          expressionListResult[expression]?.filter(filterSameNote) ?? [];
+      }
+
+      req.resolve({
+        kanjiResult,
+        readingResult,
+        expressionResult,
+      });
     }
   }
 

@@ -114,6 +114,10 @@ export function useKanji() {
       const readingList = ankiFields.ExpressionReading
         ? [ankiFields.ExpressionReading]
         : [];
+      const expressionList = ankiFields.Expression
+        ? [ankiFields.Expression]
+        : [];
+
       const nexClient = new NexClient({
         env: env,
         config: unwrap($config),
@@ -124,17 +128,21 @@ export function useKanji() {
       KIKU_STATE.nexClient = nexClient;
       $general.nexClientPromise.resolve(nexClient);
       const nex = await nexClient.nex;
-      const { kanjiResult, readingResult } = await nex.queryShared({
-        kanjiList,
-        readingList,
-        ankiFields: unwrap(ankiFields),
-      });
+      const { kanjiResult, readingResult, expressionResult } =
+        await nex.queryShared({
+          kanjiList,
+          readingList,
+          ankiFields: unwrap(ankiFields),
+          expressionList,
+        });
+
       if ($general.aborter.signal.aborted) return;
 
       $setCard("query", {
         status: "success",
         noteList: Object.entries(kanjiResult),
         sameReading: readingResult[ankiFields.ExpressionReading],
+        sameExpression: expressionResult[ankiFields.Expression],
       });
 
       nex
