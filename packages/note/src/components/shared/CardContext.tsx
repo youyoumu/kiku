@@ -5,8 +5,8 @@ import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 
 type Query = {
   status: "loading" | "success" | "error";
-  kanji: Record<string, AnkiNote[]>;
   sameReading: AnkiNote[] | undefined;
+  sameExpression: AnkiNote[] | undefined;
   noteList: [string, AnkiNote[]][];
 };
 
@@ -58,8 +58,8 @@ export function CardStoreContextProvider(props: {
     pictureModal: undefined,
     query: {
       status: "loading",
-      kanji: {},
       sameReading: undefined,
+      sameExpression: undefined,
       noteList: [],
     },
     focus: {

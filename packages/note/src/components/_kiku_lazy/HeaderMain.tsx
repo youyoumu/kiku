@@ -125,23 +125,20 @@ function KanjiPageIndicator() {
   const { navigate } = useNavigationTransition();
 
   const length = () =>
-    Object.entries($card.query.kanji).length +
-    ($card.query.sameReading?.length ? 1 : 0);
+    $card.query.noteList.length + ($card.query.sameReading?.length ? 1 : 0);
 
   const onClick = (key: string | symbol) => {
-    const isKanjiResult = Object.keys($card.query.kanji).length > 0;
+    const isKanjiResult = $card.query.noteList.length > 0;
     const isSameReadingResult = ($card.query.sameReading?.length ?? 0) > 0;
     if (isKanjiResult || isSameReadingResult) {
       $setCard("focus", "kanji", key);
-      const list = Object.entries($card.query.kanji);
-      $setCard("query", "noteList", list);
       $setCard("uniqueId", createUniqueId());
       navigate("kanji", "forward", () => navigate("main", "back"));
     }
   };
 
   function KanjiIndicator() {
-    return Object.entries($card.query.kanji).map(([kanji, data]) => {
+    return $card.query.noteList.map(([kanji, data]) => {
       return (
         <div
           class="flex gap-px sm:gap-0.5 items-start hover:text-base-content transition-colors"

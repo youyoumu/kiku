@@ -133,7 +133,7 @@ export function useKanji() {
 
       $setCard("query", {
         status: "success",
-        kanji: kanjiResult,
+        noteList: Object.entries(kanjiResult),
         sameReading: readingResult[ankiFields.ExpressionReading],
       });
 
