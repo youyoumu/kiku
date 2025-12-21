@@ -37,9 +37,9 @@ const AnkiConnect = {
     readingList,
     expressionList,
   }: {
-    kanjiList?: string[];
-    readingList?: string[];
-    expressionList?: string[];
+    kanjiList: string[];
+    readingList: string[];
+    expressionList: string[];
   }) => {
     const kanjiListResult: Record<string, AnkiNote[]> = {};
     const readingListResult: Record<string, AnkiNote[]> = {};
@@ -48,45 +48,33 @@ const AnkiConnect = {
     const noteFilter = `("note:Kiku" OR "note:Lapis")`;
 
     // --- search kanji (contains) ---
-    if (kanjiList) {
-      for (const kanji of kanjiList) {
-        const query = `${noteFilter} AND "Expression:*${kanji}*"`;
-
-        const idsRes = await AnkiConnect.invoke("findNotes", { query });
-        const ids: number[] = idsRes.result ?? [];
-        if (ids.length === 0) continue;
-
-        const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
-        kanjiListResult[kanji] = notesRes.result ?? [];
-      }
+    for (const kanji of kanjiList) {
+      const query = `${noteFilter} AND "Expression:*${kanji}*"`;
+      const idsRes = await AnkiConnect.invoke("findNotes", { query });
+      const ids: number[] = idsRes.result ?? [];
+      if (ids.length === 0) continue;
+      const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
+      kanjiListResult[kanji] = notesRes.result ?? [];
     }
 
     // --- search reading (exact) ---
-    if (readingList) {
-      for (const reading of readingList) {
-        const query = `${noteFilter} AND "ExpressionReading:${reading}"`;
-
-        const idsRes = await AnkiConnect.invoke("findNotes", { query });
-        const ids: number[] = idsRes.result ?? [];
-        if (ids.length === 0) continue;
-
-        const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
-        readingListResult[reading] = notesRes.result ?? [];
-      }
+    for (const reading of readingList) {
+      const query = `${noteFilter} AND "ExpressionReading:${reading}"`;
+      const idsRes = await AnkiConnect.invoke("findNotes", { query });
+      const ids: number[] = idsRes.result ?? [];
+      if (ids.length === 0) continue;
+      const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
+      readingListResult[reading] = notesRes.result ?? [];
     }
 
     // --- search expression (exact) ---
-    if (expressionList) {
-      for (const expression of expressionList) {
-        const query = `${noteFilter} AND "Expression:${expression}"`;
-
-        const idsRes = await AnkiConnect.invoke("findNotes", { query });
-        const ids: number[] = idsRes.result ?? [];
-        if (ids.length === 0) continue;
-
-        const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
-        expressionListResult[expression] = notesRes.result ?? [];
-      }
+    for (const expression of expressionList) {
+      const query = `${noteFilter} AND "Expression:${expression}"`;
+      const idsRes = await AnkiConnect.invoke("findNotes", { query });
+      const ids: number[] = idsRes.result ?? [];
+      if (ids.length === 0) continue;
+      const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
+      expressionListResult[expression] = notesRes.result ?? [];
     }
 
     return {
@@ -199,7 +187,7 @@ export class Nex {
         return await AnkiConnect.queryFieldContains({
           kanjiList,
           readingList,
-          // expressionList intentionally not passed yet
+          expressionList,
         });
       } catch {
         logger.warn(
@@ -219,7 +207,7 @@ export class Nex {
       return await AnkiConnect.queryFieldContains({
         kanjiList,
         readingList,
-        // expressionList intentionally not passed yet
+        expressionList,
       });
     }
   }
