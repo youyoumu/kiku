@@ -32,6 +32,14 @@ If defined, this component will replace the default `Sentence` component.
 
 <<< ../../../packages/note/src/plugins/Sentence.js
 
+## Footer
+
+If defined, this component will replace the default `Footer` component.
+
+### Example
+
+<<< ../../../packages/note/src/plugins/Footer.js
+
 ## Pitch
 
 If defined, this component will replace the default `Pitch` component.
