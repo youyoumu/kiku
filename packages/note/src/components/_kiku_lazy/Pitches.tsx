@@ -2,7 +2,7 @@ import { ErrorBoundary, Show } from "solid-js";
 import { hatsuon, type PitchInfo } from "#/components/_kiku_lazy/util/hatsuon";
 import { useCardContext } from "#/components/shared/CardContext";
 import type { DatasetProp } from "#/util/config";
-import { parseHtml } from "#/util/general";
+import { parseHtml, unique } from "#/util/general";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useCtxContext } from "../shared/CtxContext";
 import { useGeneralContext } from "../shared/GeneralContext";
@@ -12,13 +12,15 @@ export default function Pitches() {
   const { ankiFields } = useAnkiFieldContext<"back">();
 
   const pitchPositionDoc = parseHtml(ankiFields.PitchPosition);
-  const pitchNumber = Array.from(pitchPositionDoc.querySelectorAll("span"))
-    .filter((el) => {
-      return !Number.isNaN(Number(el.innerText));
-    })
-    .map((el) => {
-      return Number(el.innerText);
-    });
+  const pitchNumber = unique(
+    Array.from(pitchPositionDoc.querySelectorAll("span"))
+      .filter((el) => {
+        return !Number.isNaN(Number(el.innerText));
+      })
+      .map((el) => {
+        return Number(el.innerText);
+      }),
+  );
   KIKU_STATE.logger.info("Detected pitch number:", pitchNumber);
 
   const kana = () => {
