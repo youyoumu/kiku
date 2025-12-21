@@ -578,4 +578,4 @@ const exampleFields17: AnkiFields = {
   "kana:SentenceFurigana": "<span class=\"term\">「</span><span class=\"term\">ふふふ</span><span class=\"term\">っ、こ</span><span class=\"term\">んな</span><span class=\"term\"><ruby>時間<rt>じかん</rt></ruby></span><span class=\"term\">だけど、</span><span class=\"term\"><ruby>帰<rt>かえ</rt></ruby>ったら</span><span class=\"term\">ごはん</span><span class=\"term\">にし</span><span class=\"term\">ようか</span><span class=\"term\"><ruby>。<rt>まる</rt></ruby></span><span class=\"term\">おせち</span><span class=\"term\">たくさん</span><span class=\"term\">あるから、</span><span class=\"term\"><ruby>好<rt>す</rt></ruby>きなだけ</span><span class=\"term\"><ruby>食<rt>た</rt></ruby>べて</span><span class=\"term\">ね</span><span class=\"term\">」</span>"
 }
 
-export const exampleFields = exampleFields17;
+export const exampleFields = exampleFields15;

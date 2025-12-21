@@ -290,23 +290,21 @@ export class Nex {
     for (const req of requests) {
       const { kanjiList, readingList, expressionList, ankiFields } = req;
 
-      //TODO: use card id to filter
       const filterSameNote = (note: AnkiNote) => {
-        if (
-          note.fields.Expression.value === ankiFields.Expression &&
-          note.fields.Sentence.value === ankiFields.Sentence &&
-          note.fields.Hint.value === ankiFields.Hint &&
-          note.fields.MiscInfo.value === ankiFields.MiscInfo
-        )
-          return false;
+        if (note.cards.includes(Number(ankiFields.CardID))) return false;
         return true;
+      };
+      const filterSameExpression = (note: AnkiNote) => {
+        return note.fields.Expression.value !== ankiFields.Expression;
       };
 
       // --- kanji ---
       const kanjiResult: Record<string, AnkiNote[]> = {};
       for (const kanji of kanjiList) {
         kanjiResult[kanji] =
-          kanjiListResult[kanji]?.filter(filterSameNote) ?? [];
+          kanjiListResult[kanji]
+            ?.filter(filterSameNote)
+            .filter(filterSameExpression) ?? [];
       }
 
       // --- reading ---
@@ -315,9 +313,7 @@ export class Nex {
         readingResult[reading] =
           readingListResult[reading]
             ?.filter(filterSameNote)
-            .filter(
-              (n) => n.fields.Expression.value !== ankiFields.Expression,
-            ) ?? [];
+            .filter(filterSameExpression) ?? [];
       }
 
       // --- expression ---

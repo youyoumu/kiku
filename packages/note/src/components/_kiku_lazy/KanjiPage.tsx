@@ -300,6 +300,8 @@ function AnkiNoteItem(props: {
           return [key, value.value];
         }),
       ),
+      // TODO: I'm not sure how to handle if the note has multiple cards
+      CardID: data().cards[0]?.toString() ?? "",
       Tags: data().tags.join(" "),
     };
 
