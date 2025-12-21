@@ -13,7 +13,9 @@ import {
   type KikuConfig,
   type RootDatasetKey,
   rootDatasetConfigWhitelist,
+  type TailwindContainerSize,
   type TailwindSize,
+  tailwindContainerSize,
   tailwindFontSizeVar,
   tailwindSize,
 } from "#/util/config";
@@ -257,6 +259,34 @@ function GeneralSettings() {
               }}
             />
           </label>
+        </fieldset>
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Layout Max Width</legend>
+          <input
+            on:change={(e) => {
+              const target = e.target as HTMLInputElement;
+              const value = tailwindContainerSize[
+                Number(target.value)
+              ] as TailwindContainerSize;
+              $setConfig("layoutMaxWidth", value);
+            }}
+            type="range"
+            min="0"
+            max={(tailwindContainerSize.length - 1).toString()}
+            value={tailwindContainerSize
+              .indexOf($config.layoutMaxWidth)
+              .toString()}
+            class="range w-full range-sm"
+            step="1"
+          />
+          <div class="flex justify-between px-2.5 text-xs">
+            <For each={tailwindContainerSize}>{(_) => <span>|</span>}</For>
+          </div>
+          <div class="flex justify-between px-2.5 text-xs">
+            <For each={tailwindContainerSize}>
+              {(label) => <span>{label}</span>}
+            </For>
+          </div>
         </fieldset>
       </div>
     </div>
