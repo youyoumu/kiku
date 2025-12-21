@@ -1,4 +1,4 @@
-import { For, Match, onMount, Show, Switch } from "solid-js";
+import { createSignal, For, Match, onMount, Show, Switch } from "solid-js";
 import { useCardContext } from "#/components/shared/CardContext";
 import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
@@ -124,15 +124,25 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
   const [$kanjiPage, $setKanjiPage] = useKanjiPageContext();
   const [$kanji, $setKanji] = useKanjiContext();
   const data = () => props.data;
+  const [checked, setChecked] = createSignal(
+    $kanjiPage.focus.kanji === $kanji.kanji,
+  );
 
-  //TODO: better ux to expand/collapse
   return (
     <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
       <input
         type="checkbox"
-        checked={$kanjiPage.focus.kanji === $kanji.kanji}
+        checked={checked()}
+        onChange={(e) => {
+          setChecked(e.currentTarget.checked);
+        }}
       />
-      <div class="collapse-title justify-between flex items-center ps-2 sm:ps-4 pe-2 sm:pe-4 py-2 sm:py-4">
+      <div
+        class="collapse-title justify-between flex items-center ps-2 sm:ps-4 pe-2 sm:pe-4 py-2 sm:py-4"
+        on:click={() => {
+          setChecked(!checked());
+        }}
+      >
         <KanjiText />
         <Show when={$kanji.status === "loading"}>
           <div class="absolute top-2 right-2 sm:top-4 sm:right-4 loading loading-sm text-base-content-soft animate-fade-in-sm"></div>
