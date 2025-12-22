@@ -291,10 +291,16 @@ function KanjiKeyword(props: {
     $kanji.kanjiInfo?.wkMeaning
       ? $kanji.kanjiInfo?.wkMeaning
       : $kanji.kanjiInfo?.keyword;
+  const ready = () => !!props.noteList;
 
   return (
     <div
       class="inline-flex border border-base-content-subtle-100 transition-colors hover:border-base-content-subtle-200"
+      classList={{
+        "cursor-pointer": ready(),
+        "text-base-content-calm": ready(),
+        "text-base-content-soft": !ready(),
+      }}
       on:click={props.onClick}
     >
       <div class=" px-1 text-lg sm:text-xl">{$kanji.kanji}</div>
