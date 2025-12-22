@@ -1,4 +1,12 @@
-import { createSignal, For, Match, onMount, Show, Switch } from "solid-js";
+import {
+  createEffect,
+  createSignal,
+  For,
+  Match,
+  onMount,
+  Show,
+  Switch,
+} from "solid-js";
 import { useCardContext } from "#/components/shared/CardContext";
 import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
@@ -82,7 +90,7 @@ function Page() {
           <For each={$kanjiPage.noteList}>
             {([kanji, data]) => {
               return (
-                <KanjiContextProvider kanji={kanji} fetchNotes>
+                <KanjiContextProvider kanji={kanji}>
                   <KanjiCollapsible data={data} />
                 </KanjiContextProvider>
               );
@@ -128,6 +136,10 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
     $kanjiPage.focus.kanji === $kanji.kanji,
   );
 
+  createEffect(() => {
+    if (checked()) $kanji.fetchNotes();
+  });
+
   return (
     <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
       <input
@@ -144,14 +156,14 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
         }}
       >
         <KanjiText />
-        <Show when={$kanji.status === "loading"}>
-          <div class="absolute top-2 right-2 sm:top-4 sm:right-4 loading loading-sm text-base-content-soft animate-fade-in-sm"></div>
-        </Show>
-        <Show when={$kanji.status === "success"}>
-          <div class="absolute top-2 right-2 sm:top-4 sm:right-4 text-base-content-soft bg-base-300 px-1 rounded-xs animate-fade-in-sm text-sm sm:text-base">
+        <div class="flex gap-1 sm:gap-2 absolute top-2 right-2 sm:top-4 sm:right-4">
+          <Show when={$kanji.status === "loading"}>
+            <div class="loading loading-sm text-base-content-soft animate-fade-in-sm"></div>
+          </Show>
+          <div class="text-base-content-soft bg-base-300 px-1 rounded-xs animate-fade-in-sm text-sm sm:text-base">
             {data().length}
           </div>
-        </Show>
+        </div>
       </div>
 
       <div class="collapse-content text-sm px-2 sm:px-4 pb-2 sm:pb-4 flex flex-col gap-1 sm:gap-2">
