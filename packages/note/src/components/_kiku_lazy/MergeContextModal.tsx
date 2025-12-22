@@ -26,6 +26,7 @@ export default function MergeContextModal() {
     "toRoot" | "toCurrent"
   >("toCurrent");
   const [deleteRootNote, setDeleteRootNote] = createSignal(false);
+  const [loading, setLoading] = createSignal(true);
 
   if (!$config.preferAnkiConnect) return null;
   if ($card.isMergePreview) return null;
@@ -34,6 +35,7 @@ export default function MergeContextModal() {
 
   createEffect(async () => {
     if ($general.isAnkiConnectAvailable) {
+      setLoading(true);
       try {
         const noteIds = await AnkiConnect.invoke("findNotes", {
           query: `cid:${rootAnkiFields.CardID}`,
@@ -58,6 +60,7 @@ export default function MergeContextModal() {
         KIKU_STATE.logger.error(e);
       }
     }
+    setLoading(false);
   });
 
   const merged = () => {
@@ -207,6 +210,9 @@ export default function MergeContextModal() {
   return (
     <>
       <Switch>
+        <Match when={loading()}>
+          <span class="loading loading-spinner loading-xs text-base-content-faint animate-fade-in-sm"></span>
+        </Match>
         <Match
           when={$general.isAnkiConnectAvailable && rootNote() && currentNote()}
         >
