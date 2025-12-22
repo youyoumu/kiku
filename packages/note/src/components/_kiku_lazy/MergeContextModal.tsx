@@ -88,6 +88,10 @@ export default function MergeContextModal() {
   };
 
   const mergedReadable = () => parseMergedIntoReadable(merged());
+  const hasDuplicates = () =>
+    Object.values(mergedReadable().duplicates).some((item) =>
+      Boolean(item.length),
+    );
 
   const mergedAnkiFields = () => {
     if (mergeDirection() === "toRoot") {
@@ -324,6 +328,12 @@ export default function MergeContextModal() {
               >
                 <div role="alert" class="alert alert-warning">
                   Root and Current have different Expression
+                </div>
+              </Show>
+
+              <Show when={hasDuplicates()}>
+                <div role="alert" class="alert alert-warning">
+                  Some fields have duplicates data-group-id
                 </div>
               </Show>
 
@@ -571,53 +581,76 @@ function parseMergedIntoReadable(fields: {
   MiscInfo: string;
   Picture: string;
 }) {
-  const sentenceDoc = parseHtml(fields.Sentence);
-  const sentenceWithGroup = sentenceDoc.querySelectorAll("[data-group-id]");
-  const Sentence = Array.from(sentenceWithGroup)
-    .map((node) => {
-      return `${node.getAttribute("data-group-id")}: ${node.textContent}`;
-    })
-    .join("\n");
+  function extractGroupedText(
+    doc: Document,
+    selector: string,
+    value: (node: Element) => string,
+  ) {
+    const seen = new Set<string>();
+    const duplicates = new Set<string>();
 
-  const sentenceFuriganaDoc = parseHtml(fields.SentenceFurigana);
-  const sentenceFuriganaWithGroup =
-    sentenceFuriganaDoc.querySelectorAll("[data-group-id]");
-  const SentenceFurigana = Array.from(sentenceFuriganaWithGroup)
-    .map((node) => {
-      return `${node.getAttribute("data-group-id")}: ${node.textContent}`;
-    })
-    .join("\n");
+    const lines = Array.from(doc.querySelectorAll(selector))
+      .map((node) => {
+        const groupId = node.getAttribute("data-group-id");
+        if (!groupId) return null;
+        if (seen.has(groupId)) {
+          duplicates.add(groupId);
+        } else {
+          seen.add(groupId);
+        }
+        return `${groupId}: ${value(node)}`;
+      })
+      .filter(Boolean) as string[];
 
-  const sentenceAudioDoc = parseHtml(fields.SentenceAudio);
-  const sentenceAudioWithGroup =
-    sentenceAudioDoc.querySelectorAll("[data-group-id]");
-  const SentenceAudio = Array.from(sentenceAudioWithGroup)
-    .map((node) => {
-      return `${node.getAttribute("data-group-id")}: ${node.textContent}`;
-    })
-    .join("\n");
+    return {
+      text: lines.join("\n"),
+      duplicates: Array.from(duplicates),
+    };
+  }
 
-  const miscInfoDoc = parseHtml(fields.MiscInfo);
-  const miscInfoWithGroup = miscInfoDoc.querySelectorAll("[data-group-id]");
-  const MiscInfo = Array.from(miscInfoWithGroup)
-    .map((node) => {
-      return `${node.getAttribute("data-group-id")}: ${node.textContent}`;
-    })
-    .join("\n");
+  const sentence = extractGroupedText(
+    parseHtml(fields.Sentence),
+    "[data-group-id]",
+    (n) => n.textContent ?? "",
+  );
 
-  const pictureDoc = parseHtml(fields.Picture);
-  const pictureWithGroup = pictureDoc.querySelectorAll("img[data-group-id]");
-  const Picture = Array.from(pictureWithGroup)
-    .map((node) => {
-      return `${node.getAttribute("data-group-id")}: ${node.getAttribute("src")}`;
-    })
-    .join("\n");
+  const sentenceFurigana = extractGroupedText(
+    parseHtml(fields.SentenceFurigana),
+    "[data-group-id]",
+    (n) => n.textContent ?? "",
+  );
+
+  const sentenceAudio = extractGroupedText(
+    parseHtml(fields.SentenceAudio),
+    "[data-group-id]",
+    (n) => n.textContent ?? "",
+  );
+
+  const miscInfo = extractGroupedText(
+    parseHtml(fields.MiscInfo),
+    "[data-group-id]",
+    (n) => n.textContent ?? "",
+  );
+
+  const picture = extractGroupedText(
+    parseHtml(fields.Picture),
+    "img[data-group-id]",
+    (n) => n.getAttribute("src") ?? "",
+  );
 
   return {
-    Sentence,
-    SentenceFurigana,
-    SentenceAudio,
-    MiscInfo,
-    Picture,
+    Sentence: sentence.text,
+    SentenceFurigana: sentenceFurigana.text,
+    SentenceAudio: sentenceAudio.text,
+    MiscInfo: miscInfo.text,
+    Picture: picture.text,
+
+    duplicates: {
+      Sentence: sentence.duplicates,
+      SentenceFurigana: sentenceFurigana.duplicates,
+      SentenceAudio: sentenceAudio.duplicates,
+      MiscInfo: miscInfo.duplicates,
+      Picture: picture.duplicates,
+    },
   };
 }
