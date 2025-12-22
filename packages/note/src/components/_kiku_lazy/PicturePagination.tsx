@@ -36,16 +36,29 @@ export default function PicturePagination() {
     }
   };
 
+  const groupId = () => $group.ids[$group.index];
+
+  const date = () => {
+    const ms = Number(groupId());
+    const MIN = Date.UTC(2000, 0, 1); // 2000-01-01
+    const MAX = Date.UTC(2100, 0, 1); // 2100-01-01 (exclusive)
+    if (ms < MIN || ms >= MAX) return null;
+    return new Date(ms).toLocaleDateString();
+  };
+
   return (
     $group.ids.length > 1 && (
       <>
         <ArrowLeftIcon
-          class="cursor-pointer size-5 sm:size-8 hover:scale-110 transition-transform"
+          class="cursor-pointer size-5 sm:size-8 hover:text-base-content-calm transition-colors"
           on:click={onPrevClick}
         ></ArrowLeftIcon>
-        {`${$group.index + 1} / ${$group.ids.length}`}
+        <div class="flex flex-col items-center">
+          <div class="text-xs text-base-content-faint">{date()}</div>
+          <div>{`${$group.index + 1} / ${$group.ids.length}`}</div>
+        </div>
         <ArrowLeftIcon
-          class="cursor-pointer size-5 sm:size-8 rotate-180 hover:scale-110 transition-transform"
+          class="cursor-pointer size-5 sm:size-8 rotate-180 hover:text-base-content-calm transition-colors"
           on:click={onNextClick}
         ></ArrowLeftIcon>
       </>
