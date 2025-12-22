@@ -1,12 +1,4 @@
-import {
-  createEffect,
-  createSignal,
-  For,
-  Match,
-  onMount,
-  Show,
-  Switch,
-} from "solid-js";
+import { createSignal, For, Match, onMount, Show, Switch } from "solid-js";
 import { useCardContext } from "#/components/shared/CardContext";
 import { type AnkiFields, type AnkiNote, ankiFieldsSkeleton } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
@@ -136,9 +128,9 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
     $kanjiPage.focus.kanji === $kanji.kanji,
   );
 
-  createEffect(() => {
-    if (checked()) $kanji.fetchNotes();
-  });
+  const loading = () => {
+    return Object.values($kanji.loading).some((v) => v);
+  };
 
   return (
     <div class="collapse bg-base-200 border border-base-300 animate-fade-in">
@@ -157,7 +149,7 @@ function KanjiCollapsible(props: { data: AnkiNote[] }) {
       >
         <KanjiText />
         <div class="flex gap-1 sm:gap-2 absolute top-2 right-2 sm:top-4 sm:right-4">
-          <Show when={$kanji.status === "loading"}>
+          <Show when={loading()}>
             <div class="loading loading-sm text-base-content-soft animate-fade-in-sm"></div>
           </Show>
           <div class="text-base-content-soft bg-base-300 px-1 rounded-xs animate-fade-in-sm text-sm sm:text-base">

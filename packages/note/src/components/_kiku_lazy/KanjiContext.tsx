@@ -9,6 +9,8 @@ import type { AnkiNote, KanjiInfo } from "#/types";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 
+type FetchType = "composedOf" | "usedIn" | "visuallySimilar" | "related";
+
 type KanjiStore = {
   kanji: string;
   kanjiInfo: KanjiInfo | undefined;
@@ -16,9 +18,14 @@ type KanjiStore = {
   usedIn?: [string, AnkiNote[]][];
   visuallySimilar?: [string, AnkiNote[]][];
   related?: [string, AnkiNote[]][];
-  status: "loading" | "success" | "error";
-  fetched: boolean;
-  fetchNotes: () => Promise<void>;
+  loading: {
+    composedOf: boolean;
+    usedIn: boolean;
+    visuallySimilar: boolean;
+    related: boolean;
+  };
+  fetchNotes: (type: FetchType) => Promise<void>;
+  fetched: Set<FetchType>;
 };
 
 const KanjiContext =
@@ -33,43 +40,38 @@ export function KanjiContextProvider(props: {
   const [$kanji, $setKanji] = createStore<KanjiStore>({
     kanji: props.kanji,
     kanjiInfo: undefined,
-    status: "success",
-    fetched: false,
+    loading: {
+      visuallySimilar: false,
+      composedOf: false,
+      usedIn: false,
+      related: false,
+    },
     fetchNotes,
+    fetched: new Set(),
   });
   const lookupKanjiCache = $general.lookupKanjiCache;
 
-  async function fetchNotes() {
-    if ($kanji.fetched) return;
+  async function fetchNotes(type: FetchType) {
     const nex = await (await $general.nexClientPromise.promise).nex;
     const kanjiInfo = unwrap($kanji.kanjiInfo);
     if (!kanjiInfo) return;
-    $setKanji("fetched", true);
-    $setKanji("status", "loading");
-    const [composedOf, usedIn, visuallySimilar, related] = await Promise.all([
-      nex.queryShared({
-        ankiFields: unwrap(ankiFields),
-        kanjiList: kanjiInfo?.composedOf ?? [],
-      }),
-      nex.queryShared({
-        ankiFields: unwrap(ankiFields),
-        kanjiList: kanjiInfo?.usedIn ?? [],
-      }),
-      nex.queryShared({
-        ankiFields: unwrap(ankiFields),
-        kanjiList: kanjiInfo?.visuallySimilar ?? [],
-      }),
-      nex.queryShared({
-        ankiFields: unwrap(ankiFields),
-        kanjiList: kanjiInfo?.related ?? [],
-      }),
-    ]);
+    if ($kanji.fetched.has(type)) return;
+    $kanji.fetched.add(type);
 
-    $setKanji("composedOf", Object.entries(composedOf.kanjiResult));
-    $setKanji("usedIn", Object.entries(usedIn.kanjiResult));
-    $setKanji("visuallySimilar", Object.entries(visuallySimilar.kanjiResult));
-    $setKanji("related", Object.entries(related.kanjiResult));
-    $setKanji("status", "success");
+    const list = kanjiInfo[type] ?? [];
+    if (list.length === 0) {
+      $setKanji(type, []);
+      return;
+    }
+
+    $setKanji("loading", type, true);
+    const result = await nex.queryShared({
+      ankiFields: unwrap(ankiFields),
+      kanjiList: list,
+    });
+
+    $setKanji(type, Object.entries(result.kanjiResult));
+    $setKanji("loading", type, false);
   }
 
   onMount(async () => {

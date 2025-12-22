@@ -1,4 +1,5 @@
-import { createUniqueId, For, Show } from "solid-js";
+import { createEffect, createUniqueId, For, Show } from "solid-js";
+import { createStore } from "solid-js/store";
 import type { AnkiNote } from "#/types";
 import { useNavigationTransition } from "#/util/hooks";
 import { KanjiContextProvider, useKanjiContext } from "./KanjiContext";
@@ -62,14 +63,43 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
   const KanjiKeywordComponent = props.inKanjiPage
     ? KanjiKeywordKanjiPage
     : KanjiKeyword;
+  const [$checkbox, $setCheckbox] = createStore({
+    visuallySimilar: true,
+    composedOf: false,
+    usedIn: false,
+    meanings: false,
+    related: false,
+  });
+
+  createEffect(() => {
+    if ($checkbox.visuallySimilar) {
+      $kanji.fetchNotes("visuallySimilar");
+    }
+    if ($checkbox.composedOf) {
+      $kanji.fetchNotes("composedOf");
+    }
+    if ($checkbox.usedIn) {
+      $kanji.fetchNotes("usedIn");
+    }
+    if ($checkbox.related) {
+      $kanji.fetchNotes("related");
+    }
+  });
 
   return (
     <>
       <Show when={$kanji.kanjiInfo?.visuallySimilar.length}>
         <div class="collapse collapse-arrow rounded-none">
-          <input type="checkbox" class="p-0" checked />
+          <input
+            type="checkbox"
+            class="p-0"
+            checked={$checkbox.visuallySimilar}
+            on:change={(e) => {
+              $setCheckbox("visuallySimilar", e.currentTarget.checked);
+            }}
+          />
           <div class="collapse-title p-0 mb-1 after:text-base-content-calm text-start">
-            <div class="font-bold text-base-content-calm">Similar</div>
+            <div class="font-bold text-base-content-calm">Visually Similar</div>
           </div>
           <div class="collapse-content p-0">
             <div class="flex gap-1 sm:gap-2 flex-wrap text-base-content-calm">
@@ -102,7 +132,10 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
           <input
             type="checkbox"
             class="p-0"
-            checked={!$kanji.kanjiInfo?.visuallySimilar.length}
+            checked={$checkbox.composedOf}
+            on:change={(e) => {
+              $setCheckbox("composedOf", e.currentTarget.checked);
+            }}
           />
           <div class="collapse-title p-0 mb-1 after:text-base-content-calm text-start">
             <div class="font-bold text-base-content-calm">Composed of</div>
@@ -135,7 +168,14 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
 
       <Show when={$kanji.kanjiInfo?.usedIn.length}>
         <div class="collapse collapse-arrow rounded-none">
-          <input type="checkbox" class="p-0" />
+          <input
+            type="checkbox"
+            class="p-0"
+            checked={$checkbox.usedIn}
+            on:change={(e) => {
+              $setCheckbox("usedIn", e.currentTarget.checked);
+            }}
+          />
           <div class="collapse-title p-0 mb-1 after:text-base-content-calm text-start">
             <div class="font-bold text-base-content-calm">Used in</div>
           </div>
@@ -167,7 +207,14 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
 
       <Show when={$kanji.kanjiInfo?.meanings.length}>
         <div class="collapse collapse-arrow rounded-none">
-          <input type="checkbox" class="p-0" />
+          <input
+            type="checkbox"
+            class="p-0"
+            checked={$checkbox.meanings}
+            on:change={(e) => {
+              $setCheckbox("meanings", e.currentTarget.checked);
+            }}
+          />
           <div class="collapse-title p-0 mb-1 after:text-base-content-calm text-start">
             <div class="font-bold text-base-content-calm">Meanings</div>
           </div>
@@ -189,7 +236,14 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
 
       <Show when={$kanji.kanjiInfo?.related.length}>
         <div class="collapse collapse-arrow rounded-none">
-          <input type="checkbox" class="p-0" />
+          <input
+            type="checkbox"
+            class="p-0"
+            checked={$checkbox.related}
+            on:change={(e) => {
+              $setCheckbox("related", e.currentTarget.checked);
+            }}
+          />
           <div class="collapse-title p-0 mb-1 after:text-base-content-calm text-start">
             <div class="font-bold text-base-content-calm">Related</div>
           </div>
@@ -241,9 +295,6 @@ function KanjiKeyword(props: {
   return (
     <div
       class="inline-flex border border-base-content-subtle-100 transition-colors hover:border-base-content-subtle-200"
-      classList={{
-        "cursor-pointer": $kanji.status === "success",
-      }}
       on:click={props.onClick}
     >
       <div class=" px-1 text-lg sm:text-xl">{$kanji.kanji}</div>
