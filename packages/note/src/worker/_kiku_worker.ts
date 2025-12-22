@@ -19,6 +19,10 @@ const logger = {
   error: (...args: unknown[]) => postMessage({ log: { level: "error", args } }),
 };
 
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 const AnkiConnect = {
   invoke: async (action: string, params: Record<string, unknown> = {}) => {
     const res = await fetch(ankiConnectAddress, {
@@ -55,6 +59,7 @@ const AnkiConnect = {
       if (ids.length === 0) continue;
       const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
       kanjiListResult[kanji] = notesRes.result ?? [];
+      await sleep(50);
     }
 
     // --- search reading (exact) ---
@@ -65,6 +70,7 @@ const AnkiConnect = {
       if (ids.length === 0) continue;
       const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
       readingListResult[reading] = notesRes.result ?? [];
+      await sleep(50);
     }
 
     // --- search expression (exact) ---
@@ -75,6 +81,7 @@ const AnkiConnect = {
       if (ids.length === 0) continue;
       const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
       expressionListResult[expression] = notesRes.result ?? [];
+      await sleep(50);
     }
 
     return {
