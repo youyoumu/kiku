@@ -66,6 +66,7 @@ export default function MergeContextModal() {
       Sentence: rootNote()?.fields.Sentence.value ?? "",
       SentenceFurigana: rootNote()?.fields.SentenceFurigana.value ?? "",
       SentenceAudio: rootNote()?.fields.SentenceAudio.value ?? "",
+      MiscInfo: rootNote()?.fields.MiscInfo.value ?? "",
       Picture: rootNote()?.fields.Picture.value ?? "",
     };
     const current = {
@@ -73,6 +74,7 @@ export default function MergeContextModal() {
       Sentence: currentNote()?.fields.Sentence.value ?? "",
       SentenceFurigana: currentNote()?.fields.SentenceFurigana.value ?? "",
       SentenceAudio: currentNote()?.fields.SentenceAudio.value ?? "",
+      MiscInfo: currentNote()?.fields.MiscInfo.value ?? "",
       Picture: currentNote()?.fields.Picture.value ?? "",
     };
     if (mergeDirection() === "toRoot") {
@@ -209,7 +211,7 @@ export default function MergeContextModal() {
           when={$general.isAnkiConnectAvailable && rootNote() && currentNote()}
         >
           <GitPullRequestArrow
-            class="size-4 cursor-pointer text-base-content-soft"
+            class="size-4 cursor-pointer text-base-content-soft animate-fade-in-sm"
             on:click={() => {
               if (dialogRef) {
                 dialogRef.showModal();
@@ -222,10 +224,12 @@ export default function MergeContextModal() {
             $general.isAnkiConnectAvailable && (!rootNote() || !currentNote())
           }
         >
-          <span class="status status-error animate-ping"></span>
+          <span class="animate-fade-in-sm">
+            <span class="status status-error animate-ping"></span>
+          </span>
         </Match>
         <Match when={!$general.isAnkiConnectAvailable}>
-          <div class="indicator">
+          <div class="indicator animate-fade-in-sm">
             <div class="place-items-center">
               <RefreshCwIcon
                 class="size-4 cursor-pointer text-base-content-soft"
@@ -250,11 +254,23 @@ export default function MergeContextModal() {
 
             <div class="flex flex-col gap-4">
               <div class="flex gap-4 items-center justify-center">
-                <div>Root</div>
+                <div class="flex flex-col items-center">
+                  <div>Root</div>
+                  <div class="text-base-content-calm text-xs">
+                    {rootNote()?.noteId}
+                  </div>
+                  <Show when={rootNote()?.noteId}>
+                    {(id) => (
+                      <div class="text-base-content-soft text-xs">
+                        {new Date(id()).toLocaleDateString()}
+                      </div>
+                    )}
+                  </Show>
+                </div>
                 <ArrowLeftIcon
                   class="self-center text-base-content-calm size-10 cursor-pointer transition-transform"
                   on:click={() => {
-                    // NOTE: we can't update root while opening the note in anki browser. https://github.com/FooSoft/anki-connect/issues/82
+                    // TODO: we can't update root while opening the note in anki browser. What to do??? https://github.com/FooSoft/anki-connect/issues/82
                     // setMergeDirection((prev) =>
                     //   prev === "toRoot" ? "toCurrent" : "toRoot",
                     // );
@@ -264,7 +280,19 @@ export default function MergeContextModal() {
                     "rotate-180": mergeDirection() === "toCurrent",
                   }}
                 />
-                <div>Current</div>
+                <div class="flex flex-col items-center">
+                  <div>Current</div>
+                  <div class="text-base-content-calm text-xs">
+                    {currentNote()?.noteId}
+                  </div>
+                  <Show when={currentNote()?.noteId}>
+                    {(id) => (
+                      <div class="text-base-content-soft text-xs">
+                        {new Date(id()).toLocaleDateString()}
+                      </div>
+                    )}
+                  </Show>
+                </div>
               </div>
 
               <Show
@@ -292,6 +320,10 @@ export default function MergeContextModal() {
                 <FieldPreview
                   title="SentenceAudio"
                   content={mergedReadable().SentenceAudio}
+                />
+                <FieldPreview
+                  title="MiscInfo"
+                  content={mergedReadable().MiscInfo}
                 />
                 <FieldPreview
                   title="Picture"
@@ -371,6 +403,7 @@ type ContextField = {
   Sentence: string;
   SentenceFurigana: string;
   SentenceAudio: string;
+  MiscInfo: string;
   Picture: string;
 };
 
@@ -391,6 +424,7 @@ function mergeContext(base: ContextField, extra: ContextField) {
     Sentence: normalizedBase.Sentence + normalizedExtra.Sentence,
     SentenceFurigana: getSentenceFurigana(),
     SentenceAudio: normalizedBase.SentenceAudio + normalizedExtra.SentenceAudio,
+    MiscInfo: normalizedBase.MiscInfo + normalizedExtra.MiscInfo,
     Picture: normalizedBase.Picture + normalizedExtra.Picture,
   };
 
@@ -418,6 +452,11 @@ function mergeContext(base: ContextField, extra: ContextField) {
     sentenceAudioDoc.querySelectorAll("[data-group-id]");
   const SentenceAudio = sortGroup(sentenceAudioWithGroup);
   merged.SentenceAudio = nodesToString(SentenceAudio);
+
+  const miscInfoDoc = parseHtml(merged.MiscInfo);
+  const miscInfoWithGroup = miscInfoDoc.querySelectorAll("[data-group-id]");
+  const MiscInfo = sortGroup(miscInfoWithGroup);
+  merged.MiscInfo = nodesToString(MiscInfo);
 
   const pictureDoc = parseHtml(merged.Picture);
   const pictureWithGroup = pictureDoc.querySelectorAll("img[data-group-id]");
@@ -453,6 +492,12 @@ function normalizeFields(fields: ContextField) {
     sentenceAudioDoc.body.childNodes,
   ).filter((el) => !(el as HTMLSpanElement).dataset?.groupId);
 
+  const miscInfoDoc = parseHtml(fields.MiscInfo);
+  const miscInfoWithGroup = miscInfoDoc.querySelectorAll("[data-group-id]");
+  const miscInfoWithoutGroup = Array.from(miscInfoDoc.body.childNodes).filter(
+    (el) => !(el as HTMLSpanElement).dataset?.groupId,
+  );
+
   const pictureDoc = parseHtml(fields.Picture);
   const pictureWithGroup = pictureDoc.querySelectorAll("img[data-group-id]");
   // NOTE: this only pick the first img from ungrouped img
@@ -483,6 +528,10 @@ function normalizeFields(fields: ContextField) {
     nodesToString(Array.from(sentenceAudioWithGroup)).trim() +
     wrapInSpan(nodesToString(sentenceAudioWithoutGroup).trim());
 
+  const MiscInfo =
+    nodesToString(Array.from(miscInfoWithGroup)).trim() +
+    wrapInSpan(nodesToString(miscInfoWithoutGroup).trim());
+
   const Picture =
     nodesToString(Array.from(pictureWithGroup)).trim() +
     (pictureWithoutGroup?.outerHTML ?? "");
@@ -491,6 +540,7 @@ function normalizeFields(fields: ContextField) {
     Sentence,
     SentenceFurigana,
     SentenceAudio,
+    MiscInfo,
     Picture,
   };
 }
@@ -499,6 +549,7 @@ function parseMergedIntoReadable(fields: {
   Sentence: string;
   SentenceFurigana: string;
   SentenceAudio: string;
+  MiscInfo: string;
   Picture: string;
 }) {
   const sentenceDoc = parseHtml(fields.Sentence);
@@ -527,6 +578,14 @@ function parseMergedIntoReadable(fields: {
     })
     .join("\n");
 
+  const miscInfoDoc = parseHtml(fields.MiscInfo);
+  const miscInfoWithGroup = miscInfoDoc.querySelectorAll("[data-group-id]");
+  const MiscInfo = Array.from(miscInfoWithGroup)
+    .map((node) => {
+      return `${node.getAttribute("data-group-id")}: ${node.textContent}`;
+    })
+    .join("\n");
+
   const pictureDoc = parseHtml(fields.Picture);
   const pictureWithGroup = pictureDoc.querySelectorAll("img[data-group-id]");
   const Picture = Array.from(pictureWithGroup)
@@ -539,6 +598,7 @@ function parseMergedIntoReadable(fields: {
     Sentence,
     SentenceFurigana,
     SentenceAudio,
+    MiscInfo,
     Picture,
   };
 }
