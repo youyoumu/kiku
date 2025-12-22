@@ -1,7 +1,7 @@
 import { createEffect, createSignal, Match, Show, Switch } from "solid-js";
 import { Portal } from "solid-js/web";
 import { type AnkiNote, ankiFieldsSkeleton } from "#/types";
-import { nodesToString, parseHtml } from "#/util/general";
+import { nodesToString, parseHtml, unique } from "#/util/general";
 import { useNavigationTransition } from "#/util/hooks";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useCardContext } from "../shared/CardContext";
@@ -151,10 +151,15 @@ export default function MergeContextModal() {
         delete fields[key as keyof typeof fields];
       }
     }
+    const rootTags = rootNote()?.tags ?? [];
+    const currentTags = currentNote()?.tags ?? [];
+    const tags = unique([...rootTags, ...currentTags]);
+
     return {
       note: {
         id: targetId$,
         fields: fields,
+        tags: tags,
       },
     };
   };
@@ -171,7 +176,7 @@ export default function MergeContextModal() {
 
   const onMergeClick = async () => {
     const payload = updateNoteFieldsPayload();
-    await AnkiConnect.invoke("updateNoteFields", payload)
+    await AnkiConnect.invoke("updateNote", payload)
       .catch((e) => {
         $general.toast.error(
           `Failed to update note fields: ${e instanceof Error ? e.message : ""}`,
