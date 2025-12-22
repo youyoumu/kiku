@@ -22,18 +22,33 @@
     color: var(--color-base-content-primary) !important;
   }
 
-  [data-jitendex-tag-gray="true"] {
+  [data-sc-content="sense-note"] {
+    background-color: var(--color-base-300) !important;
+    border-color: var(--color-warning) !important;
+    div[style*="color"] {
+      color: var(--color-base-content-soft) !important;
+    }
+  }
+
+  span[style*="color: rgb(86, 86, 86)"] {
     background-color: var(--color-secondary) !important;
     color: var(--color-secondary-content) !important;
   }
 
-  [data-jitendex-tag-brown="true"] {
+  span[style*="background-color: brown"] {
     background-color: var(--color-accent) !important;
     color: var(--color-accent-content) !important;
   }
 
-  [data-jitendex-i="true"] {
-    color: var(--color-base-content-calm) !important;
+  span[style*="background-color: purple"] {
+    background-color: var(--color-primary) !important;
+    color: var(--color-primary-content) !important;
+  }
+
+  li[data-dictionary*="Jitendex.org"] {
+    i:first-child {
+      color: var(--color-base-content-calm) !important;
+    }
   }
 
   /*

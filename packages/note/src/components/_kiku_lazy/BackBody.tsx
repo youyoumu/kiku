@@ -1,5 +1,4 @@
 import {
-  createEffect,
   createSignal,
   ErrorBoundary,
   onCleanup,
@@ -58,11 +57,6 @@ export default function BackBody(props: {
   onMount(() => {
     const imgDoc = parseHtml(ankiFields.DefinitionPicture);
     setDefinitionPicture(imgDoc.querySelector("img")?.outerHTML ?? "");
-  });
-
-  createEffect(() => {
-    definitionPage();
-    styleJitendex(definitionEl);
   });
 
   onMount(() => {
@@ -199,35 +193,4 @@ function DefaultExternalLinks() {
       </a>
     </>
   );
-}
-
-function styleJitendex(definitionEl: HTMLDivElement | undefined) {
-  if (definitionEl) {
-    const spans = Array.from(definitionEl.querySelectorAll("span"));
-
-    spans
-      .filter((el) => {
-        return el.getAttribute("style")?.includes("color: rgb(86, 86, 86)");
-      })
-      .forEach((el) => {
-        el.dataset.jitendexTagGray = "true";
-      });
-
-    spans
-      .filter((el) => {
-        return el.getAttribute("style")?.includes("background-color: brown");
-      })
-      .forEach((el) => {
-        el.dataset.jitendexTagBrown = "true";
-      });
-
-    const jitendexI = Array.from(definitionEl.querySelectorAll("i")).filter(
-      (el) => {
-        return el.innerHTML.includes("Jitendex.org");
-      },
-    );
-    jitendexI.forEach((el) => {
-      el.dataset.jitendexI = "true";
-    });
-  }
 }
