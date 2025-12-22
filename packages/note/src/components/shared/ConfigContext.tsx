@@ -1,6 +1,6 @@
 import { createContext, createEffect, useContext } from "solid-js";
 import type { JSX } from "solid-js/jsx-runtime";
-import type { SetStoreFunction, Store } from "solid-js/store";
+import { type SetStoreFunction, type Store, unwrap } from "solid-js/store";
 import { type KikuConfig, updateConfigState } from "#/util/config";
 import { env } from "#/util/general";
 import type { DaisyUITheme } from "#/util/theme";
@@ -24,6 +24,18 @@ export function ConfigContextProvider(props: {
     if (!KIKU_STATE.root) throw new Error("Missing root");
     updateConfigState(KIKU_STATE.root, $config);
     AnkiConnect.changeAddress($config.ankiConnectAddress);
+    $general.nexClientPromise.promise.then((nexClient) => {
+      nexClient.nex.then((nex) => {
+        nex.init({
+          env: env,
+          config: unwrap($config),
+          assetsPath: import.meta.env.DEV ? "" : KIKU_STATE.assetsPath,
+          preferAnkiConnect:
+            $config.preferAnkiConnect && !!KIKU_STATE.isAnkiDesktop,
+        });
+      });
+    });
+
     sessionStorage.setItem(
       env.KIKU_CONFIG_SESSION_STORAGE_KEY,
       JSON.stringify($config),
