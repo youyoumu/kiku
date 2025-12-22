@@ -1,19 +1,19 @@
 import { ErrorBoundary, Show } from "solid-js";
-import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useCtxContext } from "../shared/CtxContext";
+import { useFieldGroupContext } from "../shared/FieldGroupContext";
 import { useGeneralContext } from "../shared/GeneralContext";
 import { InfoIcon } from "./Icons";
 
 export default function BackFooter(props: { tags: string[] }) {
-  const { ankiFields } = useAnkiFieldContext<"back">();
   const [$general] = useGeneralContext();
+  const { $group } = useFieldGroupContext();
   const ctx = useCtxContext();
   const tags = () => props.tags.filter(Boolean);
 
   function DefaultFooter() {
     return (
       <>
-        {ankiFields.MiscInfo && (
+        {$group.miscInfoField && (
           <div
             class={`flex gap-2 items-center justify-center bg-base-200 p-2 rounded-lg animate-fade-in misc-info`}
           >
@@ -22,7 +22,7 @@ export default function BackFooter(props: { tags: string[] }) {
             </div>
             <div
               class="text-base-content-calm"
-              innerHTML={ankiFields.MiscInfo}
+              innerHTML={$group.miscInfoField}
             ></div>
           </div>
         )}

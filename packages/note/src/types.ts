@@ -52,6 +52,7 @@ const frontKeys = [
   "IsAudioCard",
   "SentenceAudio",
   "ExpressionAudio",
+  "MiscInfo",
   "Hint",
   "Picture",
   "Tags",
