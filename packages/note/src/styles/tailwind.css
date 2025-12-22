@@ -149,6 +149,9 @@
     &[data-transition="true"] {
       @apply [&_img]:transition-[filter];
     }
+    img[data-nsfw="false"] {
+      filter: none;
+    }
   }
 
   [data-blur-nsfw="false"] .picture-field {
