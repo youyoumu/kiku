@@ -1,6 +1,7 @@
 import { createEffect, For, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import { useCardContext } from "#/components/shared/CardContext";
+import { nodesToString } from "#/util/general";
 import { useAnkiFieldContext } from "../shared/AnkiFieldsContext";
 import { useBreakpointContext } from "../shared/BreakpointContext";
 import { useConfigContext } from "../shared/ConfigContext";
@@ -63,21 +64,19 @@ export default function AudioButtons(props: { position: 1 | 2 }) {
     const anchors = $card.sentenceAudioRef?.querySelectorAll("a");
     if (anchors?.length) {
       $setCard("sentenceAudios", Array.from(anchors));
-      let anchorsHtml = "";
-      anchors.forEach((a) => {
-        anchorsHtml += a.outerHTML;
-      });
+      const anchorsHtml = nodesToString(Array.from(anchors));
       KIKU_STATE.logger.info("Anchors in sentence audios:", anchorsHtml);
     }
 
     const audios = $card.sentenceAudioRef?.querySelectorAll("audio");
     if (audios?.length) {
       $setCard("sentenceAudios", Array.from(audios));
-      let audiosHtml = "";
-      audios.forEach((a) => {
-        audiosHtml += a.outerHTML;
-      });
+      const audiosHtml = nodesToString(Array.from(audios));
       KIKU_STATE.logger.info("Audios in sentence audios:", audiosHtml);
+    }
+
+    if (!anchors?.length && !audios?.length) {
+      $setCard("sentenceAudios", undefined);
     }
   });
 
