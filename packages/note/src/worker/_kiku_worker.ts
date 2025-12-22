@@ -19,10 +19,6 @@ const logger = {
   error: (...args: unknown[]) => postMessage({ log: { level: "error", args } }),
 };
 
-async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 const AnkiConnect = {
   invoke: async (action: string, params: Record<string, unknown> = {}) => {
     const res = await fetch(ankiConnectAddress, {
@@ -36,6 +32,25 @@ const AnkiConnect = {
     return result;
   },
 
+  batchFindNotes: async (queries: string[]) => {
+    const res = (await AnkiConnect.invoke("multi", {
+      actions: queries.map((query) => ({
+        action: "findNotes",
+        params: { query },
+      })),
+    })) as { result: Array<number[]> };
+    return res.result;
+  },
+  batchNotesInfo: async (noteIdsList: number[][]) => {
+    const res = (await AnkiConnect.invoke("multi", {
+      actions: noteIdsList.map((ids) => ({
+        action: "notesInfo",
+        params: { notes: ids },
+      })),
+    })) as { result: Array<AnkiNote[]> };
+    return res.result;
+  },
+
   queryFieldContains: async ({
     kanjiList,
     readingList,
@@ -45,43 +60,56 @@ const AnkiConnect = {
     readingList: string[];
     expressionList: string[];
   }) => {
+    const noteFilter = `("note:Kiku" OR "note:Lapis")`;
+
+    const kanjiQuery =
+      kanjiList.length === 0
+        ? null
+        : `${noteFilter} AND (${kanjiList
+            .map((k) => `"Expression:*${k}*"`)
+            .join(" OR ")})`;
+
+    const readingQuery =
+      readingList.length === 0
+        ? null
+        : `${noteFilter} AND (${readingList
+            .map((r) => `"ExpressionReading:${r}"`)
+            .join(" OR ")})`;
+
+    const expressionQuery =
+      expressionList.length === 0
+        ? null
+        : `${noteFilter} AND (${expressionList
+            .map((e) => `"Expression:${e}"`)
+            .join(" OR ")})`;
+
+    const queries = [kanjiQuery, readingQuery, expressionQuery].filter(
+      Boolean,
+    ) as string[];
+    const idsLists = await AnkiConnect.batchFindNotes(queries);
+    const allIds = [...new Set(idsLists.flat())];
+    const [allNotes] = await AnkiConnect.batchNotesInfo([allIds]);
+
     const kanjiListResult: Record<string, AnkiNote[]> = {};
     const readingListResult: Record<string, AnkiNote[]> = {};
     const expressionListResult: Record<string, AnkiNote[]> = {};
 
-    const noteFilter = `("note:Kiku" OR "note:Lapis")`;
-
-    // --- search kanji (contains) ---
-    for (const kanji of kanjiList) {
-      const query = `${noteFilter} AND "Expression:*${kanji}*"`;
-      const idsRes = await AnkiConnect.invoke("findNotes", { query });
-      const ids: number[] = idsRes.result ?? [];
-      if (ids.length === 0) continue;
-      const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
-      kanjiListResult[kanji] = notesRes.result ?? [];
-      await sleep(50);
+    for (const k of kanjiList) {
+      kanjiListResult[k] = allNotes.filter((n) =>
+        n.fields.Expression?.value.includes(k),
+      );
     }
 
-    // --- search reading (exact) ---
-    for (const reading of readingList) {
-      const query = `${noteFilter} AND "ExpressionReading:${reading}"`;
-      const idsRes = await AnkiConnect.invoke("findNotes", { query });
-      const ids: number[] = idsRes.result ?? [];
-      if (ids.length === 0) continue;
-      const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
-      readingListResult[reading] = notesRes.result ?? [];
-      await sleep(50);
+    for (const r of readingList) {
+      readingListResult[r] = allNotes.filter(
+        (n) => n.fields.ExpressionReading?.value === r,
+      );
     }
 
-    // --- search expression (exact) ---
-    for (const expression of expressionList) {
-      const query = `${noteFilter} AND "Expression:${expression}"`;
-      const idsRes = await AnkiConnect.invoke("findNotes", { query });
-      const ids: number[] = idsRes.result ?? [];
-      if (ids.length === 0) continue;
-      const notesRes = await AnkiConnect.invoke("notesInfo", { notes: ids });
-      expressionListResult[expression] = notesRes.result ?? [];
-      await sleep(50);
+    for (const e of expressionList) {
+      expressionListResult[e] = allNotes.filter(
+        (n) => n.fields.Expression?.value === e,
+      );
     }
 
     return {
