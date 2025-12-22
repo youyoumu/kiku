@@ -153,7 +153,15 @@ export default function MergeContextModal() {
     }
     const rootTags = rootNote()?.tags ?? [];
     const currentTags = currentNote()?.tags ?? [];
-    const tags = unique([...rootTags, ...currentTags]);
+    let tags = unique([...rootTags, ...currentTags]);
+
+    const targetTags = mergeDirection() === "toRoot" ? rootTags : currentTags;
+    const unwantedTags = ["leech", "marked", "potential_leech"];
+    for (const tag of unwantedTags) {
+      if (!targetTags.includes(tag)) {
+        tags = tags.filter((t) => t !== tag);
+      }
+    }
 
     return {
       note: {
