@@ -70,6 +70,19 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
     meanings: false,
     related: false,
   });
+  const [$checkboxRef, $setCheckboxRef] = createStore<{
+    composedOf: undefined | HTMLInputElement;
+  }>({
+    composedOf: undefined,
+  });
+
+  createEffect(() => {
+    const ref = $checkboxRef.composedOf;
+    const visuallySimilarLength = $kanji.kanjiInfo?.visuallySimilar.length;
+    if (ref && !visuallySimilarLength) {
+      ref.checked = true;
+    }
+  });
 
   createEffect(() => {
     if ($checkbox.visuallySimilar) {
@@ -133,6 +146,7 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
           <input
             type="checkbox"
             class="p-0"
+            ref={(ref) => $setCheckboxRef("composedOf", ref)}
             checked={$checkbox.composedOf}
             on:change={(e) => {
               $setCheckbox("composedOf", e.currentTarget.checked);
