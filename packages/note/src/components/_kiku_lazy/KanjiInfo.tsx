@@ -108,6 +108,7 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
                   return (
                     <KanjiContextProvider kanji={kanji}>
                       <KanjiKeywordComponent
+                        parentKanji={$kanji.kanji}
                         noteList={$kanji.visuallySimilar}
                         nestedFocus={{
                           kanji: kanji,
@@ -147,6 +148,7 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
                   return (
                     <KanjiContextProvider kanji={kanji}>
                       <KanjiKeywordComponent
+                        parentKanji={$kanji.kanji}
                         noteList={$kanji.composedOf}
                         nestedFocus={{
                           kanji: kanji,
@@ -186,6 +188,7 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
                   return (
                     <KanjiContextProvider kanji={kanji}>
                       <KanjiKeywordComponent
+                        parentKanji={$kanji.kanji}
                         noteList={$kanji.usedIn}
                         nestedFocus={{
                           kanji: kanji,
@@ -254,6 +257,7 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
                   return (
                     <KanjiContextProvider kanji={kanji}>
                       <KanjiKeywordComponent
+                        parentKanji={$kanji.kanji}
                         noteList={$kanji.related}
                         nestedFocus={{
                           kanji: kanji,
@@ -284,6 +288,7 @@ function KanjiKeyword(props: {
   };
   contextLabel?: ContextLabel;
   onClick?: () => void;
+  parentKanji: string;
 }) {
   const [$kanji, $setKanji] = useKanjiContext();
 
@@ -320,6 +325,7 @@ function KanjiKeywordKanjiPage(props: {
     noteId: number | undefined;
   };
   contextLabel?: ContextLabel;
+  parentKanji: string;
 }) {
   const [$kanjiPage, $setKanjiPage] = useKanjiPageContext();
   const { navigate } = useNavigationTransition();
@@ -333,6 +339,10 @@ function KanjiKeywordKanjiPage(props: {
         $setKanjiPage("nestedFocus", {
           kanji: props.nestedFocus.kanji,
           noteId: props.nestedFocus.noteId,
+        });
+        $setKanjiPage("focus", {
+          kanji: props.parentKanji,
+          noteId: undefined,
         });
         $setKanjiPage("nestedNoteList", props.noteList);
         $setKanjiPage("nested", true);
