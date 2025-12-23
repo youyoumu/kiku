@@ -64,22 +64,16 @@ export default function MergeContextModal() {
   });
 
   const merged = () => {
-    const root = {
-      noteId: rootNote()?.noteId,
-      Sentence: rootNote()?.fields.Sentence.value ?? "",
-      SentenceFurigana: rootNote()?.fields.SentenceFurigana.value ?? "",
-      SentenceAudio: rootNote()?.fields.SentenceAudio.value ?? "",
-      MiscInfo: rootNote()?.fields.MiscInfo.value ?? "",
-      Picture: rootNote()?.fields.Picture.value ?? "",
-    };
-    const current = {
-      noteId: currentNote()?.noteId,
-      Sentence: currentNote()?.fields.Sentence.value ?? "",
-      SentenceFurigana: currentNote()?.fields.SentenceFurigana.value ?? "",
-      SentenceAudio: currentNote()?.fields.SentenceAudio.value ?? "",
-      MiscInfo: currentNote()?.fields.MiscInfo.value ?? "",
-      Picture: currentNote()?.fields.Picture.value ?? "",
-    };
+    const toContextField = (note: AnkiNote | undefined) => ({
+      noteId: note?.noteId,
+      Sentence: note?.fields.Sentence.value ?? "",
+      SentenceFurigana: note?.fields.SentenceFurigana.value ?? "",
+      SentenceAudio: note?.fields.SentenceAudio.value ?? "",
+      MiscInfo: note?.fields.MiscInfo.value ?? "",
+      Picture: note?.fields.Picture.value ?? "",
+    });
+    const root = toContextField(rootNote());
+    const current = toContextField(currentNote());
     if (mergeDirection() === "toRoot") {
       return mergeContext(root, current);
     } else {
@@ -94,53 +88,33 @@ export default function MergeContextModal() {
     );
 
   const mergedAnkiFields = () => {
+    const direction = mergeDirection();
+    // ---- fields ----
+    const targetNote = direction === "toRoot" ? rootNote() : currentNote();
+    if (!targetNote) return ankiFieldsSkeleton;
+    const targetFields = Object.fromEntries(
+      Object.entries(targetNote.fields).map(([key, value]) => [
+        key,
+        value.value,
+      ]),
+    );
+
+    // ---- tags ----
     const rootTags = rootNote()?.tags ?? [];
     const currentTags = currentNote()?.tags ?? [];
     let tags = unique([...rootTags, ...currentTags]);
-
-    const targetTags = mergeDirection() === "toRoot" ? rootTags : currentTags;
+    const targetTags = direction === "toRoot" ? rootTags : currentTags;
     const unwantedTags = ["leech", "marked", "potential_leech"];
-    for (const tag of unwantedTags) {
-      if (!targetTags.includes(tag)) {
-        tags = tags.filter((t) => t !== tag);
-      }
-    }
+    tags = tags.filter(
+      (tag) => targetTags.includes(tag) || !unwantedTags.includes(tag),
+    );
 
-    if (mergeDirection() === "toRoot") {
-      const rootNote$ = rootNote();
-      if (!rootNote$) return ankiFieldsSkeleton;
-      const ankiFields = {
-        ...ankiFieldsSkeleton,
-        ...Object.fromEntries(
-          Object.entries(rootNote$.fields).map(([key, value]) => {
-            return [key, value.value];
-          }),
-        ),
-        Tags: tags.join(" "),
-      };
-      return {
-        ...ankiFieldsSkeleton,
-        ...ankiFields,
-        ...merged(),
-      };
-    } else {
-      const currentNote$ = currentNote();
-      if (!currentNote$) return ankiFieldsSkeleton;
-      const ankiFields = {
-        ...ankiFieldsSkeleton,
-        ...Object.fromEntries(
-          Object.entries(currentNote$.fields).map(([key, value]) => {
-            return [key, value.value];
-          }),
-        ),
-        Tags: tags.join(" "),
-      };
-      return {
-        ...ankiFieldsSkeleton,
-        ...ankiFields,
-        ...merged(),
-      };
-    }
+    return {
+      ...ankiFieldsSkeleton,
+      ...targetFields,
+      ...merged(),
+      Tags: tags.join(" "),
+    };
   };
 
   const targetId = () => {
