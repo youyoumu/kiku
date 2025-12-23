@@ -94,6 +94,18 @@ export default function MergeContextModal() {
     );
 
   const mergedAnkiFields = () => {
+    const rootTags = rootNote()?.tags ?? [];
+    const currentTags = currentNote()?.tags ?? [];
+    let tags = unique([...rootTags, ...currentTags]);
+
+    const targetTags = mergeDirection() === "toRoot" ? rootTags : currentTags;
+    const unwantedTags = ["leech", "marked", "potential_leech"];
+    for (const tag of unwantedTags) {
+      if (!targetTags.includes(tag)) {
+        tags = tags.filter((t) => t !== tag);
+      }
+    }
+
     if (mergeDirection() === "toRoot") {
       const rootNote$ = rootNote();
       if (!rootNote$) return ankiFieldsSkeleton;
@@ -104,7 +116,7 @@ export default function MergeContextModal() {
             return [key, value.value];
           }),
         ),
-        Tags: rootNote$.tags.join(" "),
+        Tags: tags.join(" "),
       };
       return {
         ...ankiFieldsSkeleton,
@@ -121,7 +133,7 @@ export default function MergeContextModal() {
             return [key, value.value];
           }),
         ),
-        Tags: currentNote$.tags.join(" "),
+        Tags: tags.join(" "),
       };
       return {
         ...ankiFieldsSkeleton,
@@ -144,6 +156,7 @@ export default function MergeContextModal() {
     const targetId$ = targetId();
     if (!targetId$) return;
     const fields = mergedAnkiFields();
+    const tags = fields.Tags.split(" ");
     for (const key in fields) {
       if (
         key.startsWith("furigana:") ||
@@ -153,17 +166,6 @@ export default function MergeContextModal() {
         key === "CardID"
       ) {
         delete fields[key as keyof typeof fields];
-      }
-    }
-    const rootTags = rootNote()?.tags ?? [];
-    const currentTags = currentNote()?.tags ?? [];
-    let tags = unique([...rootTags, ...currentTags]);
-
-    const targetTags = mergeDirection() === "toRoot" ? rootTags : currentTags;
-    const unwantedTags = ["leech", "marked", "potential_leech"];
-    for (const tag of unwantedTags) {
-      if (!targetTags.includes(tag)) {
-        tags = tags.filter((t) => t !== tag);
       }
     }
 
