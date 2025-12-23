@@ -1,4 +1,5 @@
 # Kiku
+
 ![Downloads](https://img.shields.io/github/downloads/youyoumu/kiku/total.svg?label=Downloads)
 ![Release](https://img.shields.io/github/v/release/youyoumu/kiku?label=Latest%20Version)
 ![Addon](https://img.shields.io/badge/Addon-v1.1.0-blue?logo=anki&link=https%3A%2F%2Fankiweb.net%2Fshared%2Finfo%2F408592650%3Fcb%3D1763445474367)
@@ -6,7 +7,6 @@
 ![Platform](https://img.shields.io/badge/Platform-Desktop%20%2B%20Mobile-green)
 ![License](https://img.shields.io/github/license/youyoumu/kiku?label=License)
 ![GitHub top language](https://img.shields.io/github/languages/top/youyoumu/kiku)
-
 
 <br/>
 <div align="center">
@@ -33,21 +33,25 @@ To get started, visit the documentation [here](https://kiku.youyoumu.my.id/insta
 
 ## Demo
 
-
 [demo.webm](https://github.com/user-attachments/assets/2ba85de6-8694-4b1b-b5f2-bf0ef8e0b520)
 
 [See more features](https://kiku.youyoumu.my.id/features.html)
 
 ## Support
+
 Found a bug or have a feature request?  
 Please [open an issue here](https://github.com/youyoumu/kiku/issues).
 
 ## Credit
 
 - [Lapis](https://github.com/donkuri/lapis), [JPMN](https://github.com/Aquafina-water-bottle/jp-mining-note), and [Senren](https://github.com/BrenoAqua/Senren) for inspiration.
-- [Wanikani Userscript](https://github.com/mwil/wanikani-userscripts) for the excellent database.
+- Dictionary data based on [JMdict](https://www.edrdg.org/jmdict/).
+- Kanji decomposition data derived from [KanjiVG](https://kanjivg.tagaini.net/).
+- Additional metadata and heuristics were derived from publicly accessible information on WaniKani and JPDB.
+- [WaniKani Userscript](https://github.com/mwil/wanikani-userscripts) for the database used in earlier versions of the project.
 
 ## Support Me
+
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/U6U81PEJF0)
 
 You can also support me on [GitHub Sponsors](https://github.com/sponsors/youyoumu) 😄
