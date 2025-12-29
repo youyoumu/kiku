@@ -57,5 +57,16 @@ AnkiWeb is supported, but it hasn't been tested heavily. Please open an issue if
 :::
 
 :::info AnkiMobile
-AnkiMobile either works out of the box or works after some adjustments. Unfortunately, I don't have any iOS device to test it.
+AnkiMobile needs some adjustments to work properly. Unfortunately, I don't have any iOS device to test it.
+[Tracked issue](https://github.com/youyoumu/kiku/issues/12)
 :::
+
+## Other features
+
+### Keybinds
+
+Press `ArrowLeft` and `ArrowRight` to switch between definitions. Press `h` and `l` to switch between grouped field.
+
+### NSFW Blur
+
+Add `NSFW` tag to the note and Picture will be blurred automatically. If you have multiple `<img>` you can opt-out by adding `data-nsfw="false"` to the `<img>` tag.
