@@ -244,7 +244,7 @@ function GeneralSettings() {
             Prefer AnkiConnect
             <div
               class="tooltip"
-              data-tip="Query notes via AnkiConnect instead of the notes cache (Desktop only)."
+              data-tip="Query notes via AnkiConnect instead of the notes cache (Desktop only). Note that this is slower and cause Anki to freeze sometimes"
             >
               <InfoIcon class="size-4 text-base-content-calm" />
             </div>
