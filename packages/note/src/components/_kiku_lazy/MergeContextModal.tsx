@@ -28,7 +28,6 @@ export default function MergeContextModal() {
   const [deleteRootNote, setDeleteRootNote] = createSignal(false);
   const [loading, setLoading] = createSignal(true);
 
-  if (!$config.preferAnkiConnect) return null;
   if ($card.isMergePreview) return null;
 
   $general.useCheckAnkiConnect();
@@ -361,6 +360,15 @@ export default function MergeContextModal() {
                   </label>
                 </fieldset>
               </Show>
+
+              <Show when={!$config.preferAnkiConnect}>
+                <div role="alert" class="alert alert-warning">
+                  <span>
+                    To prevent unwanted result caused by stale notes cache,
+                    please enable <b>"Prefer AnkiConnect"</b> in Settings.
+                  </span>
+                </div>
+              </Show>
             </div>
 
             <div class="modal-action">
@@ -372,6 +380,7 @@ export default function MergeContextModal() {
               </button>
               <button
                 class="btn"
+                disabled={!$config.preferAnkiConnect}
                 classList={{
                   "btn-primary": !deleteRootNote(),
                   "btn-error": deleteRootNote(),
