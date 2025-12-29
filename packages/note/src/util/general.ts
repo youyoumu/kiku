@@ -26,6 +26,7 @@ export const env = {
     "_kiku_lazy.js",
     "_kiku_worker.js",
     "_kiku_plugin.js",
+    "_kiku_plugin.css",
 
     "_kiku_front.html",
     "_kiku_back.html",
