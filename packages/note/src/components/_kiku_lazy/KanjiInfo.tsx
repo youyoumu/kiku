@@ -77,10 +77,13 @@ export function KanjiInfoExtra(props: { inKanjiPage?: boolean }) {
   });
 
   createEffect(() => {
-    const ref = $checkboxRef.composedOf;
+    const composedOfRef = $checkboxRef.composedOf;
     const visuallySimilarLength = $kanji.kanjiInfo?.visuallySimilar.length;
-    if (ref && !visuallySimilarLength) {
-      ref.checked = true;
+    if (composedOfRef) {
+      if (!visuallySimilarLength) {
+        composedOfRef.checked = true;
+      }
+      $setCheckbox("composedOf", composedOfRef.checked);
     }
   });
 
@@ -317,6 +320,7 @@ function KanjiKeyword(props: {
       class="inline-flex border border-base-content-subtle-100 transition-colors hover:border-base-content-subtle-200"
       classList={{
         "cursor-pointer": ready(),
+        "cursor-not-allowed": !ready(),
         "text-base-content-calm": ready(),
         "text-base-content-soft": !ready(),
       }}
@@ -345,9 +349,10 @@ function KanjiKeywordKanjiPage(props: {
   const { navigate } = useNavigationTransition();
 
   const onClick = () => {
+    const noteList = props.noteList;
+    if (!noteList) return;
     navigate(
       () => {
-        if (!props.noteList) return;
         $setKanjiPage("nestedContextLabel", props.contextLabel);
         $setKanjiPage("nestedId", createUniqueId());
         $setKanjiPage("nestedFocus", {
@@ -358,7 +363,7 @@ function KanjiKeywordKanjiPage(props: {
           kanji: props.parentKanji,
           noteId: undefined,
         });
-        $setKanjiPage("nestedNoteList", props.noteList);
+        $setKanjiPage("nestedNoteList", noteList);
         $setKanjiPage("nested", true);
       },
       "forward",
