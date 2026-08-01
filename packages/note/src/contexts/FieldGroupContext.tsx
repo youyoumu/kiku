@@ -168,7 +168,7 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
     if (
       !Array.from(ids)
         .map(Number)
-        .some((id) => id <= 0) &&
+        .some((id) => id == 0) &&
       (sentenceFieldWithoutGroupHtml.trim() ||
         sentenceTranslationFieldWithoutGroupHtml.trim() ||
         sentenceAudioFieldWithoutGroupHtml.trim() ||
