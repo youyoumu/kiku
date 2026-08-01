@@ -54,6 +54,18 @@ export function mergeContext(base: ContextField, extra: ContextField): ContextFi
     return Array.from(items).sort((a, b) => {
       const aId = Number((a as HTMLSpanElement).dataset.groupId);
       const bId = Number((b as HTMLSpanElement).dataset.groupId);
+
+      // "unindexed" ids will be NaN
+      const aIsNaN = Number.isNaN(aId);
+      const bIsNaN = Number.isNaN(bId);
+
+      if (aIsNaN && !bIsNaN) {
+        return 1;
+      } else if (!aIsNaN && bIsNaN) {
+        return -1;
+      } else if (aIsNaN && bIsNaN) {
+        return 0;
+      }
       return bId - aId;
     });
   }
@@ -92,11 +104,11 @@ export function normalizeFields(fields: ContextField): ContextField {
 
   //oxfmt-ignore
   const withoutGroup = {
-    sentence: Array.from(doc.sentence.body.childNodes).filter( (el) => !(el as HTMLSpanElement).dataset?.groupId,),
-    sentenceTranslation: Array.from(doc.sentenceTranslation.body.childNodes).filter( (el) => !(el as HTMLSpanElement).dataset?.groupId,),
-    sentenceFurigana: Array.from(doc.sentenceFurigana.body.childNodes).filter( (el) => !(el as HTMLSpanElement).dataset?.groupId,),
-    sentenceAudio: Array.from(doc.sentenceAudio.body.childNodes).filter( (el) => !(el as HTMLSpanElement).dataset?.groupId,),
-    miscInfo: Array.from(doc.miscInfo.body.childNodes).filter( (el) => !(el as HTMLSpanElement).dataset?.groupId,),
+    sentence: Array.from(doc.sentence.body.childNodes).filter((el) => !(el as HTMLSpanElement).dataset?.groupId,),
+    sentenceTranslation: Array.from(doc.sentenceTranslation.body.childNodes).filter((el) => !(el as HTMLSpanElement).dataset?.groupId,),
+    sentenceFurigana: Array.from(doc.sentenceFurigana.body.childNodes).filter((el) => !(el as HTMLSpanElement).dataset?.groupId,),
+    sentenceAudio: Array.from(doc.sentenceAudio.body.childNodes).filter((el) => !(el as HTMLSpanElement).dataset?.groupId,),
+    miscInfo: Array.from(doc.miscInfo.body.childNodes).filter((el) => !(el as HTMLSpanElement).dataset?.groupId,),
     picture: Array.from(doc.picture.querySelectorAll("img:not([data-group-id])")),
   };
 
@@ -153,8 +165,11 @@ export function parseMergedIntoReadable(fields: ContextField) {
       .map((node) => {
         const groupId = node.getAttribute("data-group-id");
         if (!groupId) return null;
-        if (seen.has(groupId)) duplicates.add(groupId);
-        else seen.add(groupId);
+        // Don't check for duplicate if it's unindexed
+        if (groupId != "unindexed") {
+          if (seen.has(groupId)) duplicates.add(groupId);
+          else seen.add(groupId);
+        }
         return `${groupId}: ${value(node)}`;
       })
       .filter(Boolean) as string[];
@@ -168,9 +183,9 @@ export function parseMergedIntoReadable(fields: ContextField) {
   // oxfmt-ignore
   const result = {
     sentence: extractGroupedText(fields.Sentence, "[data-group-id]", (n) => n.textContent),
-    sentenceTranslation: extractGroupedText( fields.SentenceTranslation, "[data-group-id]", (n) => n.textContent,),
-    sentenceFurigana: extractGroupedText( fields.SentenceFurigana, "[data-group-id]", (n) => n.textContent,),
-    sentenceAudio: extractGroupedText( fields.SentenceAudio, "[data-group-id]", (n) => n.textContent,),
+    sentenceTranslation: extractGroupedText(fields.SentenceTranslation, "[data-group-id]", (n) => n.textContent,),
+    sentenceFurigana: extractGroupedText(fields.SentenceFurigana, "[data-group-id]", (n) => n.textContent,),
+    sentenceAudio: extractGroupedText(fields.SentenceAudio, "[data-group-id]", (n) => n.textContent,),
     miscInfo: extractGroupedText(fields.MiscInfo, "[data-group-id]", (n) => n.textContent),
     picture: extractGroupedText(fields.Picture, "img[data-group-id]", (n) => n.getAttribute("src")),
   };

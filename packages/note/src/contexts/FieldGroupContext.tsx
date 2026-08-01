@@ -70,9 +70,23 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       $initialSide(),
     );
 
+    // unindexed group will be assigned negative index
+    // the n-th unindexed group of each fields will have index -n
+    //
+    // each fields should have the same amount of unindexed group
+    // you can't have
+    // field 1: <unindexed 1> <unindexed2> <unindexed3>
+    // field 2: <unindexed 1> <unindexed3>
+    // because there would be no way to know that it's the group 3
+    // though it should be fine if there's one field with more fields, but in the same order
+    let indexOfNextUnindexedGroup = -1;
     const sentenceFieldDoc = parseHtml($sentenceField());
     const sentenceFieldWithGroup = sentenceFieldDoc.querySelectorAll("[data-group-id]");
     sentenceFieldWithGroup.forEach((el) => {
+      if ((el as HTMLElement).dataset.groupId == "unindexed") {
+        (el as HTMLElement).dataset.groupId = indexOfNextUnindexedGroup.toString();
+        indexOfNextUnindexedGroup -= 1;
+      }
       addId((el as HTMLElement).dataset.groupId);
     });
 
@@ -81,10 +95,15 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
     );
     const sentenceFieldWithoutGroupHtml = nodesToString(sentenceFieldWithoutGroup);
 
+    indexOfNextUnindexedGroup = -1;
     const sentenceTranslationFieldDoc = parseHtml($sentenceTranslationField());
     const sentenceTranslationFieldWithGroup =
       sentenceTranslationFieldDoc.querySelectorAll("[data-group-id]");
     sentenceTranslationFieldWithGroup.forEach((el) => {
+      if ((el as HTMLElement).dataset.groupId == "unindexed") {
+        (el as HTMLElement).dataset.groupId = indexOfNextUnindexedGroup.toString();
+        indexOfNextUnindexedGroup -= 1;
+      }
       addId((el as HTMLElement).dataset.groupId);
     });
 
@@ -95,9 +114,14 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       sentenceTranslationFieldWithoutGroup,
     );
 
+    indexOfNextUnindexedGroup = -1;
     const sentenceAudioFieldDoc = parseHtml($sentenceAudioField());
     const sentenceAudioFieldWithGroup = sentenceAudioFieldDoc.querySelectorAll("[data-group-id]");
     sentenceAudioFieldWithGroup.forEach((el) => {
+      if ((el as HTMLElement).dataset.groupId == "unindexed") {
+        (el as HTMLElement).dataset.groupId = indexOfNextUnindexedGroup.toString();
+        indexOfNextUnindexedGroup -= 1;
+      }
       addId((el as HTMLElement).dataset.groupId);
     });
 
@@ -106,9 +130,14 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
     );
     const sentenceAudioFieldWithoutGroupHtml = nodesToString(sentenceAudioFieldWithoutGroup);
 
+    indexOfNextUnindexedGroup = -1;
     const miscInfoFieldDoc = parseHtml($miscInfoField());
     const miscInfoFieldWithGroup = miscInfoFieldDoc.querySelectorAll("[data-group-id]");
     miscInfoFieldWithGroup.forEach((el) => {
+      if ((el as HTMLElement).dataset.groupId == "unindexed") {
+        (el as HTMLElement).dataset.groupId = indexOfNextUnindexedGroup.toString();
+        indexOfNextUnindexedGroup -= 1;
+      }
       addId((el as HTMLElement).dataset.groupId);
     });
 
@@ -118,6 +147,7 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
     const miscInfoFieldWithoutGroupHtml = nodesToString(miscInfoFieldWithoutGroup);
 
     // each group may contain multiple img. img without group id will be given group id 0
+    indexOfNextUnindexedGroup = -1;
     const pictureFieldDoc = parseHtml($pictureField());
     const pictureFieldWithGroup = pictureFieldDoc.querySelectorAll("img");
     pictureFieldWithGroup.forEach((el) => {
@@ -125,6 +155,10 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       if (!id) {
         id = "0";
         el.dataset.groupId = id;
+      } else if (id == "unindexed") {
+        id = indexOfNextUnindexedGroup.toString();
+        el.dataset.groupId = id;
+        indexOfNextUnindexedGroup -= 1;
       }
       addId(id);
     });
@@ -149,7 +183,17 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
     const idsArray = Array.from(ids);
     if (idsArray.length === 0) return $defaultGroup();
 
-    const sorted = idsArray.map((id) => Number(id)).sort((a, b) => b - a);
+    const sorted = idsArray.map((id) => Number(id)).sort((a, b) => {
+      // so that the ungrouped one is always last
+      if (b == 0) {
+        return -1;
+      } else if (a == 0) {
+        return 1;
+      } else {
+        // positive indexed group will be first, negative "unindexed" will come after
+        return b - a;
+      }
+    });
     const index = $index();
     const selectedId = sorted[index] ?? sorted[0];
     logger.info("[Groups] selected:", {
@@ -171,7 +215,7 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
     let miscInfoField: string | undefined;
     let pictureField: string | undefined;
 
-    if (selectedId > 0) {
+    if (selectedId != 0) {
       sentenceField = filterById(sentenceFieldWithGroup);
       sentenceTranslationField = filterById(sentenceTranslationFieldWithGroup);
       sentenceAudioField = filterById(sentenceAudioFieldWithGroup);
