@@ -247,7 +247,7 @@ export function FieldGroupContextProvider(props: { children: JSX.Element }) {
       sentenceAudioField: sentenceAudioField ?? "",
       miscInfoField: miscInfoField ?? "",
       pictureField: pictureField ?? "",
-      ids: idsArray,
+      ids: sorted.map(String),
     };
   });
 
