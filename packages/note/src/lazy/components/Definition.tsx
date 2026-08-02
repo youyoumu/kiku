@@ -104,7 +104,46 @@ export function Definition() {
     return p;
   });
 
-  const [$definitionIndex, $setDefinitionIndex] = createSignal(0);
+  let defaultIndex = 0;
+  // if it's one page, it will always be index 0
+  // if it's normal, can chose between selection (always 0), main, or glossary
+  // if it's glossary-split, it can be any dictionnary name (even if it's in MainDefinition)
+  switch ($config.definitionStyle) {
+    case "normal":
+      switch ($ankiFields.PreferredDictionary.toLowerCase()) {
+        case "maindefinition":
+        case "main":
+        case "m":
+          if ($selection() && $main()) {
+            // main is index 1
+            defaultIndex = 1
+          }
+          break;
+        case "glossary":
+        case "gloss":
+        case "g":
+          const isThereSelection = $selection() ? 1 : 0;
+          const isThereMain = $main() ? 1 : 0;
+          defaultIndex = isThereSelection + isThereMain;
+          break;
+      }
+      break;
+    case "glossary-split":
+      for (let i = 0; i < $pages().length; i++) {
+        const page = $pages()[i];
+        if (
+          page.name.toLowerCase() == $ankiFields.PreferredDictionary.toLowerCase()
+          || page.name.toLowerCase() == `Main Definition (${$ankiFields.PreferredDictionary})`.toLowerCase()
+        ) {
+          defaultIndex = i;
+          break;
+        }
+      }
+      break;
+
+  }
+
+  const [$definitionIndex, $setDefinitionIndex] = createSignal(defaultIndex);
   const currentPage = () => $pages()[$definitionIndex()];
 
   function changePage(direction: 1 | -1) {

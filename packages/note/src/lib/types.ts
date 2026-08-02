@@ -16,6 +16,7 @@ export type AnkiFields = {
   SentenceTranslation: string;
   Picture: string;
   Glossary: string;
+  PreferredDictionary: string;
   Hint: string;
   IsWordAndSentenceCard: string;
   IsClickCard: string;
@@ -121,6 +122,7 @@ export const ankiFieldsSkeleton: AnkiFields = {
   SentenceAudio: "",
   Picture: "",
   Glossary: "",
+  PreferredDictionary: "",
   Hint: "",
   IsWordAndSentenceCard: "",
   IsClickCard: "",
