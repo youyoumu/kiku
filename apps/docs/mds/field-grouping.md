@@ -127,3 +127,110 @@ The button is available on the top left corner when you visit nested notes.
 - If either note has empty **SentenceFurigana**, the target note's **SentenceFurigana** will be updated as empty.
 - Some special tags like `leech`, `marked`, `potential_leech` will not be added to the target note.
 - "Delete Root Note" option will be available when the root note is less than 1 day old. This option will delete the root note after merging.
+
+## Unindexed group
+
+If you want to automatically add notes through anki-connect (for example using yomitan), it's not easy to know which id to use to not overlap with any existing ids.
+In that case, you can use `data-group-id="unindexed"`.
+
+- Each group with id "unindexed" will be considered different.
+- Unindexed group are rendered sequentialy *after* explicitly indexed group
+- The n-th unindexed group of one field is matched with the n-th unindexed group of the other fields.
+- Therefore, there should be the same number of unindexed group in each field, if you want an empty field, you can create an empty span or image with the `data-group-id="unindexed"`.
+
+A card could look like this:
+
+::: details Fields {open}
+
+Picture:
+
+```html
+<img data-group-id="unindexed" src="shadow_house_screenshot_2026-07-03-14-23-59-392.jpeg">
+<img data-group-id="10" src="SubsPlease%20Tate%20no%20Yuusha%20no%20Nariagari%20S3%20-%2010%20(1080p)%20BCA53DD5.mkv_1190221.jpeg">
+<img data-group-id="unindexed" src="Anime_Time_Solo_Leveli_928960_pzThqpQf.jpeg">
+<img src="cbt%20gochuumon%20wa%20usagi%20desuka%20s01e09%20bdrip%201920x1080%20x264%20flac%209092049a.mkv_957803.webp">
+```
+
+Sentence:
+
+```html
+<span data-group-id="unindexed">偉大[いだい]なるおじいさまにもっと 貢献[こうけん]せねば</span>
+<span data-group-id="10">どうせ 勇者[ゆうしゃ]の 捕縛[ほばく]に<b> 貢献[こうけん]</b>すれば➡</span>
+<span data-group-id="unindexed">これで  少[すこ]しは<br> 世[よ]の 中[なか]に<b> 貢献[こうけん]</b>できるかな</span>
+このお 店[たな,みせ]に<b> 貢献[こうけん]</b>するために―
+```
+
+SentenceAudio:
+
+```html
+<span data-group-id="unindexed"></span>
+<span data-group-id="10">[sound:SubsPlease Tate no Yuusha no Nariagari S3 - 10 (1080p) BCA53DD5.mkv_118779-a512c7dd2b6572854ecfd7760d9f297cea529b66.mp3]</span>
+<span data-group-id="unindexed">[sound:Anime_Time_Solo_Leveli_925842_K4AlcB99.mp3]</span>
+[sound:CBT Gochuumon wa Usagi Desuka S01E09 BDrip 1920x1080 x264 FLAC 9092049A.mkv_955687.289_958481.289.mp3]
+```
+
+:::
+
+## Yomitan Setup
+
+Yomitan supports prepending/overwriting/appending to existing cards. We can configure it to use unindexed ids in order to automatically group the fields.
+
+1. Open your Yomitan settings, you will first need to enable advanced options in the bottom left corner
+
+2. Now, go to `Anki` > `Check for duplicates`, change the dropdown `When a duplicate is detected` to `allow overwriting`
+
+3. To inject the `data-group-id` attribute into the images created by the `{screenshot}` and `{clipboard-image}`, we need to add our own handlebar code to yomitan.
+    - Go to `Anki` > `Customize handlebars templates…`,
+    - Scroll down,
+    - paste the following code *before* <code v-pre>{{~> (lookup . "marker") ~}}</code>
+
+    ```
+    {{#*inline "clipboard-image-unindexed"}}
+        {{~#if (hasMedia "clipboardImage")~}}
+            <img data-group-id="unindexed" src="{{getMedia "clipboardImage"}}"/>
+        {{~else~}}
+            <img data-group-id="unindexed"/>
+        {{~/if~}}
+    {{/inline}}
+    
+    {{#*inline "screenshot-unindexed"}}
+        {{~#if (hasMedia "screenshot")~}}
+            <img data-group-id="unindexed" src="{{getMedia "screenshot"}}"/>
+        {{~else~}}
+            <img data-group-id="unindexed"/>
+        {{~/if~}}
+    {{/inline}}
+    ```
+
+    Now, we can use `{clipboard-image-unindexed}` and `{screenshot-unindexed}`.
+
+4. Finally, open `Anki` > `Configure Anki flashcard`, select `Kiku` as the Model, select your deck, and configure the following fields:
+
+
+| Field                 | Value                                                                                          |   Overwrite    |
+| --------------------- | -----------------------------------------------------------------------------------------------|----------------|
+| Expression            | `{expression}`                                                                                 | Fill if empty  |
+| ExpressionFurigana    | `{furigana-plain}`                                                                             | Fill if empty  |
+| ExpressionReading     | `{reading}`                                                                                    | Fill if empty  |
+| ExpressionAudio       | `{audio}`                                                                                      | Fill if empty  |
+| RelatedExpression     | (leave empty)                                                                                  | Skip           |
+| SelectionText         | `{popup-selection-text}`                                                                       | Prepend        |
+| MainDefinition        | Something like `{single-glossary-jmdict/jitendex}`                                             | Fill if empty  |
+| DefinitionPicture     | (leave empty)                                                                                  | Fill if empty  |
+| Sentence              | `<span data-group-id="unindexed">{cloze-prefix}<b>{cloze-body}</b>{cloze-suffix}</span>`       | Prepend        |
+| SentenceFurigana      | `<span data-group-id="unindexed">{sentence-furigana-plain}</span>`                             | Prepend        |
+| SentenceTranslation   | `<span data-group-id="unindexed"></span>`                                                      | Prepend        |
+| SentenceAudio         | `<span data-group-id="unindexed"></span>`                                                      | Prepend        |
+| Picture               | `{screenshot-unindexed}` OR `{clipboard-image-unindexed}` OR `<img data-group-id="unindexed">` | Prepend        |
+| Glossary              | `{glossary}`                                                                                   | Fill if empty  |
+| Hint                  | (leave empty)                                                                                  | Skip           |
+| IsWordAndSentenceCard | (leave empty)                                                                                  | Skip           |
+| IsClickCard           | (leave empty)                                                                                  | Skip           |
+| IsSentenceCard        | (leave empty)                                                                                  | Skip           |
+| IsAudioCard           | (leave empty)                                                                                  | Skip           |
+| PitchPosition         | `{pitch-accent-positions}`                                                                     | Fill if empty  |
+| PitchCategories       | `{pitch-accent-categories}`                                                                    | Fill if empty  |
+| Frequency             | `{frequencies}`                                                                                | Fill if empty  |
+| FreqSort              | `{frequency-harmonic-rank}`                                                                    | Fill if empty  |
+| MiscInfo              | `<span data-group-id="unindexed">{document-title}</span>`                                      | Prepend        |
+                                                                                                                                           
